@@ -1,0 +1,190 @@
+{% extends "base.html" %}
+
+{% block title %}Mon profil - Subly Cloud{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <h2 class="mb-4">Mon profil</h2>
+
+            <!-- Plan actuel -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-crown"></i> Plan actuel</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h4>
+                                Plan {{ current_user.plan.name }}
+                                {% if current_user.plan.name == 'Premium' or current_user.plan.name == 'Premium Annual' %}
+                                    <span class="badge bg-warning text-dark">Premium</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">Gratuit</span>
+                                {% endif %}
+                            </h4>
+                            <p class="text-muted mb-0">
+                                {{ current_user.get_active_subscriptions_count() }}
+                                {% if current_user.plan.max_subscriptions %}
+                                    / {{ current_user.plan.max_subscriptions }}
+                                {% endif %}
+                                abonnements actifs
+                            </p>
+                        </div>
+                        <div>
+                            {% if current_user.plan.name == 'Free' %}
+                                <a href="{{ url_for('main.pricing') }}" class="btn btn-primary">
+                                    <i class="fas fa-arrow-up"></i> Passer à Premium
+                                </a>
+                            {% else %}
+                                <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#downgradePlanModal">
+                                    <i class="fas fa-arrow-down"></i> Rétrograder vers Gratuit
+                                </button>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    {% if current_user.plan and current_user.plan.name != 'Free' %}
+                    <hr>
+                    <div class="alert alert-info mb-0">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>Bon à savoir :</strong> Vous pouvez rétrograder vers le plan gratuit à tout moment.
+                        La rétrogradation est immédiate et vous perdrez les avantages Premium.
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Informations personnelles -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-user"></i> Informations personnelles</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="first_name" class="form-label">Prénom</label>
+                                <input type="text" class="form-control" id="first_name" name="first_name"
+                                       value="{{ current_user.first_name or '' }}">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="last_name" class="form-label">Nom</label>
+                                <input type="text" class="form-control" id="last_name" name="last_name"
+                                       value="{{ current_user.last_name or '' }}">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" value="{{ current_user.email }}" disabled>
+                            <small class="text-muted">L'email ne peut pas être modifié</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="default_currency" class="form-label">Devise par défaut</label>
+                            <select class="form-select" id="default_currency" name="default_currency">
+                                <option value="EUR" {% if (current_user.default_currency or 'EUR') == 'EUR' %}selected{% endif %}>€ EUR - Euro</option>
+                                <option value="USD" {% if current_user.default_currency == 'USD' %}selected{% endif %}>$ USD - Dollar américain</option>
+                                <option value="GBP" {% if current_user.default_currency == 'GBP' %}selected{% endif %}>£ GBP - Livre sterling</option>
+                            </select>
+                            <small class="text-muted">Cette devise sera sélectionnée par défaut lors de la création d'un nouvel abonnement</small>
+                        </div>
+
+                        {% if not current_user.oauth_provider %}
+                        <hr>
+                        <h6 class="mb-3">Changer le mot de passe</h6>
+
+                        <div class="mb-3">
+                            <label for="current_password" class="form-label">Mot de passe actuel</label>
+                            <input type="password" class="form-control" id="current_password" name="current_password">
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="new_password" class="form-label">Nouveau mot de passe</label>
+                                <input type="password" class="form-control" id="new_password" name="new_password">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="new_password_confirm" class="form-label">Confirmer</label>
+                                <input type="password" class="form-control" id="new_password_confirm" name="new_password_confirm">
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Enregistrer les modifications
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Compte -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-info-circle"></i> Informations du compte</h5>
+                </div>
+                <div class="card-body">
+                    <p class="mb-2">
+                        <strong>Membre depuis :</strong>
+                        {{ current_user.created_at.strftime('%d/%m/%Y') }}
+                    </p>
+                    <p class="mb-2">
+                        <strong>Méthode de connexion :</strong>
+                        {% if current_user.oauth_provider %}
+                            <span class="badge bg-info">{{ current_user.oauth_provider|capitalize }}</span>
+                        {% else %}
+                            <span class="badge bg-secondary">Email/Mot de passe</span>
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de confirmation de rétrogradation -->
+<div class="modal fade" id="downgradePlanModal" tabindex="-1" aria-labelledby="downgradePlanModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-warning">
+                <h5 class="modal-title" id="downgradePlanModalLabel">
+                    <i class="fas fa-exclamation-triangle"></i> Confirmer la rétrogradation
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Êtes-vous sûr de vouloir rétrograder vers le plan gratuit ?</strong></p>
+
+                <div class="alert alert-warning">
+                    <i class="fas fa-info-circle"></i>
+                    <strong>Ce qui va se passer :</strong>
+                    <ul class="mb-0 mt-2">
+                        <li><strong>Rétrogradation immédiate</strong> - L'effet est instantané</li>
+                        <li>Limite d'abonnements : <strong>5 maximum</strong> (contre illimité)</li>
+                        <li>Catégories personnalisées : <strong>5 maximum</strong> (contre illimité)</li>
+                        <li>Services personnalisés : <strong>5 maximum</strong> (contre illimité)</li>
+                        <li>Plans personnalisés : <strong>10 maximum</strong> (contre illimité)</li>
+                    </ul>
+                </div>
+
+                <div class="alert alert-success">
+                    <i class="fas fa-check-circle"></i>
+                    Vous pourrez repasser à Premium à tout moment depuis la page <a href="{{ url_for('main.pricing') }}" class="alert-link">Tarifs</a>.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times"></i> Annuler
+                </button>
+                <form action="{{ url_for('auth.downgrade_to_free') }}" method="POST" class="d-inline">
+                    <button type="submit" class="btn btn-warning">
+                        <i class="fas fa-arrow-down"></i> Rétrograder maintenant
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

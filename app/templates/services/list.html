@@ -1,0 +1,415 @@
+{% extends "base.html" %}
+
+{% block title %}Services - Subly Cloud{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2><i class="fas fa-store"></i> Services</h2>
+            {% if not current_user.is_premium() %}
+                <small class="text-muted">
+                    <i class="fas fa-info-circle"></i>
+                    {{ current_user.get_custom_services_count() }}/5 services personnalisés utilisés
+                </small>
+            {% endif %}
+        </div>
+        <div class="d-flex gap-2">
+            <!-- Boutons de basculement vue -->
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-outline-secondary active" id="gridViewBtn" onclick="switchView('grid')">
+                    <i class="fas fa-th"></i>
+                </button>
+                <button type="button" class="btn btn-outline-secondary" id="listViewBtn" onclick="switchView('list')">
+                    <i class="fas fa-list"></i>
+                </button>
+            </div>
+            {% if current_user.can_create_custom_service() %}
+                <a href="{{ url_for('services.add') }}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Créer un service
+                </a>
+            {% else %}
+                <button class="btn btn-secondary" disabled title="Limite atteinte (5/5)">
+                    <i class="fas fa-lock"></i> Limite atteinte
+                </button>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Message pour les utilisateurs gratuits -->
+    {% if not current_user.is_premium() %}
+        {% if not current_user.can_create_custom_service() %}
+        <div class="alert alert-warning border-0 shadow-sm mb-4">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h5 class="alert-heading"><i class="fas fa-exclamation-triangle"></i> Limite atteinte</h5>
+                    <p class="mb-0">
+                        Vous avez atteint la limite de 5 services personnalisés pour le plan gratuit. Passez au plan Premium pour créer un nombre illimité de services.
+                    </p>
+                </div>
+                <div class="col-md-4 text-end">
+                    <a href="{{ url_for('main.pricing') }}" class="btn btn-warning">
+                        <i class="fas fa-crown"></i> Passer à Premium
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% elif custom_services|length == 0 %}
+        <div class="alert alert-info border-0 shadow-sm mb-4">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h5 class="alert-heading"><i class="fas fa-info-circle"></i> Services personnalisés</h5>
+                    <p class="mb-0">
+                        Vous pouvez créer jusqu'à 5 services personnalisés avec le plan gratuit. Passez à Premium pour un nombre illimité.
+                    </p>
+                </div>
+                <div class="col-md-4 text-end">
+                    <a href="{{ url_for('main.pricing') }}" class="btn btn-outline-primary">
+                        <i class="fas fa-crown"></i> Découvrir Premium
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    {% endif %}
+
+    <!-- Services personnalisés -->
+    {% if custom_services %}
+    <div class="mb-5">
+        <h4 class="mb-3">
+            <i class="fas fa-user"></i> Mes services personnalisés
+            <span class="badge bg-primary">{{ custom_services|length }}</span>
+        </h4>
+
+        <!-- Vue grille -->
+        <div class="row g-4 grid-view">
+            {% for service in custom_services %}
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 {% if not service.is_active %}opacity-50{% endif %}">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="me-3">
+                                {% if service.logo_url %}
+                                    <img src="{{ service.logo_url }}" alt="{{ service.name }}"
+                                         style="width: 50px; height: 50px; object-fit: contain;">
+                                {% else %}
+                                    <i class="fas fa-box fa-3x text-muted"></i>
+                                {% endif %}
+                            </div>
+                            <div class="flex-grow-1">
+                                <h5 class="mb-0">
+                                    {{ service.name }}
+                                    {% if not service.is_active %}
+                                        <span class="badge bg-secondary">Désactivé</span>
+                                    {% endif %}
+                                </h5>
+                                <small class="text-muted">
+                                    {{ service.plans|length }} formule{{ 's' if service.plans|length > 1 else '' }}
+                                </small>
+                            </div>
+                        </div>
+
+                        {% if service.description %}
+                        <p class="text-muted mb-3 small">{{ service.description[:100] }}{% if service.description|length > 100 %}...{% endif %}</p>
+                        {% endif %}
+
+                        {% if service.category %}
+                        <div class="mb-3">
+                            <span class="badge" style="background-color: {{ service.category.color }}">
+                                {{ service.category.name }}
+                            </span>
+                        </div>
+                        {% endif %}
+
+                        {% if service.website_url %}
+                        <a href="{{ service.website_url }}" target="_blank" class="btn btn-sm btn-outline-primary w-100 mb-2">
+                            <i class="fas fa-external-link-alt"></i> Visiter le site
+                        </a>
+                        {% endif %}
+
+                        <!-- Actions -->
+                        <div class="btn-group w-100 mt-2">
+                            <a href="{{ url_for('services.plans', service_id=service.id) }}"
+                               class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-list"></i> Formules
+                            </a>
+                            <a href="{{ url_for('services.edit', service_id=service.id) }}"
+                               class="btn btn-sm btn-outline-warning">
+                                <i class="fas fa-edit"></i> Modifier
+                            </a>
+                            <form method="POST" action="{{ url_for('services.delete', service_id=service.id) }}"
+                                  onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce service ?')" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Vue liste -->
+        <div class="list-view d-none">
+            <div class="card">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Service</th>
+                                <th>Description</th>
+                                <th>Catégorie</th>
+                                <th>Formules</th>
+                                <th>Statut</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for service in custom_services %}
+                            <tr class="{% if not service.is_active %}opacity-50{% endif %}">
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="me-2">
+                                            {% if service.logo_url %}
+                                                <img src="{{ service.logo_url }}" alt="{{ service.name }}"
+                                                     style="width: 40px; height: 40px; object-fit: contain;">
+                                            {% else %}
+                                                <i class="fas fa-box fa-2x text-muted"></i>
+                                            {% endif %}
+                                        </div>
+                                        <strong>{{ service.name }}</strong>
+                                    </div>
+                                </td>
+                                <td>
+                                    <small class="text-muted">{{ service.description[:80] if service.description else '-' }}{% if service.description and service.description|length > 80 %}...{% endif %}</small>
+                                </td>
+                                <td>
+                                    {% if service.category %}
+                                    <span class="badge" style="background-color: {{ service.category.color }}">
+                                        {{ service.category.name }}
+                                    </span>
+                                    {% else %}
+                                    <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <span class="badge bg-info">
+                                        {{ service.plans|length }} formule{{ 's' if service.plans|length > 1 else '' }}
+                                    </span>
+                                </td>
+                                <td>
+                                    {% if service.is_active %}
+                                        <span class="badge bg-success">Actif</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">Désactivé</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-end">
+                                    <div class="btn-group">
+                                        <a href="{{ url_for('services.plans', service_id=service.id) }}"
+                                           class="btn btn-sm btn-outline-primary" title="Formules">
+                                            <i class="fas fa-list"></i>
+                                        </a>
+                                        {% if service.website_url %}
+                                        <a href="{{ service.website_url }}" target="_blank" class="btn btn-sm btn-outline-info" title="Visiter le site">
+                                            <i class="fas fa-external-link-alt"></i>
+                                        </a>
+                                        {% endif %}
+                                        <a href="{{ url_for('services.edit', service_id=service.id) }}"
+                                           class="btn btn-sm btn-outline-warning" title="Modifier">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <form method="POST" action="{{ url_for('services.delete', service_id=service.id) }}"
+                                              onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce service ?')" class="d-inline">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Supprimer">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Services globaux -->
+    {% if global_services %}
+    <div class="mb-5">
+        <h4 class="mb-3">
+            <i class="fas fa-globe"></i> Services disponibles
+            <span class="badge bg-primary">{{ global_services|length }}</span>
+        </h4>
+
+        <!-- Vue grille -->
+        <div class="row g-4 grid-view">
+            {% for service in global_services %}
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="me-3">
+                                {% if service.logo_url %}
+                                    <img src="{{ service.logo_url }}" alt="{{ service.name }}"
+                                         style="width: 50px; height: 50px; object-fit: contain;">
+                                {% else %}
+                                    <i class="fas fa-box fa-3x text-muted"></i>
+                                {% endif %}
+                            </div>
+                            <div class="flex-grow-1">
+                                <h5 class="mb-0">{{ service.name }}</h5>
+                                <small class="text-muted">
+                                    {{ service.plans|length }} formule{{ 's' if service.plans|length > 1 else '' }}
+                                </small>
+                            </div>
+                        </div>
+
+                        {% if service.description %}
+                        <p class="text-muted mb-3 small">{{ service.description[:100] }}{% if service.description|length > 100 %}...{% endif %}</p>
+                        {% endif %}
+
+                        {% if service.category %}
+                        <div class="mb-3">
+                            <span class="badge" style="background-color: {{ service.category.color }}">
+                                {{ service.category.name }}
+                            </span>
+                        </div>
+                        {% endif %}
+
+                        <a href="{{ url_for('services.plans', service_id=service.id) }}" class="btn btn-sm btn-outline-primary w-100 mb-2">
+                            <i class="fas fa-list"></i> Voir les formules
+                        </a>
+
+                        {% if current_user.is_premium() %}
+                        <div class="btn-group w-100">
+                            <form method="POST" action="{{ url_for('services.customize', service_id=service.id) }}" class="flex-fill">
+                                <button type="submit" class="btn btn-sm btn-outline-warning w-100">
+                                    <i class="fas fa-edit"></i> Personnaliser
+                                </button>
+                            </form>
+                            <form method="POST" action="{{ url_for('services.hide', service_id=service.id) }}" class="flex-fill" onsubmit="return confirm('Masquer ce service ?')">
+                                <button type="submit" class="btn btn-sm btn-outline-danger w-100">
+                                    <i class="fas fa-eye-slash"></i> Masquer
+                                </button>
+                            </form>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Vue liste -->
+        <div class="list-view d-none">
+            <div class="card">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Service</th>
+                                <th>Description</th>
+                                <th>Catégorie</th>
+                                <th>Formules</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for service in global_services %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="me-2">
+                                            {% if service.logo_url %}
+                                                <img src="{{ service.logo_url }}" alt="{{ service.name }}"
+                                                     style="width: 40px; height: 40px; object-fit: contain;">
+                                            {% else %}
+                                                <i class="fas fa-box fa-2x text-muted"></i>
+                                            {% endif %}
+                                        </div>
+                                        <strong>{{ service.name }}</strong>
+                                    </div>
+                                </td>
+                                <td>
+                                    <small class="text-muted">{{ service.description[:80] if service.description else '-' }}{% if service.description and service.description|length > 80 %}...{% endif %}</small>
+                                </td>
+                                <td>
+                                    {% if service.category %}
+                                    <span class="badge" style="background-color: {{ service.category.color }}">
+                                        {{ service.category.name }}
+                                    </span>
+                                    {% else %}
+                                    <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <span class="badge bg-info">
+                                        {{ service.plans|length }} formule{{ 's' if service.plans|length > 1 else '' }}
+                                    </span>
+                                </td>
+                                <td class="text-end">
+                                    <div class="btn-group">
+                                        <a href="{{ url_for('services.plans', service_id=service.id) }}" class="btn btn-sm btn-outline-primary" title="Voir les formules">
+                                            <i class="fas fa-list"></i> Formules
+                                        </a>
+                                        {% if current_user.is_premium() %}
+                                        <form method="POST" action="{{ url_for('services.customize', service_id=service.id) }}" class="d-inline">
+                                            <button type="submit" class="btn btn-sm btn-outline-warning" title="Personnaliser ce service">
+                                                <i class="fas fa-edit"></i> Personnaliser
+                                            </button>
+                                        </form>
+                                        <form method="POST" action="{{ url_for('services.hide', service_id=service.id) }}" class="d-inline" onsubmit="return confirm('Masquer ce service ?')">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Masquer ce service">
+                                                <i class="fas fa-eye-slash"></i>
+                                            </button>
+                                        </form>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+// Fonction pour basculer entre les vues grille et liste
+function switchView(view) {
+    const gridViews = document.querySelectorAll('.grid-view');
+    const listViews = document.querySelectorAll('.list-view');
+    const gridBtn = document.getElementById('gridViewBtn');
+    const listBtn = document.getElementById('listViewBtn');
+
+    if (view === 'grid') {
+        gridViews.forEach(el => el.classList.remove('d-none'));
+        listViews.forEach(el => el.classList.add('d-none'));
+        gridBtn.classList.add('active');
+        listBtn.classList.remove('active');
+    } else {
+        gridViews.forEach(el => el.classList.add('d-none'));
+        listViews.forEach(el => el.classList.remove('d-none'));
+        gridBtn.classList.remove('active');
+        listBtn.classList.add('active');
+    }
+
+    // Sauvegarder la préférence dans localStorage
+    localStorage.setItem('servicesView', view);
+}
+
+// Restaurer la vue préférée au chargement de la page
+document.addEventListener('DOMContentLoaded', function() {
+    const savedView = localStorage.getItem('servicesView') || 'grid';
+    switchView(savedView);
+});
+</script>
+{% endblock %}

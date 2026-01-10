@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+
+{% block title %}Gestion des plans - Administration{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h3"><i class="fas fa-list-alt"></i> Gestion des plans de services par défaut</h1>
+                <a href="{{ url_for('admin.service_plans_add') }}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Ajouter un plan
+                </a>
+            </div>
+
+            <!-- Filtre par service -->
+            <div class="mb-3">
+                <div class="btn-group flex-wrap" role="group" aria-label="Filtre service">
+                    <a href="{{ url_for('admin.service_plans_list') }}"
+                       class="btn btn-outline-primary {% if not service_filter %}active{% endif %}">
+                        <i class="fas fa-list"></i> Tous
+                    </a>
+                    {% for svc in services[:10] %}
+                    <a href="{{ url_for('admin.service_plans_list', service=svc.id) }}"
+                       class="btn btn-outline-primary {% if service_filter == svc.id %}active{% endif %}">
+                        {{ svc.name }}
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Service</th>
+                                    <th>Nom du plan</th>
+                                    <th>Prix</th>
+                                    <th>Période</th>
+                                    <th>Description</th>
+                                    <th>Actif</th>
+                                    <th class="text-end">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for plan in plans %}
+                                <tr>
+                                    <td>{{ plan.id }}</td>
+                                    <td>
+                                        <strong>{{ plan.service.name }}</strong>
+                                        {% if plan.service.category %}
+                                        <br>
+                                        <small class="text-muted">
+                                            <i class="{{ plan.service.category.icon }}"></i>
+                                            {{ plan.service.category.name }}
+                                        </small>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ plan.name }}</td>
+                                    <td>
+                                        <strong>{{ "%.2f"|format(plan.amount) }} {{ plan.currency }}</strong>
+                                    </td>
+                                    <td>
+                                        {% if plan.billing_cycle == 'monthly' %}
+                                        <span class="badge bg-info">Mensuel</span>
+                                        {% elif plan.billing_cycle == 'yearly' %}
+                                        <span class="badge bg-primary">Annuel</span>
+                                        {% elif plan.billing_cycle == 'quarterly' %}
+                                        <span class="badge bg-warning">Trimestriel</span>
+                                        {% elif plan.billing_cycle == 'weekly' %}
+                                        <span class="badge bg-secondary">Hebdomadaire</span>
+                                        {% else %}
+                                        <span class="badge bg-light text-dark">{{ plan.billing_cycle }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if plan.description %}
+                                        {{ plan.description[:40] }}{% if plan.description|length > 40 %}...{% endif %}
+                                        {% else %}
+                                        <span class="text-muted">-</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if plan.is_active %}
+                                        <span class="badge bg-success">Actif</span>
+                                        {% else %}
+                                        <span class="badge bg-danger">Inactif</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-end">
+                                        <a href="{{ url_for('admin.service_plans_edit', plan_id=plan.id) }}"
+                                           class="btn btn-sm btn-outline-primary" title="Modifier">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <form action="{{ url_for('admin.service_plans_delete', plan_id=plan.id) }}"
+                                              method="POST" style="display: inline;"
+                                              onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce plan ?');">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Supprimer">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td colspan="8" class="text-center text-muted">Aucun plan trouvé</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    {% if pagination.pages > 1 %}
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination justify-content-center mt-4">
+                            {% if pagination.has_prev %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ url_for('admin.service_plans_list', page=pagination.prev_num, service=service_filter) }}">Précédent</a>
+                            </li>
+                            {% endif %}
+
+                            {% for page_num in pagination.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+                                {% if page_num %}
+                                    {% if page_num == pagination.page %}
+                                    <li class="page-item active"><span class="page-link">{{ page_num }}</span></li>
+                                    {% else %}
+                                    <li class="page-item"><a class="page-link" href="{{ url_for('admin.service_plans_list', page=page_num, service=service_filter) }}">{{ page_num }}</a></li>
+                                    {% endif %}
+                                {% else %}
+                                <li class="page-item disabled"><span class="page-link">...</span></li>
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if pagination.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ url_for('admin.service_plans_list', page=pagination.next_num, service=service_filter) }}">Suivant</a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

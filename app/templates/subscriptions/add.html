@@ -1,0 +1,263 @@
+{% extends "base.html" %}
+
+{% block title %}Ajouter un abonnement - Subly Cloud{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Ajouter un abonnement</h2>
+                <a href="{{ url_for('subscriptions.list') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Retour
+                </a>
+            </div>
+
+            <div class="card">
+                <div class="card-body p-4">
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label for="service_id" class="form-label">Service (optionnel)</label>
+                            <select class="form-select" id="service_id" name="service_id" onchange="updateFromService()">
+                                <option value="">-- Saisie manuelle --</option>
+                                {% if services %}
+                                    {% for service in services %}
+                                        <option value="{{ service.id }}"
+                                                data-name="{{ service.name }}"
+                                                data-category="{{ service.category_id or '' }}">
+                                            {{ service.name }}
+                                        </option>
+                                    {% endfor %}
+                                {% endif %}
+                            </select>
+                            <small class="text-muted">Sélectionnez un service pour pré-remplir les informations</small>
+                        </div>
+
+                        <div id="plan-selector" class="mb-3" style="display: none;">
+                            <label for="plan_select" class="form-label">Formule</label>
+                            <select class="form-select" id="plan_select" onchange="updateFromPlan()">
+                                <option value="">-- Choisir une formule --</option>
+                            </select>
+                            <small class="text-muted">Sélectionnez une formule pour remplir automatiquement le montant</small>
+                        </div>
+
+                        <input type="hidden" id="plan_id" name="plan_id" value="">
+
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Nom de l'abonnement *</label>
+                            <input type="text" class="form-control" id="name" name="name" required
+                                   placeholder="ex: Netflix, Spotify, Adobe Creative Cloud...">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" name="description" rows="3"
+                                      placeholder="Informations complémentaires sur l'abonnement"></textarea>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="amount" class="form-label">Montant *</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control text-end" id="amount" name="amount"
+                                           step="0.01" min="0" required placeholder="9.99">
+                                    <select class="form-select" id="currency" name="currency" style="max-width: 100px;">
+                                        <option value="EUR" {% if (current_user.default_currency or 'EUR') == 'EUR' %}selected{% endif %}>€ EUR</option>
+                                        <option value="USD" {% if current_user.default_currency == 'USD' %}selected{% endif %}>$ USD</option>
+                                        <option value="GBP" {% if current_user.default_currency == 'GBP' %}selected{% endif %}>£ GBP</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="billing_cycle" class="form-label">Périodicité *</label>
+                                <select class="form-select" id="billing_cycle" name="billing_cycle" required>
+                                    <option value="weekly">Hebdomadaire</option>
+                                    <option value="monthly" selected>Mensuel</option>
+                                    <option value="quarterly">Trimestriel</option>
+                                    <option value="yearly">Annuel</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="category_id" class="form-label">Catégorie</label>
+                                <select class="form-select" id="category_id" name="category_id">
+                                    <option value="">Aucune catégorie</option>
+                                    {% for category in categories %}
+                                        <option value="{{ category.id }}">{{ category.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="start_date" class="form-label">Date de début *</label>
+                                <input type="date" class="form-control" id="start_date" name="start_date"
+                                       value="{{ today }}" required>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i>
+                            <strong>Info :</strong> La prochaine date de facturation sera calculée automatiquement en fonction de la périodicité choisie.
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{{ url_for('subscriptions.list') }}" class="btn btn-outline-secondary">
+                                Annuler
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Enregistrer l'abonnement
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Fonction pour formater les montants au format français
+function formatAmount(amount) {
+    const formatted = amount.toFixed(2);
+    const parts = formatted.split('.');
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+    return parts.join(',');
+}
+
+// Données des services avec leurs plans
+const servicesData = {{ services|tojson|safe }};
+console.log('Services data loaded:', servicesData);
+
+// Définir la date d'aujourd'hui par défaut
+document.getElementById('start_date').valueAsDate = new Date();
+
+// Traduction des cycles de facturation
+const cycleTranslations = {
+    'weekly': 'Hebdomadaire',
+    'monthly': 'Mensuel',
+    'quarterly': 'Trimestriel',
+    'yearly': 'Annuel'
+};
+
+// Symboles de devises
+const currencySymbols = {
+    'EUR': '€',
+    'USD': '$',
+    'GBP': '£'
+};
+
+// Gestion de la sélection de service
+function updateFromService() {
+    const serviceSelect = document.getElementById('service_id');
+    const selectedOption = serviceSelect.options[serviceSelect.selectedIndex];
+    const planSelector = document.getElementById('plan-selector');
+    const planSelect = document.getElementById('plan_select');
+
+    if (serviceSelect.value) {
+        const serviceId = parseInt(serviceSelect.value);
+
+        // Trouver le service dans les données
+        const service = servicesData.find(s => s.id === serviceId);
+
+        if (!service) {
+            console.error('Service not found:', serviceId);
+            return;
+        }
+
+        console.log('Service selected:', service);
+
+        // Pré-remplir le nom
+        document.getElementById('name').value = service.name;
+
+        // Pré-sélectionner la catégorie
+        if (service.category_id) {
+            document.getElementById('category_id').value = service.category_id;
+        }
+
+        // Charger les formules
+        const plans = service.plans || [];
+        console.log('Plans found:', plans);
+
+        planSelect.innerHTML = '<option value="">-- Choisir une formule --</option>';
+
+        let activePlansCount = 0;
+        plans.forEach(plan => {
+            if (plan.is_active) {
+                const option = document.createElement('option');
+                option.value = plan.id;
+                option.setAttribute('data-amount', plan.amount);
+                option.setAttribute('data-currency', plan.currency);
+                option.setAttribute('data-cycle', plan.billing_cycle);
+
+                // Affichage avec traduction française
+                const currencySymbol = currencySymbols[plan.currency] || plan.currency;
+                const cycleLabel = cycleTranslations[plan.billing_cycle] || plan.billing_cycle;
+                option.textContent = `${plan.name} - ${formatAmount(plan.amount)} ${currencySymbol} / ${cycleLabel}`;
+
+                planSelect.appendChild(option);
+                activePlansCount++;
+            }
+        });
+
+        if (activePlansCount > 0) {
+            console.log('Showing plan selector with', activePlansCount, 'plans');
+            planSelector.style.display = 'block';
+        } else {
+            console.log('No active plans found');
+            planSelector.style.display = 'none';
+        }
+    } else {
+        // Réinitialiser
+        console.log('Service deselected, resetting form');
+        document.getElementById('name').value = '';
+        planSelector.style.display = 'none';
+        planSelect.innerHTML = '<option value="">-- Choisir une formule --</option>';
+        document.getElementById('plan_id').value = '';
+
+        // Réinitialiser aussi les champs de montant
+        document.getElementById('amount').value = '';
+    }
+}
+
+// Gestion de la sélection de formule
+function updateFromPlan() {
+    const planSelect = document.getElementById('plan_select');
+    const selectedOption = planSelect.options[planSelect.selectedIndex];
+
+    if (planSelect.value) {
+        const amount = selectedOption.getAttribute('data-amount');
+        const currency = selectedOption.getAttribute('data-currency');
+        const cycle = selectedOption.getAttribute('data-cycle');
+
+        console.log('Plan selected:', {
+            id: planSelect.value,
+            amount: amount,
+            currency: currency,
+            cycle: cycle
+        });
+
+        // Mettre à jour le champ caché plan_id
+        document.getElementById('plan_id').value = planSelect.value;
+
+        if (amount) {
+            document.getElementById('amount').value = parseFloat(amount).toFixed(2);
+            console.log('Amount set to:', parseFloat(amount).toFixed(2));
+        }
+        if (currency) {
+            document.getElementById('currency').value = currency;
+            console.log('Currency set to:', currency);
+        }
+        if (cycle) {
+            document.getElementById('billing_cycle').value = cycle;
+            console.log('Billing cycle set to:', cycle);
+        }
+    } else {
+        console.log('Plan deselected');
+        document.getElementById('plan_id').value = '';
+    }
+}
+</script>
+{% endblock %}

@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% block title %}Gestion des catégories - Administration{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h3"><i class="fas fa-folder"></i> Gestion des catégories par défaut</h1>
+                <a href="{{ url_for('admin.categories_add') }}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Ajouter une catégorie
+                </a>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nom</th>
+                                    <th>Description</th>
+                                    <th>Couleur</th>
+                                    <th>Icône</th>
+                                    <th>Actif</th>
+                                    <th>Créée le</th>
+                                    <th class="text-end">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for category in categories %}
+                                <tr>
+                                    <td>{{ category.id }}</td>
+                                    <td>
+                                        <strong>{{ category.name }}</strong>
+                                        {% if category.website_url %}
+                                        <a href="{{ category.website_url }}" target="_blank" class="ms-1">
+                                            <i class="fas fa-external-link-alt text-muted small"></i>
+                                        </a>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if category.description %}
+                                        {{ category.description[:50] }}{% if category.description|length > 50 %}...{% endif %}
+                                        {% else %}
+                                        <span class="text-muted">-</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <span class="badge" style="background-color: {{ category.color }};">
+                                            {{ category.color }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        {% if category.icon %}
+                                        <i class="{{ category.icon }}"></i> {{ category.icon }}
+                                        {% else %}
+                                        <span class="text-muted">-</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if category.is_active %}
+                                        <span class="badge bg-success">Actif</span>
+                                        {% else %}
+                                        <span class="badge bg-danger">Inactif</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ category.created_at.strftime('%d/%m/%Y') }}</td>
+                                    <td class="text-end">
+                                        <a href="{{ url_for('admin.categories_edit', category_id=category.id) }}"
+                                           class="btn btn-sm btn-outline-primary" title="Modifier">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <form action="{{ url_for('admin.categories_delete', category_id=category.id) }}"
+                                              method="POST" style="display: inline;"
+                                              onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette catégorie ?');">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Supprimer">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td colspan="8" class="text-center text-muted">Aucune catégorie trouvée</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    {% if pagination.pages > 1 %}
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination justify-content-center mt-4">
+                            {% if pagination.has_prev %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ url_for('admin.categories_list', page=pagination.prev_num) }}">Précédent</a>
+                            </li>
+                            {% endif %}
+
+                            {% for page_num in pagination.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+                                {% if page_num %}
+                                    {% if page_num == pagination.page %}
+                                    <li class="page-item active"><span class="page-link">{{ page_num }}</span></li>
+                                    {% else %}
+                                    <li class="page-item"><a class="page-link" href="{{ url_for('admin.categories_list', page=page_num) }}">{{ page_num }}</a></li>
+                                    {% endif %}
+                                {% else %}
+                                <li class="page-item disabled"><span class="page-link">...</span></li>
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if pagination.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ url_for('admin.categories_list', page=pagination.next_num) }}">Suivant</a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

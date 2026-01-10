@@ -1,0 +1,158 @@
+/* Styles personnalisés pour Subly Cloud */
+
+:root {
+    --primary-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* Hero section */
+.hero-section {
+    background: var(--primary-gradient);
+    color: white;
+    padding: 4rem 0;
+    border-radius: 15px;
+    margin-bottom: 2rem;
+}
+
+/* Cards améliorées */
+.card {
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* Stats cards */
+.stat-value {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: white;
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    opacity: 0.9;
+}
+
+/* Subscription cards */
+.subscription-card {
+    border-left: 4px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.subscription-card:hover {
+    border-left-color: var(--primary-color);
+    background-color: #f8f9fa;
+}
+
+/* Badge personnalisé */
+.badge-premium {
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+    color: #000;
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+}
+
+/* Boutons */
+.btn-gradient {
+    background: var(--primary-gradient);
+    border: none;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.btn-gradient:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+    color: white;
+}
+
+/* Charts */
+canvas {
+    max-height: 300px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .stat-value {
+        font-size: 1.8rem;
+    }
+
+    .hero-section {
+        padding: 2rem 0;
+    }
+}
+
+/* Loading spinner */
+.spinner-border-sm {
+    width: 1rem;
+    height: 1rem;
+}
+
+/* Notifications badge */
+.notification-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.7rem;
+}
+
+/* Category cards */
+.category-icon {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 1.5rem;
+}
+
+/* Form enhancements */
+.form-control:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 0.2rem rgba(99, 102, 241, 0.25);
+}
+
+/* Footer */
+footer {
+    margin-top: auto;
+}
+
+/* Empty states */
+.empty-state {
+    padding: 4rem 2rem;
+    text-align: center;
+}
+
+.empty-state i {
+    font-size: 4rem;
+    color: #dee2e6;
+    margin-bottom: 1rem;
+}
+
+/* Pricing cards */
+.pricing-card {
+    transition: all 0.3s ease;
+}
+
+.pricing-card:hover {
+    transform: scale(1.05);
+}
+
+.pricing-card.featured {
+    border: 2px solid #6366f1;
+}

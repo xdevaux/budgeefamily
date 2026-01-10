@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}Ajouter une formule - {{ service.name }} - Subly Cloud{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Ajouter une formule personnalisée à {{ service.name }}</h2>
+                <a href="{{ url_for('services.plans', service_id=service.id) }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Retour
+                </a>
+            </div>
+
+            {% if not service.is_custom() %}
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i>
+                <strong>Info :</strong> Vous créez une formule personnalisée pour ce service. Elle sera visible uniquement par vous et pourra être utilisée lors de la création de vos abonnements.
+            </div>
+            {% endif %}
+
+            <div class="card">
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Nom de la formule *</label>
+                            <input type="text" class="form-control" id="name" name="name" required placeholder="Ex: Standard, Premium, Famille">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" name="description" rows="2" placeholder="Caractéristiques de cette formule"></textarea>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="amount" class="form-label">Montant *</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control text-end" id="amount" name="amount"
+                                           step="0.01" min="0" required placeholder="9.99">
+                                    <select class="form-select" name="currency" style="max-width: 100px;">
+                                        <option value="EUR" {% if (current_user.default_currency or 'EUR') == 'EUR' %}selected{% endif %}>€ EUR</option>
+                                        <option value="USD" {% if current_user.default_currency == 'USD' %}selected{% endif %}>$ USD</option>
+                                        <option value="GBP" {% if current_user.default_currency == 'GBP' %}selected{% endif %}>£ GBP</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="billing_cycle" class="form-label">Périodicité *</label>
+                                <select class="form-select" id="billing_cycle" name="billing_cycle" required>
+                                    <option value="weekly">Hebdomadaire</option>
+                                    <option value="monthly" selected>Mensuel</option>
+                                    <option value="quarterly">Trimestriel</option>
+                                    <option value="yearly">Annuel</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Ajouter la formule
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

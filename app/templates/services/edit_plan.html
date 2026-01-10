@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}Modifier la formule - {{ service.name }} - Subly Cloud{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Modifier la formule "{{ plan.name }}"</h2>
+                <a href="{{ url_for('services.plans', service_id=service.id) }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Retour
+                </a>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Nom de la formule *</label>
+                            <input type="text" class="form-control" id="name" name="name" required
+                                   value="{{ plan.name }}" placeholder="Ex: Standard, Premium, Famille">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" name="description" rows="2"
+                                      placeholder="Caractéristiques de cette formule">{{ plan.description or '' }}</textarea>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="amount" class="form-label">Montant *</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control text-end" id="amount" name="amount"
+                                           step="0.01" min="0" required value="{{ plan.amount }}" placeholder="9.99">
+                                    <select class="form-select" name="currency" style="max-width: 100px;">
+                                        <option value="EUR" {% if plan.currency == 'EUR' %}selected{% endif %}>€ EUR</option>
+                                        <option value="USD" {% if plan.currency == 'USD' %}selected{% endif %}>$ USD</option>
+                                        <option value="GBP" {% if plan.currency == 'GBP' %}selected{% endif %}>£ GBP</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="billing_cycle" class="form-label">Périodicité *</label>
+                                <select class="form-select" id="billing_cycle" name="billing_cycle" required>
+                                    <option value="weekly" {% if plan.billing_cycle == 'weekly' %}selected{% endif %}>Hebdomadaire</option>
+                                    <option value="monthly" {% if plan.billing_cycle == 'monthly' %}selected{% endif %}>Mensuel</option>
+                                    <option value="quarterly" {% if plan.billing_cycle == 'quarterly' %}selected{% endif %}>Trimestriel</option>
+                                    <option value="yearly" {% if plan.billing_cycle == 'yearly' %}selected{% endif %}>Annuel</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Enregistrer les modifications
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
