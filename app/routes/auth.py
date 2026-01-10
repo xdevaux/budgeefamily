@@ -1,29 +1,12 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request, session
 from flask_login import login_user, logout_user, current_user, login_required
 from urllib.parse import urlparse
-from authlib.integrations.flask_client import OAuth
 from app import db
 from app.models import User, Plan
 from datetime import datetime
 import os
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
-
-# Configuration OAuth
-oauth = OAuth()
-
-
-def init_oauth(app):
-    oauth.init_app(app)
-
-    # Google OAuth
-    oauth.register(
-        name='google',
-        client_id=app.config['GOOGLE_CLIENT_ID'],
-        client_secret=app.config['GOOGLE_CLIENT_SECRET'],
-        server_metadata_url=app.config['GOOGLE_DISCOVERY_URL'],
-        client_kwargs={'scope': 'openid email profile'}
-    )
 
 
 @bp.route('/login', methods=['GET', 'POST'])
@@ -104,16 +87,12 @@ def register():
             db.session.add(free_plan)
             db.session.commit()
 
-        # Si inscription Premium directe, ne pas activer la période d'essai
-        trial_start = None if is_premium_signup else datetime.utcnow()
-
         user = User(
             email=email,
             first_name=first_name,
             last_name=last_name,
             default_currency=default_currency,
-            plan=free_plan,
-            trial_start_date=trial_start  # Pas d'essai si inscription Premium directe
+            plan=free_plan
         )
         user.set_password(password)
         user.set_country(country)  # Définit le pays et le fuseau horaire automatiquement
@@ -132,7 +111,7 @@ def register():
             session['pending_premium_plan'] = 'yearly' if plan_param == 'premium-annual' else 'monthly'
             flash('Votre compte a été créé avec succès ! Un email de confirmation a été envoyé à votre adresse. Vous pourrez finaliser votre paiement Premium après avoir vérifié votre email.', 'success')
         else:
-            flash('Votre compte a été créé avec succès ! Un email de confirmation a été envoyé à votre adresse. Vous bénéficiez de 7 jours d\'essai Premium gratuit.', 'success')
+            flash('Votre compte a été créé avec succès ! Un email de confirmation a été envoyé à votre adresse.', 'success')
 
         return redirect(url_for('auth.login'))
 
@@ -145,63 +124,6 @@ def logout():
     logout_user()
     flash('Vous avez été déconnecté avec succès.', 'info')
     return redirect(url_for('main.index'))
-
-
-@bp.route('/google')
-def google_login():
-    redirect_uri = url_for('auth.google_callback', _external=True)
-    return oauth.google.authorize_redirect(redirect_uri)
-
-
-@bp.route('/google/callback')
-def google_callback():
-    try:
-        token = oauth.google.authorize_access_token()
-        user_info = token.get('userinfo')
-
-        if user_info:
-            email = user_info.get('email')
-            user = User.query.filter_by(email=email).first()
-
-            if not user:
-                # Créer un nouveau compte
-                free_plan = Plan.query.filter_by(name='Free').first()
-                user = User(
-                    email=email,
-                    first_name=user_info.get('given_name'),
-                    last_name=user_info.get('family_name'),
-                    avatar_url=user_info.get('picture'),
-                    oauth_provider='google',
-                    oauth_id=user_info.get('sub'),
-                    default_currency='EUR',  # Devise par défaut pour OAuth (peut être modifiée dans le profil)
-                    plan=free_plan,
-                    trial_start_date=datetime.utcnow()  # Activer la période d'essai Premium de 7 jours
-                )
-                db.session.add(user)
-                db.session.commit()
-
-                # Envoyer l'email de vérification
-                from app.utils.email import send_verification_email
-                send_verification_email(user)
-                db.session.commit()
-
-                flash('Votre compte a été créé avec succès ! Un email de confirmation a été envoyé à votre adresse. Vous bénéficiez de 7 jours d\'essai Premium gratuit.', 'success')
-            else:
-                # Mettre à jour les infos OAuth si nécessaire
-                if not user.oauth_provider:
-                    user.oauth_provider = 'google'
-                    user.oauth_id = user_info.get('sub')
-                    db.session.commit()
-
-            login_user(user)
-            return redirect(url_for('main.dashboard'))
-        else:
-            flash('Impossible de récupérer vos informations Google.', 'danger')
-            return redirect(url_for('auth.login'))
-
-    except Exception as e:
-        flash(f'Erreur lors de la connexion avec Google: {str(e)}', 'danger')
-        return redirect(url_for('auth.login'))
 
 
 @bp.route('/profile', methods=['GET', 'POST'])

@@ -24,6 +24,16 @@
                     <i class="fas fa-list"></i>
                 </button>
             </div>
+            {% if current_user.is_premium() %}
+                <div class="btn-group">
+                    <a href="{{ url_for('exports.export_categories', format='excel') }}" class="btn btn-outline-success" title="Exporter en Excel">
+                        <i class="fas fa-file-excel"></i>
+                    </a>
+                    <a href="{{ url_for('exports.export_categories', format='pdf') }}" class="btn btn-outline-danger" title="Exporter en PDF">
+                        <i class="fas fa-file-pdf"></i>
+                    </a>
+                </div>
+            {% endif %}
             {% if current_user.can_create_custom_category() %}
                 <a href="{{ url_for('categories.add') }}" class="btn btn-primary">
                     <i class="fas fa-plus"></i> Créer une catégorie

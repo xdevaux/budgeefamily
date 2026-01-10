@@ -69,26 +69,15 @@
 
         <div class="col-md-3">
             <a href="{{ url_for('auth.profile') }}" class="text-decoration-none">
-                <div class="card stat-card {% if current_user.is_on_trial() %}bg-success{% else %}bg-info{% endif %} text-white stat-card-clickable">
+                <div class="card stat-card bg-info text-white stat-card-clickable">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
                                 <h6 class="text-uppercase mb-1 opacity-75">Plan actuel</h6>
-                                <h2 class="mb-0">
-                                    {% if current_user.is_on_trial() %}
-                                        Essai Premium
-                                    {% else %}
-                                        {{ current_user.plan.name }}
-                                    {% endif %}
-                                </h2>
-                                {% if current_user.is_on_trial() %}
-                                    <small class="d-block mt-1">
-                                        <i class="fas fa-clock"></i> {{ current_user.get_trial_days_remaining() }} jour{{ 's' if current_user.get_trial_days_remaining() > 1 else '' }} restant{{ 's' if current_user.get_trial_days_remaining() > 1 else '' }}
-                                    </small>
-                                {% endif %}
+                                <h2 class="mb-0">{{ current_user.plan.name }}</h2>
                             </div>
                             <div>
-                                <i class="fas {% if current_user.is_on_trial() %}fa-gift{% else %}fa-crown{% endif %} fa-2x opacity-50"></i>
+                                <i class="fas fa-crown fa-2x opacity-50"></i>
                             </div>
                         </div>
                     </div>
@@ -103,9 +92,21 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0"><i class="fas fa-calendar-alt"></i> Prochains renouvellements</h5>
-                    {% if upcoming_renewals %}
-                        <span class="badge bg-primary">{{ upcoming_renewals|length }}</span>
-                    {% endif %}
+                    <div class="d-flex align-items-center gap-2">
+                        {% if upcoming_renewals %}
+                            <span class="badge bg-primary">{{ upcoming_renewals|length }}</span>
+                        {% endif %}
+                        {% if current_user.is_premium() %}
+                            <div class="btn-group btn-group-sm">
+                                <a href="{{ url_for('exports.export_upcoming_renewals', format='excel') }}" class="btn btn-outline-success" title="Exporter en Excel">
+                                    <i class="fas fa-file-excel"></i>
+                                </a>
+                                <a href="{{ url_for('exports.export_upcoming_renewals', format='pdf') }}" class="btn btn-outline-danger" title="Exporter en PDF">
+                                    <i class="fas fa-file-pdf"></i>
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
                 </div>
                 <div class="card-body p-0">
                     {% if upcoming_renewals %}
@@ -161,8 +162,18 @@
         <!-- Répartition par catégorie -->
         <div class="col-lg-6">
             <div class="card">
-                <div class="card-header">
+                <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0"><i class="fas fa-chart-pie"></i> Répartition par catégorie</h5>
+                    {% if current_user.is_premium() %}
+                        <div class="btn-group btn-group-sm">
+                            <a href="{{ url_for('exports.export_category_distribution', format='excel') }}" class="btn btn-outline-success" title="Exporter en Excel">
+                                <i class="fas fa-file-excel"></i>
+                            </a>
+                            <a href="{{ url_for('exports.export_category_distribution', format='pdf') }}" class="btn btn-outline-danger" title="Exporter en PDF">
+                                <i class="fas fa-file-pdf"></i>
+                            </a>
+                        </div>
+                    {% endif %}
                 </div>
                 <div class="card-body">
                     {% if category_stats %}
@@ -179,8 +190,18 @@
     <div class="row mt-4">
         <div class="col-12">
             <div class="card">
-                <div class="card-header">
+                <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0"><i class="fas fa-chart-line"></i> Évolution des dépenses mensuelles</h5>
+                    {% if current_user.is_premium() %}
+                        <div class="btn-group btn-group-sm">
+                            <a href="{{ url_for('exports.export_monthly_evolution', format='excel') }}" class="btn btn-outline-success" title="Exporter en Excel">
+                                <i class="fas fa-file-excel"></i>
+                            </a>
+                            <a href="{{ url_for('exports.export_monthly_evolution', format='pdf') }}" class="btn btn-outline-danger" title="Exporter en PDF">
+                                <i class="fas fa-file-pdf"></i>
+                            </a>
+                        </div>
+                    {% endif %}
                 </div>
                 <div class="card-body">
                     <canvas id="spendingChart" height="80"></canvas>

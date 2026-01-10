@@ -62,7 +62,6 @@ class User(UserMixin, db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     is_active = db.Column(db.Boolean, default=True)
-    trial_start_date = db.Column(db.DateTime, nullable=True)  # Date de début de la période d'essai Premium
 
     # Relations
     subscriptions = db.relationship('Subscription', back_populates='user', lazy='dynamic',
@@ -104,36 +103,8 @@ class User(UserMixin, db.Model):
         return self.subscriptions.filter_by(is_active=True).count() < 5
 
     def is_premium(self):
-        """Vérifie si l'utilisateur a un plan Premium (mensuel ou annuel) ou est en période d'essai"""
-        # Vérifier si l'utilisateur a un plan Premium payant
-        if self.plan and self.plan.is_premium():
-            return True
-
-        # Vérifier si l'utilisateur est dans la période d'essai de 7 jours
-        if self.trial_start_date:
-            trial_end = self.trial_start_date + timedelta(days=7)
-            if datetime.utcnow() < trial_end:
-                return True
-
-        return False
-
-    def is_on_trial(self):
-        """Vérifie si l'utilisateur est actuellement en période d'essai"""
-        if not self.trial_start_date:
-            return False
-
-        trial_end = self.trial_start_date + timedelta(days=7)
-        # En période d'essai si pas de plan payant ET dans les 7 jours
-        return datetime.utcnow() < trial_end and (not self.plan or not self.plan.is_premium())
-
-    def get_trial_days_remaining(self):
-        """Retourne le nombre de jours restants dans la période d'essai (0 si pas en essai)"""
-        if not self.is_on_trial():
-            return 0
-
-        trial_end = self.trial_start_date + timedelta(days=7)
-        days_remaining = (trial_end - datetime.utcnow()).days
-        return max(0, days_remaining + 1)  # +1 pour inclure le jour actuel
+        """Vérifie si l'utilisateur a un plan Premium (mensuel ou annuel)"""
+        return self.plan and self.plan.is_premium()
 
     def can_create_custom_category(self):
         """Vérifie si l'utilisateur peut créer des catégories personnalisées

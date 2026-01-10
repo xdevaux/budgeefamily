@@ -1,0 +1,197 @@
+{% extends "base.html" %}
+
+{% block title %}Nous contacter - Subly Cloud{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- En-tête sympathique -->
+            <div class="text-center mb-5">
+                <div class="mb-4">
+                    <i class="fas fa-envelope-open-text fa-4x text-primary"></i>
+                </div>
+                <h1 class="display-5 fw-bold text-primary mb-3">Nous contacter</h1>
+                <p class="lead text-muted">
+                    Une question ? Une suggestion ? Nous sommes à votre écoute !
+                </p>
+                <p class="text-muted">
+                    Remplissez le formulaire ci-dessous et nous vous répondrons dans les plus brefs délais.
+                </p>
+            </div>
+
+            <!-- Formulaire de contact -->
+            <div class="card shadow-lg border-0">
+                <div class="card-body p-5">
+                    <form method="POST" action="{{ url_for('main.contact') }}" id="contactForm">
+                        <!-- Nom -->
+                        <div class="mb-4">
+                            <label for="name" class="form-label fw-semibold">
+                                <i class="fas fa-user text-primary me-2"></i>Votre nom <span class="text-danger">*</span>
+                            </label>
+                            <input
+                                type="text"
+                                class="form-control form-control-lg"
+                                id="name"
+                                name="name"
+                                placeholder="Jean Dupont"
+                                value="{{ name or '' }}"
+                                required
+                            >
+                        </div>
+
+                        <!-- Email -->
+                        <div class="mb-4">
+                            <label for="email" class="form-label fw-semibold">
+                                <i class="fas fa-envelope text-primary me-2"></i>Votre adresse email <span class="text-danger">*</span>
+                            </label>
+                            <input
+                                type="email"
+                                class="form-control form-control-lg"
+                                id="email"
+                                name="email"
+                                placeholder="exemple@email.com"
+                                value="{{ email or '' }}"
+                                required
+                            >
+                            <small class="form-text text-muted">
+                                <i class="fas fa-lock me-1"></i>Votre adresse email ne sera pas partagée
+                            </small>
+                        </div>
+
+                        <!-- Objet -->
+                        <div class="mb-4">
+                            <label for="subject" class="form-label fw-semibold">
+                                <i class="fas fa-tag text-primary me-2"></i>Objet
+                            </label>
+                            <input
+                                type="text"
+                                class="form-control form-control-lg"
+                                id="subject"
+                                name="subject"
+                                placeholder="De quoi souhaitez-vous parler ?"
+                                value="{{ subject or '' }}"
+                            >
+                        </div>
+
+                        <!-- Message -->
+                        <div class="mb-4">
+                            <label for="message" class="form-label fw-semibold">
+                                <i class="fas fa-comment-dots text-primary me-2"></i>Votre message <span class="text-danger">*</span>
+                            </label>
+                            <textarea
+                                class="form-control form-control-lg"
+                                id="message"
+                                name="message"
+                                rows="6"
+                                placeholder="Écrivez votre message ici..."
+                                required
+                            >{{ message or '' }}</textarea>
+                            <small class="form-text text-muted">
+                                Minimum 10 caractères
+                            </small>
+                        </div>
+
+                        <!-- Bouton d'envoi -->
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-paper-plane me-2"></i>Envoyer le message
+                            </button>
+                        </div>
+
+                        <div class="text-center mt-4">
+                            <small class="text-muted">
+                                <i class="fas fa-clock me-1"></i>Temps de réponse moyen : 24-48 heures
+                            </small>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Informations supplémentaires -->
+            <div class="row mt-5">
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100 border-0 bg-light text-center p-4">
+                        <div class="mb-3">
+                            <i class="fas fa-envelope fa-2x text-primary"></i>
+                        </div>
+                        <h5 class="fw-semibold">Email</h5>
+                        <p class="text-muted mb-0">
+                            <a href="mailto:contact@subly.cloud" class="text-decoration-none">contact@subly.cloud</a>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100 border-0 bg-light text-center p-4">
+                        <div class="mb-3">
+                            <i class="fas fa-clock fa-2x text-success"></i>
+                        </div>
+                        <h5 class="fw-semibold">Horaires</h5>
+                        <p class="text-muted mb-0">
+                            Lun - Ven<br>9h00 - 18h00
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100 border-0 bg-light text-center p-4">
+                        <div class="mb-3">
+                            <i class="fas fa-headset fa-2x text-info"></i>
+                        </div>
+                        <h5 class="fw-semibold">Support</h5>
+                        <p class="text-muted mb-0">
+                            Assistance rapide<br>et personnalisée
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Retour à l'accueil -->
+            <div class="text-center mt-5">
+                <a href="{{ url_for('main.index') }}" class="btn btn-outline-primary">
+                    <i class="fas fa-home me-2"></i>Retour à l'accueil
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-control:focus {
+        border-color: #6366f1;
+        box-shadow: 0 0 0 0.25rem rgba(99, 102, 241, 0.25);
+    }
+
+    .card {
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1) !important;
+    }
+
+    .btn-primary {
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+    }
+</style>
+
+<script>
+    // Validation du formulaire
+    document.getElementById('contactForm').addEventListener('submit', function(e) {
+        const message = document.getElementById('message').value;
+
+        if (message.length < 10) {
+            e.preventDefault();
+            alert('Votre message doit contenir au moins 10 caractères.');
+            return false;
+        }
+    });
+</script>
+{% endblock %}

@@ -23,7 +23,7 @@ def create_app(config_class=Config):
     login_manager.login_message_category = 'info'
     mail.init_app(app)
 
-    from app.routes import auth, main, subscriptions, api, categories, services, admin
+    from app.routes import auth, main, subscriptions, api, categories, services, admin, exports
     app.register_blueprint(auth.bp)
     app.register_blueprint(main.bp)
     app.register_blueprint(subscriptions.bp)
@@ -31,14 +31,32 @@ def create_app(config_class=Config):
     app.register_blueprint(categories.bp)
     app.register_blueprint(services.bp)
     app.register_blueprint(admin.bp)
-
-    # Initialiser OAuth
-    auth.init_oauth(app)
+    app.register_blueprint(exports.bp)
 
     # Ajouter datetime dans le contexte Jinja2
     from datetime import datetime
     import pytz
     from flask_login import current_user
+    import random
+
+    # Phrases d'accueil aléatoires positives
+    WELCOME_MESSAGES = [
+        "Ravi de vous revoir !",
+        "Excellente journée pour optimiser vos abonnements !",
+        "Votre budget est entre de bonnes mains !",
+        "Continuez comme ça, vous gérez parfaitement !",
+        "Bravo pour votre gestion financière !",
+        "Un nouveau jour, de nouvelles économies !",
+        "Vous êtes sur la bonne voie !",
+        "Gardez le contrôle de vos abonnements !",
+        "Vous faites un travail formidable !",
+        "Chaque jour est une opportunité d'économiser !",
+        "Votre organisation est exemplaire !",
+        "Restez maître de votre budget !",
+        "Bienvenue dans votre espace !",
+        "Prêt à gérer efficacement vos abonnements ?",
+        "Votre succès financier commence ici !",
+    ]
 
     @app.context_processor
     def inject_now():
@@ -47,7 +65,15 @@ def create_app(config_class=Config):
             tz = pytz.timezone(current_user.timezone)
         else:
             tz = pytz.timezone(app.config.get('TIMEZONE', 'Europe/Paris'))
-        return {'current_year': datetime.now(tz).year}
+
+        # Ajouter un message d'accueil aléatoire
+        welcome_message = random.choice(WELCOME_MESSAGES)
+
+        return {
+            'now': datetime.now(tz),
+            'current_year': datetime.now(tz).year,
+            'welcome_message': welcome_message
+        }
 
     # Filtres Jinja2 personnalisés
     @app.template_filter('translate_cycle')

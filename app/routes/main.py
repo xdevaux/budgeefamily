@@ -128,3 +128,102 @@ def checkout_redirect():
         current_app.logger.error(f'Erreur lors de la création de la session Stripe: {str(e)}')
         flash('Erreur lors de la redirection vers le paiement. Veuillez réessayer.', 'danger')
         return redirect(url_for('main.pricing'))
+
+
+@bp.route('/mentions-legales')
+def mentions_legales():
+    """Page des mentions légales du site"""
+    return render_template('mentions_legales.html')
+
+
+@bp.route('/contact', methods=['GET', 'POST'])
+def contact():
+    """Page de contact avec formulaire"""
+    if request.method == 'POST':
+        # Récupérer les données du formulaire
+        name = request.form.get('name', '').strip()
+        email = request.form.get('email', '').strip()
+        subject = request.form.get('subject', '').strip()
+        message = request.form.get('message', '').strip()
+
+        # Validation
+        if not email:
+            flash('Veuillez saisir votre adresse email.', 'danger')
+            return render_template('contact.html', name=name, subject=subject, message=message)
+
+        if not name:
+            flash('Veuillez saisir votre nom.', 'danger')
+            return render_template('contact.html', email=email, subject=subject, message=message)
+
+        if not message:
+            flash('Veuillez saisir votre message.', 'danger')
+            return render_template('contact.html', name=name, email=email, subject=subject)
+
+        # Validation basique de l'email
+        if '@' not in email or '.' not in email:
+            flash('Veuillez saisir une adresse email valide.', 'danger')
+            return render_template('contact.html', name=name, subject=subject, message=message)
+
+        # Envoi de l'email
+        try:
+            from flask_mail import Message
+            from app import mail
+
+            msg = Message(
+                subject=f"[Contact Subly Cloud] {subject or 'Sans objet'}",
+                sender=current_app.config['MAIL_DEFAULT_SENDER'],
+                recipients=['contact@subly.cloud'],
+                reply_to=email
+            )
+
+            msg.body = f"""
+Nouveau message de contact reçu sur Subly Cloud
+
+Nom: {name}
+Email: {email}
+Objet: {subject or 'Non spécifié'}
+
+Message:
+{message}
+
+---
+Envoyé depuis le formulaire de contact de Subly Cloud
+"""
+
+            msg.html = f"""
+<html>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+    <div style="max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f8f9fa; border-radius: 10px;">
+        <h2 style="color: #6366f1; border-bottom: 3px solid #6366f1; padding-bottom: 10px;">
+            Nouveau message de contact
+        </h2>
+
+        <div style="background-color: white; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <p><strong>Nom:</strong> {name}</p>
+            <p><strong>Email:</strong> <a href="mailto:{email}">{email}</a></p>
+            <p><strong>Objet:</strong> {subject or 'Non spécifié'}</p>
+
+            <div style="margin-top: 20px; padding: 15px; background-color: #f8f9fa; border-left: 4px solid #6366f1; border-radius: 4px;">
+                <strong>Message:</strong>
+                <p style="white-space: pre-wrap; margin-top: 10px;">{message}</p>
+            </div>
+        </div>
+
+        <p style="text-align: center; color: #666; font-size: 12px; margin-top: 20px;">
+            Envoyé depuis le formulaire de contact de Subly Cloud
+        </p>
+    </div>
+</body>
+</html>
+"""
+
+            mail.send(msg)
+            flash('Votre message a été envoyé avec succès ! Nous vous répondrons dans les plus brefs délais.', 'success')
+            return redirect(url_for('main.contact'))
+
+        except Exception as e:
+            current_app.logger.error(f"Erreur lors de l'envoi de l'email de contact: {str(e)}")
+            flash('Une erreur est survenue lors de l\'envoi de votre message. Veuillez réessayer plus tard.', 'danger')
+            return render_template('contact.html', name=name, email=email, subject=subject, message=message)
+
+    return render_template('contact.html')
