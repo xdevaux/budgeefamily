@@ -51,7 +51,7 @@
                         {% if category.logo_data %}
                         <div class="mb-3">
                             <label class="form-label">Logo actuel</label><br>
-                            <img src="{{ url_for('api.serve_logo', entity_type='category', entity_id=category.id) }}" alt="{{ category.name }}" style="max-height: 100px; object-fit: contain;" class="border rounded p-2">
+                            <img src="{{ url_for('api.serve_logo', entity_type='category', entity_id=category.id) }}?v={{ category.updated_at.timestamp() if category.updated_at else category.created_at.timestamp() }}" alt="{{ category.name }}" style="max-height: 100px; object-fit: contain;" class="border rounded p-2">
                         </div>
                         {% endif %}
 

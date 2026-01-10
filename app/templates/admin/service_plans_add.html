@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 
-{% block title %}Ajouter un plan - Administration{% endblock %}
+{% block title %}Ajouter une formule - Administration{% endblock %}
 
 {% block content %}
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="mb-4">
-                <h1 class="h3"><i class="fas fa-plus-circle"></i> Ajouter un plan de service par défaut</h1>
+                <h1 class="h3"><i class="fas fa-plus-circle"></i> Ajouter une formule de service par défaut</h1>
             </div>
 
             <div class="card">
@@ -27,7 +27,7 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="name" class="form-label">Nom du plan <span class="text-danger">*</span></label>
+                            <label for="name" class="form-label">Nom de la formule <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" id="name" name="name" required placeholder="Ex: Standard, Premium, Pro">
                         </div>
 
@@ -66,13 +66,13 @@
                         <div class="mb-3 form-check">
                             <input type="checkbox" class="form-check-input" id="is_active" name="is_active" checked>
                             <label class="form-check-label" for="is_active">
-                                Plan actif
+                                Formule active
                             </label>
                         </div>
 
                         <div class="d-flex gap-2">
                             <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save"></i> Créer le plan
+                                <i class="fas fa-save"></i> Créer la formule
                             </button>
                             <a href="{{ url_for('admin.service_plans_list') }}" class="btn btn-secondary">
                                 <i class="fas fa-times"></i> Annuler

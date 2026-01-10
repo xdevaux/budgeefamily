@@ -20,6 +20,7 @@
                             <thead>
                                 <tr>
                                     <th>ID</th>
+                                    <th>Logo</th>
                                     <th>Nom</th>
                                     <th>Description</th>
                                     <th>Couleur</th>
@@ -33,6 +34,16 @@
                                 {% for category in categories %}
                                 <tr>
                                     <td>{{ category.id }}</td>
+                                    <td>
+                                        {% if category.logo_data %}
+                                            <img src="{{ url_for('api.serve_logo', entity_type='category', entity_id=category.id) }}?v={{ category.updated_at.timestamp() if category.updated_at else category.created_at.timestamp() }}" alt="{{ category.name }}"
+                                                 style="width: 40px; height: 40px; object-fit: contain;">
+                                        {% elif category.icon %}
+                                            <i class="{{ category.icon }} fa-2x" style="color: {{ category.color }}"></i>
+                                        {% else %}
+                                            <i class="fas fa-tag fa-2x text-muted"></i>
+                                        {% endif %}
+                                    </td>
                                     <td>
                                         <strong>{{ category.name }}</strong>
                                         {% if category.website_url %}
@@ -84,7 +95,7 @@
                                 </tr>
                                 {% else %}
                                 <tr>
-                                    <td colspan="8" class="text-center text-muted">Aucune catégorie trouvée</td>
+                                    <td colspan="9" class="text-center text-muted">Aucune catégorie trouvée</td>
                                 </tr>
                                 {% endfor %}
                             </tbody>

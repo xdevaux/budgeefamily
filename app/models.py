@@ -244,6 +244,7 @@ class Category(db.Model):
     icon = db.Column(db.String(50), nullable=True)  # Font Awesome icon class
     is_active = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     # Relations
     user = db.relationship('User', back_populates='custom_categories')
@@ -277,6 +278,7 @@ class Service(db.Model):
 
     is_active = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     # Relations
     user = db.relationship('User', back_populates='custom_services')

@@ -15,18 +15,16 @@
 
             <!-- Filtre par catégorie -->
             <div class="mb-3">
-                <div class="btn-group" role="group" aria-label="Filtre catégorie">
-                    <a href="{{ url_for('admin.services_list') }}"
-                       class="btn btn-outline-primary {% if not category_filter %}active{% endif %}">
-                        <i class="fas fa-list"></i> Tous
-                    </a>
-                    {% for cat in categories %}
-                    <a href="{{ url_for('admin.services_list', category=cat.id) }}"
-                       class="btn btn-outline-primary {% if category_filter == cat.id %}active{% endif %}">
-                        {% if cat.icon %}<i class="{{ cat.icon }}"></i>{% endif %} {{ cat.name }}
-                    </a>
-                    {% endfor %}
+                <div class="input-group" style="max-width: 400px;">
+                    <span class="input-group-text"><i class="fas fa-search"></i></span>
+                    <input type="text" id="categoryFilter" class="form-control" placeholder="Rechercher par nom de catégorie...">
+                    <button class="btn btn-outline-secondary" type="button" id="clearFilter">
+                        <i class="fas fa-times"></i>
+                    </button>
                 </div>
+                <small class="text-muted">
+                    <span id="filterCount">{{ services|length }}</span> service(s) affiché(s)
+                </small>
             </div>
 
             <div class="card">
@@ -36,6 +34,7 @@
                             <thead>
                                 <tr>
                                     <th>ID</th>
+                                    <th>Logo</th>
                                     <th>Nom</th>
                                     <th>Catégorie</th>
                                     <th>Description</th>
@@ -48,6 +47,14 @@
                                 {% for service in services %}
                                 <tr>
                                     <td>{{ service.id }}</td>
+                                    <td>
+                                        {% if service.logo_data %}
+                                            <img src="{{ url_for('api.serve_logo', entity_type='service', entity_id=service.id) }}?v={{ service.updated_at.timestamp() if service.updated_at else service.created_at.timestamp() }}" alt="{{ service.name }}"
+                                                 style="width: 40px; height: 40px; object-fit: contain;">
+                                        {% else %}
+                                            <i class="fas fa-box fa-2x text-muted"></i>
+                                        {% endif %}
+                                    </td>
                                     <td>
                                         <strong>{{ service.name }}</strong>
                                         {% if service.website_url %}
@@ -97,7 +104,7 @@
                                 </tr>
                                 {% else %}
                                 <tr>
-                                    <td colspan="7" class="text-center text-muted">Aucun service trouvé</td>
+                                    <td colspan="8" class="text-center text-muted">Aucun service trouvé</td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
@@ -139,4 +146,52 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const filterInput = document.getElementById('categoryFilter');
+    const clearButton = document.getElementById('clearFilter');
+    const tableBody = document.querySelector('tbody');
+    const rows = Array.from(tableBody.querySelectorAll('tr')).filter(row => !row.querySelector('td[colspan]'));
+    const filterCount = document.getElementById('filterCount');
+
+    function filterTable() {
+        const searchTerm = filterInput.value.toLowerCase().trim();
+        let visibleCount = 0;
+
+        rows.forEach(row => {
+            const categoryCell = row.querySelector('td:nth-child(4)');
+            let categoryName = '';
+
+            // Vérifier si la catégorie existe
+            const categoryBadge = categoryCell.querySelector('.badge');
+            if (categoryBadge) {
+                categoryName = categoryBadge.textContent.toLowerCase().trim();
+            }
+
+            if (searchTerm === '' || categoryName.includes(searchTerm)) {
+                row.style.display = '';
+                visibleCount++;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        filterCount.textContent = visibleCount;
+    }
+
+    filterInput.addEventListener('input', filterTable);
+
+    clearButton.addEventListener('click', function() {
+        filterInput.value = '';
+        filterTable();
+        filterInput.focus();
+    });
+
+    // Initialiser le compteur
+    filterCount.textContent = rows.length;
+});
+</script>
 {% endblock %}

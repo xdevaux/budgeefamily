@@ -48,7 +48,7 @@
                         {% if service.logo_data %}
                         <div class="mb-3">
                             <label class="form-label">Logo actuel</label><br>
-                            <img src="{{ url_for('api.serve_logo', entity_type='service', entity_id=service.id) }}" alt="{{ service.name }}" style="max-height: 100px; object-fit: contain;">
+                            <img src="{{ url_for('api.serve_logo', entity_type='service', entity_id=service.id) }}?v={{ service.updated_at.timestamp() if service.updated_at else service.created_at.timestamp() }}" alt="{{ service.name }}" style="max-height: 100px; object-fit: contain;">
                         </div>
                         {% endif %}
 

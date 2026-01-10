@@ -524,14 +524,14 @@ def service_plans_list():
     per_page = 20
     service_filter = request.args.get('service', type=int)
 
-    # Requête de base : plans globaux uniquement
-    query = ServicePlan.query.filter_by(user_id=None)
+    # Requête de base : plans globaux uniquement avec join sur Service pour le tri
+    query = ServicePlan.query.filter_by(user_id=None).join(Service)
 
     # Filtre par service si spécifié
     if service_filter:
-        query = query.filter_by(service_id=service_filter)
+        query = query.filter(ServicePlan.service_id == service_filter)
 
-    pagination = query.order_by(ServicePlan.service_id, ServicePlan.name).paginate(
+    pagination = query.order_by(Service.name, ServicePlan.id).paginate(
         page=page, per_page=per_page, error_out=False
     )
     plans = pagination.items
@@ -581,7 +581,7 @@ def service_plans_add():
         db.session.add(plan)
         db.session.commit()
 
-        flash(f'Plan "{name}" créé avec succès pour le service "{service.name}" !', 'success')
+        flash(f'Formule "{name}" créée avec succès pour le service "{service.name}" !', 'success')
         return redirect(url_for('admin.service_plans_list'))
 
     # GET - Afficher le formulaire
@@ -615,7 +615,7 @@ def service_plans_edit(plan_id):
 
         db.session.commit()
 
-        flash(f'Plan "{plan.name}" mis à jour avec succès !', 'success')
+        flash(f'Formule "{plan.name}" mise à jour avec succès !', 'success')
         return redirect(url_for('admin.service_plans_list'))
 
     # GET - Afficher le formulaire
@@ -635,5 +635,5 @@ def service_plans_delete(plan_id):
     db.session.delete(plan)
     db.session.commit()
 
-    flash(f'Plan "{name}" du service "{service_name}" supprimé avec succès.', 'success')
+    flash(f'Formule "{name}" du service "{service_name}" supprimée avec succès.', 'success')
     return redirect(url_for('admin.service_plans_list'))

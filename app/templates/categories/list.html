@@ -91,7 +91,7 @@
                             <div class="rounded-circle p-3 me-3"
                                  style="background-color: {{ category.color }}20; border: 2px solid {{ category.color }}">
                                 {% if category.logo_data %}
-                                    <img src="{{ url_for('api.serve_logo', entity_type='category', entity_id=category.id) }}" alt="{{ category.name }}"
+                                    <img src="{{ url_for('api.serve_logo', entity_type='category', entity_id=category.id) }}?v={{ category.updated_at.timestamp() if category.updated_at else category.created_at.timestamp() }}" alt="{{ category.name }}"
                                          style="width: 40px; height: 40px; object-fit: contain;">
                                 {% elif category.icon %}
                                     <i class="{{ category.icon }} fa-2x" style="color: {{ category.color }}"></i>
@@ -117,8 +117,8 @@
                         {% endif %}
 
                         {% if category.website_url %}
-                        <a href="{{ category.website_url }}" target="_blank" class="btn btn-sm btn-outline-primary w-100 mb-2">
-                            <i class="fas fa-external-link-alt"></i> Visiter le site
+                        <a href="{{ category.website_url }}" target="_blank" class="btn btn-sm btn-outline-primary w-100 mb-2" data-bs-toggle="tooltip" title="Visiter le site">
+                            <i class="fas fa-external-link-alt"></i>
                         </a>
                         {% endif %}
 
@@ -126,18 +126,18 @@
                         {% if current_user.can_create_custom_category() %}
                         <div class="btn-group w-100 mt-2">
                             <a href="{{ url_for('categories.edit', category_id=category.id) }}"
-                               class="btn btn-sm btn-outline-warning">
-                                <i class="fas fa-edit"></i> Modifier
+                               class="btn btn-sm btn-outline-warning" data-bs-toggle="tooltip" title="Modifier">
+                                <i class="fas fa-edit"></i>
                             </a>
                             <form method="POST" action="{{ url_for('categories.toggle', category_id=category.id) }}" class="d-inline">
                                 <button type="submit" class="btn btn-sm btn-outline-{% if category.is_active %}info{% else %}success{% endif %}"
-                                        title="{% if category.is_active %}Désactiver{% else %}Activer{% endif %}">
+                                        data-bs-toggle="tooltip" title="{% if category.is_active %}Désactiver{% else %}Activer{% endif %}">
                                     <i class="fas fa-{% if category.is_active %}toggle-off{% else %}toggle-on{% endif %}"></i>
                                 </button>
                             </form>
                             <form method="POST" action="{{ url_for('categories.delete', category_id=category.id) }}"
                                   onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette catégorie ?')" class="d-inline">
-                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                <button type="submit" class="btn btn-sm btn-outline-danger" data-bs-toggle="tooltip" title="Supprimer">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </form>
@@ -174,8 +174,8 @@
                                     <div class="d-flex align-items-center">
                                         <div class="d-flex align-items-center justify-content-center me-2"
                                              style="min-width: 40px; height: 40px;">
-                                            {% if category.logo_url %}
-                                                <img src="{{ category.logo_url }}" alt="{{ category.name }}"
+                                            {% if category.logo_data %}
+                                                <img src="{{ url_for('api.serve_logo', entity_type='category', entity_id=category.id) }}?v={{ category.updated_at.timestamp() if category.updated_at else category.created_at.timestamp() }}" alt="{{ category.name }}"
                                                      style="max-width: 35px; max-height: 35px; object-fit: contain;">
                                             {% elif category.icon %}
                                                 <i class="{{ category.icon }} fa-lg" style="color: {{ category.color }}"></i>
@@ -205,23 +205,23 @@
                                     {% if current_user.can_create_custom_category() %}
                                     <div class="btn-group">
                                         {% if category.website_url %}
-                                        <a href="{{ category.website_url }}" target="_blank" class="btn btn-sm btn-outline-primary" title="Visiter le site">
+                                        <a href="{{ category.website_url }}" target="_blank" class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" title="Visiter le site">
                                             <i class="fas fa-external-link-alt"></i>
                                         </a>
                                         {% endif %}
                                         <a href="{{ url_for('categories.edit', category_id=category.id) }}"
-                                           class="btn btn-sm btn-outline-warning" title="Modifier">
+                                           class="btn btn-sm btn-outline-warning" data-bs-toggle="tooltip" title="Modifier">
                                             <i class="fas fa-edit"></i>
                                         </a>
                                         <form method="POST" action="{{ url_for('categories.toggle', category_id=category.id) }}" class="d-inline">
                                             <button type="submit" class="btn btn-sm btn-outline-{% if category.is_active %}info{% else %}success{% endif %}"
-                                                    title="{% if category.is_active %}Désactiver{% else %}Activer{% endif %}">
+                                                    data-bs-toggle="tooltip" title="{% if category.is_active %}Désactiver{% else %}Activer{% endif %}">
                                                 <i class="fas fa-{% if category.is_active %}toggle-off{% else %}toggle-on{% endif %}"></i>
                                             </button>
                                         </form>
                                         <form method="POST" action="{{ url_for('categories.delete', category_id=category.id) }}"
                                               onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette catégorie ?')" class="d-inline">
-                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Supprimer">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" data-bs-toggle="tooltip" title="Supprimer">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </form>
@@ -257,7 +257,7 @@
                             <div class="rounded-circle p-3 me-3"
                                  style="background-color: {{ category.color }}20; border: 2px solid {{ category.color }}">
                                 {% if category.logo_data %}
-                                    <img src="{{ url_for('api.serve_logo', entity_type='category', entity_id=category.id) }}" alt="{{ category.name }}"
+                                    <img src="{{ url_for('api.serve_logo', entity_type='category', entity_id=category.id) }}?v={{ category.updated_at.timestamp() if category.updated_at else category.created_at.timestamp() }}" alt="{{ category.name }}"
                                          style="width: 40px; height: 40px; object-fit: contain;">
                                 {% elif category.icon %}
                                     <i class="{{ category.icon }} fa-2x" style="color: {{ category.color }}"></i>
@@ -278,21 +278,21 @@
                         {% endif %}
 
                         {% if category.website_url %}
-                        <a href="{{ category.website_url }}" target="_blank" class="btn btn-sm btn-outline-primary w-100 mb-2">
-                            <i class="fas fa-external-link-alt"></i> Visiter le site
+                        <a href="{{ category.website_url }}" target="_blank" class="btn btn-sm btn-outline-primary w-100 mb-2" data-bs-toggle="tooltip" title="Visiter le site">
+                            <i class="fas fa-external-link-alt"></i>
                         </a>
                         {% endif %}
 
                         {% if current_user.is_premium() %}
                         <div class="btn-group w-100">
                             <form method="POST" action="{{ url_for('categories.customize', category_id=category.id) }}" class="flex-fill">
-                                <button type="submit" class="btn btn-sm btn-outline-warning w-100">
-                                    <i class="fas fa-edit"></i> Personnaliser
+                                <button type="submit" class="btn btn-sm btn-outline-warning w-100" data-bs-toggle="tooltip" title="Personnaliser cette catégorie">
+                                    <i class="fas fa-edit"></i>
                                 </button>
                             </form>
                             <form method="POST" action="{{ url_for('categories.hide', category_id=category.id) }}" class="flex-fill" onsubmit="return confirm('Masquer cette catégorie ?')">
-                                <button type="submit" class="btn btn-sm btn-outline-danger w-100">
-                                    <i class="fas fa-eye-slash"></i> Masquer
+                                <button type="submit" class="btn btn-sm btn-outline-danger w-100" data-bs-toggle="tooltip" title="Masquer cette catégorie">
+                                    <i class="fas fa-eye-slash"></i>
                                 </button>
                             </form>
                         </div>
@@ -323,8 +323,8 @@
                                     <div class="d-flex align-items-center">
                                         <div class="d-flex align-items-center justify-content-center me-2"
                                              style="min-width: 40px; height: 40px;">
-                                            {% if category.logo_url %}
-                                                <img src="{{ category.logo_url }}" alt="{{ category.name }}"
+                                            {% if category.logo_data %}
+                                                <img src="{{ url_for('api.serve_logo', entity_type='category', entity_id=category.id) }}?v={{ category.updated_at.timestamp() if category.updated_at else category.created_at.timestamp() }}" alt="{{ category.name }}"
                                                      style="max-width: 35px; max-height: 35px; object-fit: contain;">
                                             {% elif category.icon %}
                                                 <i class="{{ category.icon }} fa-lg" style="color: {{ category.color }}"></i>
@@ -346,18 +346,18 @@
                                 <td class="text-end">
                                     <div class="btn-group">
                                         {% if category.website_url %}
-                                        <a href="{{ category.website_url }}" target="_blank" class="btn btn-sm btn-outline-primary" title="Visiter le site">
+                                        <a href="{{ category.website_url }}" target="_blank" class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" title="Visiter le site">
                                             <i class="fas fa-external-link-alt"></i>
                                         </a>
                                         {% endif %}
                                         {% if current_user.is_premium() %}
                                         <form method="POST" action="{{ url_for('categories.customize', category_id=category.id) }}" class="d-inline">
-                                            <button type="submit" class="btn btn-sm btn-outline-warning" title="Personnaliser cette catégorie">
-                                                <i class="fas fa-edit"></i> Personnaliser
+                                            <button type="submit" class="btn btn-sm btn-outline-warning" data-bs-toggle="tooltip" title="Personnaliser cette catégorie">
+                                                <i class="fas fa-edit"></i>
                                             </button>
                                         </form>
                                         <form method="POST" action="{{ url_for('categories.hide', category_id=category.id) }}" class="d-inline" onsubmit="return confirm('Masquer cette catégorie ?')">
-                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Masquer cette catégorie">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" data-bs-toggle="tooltip" title="Masquer cette catégorie">
                                                 <i class="fas fa-eye-slash"></i>
                                             </button>
                                         </form>
@@ -426,6 +426,12 @@ function switchView(view) {
 document.addEventListener('DOMContentLoaded', function() {
     const savedView = localStorage.getItem('categoriesView') || 'grid';
     switchView(savedView);
+
+    // Initialiser les tooltips Bootstrap
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
 });
 </script>
 {% endblock %}

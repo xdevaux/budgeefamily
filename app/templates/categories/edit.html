@@ -65,7 +65,7 @@
                             </label>
                             {% if category.logo_data %}
                             <div class="mb-2">
-                                <img src="{{ url_for('api.serve_logo', entity_type='category', entity_id=category.id) }}" alt="Logo actuel"
+                                <img src="{{ url_for('api.serve_logo', entity_type='category', entity_id=category.id) }}?v={{ category.updated_at.timestamp() if category.updated_at else category.created_at.timestamp() }}" alt="Logo actuel"
                                      style="max-width: 100px; max-height: 100px; object-fit: contain;"
                                      class="border rounded p-2">
                             </div>
