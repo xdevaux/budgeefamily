@@ -6,8 +6,8 @@
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            {% if service.logo_url %}
-                <img src="{{ service.logo_url }}" alt="{{ service.name }}" style="height: 40px; object-fit: contain;" class="me-2">
+            {% if service.logo_data %}
+                <img src="{{ url_for('api.serve_logo', entity_type='service', entity_id=service.id) }}" alt="{{ service.name }}" style="height: 40px; object-fit: contain;" class="me-2">
             {% endif %}
             <h2 class="d-inline">{{ service.name }}</h2>
             {% if not current_user.is_premium() %}

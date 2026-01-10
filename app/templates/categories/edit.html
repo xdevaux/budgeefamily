@@ -59,13 +59,13 @@
                         <div class="mb-3">
                             <label for="logo" class="form-label">
                                 Logo
-                                {% if category.logo_url %}
+                                {% if category.logo_data %}
                                     <span class="badge bg-success">Actuellement défini</span>
                                 {% endif %}
                             </label>
-                            {% if category.logo_url %}
+                            {% if category.logo_data %}
                             <div class="mb-2">
-                                <img src="{{ category.logo_url }}" alt="Logo actuel"
+                                <img src="{{ url_for('api.serve_logo', entity_type='category', entity_id=category.id) }}" alt="Logo actuel"
                                      style="max-width: 100px; max-height: 100px; object-fit: contain;"
                                      class="border rounded p-2">
                             </div>

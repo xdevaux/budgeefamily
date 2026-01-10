@@ -5,6 +5,8 @@ from app import db
 from app.models import Category
 import os
 from config import Config
+import base64
+import mimetypes
 
 bp = Blueprint('categories', __name__, url_prefix='/categories')
 
@@ -60,21 +62,23 @@ def add():
             flash(f'Vous avez déjà une catégorie nommée "{name}".', 'danger')
             return redirect(url_for('categories.add'))
 
-        # Gérer l'upload du logo
-        logo_url = None
+        # Gérer l'upload du logo - stockage en base de données
+        logo_data = None
+        logo_mime_type = None
         if 'logo' in request.files:
             file = request.files['logo']
             if file and file.filename and allowed_file(file.filename):
-                filename = secure_filename(file.filename)
-                # Ajouter un préfixe unique pour éviter les conflits
-                unique_filename = f"{current_user.id}_{filename}"
-                filepath = os.path.join(Config.UPLOAD_FOLDER, unique_filename)
+                # Lire le fichier et le convertir en base64
+                file_bytes = file.read()
+                logo_data = base64.b64encode(file_bytes).decode('utf-8')
 
-                # Créer le dossier s'il n'existe pas
-                os.makedirs(Config.UPLOAD_FOLDER, exist_ok=True)
-
-                file.save(filepath)
-                logo_url = f"/static/uploads/{unique_filename}"
+                # Déterminer le MIME type
+                mime_type, _ = mimetypes.guess_type(file.filename)
+                if mime_type:
+                    logo_mime_type = mime_type
+                else:
+                    # Par défaut, PNG
+                    logo_mime_type = 'image/png'
 
         # Créer la catégorie
         category = Category(
@@ -84,7 +88,8 @@ def add():
             color=color,
             icon=icon,
             website_url=website_url,
-            logo_url=logo_url
+            logo_data=logo_data,
+            logo_mime_type=logo_mime_type
         )
 
         db.session.add(category)
@@ -131,26 +136,21 @@ def edit(category_id):
         category.icon = request.form.get('icon')
         category.website_url = request.form.get('website_url')
 
-        # Gérer l'upload du nouveau logo
+        # Gérer l'upload du nouveau logo - stockage en base de données
         if 'logo' in request.files:
             file = request.files['logo']
             if file and file.filename and allowed_file(file.filename):
-                # Supprimer l'ancien logo si nécessaire
-                if category.logo_url and category.logo_url.startswith('/static/uploads/'):
-                    old_filepath = os.path.join('app', category.logo_url.lstrip('/'))
-                    if os.path.exists(old_filepath):
-                        try:
-                            os.remove(old_filepath)
-                        except:
-                            pass
+                # Lire le fichier et le convertir en base64
+                file_bytes = file.read()
+                category.logo_data = base64.b64encode(file_bytes).decode('utf-8')
 
-                filename = secure_filename(file.filename)
-                unique_filename = f"{current_user.id}_{filename}"
-                filepath = os.path.join(Config.UPLOAD_FOLDER, unique_filename)
-
-                os.makedirs(Config.UPLOAD_FOLDER, exist_ok=True)
-                file.save(filepath)
-                category.logo_url = f"/static/uploads/{unique_filename}"
+                # Déterminer le MIME type
+                mime_type, _ = mimetypes.guess_type(file.filename)
+                if mime_type:
+                    category.logo_mime_type = mime_type
+                else:
+                    # Par défaut, PNG
+                    category.logo_mime_type = 'image/png'
 
         db.session.commit()
 
@@ -181,15 +181,6 @@ def delete(category_id):
     if subscriptions_count > 0:
         flash(f'Impossible de supprimer cette catégorie car {subscriptions_count} abonnement(s) l\'utilisent.', 'warning')
         return redirect(url_for('categories.list'))
-
-    # Supprimer le logo si nécessaire
-    if category.logo_url and category.logo_url.startswith('/static/uploads/'):
-        filepath = os.path.join('app', category.logo_url.lstrip('/'))
-        if os.path.exists(filepath):
-            try:
-                os.remove(filepath)
-            except:
-                pass
 
     category_name = category.name
     db.session.delete(category)
@@ -251,7 +242,8 @@ def customize(category_id):
         user_id=current_user.id,
         name=global_category.name,
         description=global_category.description,
-        logo_url=global_category.logo_url,
+        logo_data=global_category.logo_data,
+        logo_mime_type=global_category.logo_mime_type,
         website_url=global_category.website_url,
         color=global_category.color,
         icon=global_category.icon,

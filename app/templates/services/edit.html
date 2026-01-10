@@ -45,15 +45,15 @@
                             </div>
                         </div>
 
-                        {% if service.logo_url %}
+                        {% if service.logo_data %}
                         <div class="mb-3">
                             <label class="form-label">Logo actuel</label><br>
-                            <img src="{{ service.logo_url }}" alt="{{ service.name }}" style="max-height: 100px; object-fit: contain;">
+                            <img src="{{ url_for('api.serve_logo', entity_type='service', entity_id=service.id) }}" alt="{{ service.name }}" style="max-height: 100px; object-fit: contain;">
                         </div>
                         {% endif %}
 
                         <div class="mb-3">
-                            <label for="logo" class="form-label">{{ "Changer le logo" if service.logo_url else "Logo" }}</label>
+                            <label for="logo" class="form-label">{{ "Changer le logo" if service.logo_data else "Logo" }}</label>
                             <input type="file" class="form-control" id="logo" name="logo" accept="image/*">
                             <small class="text-muted">Formats acceptés: PNG, JPG, JPEG, GIF, SVG, WebP</small>
                         </div>

@@ -89,8 +89,8 @@
                     <div class="card-body">
                         <div class="d-flex align-items-center mb-3">
                             <div class="me-3">
-                                {% if service.logo_url %}
-                                    <img src="{{ service.logo_url }}" alt="{{ service.name }}"
+                                {% if service.logo_data %}
+                                    <img src="{{ url_for('api.serve_logo', entity_type='service', entity_id=service.id) }}" alt="{{ service.name }}"
                                          style="width: 50px; height: 50px; object-fit: contain;">
                                 {% else %}
                                     <i class="fas fa-box fa-3x text-muted"></i>
@@ -254,8 +254,8 @@
                     <div class="card-body">
                         <div class="d-flex align-items-center mb-3">
                             <div class="me-3">
-                                {% if service.logo_url %}
-                                    <img src="{{ service.logo_url }}" alt="{{ service.name }}"
+                                {% if service.logo_data %}
+                                    <img src="{{ url_for('api.serve_logo', entity_type='service', entity_id=service.id) }}" alt="{{ service.name }}"
                                          style="width: 50px; height: 50px; object-fit: contain;">
                                 {% else %}
                                     <i class="fas fa-box fa-3x text-muted"></i>

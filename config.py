@@ -40,3 +40,6 @@ class Config:
     # Upload
     MAX_CONTENT_LENGTH = 5 * 1024 * 1024  # 5MB max pour les logos
     UPLOAD_FOLDER = os.path.join(basedir, 'app/static/uploads')
+
+    # Timezone
+    TIMEZONE = 'Europe/Paris'

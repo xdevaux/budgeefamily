@@ -4,8 +4,16 @@ from functools import wraps
 from app import db
 from app.models import User, Plan, Category, Service, ServicePlan
 from datetime import datetime
+import base64
+import mimetypes
 
 bp = Blueprint('admin', __name__, url_prefix='/admin')
+
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'svg', 'webp'}
+
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
 def admin_required(f):
@@ -59,6 +67,7 @@ def clients_add():
         first_name = request.form.get('first_name')
         last_name = request.form.get('last_name')
         password = request.form.get('password')
+        country = request.form.get('country', 'FR')
         plan_id = request.form.get('plan_id', type=int)
         is_admin = request.form.get('is_admin') == 'on'
         is_active = request.form.get('is_active', 'on') == 'on'
@@ -86,6 +95,8 @@ def clients_add():
         if password:
             user.set_password(password)
 
+        user.set_country(country)  # Définit le pays et le fuseau horaire
+
         db.session.add(user)
         db.session.commit()
 
@@ -110,6 +121,11 @@ def clients_edit(user_id):
         user.last_name = request.form.get('last_name')
         user.is_admin = request.form.get('is_admin') == 'on'
         user.is_active = request.form.get('is_active') == 'on'
+
+        # Mettre à jour le pays et le fuseau horaire
+        country = request.form.get('country')
+        if country:
+            user.set_country(country)
 
         plan_id = request.form.get('plan_id', type=int)
         user.plan = Plan.query.get(plan_id) if plan_id else None
@@ -244,18 +260,36 @@ def categories_add():
     if request.method == 'POST':
         name = request.form.get('name')
         description = request.form.get('description')
-        logo_url = request.form.get('logo_url')
         website_url = request.form.get('website_url')
         color = request.form.get('color', '#6c757d')
         icon = request.form.get('icon')
         is_active = request.form.get('is_active', 'on') == 'on'
+
+        # Gérer l'upload du logo - stockage en base de données
+        logo_data = None
+        logo_mime_type = None
+        if 'logo' in request.files:
+            file = request.files['logo']
+            if file and file.filename and allowed_file(file.filename):
+                # Lire le fichier et le convertir en base64
+                file_bytes = file.read()
+                logo_data = base64.b64encode(file_bytes).decode('utf-8')
+
+                # Déterminer le MIME type
+                mime_type, _ = mimetypes.guess_type(file.filename)
+                if mime_type:
+                    logo_mime_type = mime_type
+                else:
+                    # Par défaut, PNG
+                    logo_mime_type = 'image/png'
 
         # Créer la catégorie globale (user_id = None)
         category = Category(
             user_id=None,  # Catégorie globale
             name=name,
             description=description,
-            logo_url=logo_url,
+            logo_data=logo_data,
+            logo_mime_type=logo_mime_type,
             website_url=website_url,
             color=color,
             icon=icon,
@@ -281,11 +315,26 @@ def categories_edit(category_id):
     if request.method == 'POST':
         category.name = request.form.get('name')
         category.description = request.form.get('description')
-        category.logo_url = request.form.get('logo_url')
         category.website_url = request.form.get('website_url')
         category.color = request.form.get('color', '#6c757d')
         category.icon = request.form.get('icon')
         category.is_active = request.form.get('is_active') == 'on'
+
+        # Gérer l'upload du logo - stockage en base de données
+        if 'logo' in request.files:
+            file = request.files['logo']
+            if file and file.filename and allowed_file(file.filename):
+                # Lire le fichier et le convertir en base64
+                file_bytes = file.read()
+                category.logo_data = base64.b64encode(file_bytes).decode('utf-8')
+
+                # Déterminer le MIME type
+                mime_type, _ = mimetypes.guess_type(file.filename)
+                if mime_type:
+                    category.logo_mime_type = mime_type
+                else:
+                    # Par défaut, PNG
+                    category.logo_mime_type = 'image/png'
 
         db.session.commit()
 
@@ -357,10 +406,27 @@ def services_add():
     if request.method == 'POST':
         name = request.form.get('name')
         description = request.form.get('description')
-        logo_url = request.form.get('logo_url')
         website_url = request.form.get('website_url')
         category_id = request.form.get('category_id', type=int)
         is_active = request.form.get('is_active', 'on') == 'on'
+
+        # Gérer l'upload du logo - stockage en base de données
+        logo_data = None
+        logo_mime_type = None
+        if 'logo' in request.files:
+            file = request.files['logo']
+            if file and file.filename and allowed_file(file.filename):
+                # Lire le fichier et le convertir en base64
+                file_bytes = file.read()
+                logo_data = base64.b64encode(file_bytes).decode('utf-8')
+
+                # Déterminer le MIME type
+                mime_type, _ = mimetypes.guess_type(file.filename)
+                if mime_type:
+                    logo_mime_type = mime_type
+                else:
+                    # Par défaut, PNG
+                    logo_mime_type = 'image/png'
 
         # Créer le service global (user_id = None)
         service = Service(
@@ -368,7 +434,8 @@ def services_add():
             category_id=category_id if category_id else None,
             name=name,
             description=description,
-            logo_url=logo_url,
+            logo_data=logo_data,
+            logo_mime_type=logo_mime_type,
             website_url=website_url,
             is_active=is_active
         )
@@ -394,11 +461,26 @@ def services_edit(service_id):
     if request.method == 'POST':
         service.name = request.form.get('name')
         service.description = request.form.get('description')
-        service.logo_url = request.form.get('logo_url')
         service.website_url = request.form.get('website_url')
         category_id = request.form.get('category_id', type=int)
         service.category_id = category_id if category_id else None
         service.is_active = request.form.get('is_active') == 'on'
+
+        # Gérer l'upload du logo - stockage en base de données
+        if 'logo' in request.files:
+            file = request.files['logo']
+            if file and file.filename and allowed_file(file.filename):
+                # Lire le fichier et le convertir en base64
+                file_bytes = file.read()
+                service.logo_data = base64.b64encode(file_bytes).decode('utf-8')
+
+                # Déterminer le MIME type
+                mime_type, _ = mimetypes.guess_type(file.filename)
+                if mime_type:
+                    service.logo_mime_type = mime_type
+                else:
+                    # Par défaut, PNG
+                    service.logo_mime_type = 'image/png'
 
         db.session.commit()
 

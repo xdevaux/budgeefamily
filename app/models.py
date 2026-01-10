@@ -39,6 +39,8 @@ class User(UserMixin, db.Model):
     last_name = db.Column(db.String(50), nullable=True)
     avatar_url = db.Column(db.String(500), nullable=True)
     default_currency = db.Column(db.String(3), default='EUR')  # Devise par défaut
+    country = db.Column(db.String(2), nullable=True)  # Code pays ISO 3166-1 alpha-2 (FR, US, etc.)
+    timezone = db.Column(db.String(50), default='Europe/Paris')  # Fuseau horaire de l'utilisateur
 
     # Subscription plan
     plan_id = db.Column(db.Integer, db.ForeignKey('plans.id'), nullable=True)
@@ -85,6 +87,15 @@ class User(UserMixin, db.Model):
         if not self.password_hash:
             return False
         return check_password_hash(self.password_hash, password)
+
+    def set_country(self, country_code):
+        """Définit le pays et met à jour automatiquement le fuseau horaire"""
+        from app.utils.timezone_mapping import get_timezone_for_country
+        self.country = country_code
+        if country_code:
+            self.timezone = get_timezone_for_country(country_code)
+        else:
+            self.timezone = 'Europe/Paris'
 
     def can_add_subscription(self):
         """Vérifie si l'utilisateur peut ajouter un abonnement"""
@@ -225,7 +236,9 @@ class Category(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)  # NULL = catégorie globale
     name = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text, nullable=True)
-    logo_url = db.Column(db.String(500), nullable=True)
+    logo_url = db.Column(db.String(500), nullable=True)  # Deprecated - kept for backward compatibility
+    logo_data = db.Column(db.Text, nullable=True)  # Logo stocké en base64
+    logo_mime_type = db.Column(db.String(50), nullable=True)  # Type MIME du logo (image/png, image/jpeg, etc.)
     website_url = db.Column(db.String(500), nullable=True)
     color = db.Column(db.String(7), default='#6c757d')  # Couleur en hex
     icon = db.Column(db.String(50), nullable=True)  # Font Awesome icon class
@@ -257,7 +270,9 @@ class Service(db.Model):
 
     name = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text, nullable=True)
-    logo_url = db.Column(db.String(500), nullable=True)
+    logo_url = db.Column(db.String(500), nullable=True)  # Deprecated - kept for backward compatibility
+    logo_data = db.Column(db.Text, nullable=True)  # Logo stocké en base64
+    logo_mime_type = db.Column(db.String(50), nullable=True)  # Type MIME du logo (image/png, image/jpeg, etc.)
     website_url = db.Column(db.String(500), nullable=True)
 
     is_active = db.Column(db.Boolean, default=True)

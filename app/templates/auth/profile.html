@@ -92,6 +92,46 @@
                             <small class="text-muted">Cette devise sera sélectionnée par défaut lors de la création d'un nouvel abonnement</small>
                         </div>
 
+                        <div class="mb-3">
+                            <label for="country" class="form-label">Pays <span class="text-danger">*</span></label>
+                            <select class="form-select" id="country" name="country" required>
+                                <option value="">Sélectionnez votre pays</option>
+                                <option value="FR" {% if current_user.country == 'FR' %}selected{% endif %}>France</option>
+                                <option value="ES" {% if current_user.country == 'ES' %}selected{% endif %}>Espagne</option>
+                                <option value="IT" {% if current_user.country == 'IT' %}selected{% endif %}>Italie</option>
+                                <option value="DE" {% if current_user.country == 'DE' %}selected{% endif %}>Allemagne</option>
+                                <option value="GB" {% if current_user.country == 'GB' %}selected{% endif %}>Royaume-Uni</option>
+                                <option value="PT" {% if current_user.country == 'PT' %}selected{% endif %}>Portugal</option>
+                                <option value="BE" {% if current_user.country == 'BE' %}selected{% endif %}>Belgique</option>
+                                <option value="NL" {% if current_user.country == 'NL' %}selected{% endif %}>Pays-Bas</option>
+                                <option value="CH" {% if current_user.country == 'CH' %}selected{% endif %}>Suisse</option>
+                                <option value="AT" {% if current_user.country == 'AT' %}selected{% endif %}>Autriche</option>
+                                <option value="SE" {% if current_user.country == 'SE' %}selected{% endif %}>Suède</option>
+                                <option value="NO" {% if current_user.country == 'NO' %}selected{% endif %}>Norvège</option>
+                                <option value="DK" {% if current_user.country == 'DK' %}selected{% endif %}>Danemark</option>
+                                <option value="FI" {% if current_user.country == 'FI' %}selected{% endif %}>Finlande</option>
+                                <option value="US" {% if current_user.country == 'US' %}selected{% endif %}>États-Unis</option>
+                                <option value="CA" {% if current_user.country == 'CA' %}selected{% endif %}>Canada</option>
+                                <option value="BR" {% if current_user.country == 'BR' %}selected{% endif %}>Brésil</option>
+                                <option value="AR" {% if current_user.country == 'AR' %}selected{% endif %}>Argentine</option>
+                                <option value="MX" {% if current_user.country == 'MX' %}selected{% endif %}>Mexique</option>
+                                <option value="CN" {% if current_user.country == 'CN' %}selected{% endif %}>Chine</option>
+                                <option value="JP" {% if current_user.country == 'JP' %}selected{% endif %}>Japon</option>
+                                <option value="AU" {% if current_user.country == 'AU' %}selected{% endif %}>Australie</option>
+                                <option value="MA" {% if current_user.country == 'MA' %}selected{% endif %}>Maroc</option>
+                                <option value="TN" {% if current_user.country == 'TN' %}selected{% endif %}>Tunisie</option>
+                                <option value="DZ" {% if current_user.country == 'DZ' %}selected{% endif %}>Algérie</option>
+                                <option value="SN" {% if current_user.country == 'SN' %}selected{% endif %}>Sénégal</option>
+                                <option value="CI" {% if current_user.country == 'CI' %}selected{% endif %}>Côte d'Ivoire</option>
+                                <option value="GP" {% if current_user.country == 'GP' %}selected{% endif %}>Guadeloupe</option>
+                                <option value="MQ" {% if current_user.country == 'MQ' %}selected{% endif %}>Martinique</option>
+                                <option value="GF" {% if current_user.country == 'GF' %}selected{% endif %}>Guyane</option>
+                                <option value="RE" {% if current_user.country == 'RE' %}selected{% endif %}>Réunion</option>
+                                <option value="NC" {% if current_user.country == 'NC' %}selected{% endif %}>Nouvelle-Calédonie</option>
+                            </select>
+                            <small class="text-muted">Fuseau horaire actuel: <strong>{{ current_user.timezone or 'Non défini' }}</strong></small>
+                        </div>
+
                         {% if not current_user.oauth_provider %}
                         <hr>
                         <h6 class="mb-3">Changer le mot de passe</h6>

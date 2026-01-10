@@ -37,10 +37,17 @@ def create_app(config_class=Config):
 
     # Ajouter datetime dans le contexte Jinja2
     from datetime import datetime
+    import pytz
+    from flask_login import current_user
 
     @app.context_processor
     def inject_now():
-        return {'current_year': datetime.now().year}
+        # Utiliser le timezone de l'utilisateur s'il est connecté, sinon Europe/Paris
+        if current_user.is_authenticated and current_user.timezone:
+            tz = pytz.timezone(current_user.timezone)
+        else:
+            tz = pytz.timezone(app.config.get('TIMEZONE', 'Europe/Paris'))
+        return {'current_year': datetime.now(tz).year}
 
     # Filtres Jinja2 personnalisés
     @app.template_filter('translate_cycle')
@@ -78,6 +85,33 @@ def create_app(config_class=Config):
             return formatted
         except (ValueError, TypeError):
             return "0,00"
+
+    @app.template_filter('to_user_time')
+    def to_user_time(dt):
+        """Convertit une datetime UTC dans le fuseau horaire de l'utilisateur"""
+        if dt is None:
+            return None
+        # Utiliser le timezone de l'utilisateur s'il est connecté, sinon Europe/Paris
+        if current_user.is_authenticated and current_user.timezone:
+            tz = pytz.timezone(current_user.timezone)
+        else:
+            tz = pytz.timezone(app.config.get('TIMEZONE', 'Europe/Paris'))
+
+        if dt.tzinfo is None:
+            # Si la date n'a pas de timezone, on considère qu'elle est en UTC
+            dt = pytz.utc.localize(dt)
+        return dt.astimezone(tz)
+
+    @app.template_filter('format_datetime')
+    def format_datetime(dt, format='%d/%m/%Y %H:%M'):
+        """Formate une datetime dans le fuseau horaire de l'utilisateur"""
+        if dt is None:
+            return ''
+        dt_user = to_user_time(dt)
+        return dt_user.strftime(format)
+
+    # Garder l'ancien filtre pour compatibilité
+    app.template_filter('to_paris_time')(to_user_time)
 
     return app
 

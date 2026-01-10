@@ -1,9 +1,10 @@
-from flask import Blueprint, request, jsonify, current_app, redirect, url_for
+from flask import Blueprint, request, jsonify, current_app, redirect, url_for, make_response
 from flask_login import login_required, current_user
 from app import db
-from app.models import User, Plan, Notification, Subscription
+from app.models import User, Plan, Notification, Subscription, Category, Service
 import stripe
 import os
+import base64
 
 bp = Blueprint('api', __name__, url_prefix='/api')
 
@@ -236,6 +237,37 @@ def handle_invoice_payment_succeeded(invoice):
             send_invoice_email(user, invoice['id'])
         except Exception as e:
             print(f"Erreur lors de l'envoi de la facture par email : {e}")
+
+
+@bp.route('/logo/<string:entity_type>/<int:entity_id>')
+def serve_logo(entity_type, entity_id):
+    """Sert les logos depuis la base de données"""
+    try:
+        # Récupérer l'entité (service ou category)
+        if entity_type == 'service':
+            entity = Service.query.get_or_404(entity_id)
+        elif entity_type == 'category':
+            entity = Category.query.get_or_404(entity_id)
+        else:
+            return jsonify({'error': 'Type invalide'}), 400
+
+        # Vérifier si le logo existe
+        if not entity.logo_data or not entity.logo_mime_type:
+            return jsonify({'error': 'Logo non trouvé'}), 404
+
+        # Décoder le base64
+        logo_bytes = base64.b64decode(entity.logo_data)
+
+        # Créer la réponse avec le bon MIME type
+        response = make_response(logo_bytes)
+        response.headers.set('Content-Type', entity.logo_mime_type)
+        response.headers.set('Cache-Control', 'public, max-age=86400')  # Cache 24h
+
+        return response
+
+    except Exception as e:
+        current_app.logger.error(f'Erreur lors du chargement du logo: {str(e)}')
+        return jsonify({'error': 'Erreur serveur'}), 500
 
 
 @bp.route('/stats')

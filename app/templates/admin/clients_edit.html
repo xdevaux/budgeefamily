@@ -35,6 +35,46 @@
                         </div>
 
                         <div class="mb-3">
+                            <label for="country" class="form-label">Pays <span class="text-danger">*</span></label>
+                            <select class="form-select" id="country" name="country" required>
+                                <option value="">Sélectionnez un pays</option>
+                                <option value="FR" {% if user.country == 'FR' %}selected{% endif %}>France</option>
+                                <option value="ES" {% if user.country == 'ES' %}selected{% endif %}>Espagne</option>
+                                <option value="IT" {% if user.country == 'IT' %}selected{% endif %}>Italie</option>
+                                <option value="DE" {% if user.country == 'DE' %}selected{% endif %}>Allemagne</option>
+                                <option value="GB" {% if user.country == 'GB' %}selected{% endif %}>Royaume-Uni</option>
+                                <option value="PT" {% if user.country == 'PT' %}selected{% endif %}>Portugal</option>
+                                <option value="BE" {% if user.country == 'BE' %}selected{% endif %}>Belgique</option>
+                                <option value="NL" {% if user.country == 'NL' %}selected{% endif %}>Pays-Bas</option>
+                                <option value="CH" {% if user.country == 'CH' %}selected{% endif %}>Suisse</option>
+                                <option value="AT" {% if user.country == 'AT' %}selected{% endif %}>Autriche</option>
+                                <option value="SE" {% if user.country == 'SE' %}selected{% endif %}>Suède</option>
+                                <option value="NO" {% if user.country == 'NO' %}selected{% endif %}>Norvège</option>
+                                <option value="DK" {% if user.country == 'DK' %}selected{% endif %}>Danemark</option>
+                                <option value="FI" {% if user.country == 'FI' %}selected{% endif %}>Finlande</option>
+                                <option value="US" {% if user.country == 'US' %}selected{% endif %}>États-Unis</option>
+                                <option value="CA" {% if user.country == 'CA' %}selected{% endif %}>Canada</option>
+                                <option value="BR" {% if user.country == 'BR' %}selected{% endif %}>Brésil</option>
+                                <option value="AR" {% if user.country == 'AR' %}selected{% endif %}>Argentine</option>
+                                <option value="MX" {% if user.country == 'MX' %}selected{% endif %}>Mexique</option>
+                                <option value="CN" {% if user.country == 'CN' %}selected{% endif %}>Chine</option>
+                                <option value="JP" {% if user.country == 'JP' %}selected{% endif %}>Japon</option>
+                                <option value="AU" {% if user.country == 'AU' %}selected{% endif %}>Australie</option>
+                                <option value="MA" {% if user.country == 'MA' %}selected{% endif %}>Maroc</option>
+                                <option value="TN" {% if user.country == 'TN' %}selected{% endif %}>Tunisie</option>
+                                <option value="DZ" {% if user.country == 'DZ' %}selected{% endif %}>Algérie</option>
+                                <option value="SN" {% if user.country == 'SN' %}selected{% endif %}>Sénégal</option>
+                                <option value="CI" {% if user.country == 'CI' %}selected{% endif %}>Côte d'Ivoire</option>
+                                <option value="GP" {% if user.country == 'GP' %}selected{% endif %}>Guadeloupe</option>
+                                <option value="MQ" {% if user.country == 'MQ' %}selected{% endif %}>Martinique</option>
+                                <option value="GF" {% if user.country == 'GF' %}selected{% endif %}>Guyane</option>
+                                <option value="RE" {% if user.country == 'RE' %}selected{% endif %}>Réunion</option>
+                                <option value="NC" {% if user.country == 'NC' %}selected{% endif %}>Nouvelle-Calédonie</option>
+                            </select>
+                            <small class="form-text text-muted">Fuseau horaire actuel: <strong>{{ user.timezone or 'Non défini' }}</strong></small>
+                        </div>
+
+                        <div class="mb-3">
                             <label for="plan_id" class="form-label">Plan</label>
                             <select class="form-select" id="plan_id" name="plan_id">
                                 <option value="">Aucun plan</option>
@@ -64,9 +104,11 @@
                             <small>
                                 <strong>Informations :</strong><br>
                                 - ID: {{ user.id }}<br>
-                                - Créé le: {{ user.created_at.strftime('%d/%m/%Y à %H:%M') }}<br>
-                                - Dernière modification: {{ user.updated_at.strftime('%d/%m/%Y à %H:%M') }}<br>
-                                - Email vérifié: {% if user.email_verified %}<span class="text-success">Oui</span>{% else %}<span class="text-danger">Non</span>{% endif %}<br>
+                                - Créé le: {{ user.created_at | format_datetime('%d/%m/%Y à %H:%M') }}<br>
+                                - Dernière modification: {{ user.updated_at | format_datetime('%d/%m/%Y à %H:%M') }}<br>
+                                - Email vérifié: {% if user.email_verified %}<span class="text-success">Oui</span> ({{ user.email_verified_at | format_datetime('%d/%m/%Y') }}){% else %}<span class="text-danger">Non</span>{% endif %}<br>
+                                - Pays: {{ user.country or 'Non défini' }}<br>
+                                - Fuseau horaire: {{ user.timezone or 'Non défini' }}<br>
                                 - Abonnements actifs: {{ user.get_active_subscriptions_count() }}
                             </small>
                         </div>

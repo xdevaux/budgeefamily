@@ -90,8 +90,8 @@
                         <div class="d-flex align-items-center mb-3">
                             <div class="rounded-circle p-3 me-3"
                                  style="background-color: {{ category.color }}20; border: 2px solid {{ category.color }}">
-                                {% if category.logo_url %}
-                                    <img src="{{ category.logo_url }}" alt="{{ category.name }}"
+                                {% if category.logo_data %}
+                                    <img src="{{ url_for('api.serve_logo', entity_type='category', entity_id=category.id) }}" alt="{{ category.name }}"
                                          style="width: 40px; height: 40px; object-fit: contain;">
                                 {% elif category.icon %}
                                     <i class="{{ category.icon }} fa-2x" style="color: {{ category.color }}"></i>
@@ -256,8 +256,8 @@
                         <div class="d-flex align-items-center mb-3">
                             <div class="rounded-circle p-3 me-3"
                                  style="background-color: {{ category.color }}20; border: 2px solid {{ category.color }}">
-                                {% if category.logo_url %}
-                                    <img src="{{ category.logo_url }}" alt="{{ category.name }}"
+                                {% if category.logo_data %}
+                                    <img src="{{ url_for('api.serve_logo', entity_type='category', entity_id=category.id) }}" alt="{{ category.name }}"
                                          style="width: 40px; height: 40px; object-fit: contain;">
                                 {% elif category.icon %}
                                     <i class="{{ category.icon }} fa-2x" style="color: {{ category.color }}"></i>

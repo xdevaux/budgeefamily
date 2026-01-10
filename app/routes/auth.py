@@ -76,6 +76,7 @@ def register():
         first_name = request.form.get('first_name')
         last_name = request.form.get('last_name')
         default_currency = request.form.get('default_currency', 'EUR')
+        country = request.form.get('country', 'FR')
 
         # Vérifier si l'utilisateur s'inscrit pour un plan Premium
         plan_param = request.args.get('plan', '')
@@ -115,6 +116,7 @@ def register():
             trial_start_date=trial_start  # Pas d'essai si inscription Premium directe
         )
         user.set_password(password)
+        user.set_country(country)  # Définit le pays et le fuseau horaire automatiquement
 
         db.session.add(user)
         db.session.commit()
@@ -209,6 +211,11 @@ def profile():
         current_user.first_name = request.form.get('first_name')
         current_user.last_name = request.form.get('last_name')
         current_user.default_currency = request.form.get('default_currency', 'EUR')
+
+        # Mettre à jour le pays et le fuseau horaire
+        country = request.form.get('country')
+        if country:
+            current_user.set_country(country)
 
         # Changement de mot de passe
         current_password = request.form.get('current_password')

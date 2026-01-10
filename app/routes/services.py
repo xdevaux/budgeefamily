@@ -4,6 +4,8 @@ from app import db
 from app.models import Service, ServicePlan, Category
 from werkzeug.utils import secure_filename
 import os
+import base64
+import mimetypes
 
 bp = Blueprint('services', __name__, url_prefix='/services')
 
@@ -67,24 +69,30 @@ def add():
         website_url = request.form.get('website_url')
         category_id = request.form.get('category_id', type=int)
 
-        # Gestion du logo
-        logo_url = None
+        # Gestion du logo - stockage en base de données
+        logo_data = None
+        logo_mime_type = None
         if 'logo' in request.files:
             file = request.files['logo']
             if file and file.filename and allowed_file(file.filename):
-                filename = secure_filename(file.filename)
-                # Créer le dossier uploads/logos s'il n'existe pas
-                upload_folder = os.path.join('app', 'static', 'uploads', 'logos')
-                os.makedirs(upload_folder, exist_ok=True)
-                filepath = os.path.join(upload_folder, filename)
-                file.save(filepath)
-                logo_url = f'/static/uploads/logos/{filename}'
+                # Lire le fichier et le convertir en base64
+                file_bytes = file.read()
+                logo_data = base64.b64encode(file_bytes).decode('utf-8')
+
+                # Déterminer le MIME type
+                mime_type, _ = mimetypes.guess_type(file.filename)
+                if mime_type:
+                    logo_mime_type = mime_type
+                else:
+                    # Par défaut, PNG
+                    logo_mime_type = 'image/png'
 
         service = Service(
             user_id=current_user.id,
             name=name,
             description=description,
-            logo_url=logo_url,
+            logo_data=logo_data,
+            logo_mime_type=logo_mime_type,
             website_url=website_url,
             category_id=category_id if category_id else None
         )
@@ -115,16 +123,21 @@ def edit(service_id):
         service.website_url = request.form.get('website_url')
         service.category_id = request.form.get('category_id', type=int) or None
 
-        # Gestion du logo
+        # Gestion du logo - stockage en base de données
         if 'logo' in request.files:
             file = request.files['logo']
             if file and file.filename and allowed_file(file.filename):
-                filename = secure_filename(file.filename)
-                upload_folder = os.path.join('app', 'static', 'uploads', 'logos')
-                os.makedirs(upload_folder, exist_ok=True)
-                filepath = os.path.join(upload_folder, filename)
-                file.save(filepath)
-                service.logo_url = f'/static/uploads/logos/{filename}'
+                # Lire le fichier et le convertir en base64
+                file_bytes = file.read()
+                service.logo_data = base64.b64encode(file_bytes).decode('utf-8')
+
+                # Déterminer le MIME type
+                mime_type, _ = mimetypes.guess_type(file.filename)
+                if mime_type:
+                    service.logo_mime_type = mime_type
+                else:
+                    # Par défaut, PNG
+                    service.logo_mime_type = 'image/png'
 
         db.session.commit()
 
@@ -323,7 +336,8 @@ def customize(service_id):
         category_id=global_service.category_id,
         name=global_service.name,
         description=global_service.description,
-        logo_url=global_service.logo_url,
+        logo_data=global_service.logo_data,
+        logo_mime_type=global_service.logo_mime_type,
         website_url=global_service.website_url,
         is_active=True
     )
