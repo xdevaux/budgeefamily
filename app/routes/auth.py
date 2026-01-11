@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request, session
+from flask import Blueprint, render_template, redirect, url_for, flash, request, session, jsonify, current_app
 from flask_login import login_user, logout_user, current_user, login_required
 from urllib.parse import urlparse
 from app import db
@@ -101,8 +101,18 @@ def register():
         db.session.commit()
 
         # Envoyer l'email de vérification
-        from app.utils.email import send_verification_email
+        from app.utils.email import send_verification_email, send_welcome_email, send_new_subscription_notification
         send_verification_email(user)
+
+        # Envoyer l'email de bienvenue et la notification uniquement si ce n'est pas une inscription Premium
+        # Pour Premium, ces emails seront envoyés après le paiement réussi
+        if not is_premium_signup:
+            # Envoyer l'email de bienvenue avec récapitulatif du plan
+            send_welcome_email(user)
+
+            # Envoyer la notification à l'équipe
+            send_new_subscription_notification(user)
+
         db.session.commit()
 
         # Message de confirmation adapté selon le type d'inscription
@@ -116,6 +126,76 @@ def register():
         return redirect(url_for('auth.login'))
 
     return render_template('auth/register.html')
+
+
+@bp.route('/api/register', methods=['POST'])
+def api_register():
+    """API d'inscription pour les modales (retourne JSON)"""
+    try:
+        data = request.get_json()
+        email = data.get('email')
+        password = data.get('password')
+        first_name = data.get('first_name')
+        last_name = data.get('last_name')
+        country = data.get('country', 'FR')
+        plan_type = data.get('plan_type', '')  # 'monthly' ou 'yearly'
+
+        # Validation
+        if not all([email, password, first_name, last_name, country]):
+            return jsonify({'error': 'Tous les champs sont requis'}), 400
+
+        if len(password) < 6:
+            return jsonify({'error': 'Le mot de passe doit contenir au moins 6 caractères'}), 400
+
+        if User.query.filter_by(email=email).first():
+            return jsonify({'error': 'Cette adresse email est déjà utilisée'}), 400
+
+        # Créer l'utilisateur avec le plan gratuit par défaut
+        free_plan = Plan.query.filter_by(name='Free').first()
+        if not free_plan:
+            free_plan = Plan(
+                name='Free',
+                price=0.0,
+                max_subscriptions=5,
+                description='Plan gratuit - Maximum 5 abonnements',
+                features=['5 abonnements maximum', 'Catégories', 'Statistiques', 'Notifications']
+            )
+            db.session.add(free_plan)
+            db.session.commit()
+
+        user = User(
+            email=email,
+            first_name=first_name,
+            last_name=last_name,
+            default_currency='EUR',
+            plan=free_plan
+        )
+        user.set_password(password)
+        user.set_country(country)
+
+        db.session.add(user)
+        db.session.commit()
+
+        # Envoyer l'email de vérification
+        from app.utils.email import send_verification_email
+        send_verification_email(user)
+
+        # Connecter automatiquement l'utilisateur
+        login_user(user)
+
+        db.session.commit()
+
+        return jsonify({
+            'success': True,
+            'message': 'Compte créé avec succès',
+            'user_id': user.id,
+            'plan_type': plan_type
+        }), 200
+
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f'Erreur lors de l\'inscription API: {str(e)}')
+        return jsonify({'error': 'Une erreur est survenue lors de l\'inscription'}), 500
 
 
 @bp.route('/logout')

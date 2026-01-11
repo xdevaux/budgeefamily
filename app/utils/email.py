@@ -11,31 +11,6 @@ def send_verification_email(user):
 
     verification_url = url_for('auth.verify_email', token=token, _external=True)
 
-    # Contenu sur l'essai Premium (seulement si trial_start_date est défini)
-    trial_content_html = ""
-    trial_content_text = ""
-    if user.trial_start_date:
-        trial_content_html = """
-                <p style="color: #28a745; font-weight: bold;">🎁 Bonus : Vous bénéficiez de 7 jours d'essai Premium gratuit !</p>
-
-                <p>Avec Subly Cloud Premium, vous pouvez :</p>
-                <ul>
-                    <li>Gérer un nombre illimité d'abonnements</li>
-                    <li>Créer des catégories et services personnalisés</li>
-                    <li>Accéder aux statistiques avancées</li>
-                    <li>Exporter vos données</li>
-                </ul>
-"""
-        trial_content_text = """
-    🎁 Bonus : Vous bénéficiez de 7 jours d'essai Premium gratuit !
-
-    Avec Subly Cloud Premium, vous pouvez :
-    - Gérer un nombre illimité d'abonnements
-    - Créer des catégories et services personnalisés
-    - Accéder aux statistiques avancées
-    - Exporter vos données
-"""
-
     html_body = f"""
     <!DOCTYPE html>
     <html>
@@ -96,8 +71,6 @@ def send_verification_email(user):
                     <a href="{verification_url}" class="button">Confirmer mon adresse email</a>
                 </div>
 
-                {trial_content_html}
-
                 <p>Si vous n'avez pas créé de compte sur Subly Cloud, vous pouvez ignorer cet email.</p>
 
                 <p>À bientôt,<br>L'équipe Subly Cloud</p>
@@ -121,7 +94,7 @@ def send_verification_email(user):
 
     Pour commencer à utiliser toutes nos fonctionnalités, veuillez confirmer votre adresse email en cliquant sur ce lien :
     {verification_url}
-    {trial_content_text}
+
     Si vous n'avez pas créé de compte sur Subly Cloud, vous pouvez ignorer cet email.
 
     À bientôt,
@@ -288,7 +261,29 @@ def send_plan_downgrade_email(user, old_plan_name):
 
 
 def send_plan_upgrade_email(user, new_plan_name):
-    """Envoie un email de confirmation de passage à un plan Premium"""
+    """Envoie un email de confirmation de passage à un plan Premium avec récapitulatif détaillé"""
+
+    # Récupérer les informations du plan
+    plan = user.plan
+
+    # Symbole de devise
+    currency_symbols = {
+        'EUR': '€', 'USD': '$', 'GBP': '£', 'CHF': 'CHF',
+        'CAD': '$', 'AUD': '$', 'JPY': '¥', 'CNY': '¥',
+        'INR': '₹', 'BRL': 'R$', 'MXN': '$', 'ZAR': 'R'
+    }
+    currency_symbol = currency_symbols.get(plan.currency, plan.currency) if plan else '€'
+
+    # Traduction de la période de facturation
+    billing_period_fr = {
+        'monthly': 'mensuel',
+        'yearly': 'annuel',
+        'lifetime': 'à vie'
+    }
+    period_text = billing_period_fr.get(plan.billing_period, plan.billing_period) if plan else 'mensuel'
+
+    # Prix formaté
+    price_text = f"{plan.price:.2f} {currency_symbol}" if plan else "N/A"
 
     html_body = f"""
     <!DOCTYPE html>
@@ -299,83 +294,234 @@ def send_plan_upgrade_email(user, new_plan_name):
                 font-family: Arial, sans-serif;
                 line-height: 1.6;
                 color: #333;
+                margin: 0;
+                padding: 0;
+                background-color: #f8f9fa;
             }}
             .container {{
                 max-width: 600px;
-                margin: 0 auto;
-                padding: 20px;
+                margin: 20px auto;
+                background-color: #ffffff;
+                border-radius: 15px;
+                overflow: hidden;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             }}
             .header {{
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
                 color: white;
-                padding: 30px;
+                padding: 40px 30px;
                 text-align: center;
-                border-radius: 10px 10px 0 0;
+            }}
+            .logo-container {{
+                margin-bottom: 20px;
+            }}
+            .header h1 {{
+                margin: 0;
+                font-size: 28px;
+                font-weight: bold;
+            }}
+            .header p {{
+                margin: 10px 0 0 0;
+                opacity: 0.95;
+                font-size: 16px;
             }}
             .content {{
-                background: #f9f9f9;
-                padding: 30px;
-                border-radius: 0 0 10px 10px;
+                padding: 40px 30px;
             }}
-            .success-box {{
-                background: #d1fae5;
-                border-left: 4px solid #10b981;
-                padding: 15px;
-                margin: 20px 0;
+            .content h2 {{
+                color: #6366f1;
+                font-size: 22px;
+                margin-top: 0;
+                margin-bottom: 20px;
+            }}
+            .subscription-summary {{
+                background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+                border-left: 4px solid #6366f1;
+                padding: 25px;
+                margin: 25px 0;
+                border-radius: 8px;
+            }}
+            .subscription-summary h3 {{
+                color: #6366f1;
+                margin-top: 0;
+                margin-bottom: 15px;
+                font-size: 18px;
+            }}
+            .summary-item {{
+                display: flex;
+                justify-content: space-between;
+                padding: 10px 0;
+                border-bottom: 1px solid rgba(99, 102, 241, 0.2);
+            }}
+            .summary-item:last-child {{
+                border-bottom: none;
+                font-weight: bold;
+                font-size: 1.1em;
+                color: #6366f1;
+                margin-top: 10px;
+            }}
+            .summary-label {{
+                color: #1e40af;
+                font-weight: 500;
+            }}
+            .summary-value {{
+                color: #6366f1;
+                font-weight: 600;
+            }}
+            .feature-list {{
+                margin: 25px 0;
+                background: #ffffff;
+                border-radius: 8px;
+                padding: 20px;
+            }}
+            .feature-item {{
+                padding: 10px 0;
+                border-bottom: 1px solid #e5e7eb;
+                display: flex;
+                align-items: center;
+            }}
+            .feature-item:last-child {{
+                border-bottom: none;
+            }}
+            .feature-icon {{
+                color: #10b981;
+                margin-right: 10px;
+                font-size: 18px;
             }}
             .button {{
                 display: inline-block;
-                padding: 12px 30px;
-                background: #667eea;
+                padding: 14px 32px;
+                background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
                 color: white;
                 text-decoration: none;
-                border-radius: 5px;
+                border-radius: 8px;
                 margin: 20px 0;
+                font-weight: 600;
+                text-align: center;
             }}
             .footer {{
+                background-color: #f8f9fa;
+                padding: 25px;
                 text-align: center;
-                margin-top: 20px;
-                color: #666;
-                font-size: 12px;
+                color: #6b7280;
+                font-size: 13px;
+                border-top: 1px solid #e5e7eb;
+            }}
+            .footer a {{
+                color: #6366f1;
+                text-decoration: none;
             }}
         </style>
     </head>
     <body>
         <div class="container">
             <div class="header">
+                <div class="logo-container">
+                    <svg width="60" height="60" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Maison -->
+                        <path d="M 25 8 L 10 20 L 10 40 L 40 40 L 40 20 Z" fill="white" opacity="0.9"/>
+                        <path d="M 25 8 L 10 20 L 10 40 L 40 40 L 40 20 Z" fill="none" stroke="white" stroke-width="1.5"/>
+                        <!-- Toit -->
+                        <path d="M 5 20 L 25 5 L 45 20 L 40 20 L 25 8 L 10 20 Z" fill="white"/>
+                        <!-- Porte -->
+                        <rect x="21" y="30" width="8" height="10" fill="#6366f1" opacity="0.9" rx="1"/>
+                        <!-- Fenêtres -->
+                        <rect x="14" y="24" width="6" height="6" fill="#6366f1" opacity="0.8" rx="1"/>
+                        <rect x="30" y="24" width="6" height="6" fill="#6366f1" opacity="0.8" rx="1"/>
+                        <!-- Symboles -->
+                        <circle cx="38" cy="12" r="6" fill="#10b981" opacity="0.3"/>
+                        <text x="38" y="16" text-anchor="middle" font-size="10" font-weight="bold" fill="white">$</text>
+                        <circle cx="12" cy="12" r="6" fill="#f59e0b" opacity="0.3"/>
+                        <text x="12" y="16" text-anchor="middle" font-size="10" font-weight="bold" fill="white">€</text>
+                    </svg>
+                </div>
                 <h1>🎉 Bienvenue chez Premium !</h1>
+                <p>Votre abonnement a été activé avec succès</p>
             </div>
+
             <div class="content">
-                <p>Bonjour {user.first_name or user.email},</p>
+                <h2>Bonjour {user.first_name or user.email},</h2>
 
-                <p>Félicitations ! Votre compte a été mis à niveau vers le plan <strong>{new_plan_name}</strong>.</p>
+                <p>Félicitations et bienvenue dans la famille <strong>Subly Cloud Premium</strong> !</p>
 
-                <div class="success-box">
-                    <h3>Vous bénéficiez maintenant de :</h3>
-                    <ul>
-                        <li>✅ Abonnements illimités</li>
-                        <li>✅ Catégories personnalisées illimitées</li>
-                        <li>✅ Services personnalisés illimités</li>
-                        <li>✅ Plans de services illimités</li>
-                        <li>✅ Statistiques avancées</li>
-                        <li>✅ Export de données</li>
-                        <li>✅ Support prioritaire</li>
-                    </ul>
+                <p>Nous sommes ravis de vous compter parmi nos membres Premium. Votre paiement a été traité avec succès et votre abonnement est désormais actif.</p>
+
+                <div class="subscription-summary">
+                    <h3>📋 Récapitulatif de votre abonnement</h3>
+                    <div class="summary-item">
+                        <span class="summary-label">Plan souscrit</span>
+                        <span class="summary-value">{new_plan_name}</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Période de facturation</span>
+                        <span class="summary-value">{period_text.capitalize()}</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Montant</span>
+                        <span class="summary-value">{price_text}</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Date d'activation</span>
+                        <span class="summary-value">{datetime.now().strftime('%d/%m/%Y')}</span>
+                    </div>
                 </div>
 
-                <p>Profitez pleinement de toutes les fonctionnalités Premium pour gérer vos abonnements comme un pro !</p>
+                <p><strong>Avec votre plan Premium, vous bénéficiez de :</strong></p>
 
-                <div style="text-align: center;">
-                    <a href="{url_for('main.dashboard', _external=True)}" class="button">Accéder à mon tableau de bord</a>
+                <div class="feature-list">
+                    <div class="feature-item">
+                        <span class="feature-icon">✓</span>
+                        <strong>Abonnements illimités</strong> - Ajoutez autant d'abonnements que vous le souhaitez
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">✓</span>
+                        <strong>Catégories personnalisées illimitées</strong> - Organisez vos abonnements à votre façon
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">✓</span>
+                        <strong>Services personnalisés illimités</strong> - Créez vos propres services
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">✓</span>
+                        <strong>Plans de services illimités</strong> - Gérez tous vos plans tarifaires
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">✓</span>
+                        <strong>Statistiques avancées</strong> - Analysez vos dépenses en détail
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">✓</span>
+                        <strong>Export de données</strong> - Téléchargez vos données quand vous voulez
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">✓</span>
+                        <strong>Support prioritaire</strong> - Une assistance rapide et personnalisée
+                    </div>
                 </div>
 
-                <p>Merci de votre confiance !</p>
+                <div style="text-align: center; margin: 30px 0;">
+                    <a href="{url_for('main.dashboard', _external=True)}" class="button" style="color: white;">
+                        🚀 Accéder à mon tableau de bord
+                    </a>
+                </div>
 
-                <p>Cordialement,<br>L'équipe Subly Cloud</p>
+                <p>Vous recevrez également votre facture dans un email séparé. Vous pourrez la retrouver à tout moment dans votre espace client.</p>
+
+                <p style="color: #6b7280; font-size: 14px; margin-top: 30px;">
+                    <em>Merci de votre confiance ! Nous sommes là pour vous accompagner dans la gestion de vos abonnements.</em>
+                </p>
             </div>
+
             <div class="footer">
-                <p>Cet email a été envoyé par Subly Cloud</p>
-                <p>Si vous avez des questions, n'hésitez pas à nous contacter.</p>
+                <p><strong>Subly Cloud</strong> - Gestionnaire d'abonnements intelligent</p>
+                <p style="margin-top: 8px;">
+                    <a href="https://subly.cloud">Site web</a> •
+                    <a href="https://subly.cloud/contact">Contact</a> •
+                    <a href="https://subly.cloud/mentions-legales">Mentions légales</a>
+                </p>
+                <p style="margin-top: 15px; font-size: 12px; color: #9ca3af;">
+                    © {datetime.now().year} Subly Cloud. Tous droits réservés.
+                </p>
             </div>
         </div>
     </body>
@@ -387,29 +533,43 @@ def send_plan_upgrade_email(user, new_plan_name):
 
     Bonjour {user.first_name or user.email},
 
-    Félicitations ! Votre compte a été mis à niveau vers le plan {new_plan_name}.
+    Félicitations et bienvenue dans la famille Subly Cloud Premium !
 
-    Vous bénéficiez maintenant de :
-    ✅ Abonnements illimités
-    ✅ Catégories personnalisées illimitées
-    ✅ Services personnalisés illimités
-    ✅ Plans de services illimités
-    ✅ Statistiques avancées
-    ✅ Export de données
-    ✅ Support prioritaire
+    Nous sommes ravis de vous compter parmi nos membres Premium. Votre paiement a été traité avec succès et votre abonnement est désormais actif.
 
-    Profitez pleinement de toutes les fonctionnalités Premium pour gérer vos abonnements comme un pro !
+    📋 RÉCAPITULATIF DE VOTRE ABONNEMENT
 
-    Accéder à mon tableau de bord : {url_for('main.dashboard', _external=True)}
+    Plan souscrit : {new_plan_name}
+    Période de facturation : {period_text.capitalize()}
+    Montant : {price_text}
+    Date d'activation : {datetime.now().strftime('%d/%m/%Y')}
 
-    Merci de votre confiance !
+    AVEC VOTRE PLAN PREMIUM, VOUS BÉNÉFICIEZ DE :
 
-    Cordialement,
-    L'équipe Subly Cloud
+    ✓ Abonnements illimités - Ajoutez autant d'abonnements que vous le souhaitez
+    ✓ Catégories personnalisées illimitées - Organisez vos abonnements à votre façon
+    ✓ Services personnalisés illimités - Créez vos propres services
+    ✓ Plans de services illimités - Gérez tous vos plans tarifaires
+    ✓ Statistiques avancées - Analysez vos dépenses en détail
+    ✓ Export de données - Téléchargez vos données quand vous voulez
+    ✓ Support prioritaire - Une assistance rapide et personnalisée
+
+    🚀 Accéder à mon tableau de bord : {url_for('main.dashboard', _external=True)}
+
+    Vous recevrez également votre facture dans un email séparé. Vous pourrez la retrouver à tout moment dans votre espace client.
+
+    Merci de votre confiance ! Nous sommes là pour vous accompagner dans la gestion de vos abonnements.
+
+    ---
+    Subly Cloud - Gestionnaire d'abonnements intelligent
+    Site web : https://subly.cloud
+    Contact : https://subly.cloud/contact
+
+    © {datetime.now().year} Subly Cloud. Tous droits réservés.
     """
 
     msg = Message(
-        subject=f'Bienvenue sur {new_plan_name} - Subly Cloud',
+        subject=f'✓ Bienvenue sur {new_plan_name} - Subly Cloud',
         sender=os.getenv('MAIL_DEFAULT_SENDER', 'noreply@subly.cloud'),
         recipients=[user.email],
         body=text_body,
@@ -659,6 +819,598 @@ def send_contact_confirmation_email(name, email):
         return True
     except Exception as e:
         print(f"Erreur lors de l'envoi de l'email de confirmation : {e}")
+        return False
+
+
+def send_welcome_email(user):
+    """Envoie un email de bienvenue avec récapitulatif du plan souscrit lors de l'inscription"""
+
+    # Récupérer les informations du plan
+    plan = user.plan
+
+    # Déterminer si c'est un plan gratuit ou premium
+    is_free_plan = not (plan and plan.is_premium())
+
+    # Symbole de devise
+    currency_symbols = {
+        'EUR': '€', 'USD': '$', 'GBP': '£', 'CHF': 'CHF',
+        'CAD': '$', 'AUD': '$', 'JPY': '¥', 'CNY': '¥',
+        'INR': '₹', 'BRL': 'R$', 'MXN': '$', 'ZAR': 'R'
+    }
+    currency_symbol = currency_symbols.get(plan.currency, plan.currency) if plan else '€'
+
+    # Traduction de la période de facturation
+    billing_period_fr = {
+        'monthly': 'mensuel',
+        'yearly': 'annuel',
+        'lifetime': 'à vie'
+    }
+    period_text = billing_period_fr.get(plan.billing_period, plan.billing_period) if plan else 'gratuit'
+
+    # Prix formaté
+    price_text = f"{plan.price:.2f} {currency_symbol}" if plan and plan.price > 0 else "Gratuit"
+
+    # Nom du plan
+    plan_name = plan.name if plan else "Free"
+
+    # Contenu spécifique selon le type de plan
+    if is_free_plan:
+        features_html = """
+                    <div class="feature-item">
+                        <span class="feature-icon">✓</span>
+                        <strong>Jusqu'à 5 abonnements</strong> - Gérez vos principaux abonnements
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">✓</span>
+                        <strong>Jusqu'à 5 catégories personnalisées</strong> - Organisez comme vous voulez
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">✓</span>
+                        <strong>Jusqu'à 5 services personnalisés</strong> - Créez vos propres services
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">✓</span>
+                        <strong>Jusqu'à 10 plans de services</strong> - Gérez vos plans tarifaires
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">✓</span>
+                        <strong>Statistiques de base</strong> - Suivez vos dépenses
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">✓</span>
+                        <strong>Notifications d'échéance</strong> - Ne ratez aucun renouvellement
+                    </div>"""
+
+        features_text = """✓ Jusqu'à 5 abonnements - Gérez vos principaux abonnements
+    ✓ Jusqu'à 5 catégories personnalisées - Organisez comme vous voulez
+    ✓ Jusqu'à 5 services personnalisés - Créez vos propres services
+    ✓ Jusqu'à 10 plans de services - Gérez vos plans tarifaires
+    ✓ Statistiques de base - Suivez vos dépenses
+    ✓ Notifications d'échéance - Ne ratez aucun renouvellement"""
+
+        upgrade_section_html = """
+                <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-left: 4px solid #f59e0b; padding: 20px; margin: 25px 0; border-radius: 8px;">
+                    <p style="margin: 0; color: #92400e; font-weight: 600;">💡 Envie de plus ?</p>
+                    <p style="margin: 10px 0 0 0; color: #92400e;">Passez à Premium pour débloquer des abonnements illimités, des statistiques avancées et bien plus encore !</p>
+                    <div style="text-align: center; margin-top: 15px;">
+                        <a href="{url_for('main.pricing', _external=True)}" style="display: inline-block; padding: 10px 24px; background: #f59e0b; color: white; text-decoration: none; border-radius: 6px; font-weight: 600;">Découvrir Premium</a>
+                    </div>
+                </div>"""
+
+        upgrade_section_text = """
+    💡 ENVIE DE PLUS ?
+
+    Passez à Premium pour débloquer des abonnements illimités, des statistiques avancées et bien plus encore !
+    Découvrir Premium : {url_for('main.pricing', _external=True)}"""
+
+    else:
+        features_html = """
+                    <div class="feature-item">
+                        <span class="feature-icon">✓</span>
+                        <strong>Abonnements illimités</strong> - Ajoutez autant d'abonnements que vous le souhaitez
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">✓</span>
+                        <strong>Catégories personnalisées illimitées</strong> - Organisez vos abonnements à votre façon
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">✓</span>
+                        <strong>Services personnalisés illimités</strong> - Créez vos propres services
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">✓</span>
+                        <strong>Plans de services illimités</strong> - Gérez tous vos plans tarifaires
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">✓</span>
+                        <strong>Statistiques avancées</strong> - Analysez vos dépenses en détail
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">✓</span>
+                        <strong>Export de données</strong> - Téléchargez vos données quand vous voulez
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">✓</span>
+                        <strong>Support prioritaire</strong> - Une assistance rapide et personnalisée
+                    </div>"""
+
+        features_text = """✓ Abonnements illimités - Ajoutez autant d'abonnements que vous le souhaitez
+    ✓ Catégories personnalisées illimitées - Organisez vos abonnements à votre façon
+    ✓ Services personnalisés illimités - Créez vos propres services
+    ✓ Plans de services illimités - Gérez tous vos plans tarifaires
+    ✓ Statistiques avancées - Analysez vos dépenses en détail
+    ✓ Export de données - Téléchargez vos données quand vous voulez
+    ✓ Support prioritaire - Une assistance rapide et personnalisée"""
+
+        upgrade_section_html = ""
+        upgrade_section_text = ""
+
+    html_body = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <style>
+            body {{
+                font-family: Arial, sans-serif;
+                line-height: 1.6;
+                color: #333;
+                margin: 0;
+                padding: 0;
+                background-color: #f8f9fa;
+            }}
+            .container {{
+                max-width: 600px;
+                margin: 20px auto;
+                background-color: #ffffff;
+                border-radius: 15px;
+                overflow: hidden;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            }}
+            .header {{
+                background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+                color: white;
+                padding: 40px 30px;
+                text-align: center;
+            }}
+            .logo-container {{
+                margin-bottom: 20px;
+            }}
+            .header h1 {{
+                margin: 0;
+                font-size: 28px;
+                font-weight: bold;
+            }}
+            .header p {{
+                margin: 10px 0 0 0;
+                opacity: 0.95;
+                font-size: 16px;
+            }}
+            .content {{
+                padding: 40px 30px;
+            }}
+            .content h2 {{
+                color: #6366f1;
+                font-size: 22px;
+                margin-top: 0;
+                margin-bottom: 20px;
+            }}
+            .subscription-summary {{
+                background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+                border-left: 4px solid #6366f1;
+                padding: 25px;
+                margin: 25px 0;
+                border-radius: 8px;
+            }}
+            .subscription-summary h3 {{
+                color: #6366f1;
+                margin-top: 0;
+                margin-bottom: 15px;
+                font-size: 18px;
+            }}
+            .summary-item {{
+                display: flex;
+                justify-content: space-between;
+                padding: 10px 0;
+                border-bottom: 1px solid rgba(99, 102, 241, 0.2);
+            }}
+            .summary-item:last-child {{
+                border-bottom: none;
+            }}
+            .summary-label {{
+                color: #1e40af;
+                font-weight: 500;
+            }}
+            .summary-value {{
+                color: #6366f1;
+                font-weight: 600;
+            }}
+            .feature-list {{
+                margin: 25px 0;
+                background: #ffffff;
+                border-radius: 8px;
+                padding: 20px;
+            }}
+            .feature-item {{
+                padding: 10px 0;
+                border-bottom: 1px solid #e5e7eb;
+                display: flex;
+                align-items: center;
+            }}
+            .feature-item:last-child {{
+                border-bottom: none;
+            }}
+            .feature-icon {{
+                color: #10b981;
+                margin-right: 10px;
+                font-size: 18px;
+            }}
+            .button {{
+                display: inline-block;
+                padding: 14px 32px;
+                background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+                color: white;
+                text-decoration: none;
+                border-radius: 8px;
+                margin: 20px 0;
+                font-weight: 600;
+                text-align: center;
+            }}
+            .footer {{
+                background-color: #f8f9fa;
+                padding: 25px;
+                text-align: center;
+                color: #6b7280;
+                font-size: 13px;
+                border-top: 1px solid #e5e7eb;
+            }}
+            .footer a {{
+                color: #6366f1;
+                text-decoration: none;
+            }}
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <div class="logo-container">
+                    <svg width="60" height="60" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Maison -->
+                        <path d="M 25 8 L 10 20 L 10 40 L 40 40 L 40 20 Z" fill="white" opacity="0.9"/>
+                        <path d="M 25 8 L 10 20 L 10 40 L 40 40 L 40 20 Z" fill="none" stroke="white" stroke-width="1.5"/>
+                        <!-- Toit -->
+                        <path d="M 5 20 L 25 5 L 45 20 L 40 20 L 25 8 L 10 20 Z" fill="white"/>
+                        <!-- Porte -->
+                        <rect x="21" y="30" width="8" height="10" fill="#6366f1" opacity="0.9" rx="1"/>
+                        <!-- Fenêtres -->
+                        <rect x="14" y="24" width="6" height="6" fill="#6366f1" opacity="0.8" rx="1"/>
+                        <rect x="30" y="24" width="6" height="6" fill="#6366f1" opacity="0.8" rx="1"/>
+                        <!-- Symboles -->
+                        <circle cx="38" cy="12" r="6" fill="#10b981" opacity="0.3"/>
+                        <text x="38" y="16" text-anchor="middle" font-size="10" font-weight="bold" fill="white">$</text>
+                        <circle cx="12" cy="12" r="6" fill="#f59e0b" opacity="0.3"/>
+                        <text x="12" y="16" text-anchor="middle" font-size="10" font-weight="bold" fill="white">€</text>
+                    </svg>
+                </div>
+                <h1>🎉 Bienvenue sur Subly Cloud !</h1>
+                <p>Votre compte a été créé avec succès</p>
+            </div>
+
+            <div class="content">
+                <h2>Bonjour {user.first_name or user.email},</h2>
+
+                <p>Merci de vous être inscrit sur <strong>Subly Cloud</strong>, votre gestionnaire d'abonnements intelligent !</p>
+
+                <p>Nous sommes ravis de vous accueillir et vous souhaitons la bienvenue dans notre communauté.</p>
+
+                <div class="subscription-summary">
+                    <h3>📋 Récapitulatif de votre abonnement</h3>
+                    <div class="summary-item">
+                        <span class="summary-label">Plan souscrit</span>
+                        <span class="summary-value">{plan_name}</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Type d'abonnement</span>
+                        <span class="summary-value">{period_text.capitalize()}</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Tarif</span>
+                        <span class="summary-value">{price_text}</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Date d'inscription</span>
+                        <span class="summary-value">{datetime.now().strftime('%d/%m/%Y')}</span>
+                    </div>
+                </div>
+
+                <p><strong>Avec votre plan {plan_name}, vous bénéficiez de :</strong></p>
+
+                <div class="feature-list">
+{features_html}
+                </div>
+
+{upgrade_section_html}
+
+                <div style="text-align: center; margin: 30px 0;">
+                    <a href="{url_for('main.dashboard', _external=True)}" class="button" style="color: white;">
+                        🚀 Accéder à mon tableau de bord
+                    </a>
+                </div>
+
+                <p style="color: #6b7280; font-size: 14px; margin-top: 30px;">
+                    <em>Merci de votre confiance ! Nous sommes là pour vous accompagner dans la gestion de vos abonnements.</em>
+                </p>
+            </div>
+
+            <div class="footer">
+                <p><strong>Subly Cloud</strong> - Gestionnaire d'abonnements intelligent</p>
+                <p style="margin-top: 8px;">
+                    <a href="https://subly.cloud">Site web</a> •
+                    <a href="https://subly.cloud/contact">Contact</a> •
+                    <a href="https://subly.cloud/mentions-legales">Mentions légales</a>
+                </p>
+                <p style="margin-top: 15px; font-size: 12px; color: #9ca3af;">
+                    © {datetime.now().year} Subly Cloud. Tous droits réservés.
+                </p>
+            </div>
+        </div>
+    </body>
+    </html>
+    """
+
+    text_body = f"""
+    🎉 Bienvenue sur Subly Cloud !
+
+    Bonjour {user.first_name or user.email},
+
+    Merci de vous être inscrit sur Subly Cloud, votre gestionnaire d'abonnements intelligent !
+
+    Nous sommes ravis de vous accueillir et vous souhaitons la bienvenue dans notre communauté.
+
+    📋 RÉCAPITULATIF DE VOTRE ABONNEMENT
+
+    Plan souscrit : {plan_name}
+    Type d'abonnement : {period_text.capitalize()}
+    Tarif : {price_text}
+    Date d'inscription : {datetime.now().strftime('%d/%m/%Y')}
+
+    AVEC VOTRE PLAN {plan_name.upper()}, VOUS BÉNÉFICIEZ DE :
+
+    {features_text}
+{upgrade_section_text}
+
+    🚀 Accéder à mon tableau de bord : {url_for('main.dashboard', _external=True)}
+
+    Merci de votre confiance ! Nous sommes là pour vous accompagner dans la gestion de vos abonnements.
+
+    ---
+    Subly Cloud - Gestionnaire d'abonnements intelligent
+    Site web : https://subly.cloud
+    Contact : https://subly.cloud/contact
+
+    © {datetime.now().year} Subly Cloud. Tous droits réservés.
+    """
+
+    msg = Message(
+        subject=f'✓ Bienvenue sur Subly Cloud - Plan {plan_name}',
+        sender=os.getenv('MAIL_DEFAULT_SENDER', 'noreply@subly.cloud'),
+        recipients=[user.email],
+        body=text_body,
+        html=html_body
+    )
+
+    try:
+        mail.send(msg)
+        return True
+    except Exception as e:
+        print(f"Erreur lors de l'envoi de l'email de bienvenue : {e}")
+        return False
+
+
+def send_new_subscription_notification(user):
+    """Envoie un email de notification à l'équipe lors d'une nouvelle inscription"""
+
+    # Récupérer les informations du plan
+    plan = user.plan
+    plan_name = plan.name if plan else "Free"
+    is_premium = plan and plan.is_premium()
+
+    # Symbole de devise
+    currency_symbols = {
+        'EUR': '€', 'USD': '$', 'GBP': '£', 'CHF': 'CHF',
+        'CAD': '$', 'AUD': '$', 'JPY': '¥', 'CNY': '¥',
+        'INR': '₹', 'BRL': 'R$', 'MXN': '$', 'ZAR': 'R'
+    }
+    currency_symbol = currency_symbols.get(plan.currency, plan.currency) if plan else '€'
+
+    # Prix formaté
+    price_text = f"{plan.price:.2f} {currency_symbol}" if plan and plan.price > 0 else "Gratuit"
+
+    # Badge du plan
+    plan_badge_color = "#10b981" if is_premium else "#6b7280"
+    plan_badge_bg = "#d1fae5" if is_premium else "#f3f4f6"
+
+    html_body = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <style>
+            body {{
+                font-family: Arial, sans-serif;
+                line-height: 1.6;
+                color: #333;
+                margin: 0;
+                padding: 0;
+                background-color: #f8f9fa;
+            }}
+            .container {{
+                max-width: 600px;
+                margin: 20px auto;
+                background-color: #ffffff;
+                border-radius: 15px;
+                overflow: hidden;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            }}
+            .header {{
+                background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+                color: white;
+                padding: 30px;
+                text-align: center;
+            }}
+            .header h1 {{
+                margin: 0;
+                font-size: 24px;
+                font-weight: bold;
+            }}
+            .header p {{
+                margin: 10px 0 0 0;
+                opacity: 0.95;
+                font-size: 14px;
+            }}
+            .content {{
+                padding: 30px;
+            }}
+            .plan-badge {{
+                display: inline-block;
+                padding: 6px 16px;
+                background: {plan_badge_bg};
+                color: {plan_badge_color};
+                border-radius: 20px;
+                font-weight: bold;
+                font-size: 14px;
+                margin-bottom: 20px;
+            }}
+            .info-grid {{
+                background: #f8f9fa;
+                border-radius: 8px;
+                padding: 20px;
+                margin: 20px 0;
+            }}
+            .info-item {{
+                display: flex;
+                padding: 12px 0;
+                border-bottom: 1px solid #e5e7eb;
+            }}
+            .info-item:last-child {{
+                border-bottom: none;
+            }}
+            .info-label {{
+                font-weight: 600;
+                color: #6b7280;
+                width: 140px;
+                flex-shrink: 0;
+            }}
+            .info-value {{
+                color: #1f2937;
+                flex-grow: 1;
+            }}
+            .footer {{
+                background-color: #f8f9fa;
+                padding: 20px;
+                text-align: center;
+                color: #6b7280;
+                font-size: 12px;
+                border-top: 1px solid #e5e7eb;
+            }}
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <h1>🎉 Nouvelle inscription !</h1>
+                <p>Un nouveau client vient de s'inscrire sur Subly Cloud</p>
+            </div>
+
+            <div class="content">
+                <div style="text-align: center;">
+                    <span class="plan-badge">{'⭐ ' if is_premium else ''}Plan {plan_name}</span>
+                </div>
+
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span class="info-label">Nom complet</span>
+                        <span class="info-value"><strong>{user.first_name or ''} {user.last_name or ''}</strong></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Email</span>
+                        <span class="info-value"><a href="mailto:{user.email}">{user.email}</a></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Plan souscrit</span>
+                        <span class="info-value">{plan_name}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Tarif</span>
+                        <span class="info-value">{price_text}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Pays</span>
+                        <span class="info-value">{user.country or 'Non renseigné'}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Devise par défaut</span>
+                        <span class="info-value">{user.default_currency}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Fuseau horaire</span>
+                        <span class="info-value">{user.timezone or 'Non renseigné'}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Date d'inscription</span>
+                        <span class="info-value">{datetime.now().strftime('%d/%m/%Y à %H:%M')}</span>
+                    </div>
+                </div>
+
+                {'<p style="background: #d1fae5; border-left: 4px solid #10b981; padding: 15px; border-radius: 6px; margin: 20px 0;"><strong>💰 Inscription Premium !</strong><br>Ce client a souscrit à un plan payant.</p>' if is_premium else ''}
+            </div>
+
+            <div class="footer">
+                <p><strong>Subly Cloud</strong> - Notification automatique d'inscription</p>
+                <p style="margin-top: 8px; color: #9ca3af;">© {datetime.now().year} Subly Cloud. Tous droits réservés.</p>
+            </div>
+        </div>
+    </body>
+    </html>
+    """
+
+    text_body = f"""
+    🎉 NOUVELLE INSCRIPTION SUR SUBLY CLOUD
+
+    Un nouveau client vient de s'inscrire !
+
+    {'⭐ INSCRIPTION PREMIUM !' if is_premium else ''}
+
+    INFORMATIONS DU CLIENT
+    ----------------------
+    Nom complet : {user.first_name or ''} {user.last_name or ''}
+    Email : {user.email}
+    Plan souscrit : {plan_name}
+    Tarif : {price_text}
+    Pays : {user.country or 'Non renseigné'}
+    Devise par défaut : {user.default_currency}
+    Fuseau horaire : {user.timezone or 'Non renseigné'}
+    Date d'inscription : {datetime.now().strftime('%d/%m/%Y à %H:%M')}
+
+    {'💰 Ce client a souscrit à un plan payant !' if is_premium else ''}
+
+    ---
+    Subly Cloud - Notification automatique d'inscription
+    © {datetime.now().year} Subly Cloud. Tous droits réservés.
+    """
+
+    msg = Message(
+        subject=f"{'⭐ ' if is_premium else ''}Nouvelle inscription Subly Cloud - {plan_name}",
+        sender=os.getenv('MAIL_DEFAULT_SENDER', 'noreply@subly.cloud'),
+        recipients=['contact@subly.cloud'],
+        reply_to=user.email,
+        body=text_body,
+        html=html_body
+    )
+
+    try:
+        mail.send(msg)
+        return True
+    except Exception as e:
+        print(f"Erreur lors de l'envoi de la notification d'inscription : {e}")
         return False
 
 

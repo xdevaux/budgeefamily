@@ -22,6 +22,7 @@ def create_checkout_session():
         # Récupérer le plan demandé (monthly par défaut, ou yearly)
         data = request.get_json() or {}
         plan_type = data.get('plan', 'monthly')  # 'monthly' ou 'yearly'
+        embedded = data.get('embedded', False)  # Mode embedded ou redirect
 
         # Sélectionner le bon plan
         if plan_type == 'yearly':
@@ -33,23 +34,38 @@ def create_checkout_session():
         if not premium_plan or not premium_plan.stripe_price_id:
             return jsonify({'error': f'Plan {plan_name} non configuré'}), 400
 
-        checkout_session = stripe.checkout.Session.create(
-            customer_email=current_user.email,
-            payment_method_types=['card'],
-            line_items=[{
+        # Configuration commune
+        session_config = {
+            'customer_email': current_user.email,
+            'payment_method_types': ['card'],
+            'line_items': [{
                 'price': premium_plan.stripe_price_id,
                 'quantity': 1,
             }],
-            mode='subscription',
-            success_url=url_for('api.checkout_success', _external=True) + '?session_id={CHECKOUT_SESSION_ID}',
-            cancel_url=url_for('main.pricing', _external=True),
-            metadata={
+            'mode': 'subscription',
+            'metadata': {
                 'user_id': current_user.id,
                 'plan_type': plan_type
             }
-        )
+        }
 
-        return jsonify({'checkout_url': checkout_session.url})
+        # Mode embedded : intégré dans la page
+        if embedded:
+            session_config['ui_mode'] = 'embedded'
+            session_config['return_url'] = url_for('api.checkout_success', _external=True) + '?session_id={CHECKOUT_SESSION_ID}'
+        # Mode redirect : redirection vers Stripe
+        else:
+            session_config['success_url'] = url_for('api.checkout_success', _external=True) + '?session_id={CHECKOUT_SESSION_ID}'
+            session_config['cancel_url'] = url_for('main.pricing', _external=True)
+
+        checkout_session = stripe.checkout.Session.create(**session_config)
+
+        if embedded:
+            # Retourner le client_secret pour le checkout embedded
+            return jsonify({'client_secret': checkout_session.client_secret})
+        else:
+            # Retourner l'URL pour redirection
+            return jsonify({'checkout_url': checkout_session.url})
 
     except Exception as e:
         return jsonify({'error': str(e)}), 400
@@ -66,8 +82,22 @@ def checkout_success():
             session = stripe.checkout.Session.retrieve(session_id)
 
             if session.payment_status == 'paid':
+                # Vérifier si c'est un nouvel utilisateur ou un upgrade
+                was_premium = current_user.plan and current_user.plan.is_premium()
+
+                # Récupérer le type de plan depuis les métadonnées de la session
+                plan_type = session.metadata.get('plan_type', 'monthly')
+                if plan_type == 'yearly':
+                    plan_name = 'Premium Annual'
+                else:
+                    plan_name = 'Premium'
+
                 # Mettre à jour le plan de l'utilisateur
-                premium_plan = Plan.query.filter_by(name='Premium').first()
+                premium_plan = Plan.query.filter_by(name=plan_name).first()
+                if not premium_plan:
+                    # Fallback sur Premium si le plan n'existe pas
+                    premium_plan = Plan.query.filter_by(name='Premium').first()
+
                 current_user.plan_id = premium_plan.id
                 current_user.stripe_customer_id = session.customer
                 current_user.stripe_subscription_id = session.subscription
@@ -76,15 +106,23 @@ def checkout_success():
                 notification = Notification(
                     user_id=current_user.id,
                     type='upgrade',
-                    title='Bienvenue sur le plan Premium !',
-                    message='Votre abonnement Premium a été activé. Vous pouvez maintenant ajouter un nombre illimité d\'abonnements.'
+                    title=f'Bienvenue sur le plan {premium_plan.name} !' if not was_premium else f'Abonnement {premium_plan.name} renouvelé',
+                    message=f'Votre abonnement {premium_plan.name} a été activé. Vous pouvez maintenant ajouter un nombre illimité d\'abonnements.'
                 )
                 db.session.add(notification)
                 db.session.commit()
 
-                # Envoyer l'email de confirmation
-                from app.utils.email import send_plan_upgrade_email
-                send_plan_upgrade_email(current_user, premium_plan.name)
+                # Envoyer les emails appropriés selon le contexte
+                from app.utils.email import send_plan_upgrade_email, send_welcome_email, send_new_subscription_notification
+
+                if not was_premium:
+                    # Nouveau client Premium : envoyer l'email de bienvenue avec récapitulatif
+                    send_welcome_email(current_user)
+                    # Envoyer la notification à l'équipe
+                    send_new_subscription_notification(current_user)
+                else:
+                    # Upgrade d'un client existant : envoyer l'email d'upgrade
+                    send_plan_upgrade_email(current_user, premium_plan.name)
 
                 # Récupérer et envoyer la facture
                 try:
@@ -165,7 +203,22 @@ def handle_subscription_updated(stripe_subscription):
             # Vérifier si c'est un upgrade (l'utilisateur n'était pas Premium avant)
             was_premium = user.plan and user.plan.is_premium()
 
-            premium_plan = Plan.query.filter_by(name='Premium').first()
+            # Déterminer le plan en fonction du price_id de la subscription Stripe
+            stripe_price_id = None
+            if 'items' in stripe_subscription and 'data' in stripe_subscription['items']:
+                items = stripe_subscription['items']['data']
+                if items and len(items) > 0:
+                    stripe_price_id = items[0]['price']['id']
+
+            # Chercher le plan correspondant au price_id
+            premium_plan = None
+            if stripe_price_id:
+                premium_plan = Plan.query.filter_by(stripe_price_id=stripe_price_id).first()
+
+            # Fallback sur Premium si le plan n'est pas trouvé
+            if not premium_plan:
+                premium_plan = Plan.query.filter_by(name='Premium').first()
+
             user.plan_id = premium_plan.id
 
             # Créer une notification uniquement si c'est un nouveau passage à Premium
@@ -173,8 +226,8 @@ def handle_subscription_updated(stripe_subscription):
                 notification = Notification(
                     user_id=user.id,
                     type='upgrade',
-                    title='Bienvenue sur le plan Premium !',
-                    message='Votre abonnement Premium a été activé. Vous pouvez maintenant ajouter un nombre illimité d\'abonnements.'
+                    title=f'Bienvenue sur le plan {premium_plan.name} !',
+                    message=f'Votre abonnement {premium_plan.name} a été activé. Vous pouvez maintenant ajouter un nombre illimité d\'abonnements.'
                 )
                 db.session.add(notification)
 
@@ -182,8 +235,11 @@ def handle_subscription_updated(stripe_subscription):
 
             # Envoyer l'email de confirmation uniquement si c'est un nouveau passage à Premium
             if not was_premium:
-                from app.utils.email import send_plan_upgrade_email
-                send_plan_upgrade_email(user, premium_plan.name)
+                from app.utils.email import send_welcome_email, send_new_subscription_notification
+                # Nouveau client Premium : envoyer l'email de bienvenue avec récapitulatif
+                send_welcome_email(user)
+                # Envoyer la notification à l'équipe
+                send_new_subscription_notification(user)
 
 
 def handle_subscription_deleted(stripe_subscription):
