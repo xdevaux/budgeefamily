@@ -24,6 +24,21 @@
             <div class="card shadow-lg border-0">
                 <div class="card-body p-5">
                     <form method="POST" action="{{ url_for('main.contact') }}" id="contactForm">
+                        <!-- Champ honeypot (piège à robots) - invisible pour les humains -->
+                        <div class="hp-field">
+                            <label for="website">Site web</label>
+                            <input
+                                type="text"
+                                id="website"
+                                name="website"
+                                tabindex="-1"
+                                autocomplete="off"
+                            >
+                        </div>
+
+                        <!-- Timestamp pour détecter les soumissions trop rapides -->
+                        <input type="hidden" name="timestamp" id="timestamp" value="">
+
                         <!-- Nom -->
                         <div class="mb-4">
                             <label for="name" class="form-label fw-semibold">
@@ -158,6 +173,16 @@
 </div>
 
 <style>
+    /* Masquer le champ honeypot de manière invisible pour les robots */
+    .hp-field {
+        position: absolute;
+        left: -9999px;
+        width: 1px;
+        height: 1px;
+        opacity: 0;
+        pointer-events: none;
+    }
+
     .form-control:focus {
         border-color: #6366f1;
         box-shadow: 0 0 0 0.25rem rgba(99, 102, 241, 0.25);
@@ -183,6 +208,11 @@
 </style>
 
 <script>
+    // Initialiser le timestamp au chargement de la page
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('timestamp').value = Date.now();
+    });
+
     // Validation du formulaire
     document.getElementById('contactForm').addEventListener('submit', function(e) {
         const message = document.getElementById('message').value;
@@ -190,6 +220,17 @@
         if (message.length < 10) {
             e.preventDefault();
             alert('Votre message doit contenir au moins 10 caractères.');
+            return false;
+        }
+
+        // Vérifier que le formulaire n'a pas été soumis trop rapidement (protection anti-bot)
+        const timestamp = document.getElementById('timestamp').value;
+        const timeElapsed = Date.now() - parseInt(timestamp);
+
+        // Le formulaire doit être rempli en au moins 3 secondes (humainement impossible de faire moins)
+        if (timeElapsed < 3000) {
+            e.preventDefault();
+            alert('Veuillez prendre le temps de remplir le formulaire correctement.');
             return false;
         }
     });

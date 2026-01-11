@@ -140,6 +140,29 @@ def mentions_legales():
 def contact():
     """Page de contact avec formulaire"""
     if request.method == 'POST':
+        # Protection anti-spam : vérifier le champ honeypot
+        honeypot = request.form.get('website', '').strip()
+        if honeypot:
+            # Un robot a rempli le champ invisible - rejeter silencieusement
+            current_app.logger.warning(f'Tentative de spam détectée (honeypot rempli): {request.remote_addr}')
+            flash('Votre message a été envoyé avec succès ! Nous vous répondrons dans les plus brefs délais.', 'success')
+            return redirect(url_for('main.contact'))
+
+        # Protection anti-spam : vérifier le timestamp (soumission trop rapide)
+        timestamp = request.form.get('timestamp', '0')
+        try:
+            timestamp_ms = int(timestamp)
+            time_elapsed = (datetime.now().timestamp() * 1000) - timestamp_ms
+            if time_elapsed < 3000:  # Moins de 3 secondes
+                current_app.logger.warning(f'Tentative de spam détectée (soumission trop rapide): {request.remote_addr}')
+                flash('Votre message a été envoyé avec succès ! Nous vous répondrons dans les plus brefs délais.', 'success')
+                return redirect(url_for('main.contact'))
+        except (ValueError, TypeError):
+            # Timestamp invalide ou absent
+            current_app.logger.warning(f'Tentative de spam détectée (timestamp invalide): {request.remote_addr}')
+            flash('Votre message a été envoyé avec succès ! Nous vous répondrons dans les plus brefs délais.', 'success')
+            return redirect(url_for('main.contact'))
+
         # Récupérer les données du formulaire
         name = request.form.get('name', '').strip()
         email = request.form.get('email', '').strip()
@@ -218,6 +241,15 @@ Envoyé depuis le formulaire de contact de Subly Cloud
 """
 
             mail.send(msg)
+
+            # Envoyer un email de confirmation au visiteur
+            try:
+                from app.utils.email import send_contact_confirmation_email
+                send_contact_confirmation_email(name, email)
+            except Exception as conf_error:
+                current_app.logger.error(f"Erreur lors de l'envoi de l'email de confirmation: {str(conf_error)}")
+                # Ne pas bloquer le processus si l'email de confirmation échoue
+
             flash('Votre message a été envoyé avec succès ! Nous vous répondrons dans les plus brefs délais.', 'success')
             return redirect(url_for('main.contact'))
 

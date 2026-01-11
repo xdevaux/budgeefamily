@@ -3,6 +3,7 @@ from flask_mail import Message, Mail
 from app import mail
 import os
 import stripe
+from datetime import datetime
 
 def send_verification_email(user):
     """Envoie un email de vérification à l'utilisateur"""
@@ -420,6 +421,244 @@ def send_plan_upgrade_email(user, new_plan_name):
         return True
     except Exception as e:
         print(f"Erreur lors de l'envoi de l'email : {e}")
+        return False
+
+
+def send_contact_confirmation_email(name, email):
+    """Envoie un email de confirmation après l'envoi d'un message via le formulaire de contact"""
+
+    html_body = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <style>
+            body {{
+                font-family: Arial, sans-serif;
+                line-height: 1.6;
+                color: #333;
+                margin: 0;
+                padding: 0;
+                background-color: #f8f9fa;
+            }}
+            .container {{
+                max-width: 600px;
+                margin: 20px auto;
+                background-color: #ffffff;
+                border-radius: 15px;
+                overflow: hidden;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            }}
+            .header {{
+                background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+                color: white;
+                padding: 40px 30px;
+                text-align: center;
+            }}
+            .logo-container {{
+                margin-bottom: 20px;
+            }}
+            .header h1 {{
+                margin: 0;
+                font-size: 28px;
+                font-weight: bold;
+            }}
+            .header p {{
+                margin: 10px 0 0 0;
+                opacity: 0.95;
+                font-size: 16px;
+            }}
+            .content {{
+                padding: 40px 30px;
+            }}
+            .content h2 {{
+                color: #6366f1;
+                font-size: 22px;
+                margin-top: 0;
+                margin-bottom: 20px;
+            }}
+            .info-box {{
+                background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+                border-left: 4px solid #6366f1;
+                padding: 20px;
+                margin: 25px 0;
+                border-radius: 8px;
+            }}
+            .info-box p {{
+                margin: 0;
+                color: #1e40af;
+            }}
+            .info-box strong {{
+                color: #6366f1;
+            }}
+            .feature-list {{
+                margin: 25px 0;
+            }}
+            .feature-item {{
+                padding: 10px 0;
+                border-bottom: 1px solid #e5e7eb;
+            }}
+            .feature-item:last-child {{
+                border-bottom: none;
+            }}
+            .feature-item i {{
+                color: #10b981;
+                margin-right: 10px;
+            }}
+            .button {{
+                display: inline-block;
+                padding: 14px 32px;
+                background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+                color: white;
+                text-decoration: none;
+                border-radius: 8px;
+                margin: 20px 0;
+                font-weight: 600;
+                text-align: center;
+            }}
+            .footer {{
+                background-color: #f8f9fa;
+                padding: 25px;
+                text-align: center;
+                color: #6b7280;
+                font-size: 13px;
+                border-top: 1px solid #e5e7eb;
+            }}
+            .footer a {{
+                color: #6366f1;
+                text-decoration: none;
+            }}
+            .social-links {{
+                margin-top: 15px;
+            }}
+            .social-links a {{
+                display: inline-block;
+                margin: 0 8px;
+                color: #6366f1;
+                font-size: 20px;
+            }}
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <div class="logo-container">
+                    <svg width="60" height="60" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Maison -->
+                        <path d="M 25 8 L 10 20 L 10 40 L 40 40 L 40 20 Z" fill="white" opacity="0.9"/>
+                        <path d="M 25 8 L 10 20 L 10 40 L 40 40 L 40 20 Z" fill="none" stroke="white" stroke-width="1.5"/>
+                        <!-- Toit -->
+                        <path d="M 5 20 L 25 5 L 45 20 L 40 20 L 25 8 L 10 20 Z" fill="white"/>
+                        <!-- Porte -->
+                        <rect x="21" y="30" width="8" height="10" fill="#6366f1" opacity="0.9" rx="1"/>
+                        <!-- Fenêtres -->
+                        <rect x="14" y="24" width="6" height="6" fill="#6366f1" opacity="0.8" rx="1"/>
+                        <rect x="30" y="24" width="6" height="6" fill="#6366f1" opacity="0.8" rx="1"/>
+                        <!-- Symboles -->
+                        <circle cx="38" cy="12" r="6" fill="#10b981" opacity="0.3"/>
+                        <text x="38" y="16" text-anchor="middle" font-size="10" font-weight="bold" fill="white">$</text>
+                        <circle cx="12" cy="12" r="6" fill="#f59e0b" opacity="0.3"/>
+                        <text x="12" y="16" text-anchor="middle" font-size="10" font-weight="bold" fill="white">€</text>
+                    </svg>
+                </div>
+                <h1>Message bien reçu !</h1>
+                <p>Merci de nous avoir contactés</p>
+            </div>
+
+            <div class="content">
+                <h2>Bonjour {name},</h2>
+
+                <p>Nous avons bien reçu votre message et nous vous remercions de l'intérêt que vous portez à <strong>Subly Cloud</strong>.</p>
+
+                <div class="info-box">
+                    <p><strong>✓ Votre demande a été enregistrée</strong></p>
+                    <p style="margin-top: 10px;">Notre équipe reviendra vers vous dans les <strong>24 à 48 heures</strong>.</p>
+                </div>
+
+                <p>En attendant notre réponse, saviez-vous que Subly Cloud vous permet de :</p>
+
+                <div class="feature-list">
+                    <div class="feature-item">
+                        ✓ <strong>Gérer tous vos abonnements</strong> en un seul endroit
+                    </div>
+                    <div class="feature-item">
+                        ✓ <strong>Recevoir des notifications</strong> avant chaque renouvellement
+                    </div>
+                    <div class="feature-item">
+                        ✓ <strong>Visualiser vos dépenses</strong> mensuelles en temps réel
+                    </div>
+                    <div class="feature-item">
+                        ✓ <strong>Organiser par catégories</strong> avec logos personnalisés
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin: 30px 0;">
+                    <a href="https://subly.cloud" class="button" style="color: white;">
+                        🚀 Découvrir Subly Cloud
+                    </a>
+                </div>
+
+                <p style="color: #6b7280; font-size: 14px; margin-top: 30px;">
+                    <em>Cet email confirme la réception de votre message. Vous n'avez aucune action à effectuer.</em>
+                </p>
+            </div>
+
+            <div class="footer">
+                <p><strong>Subly Cloud</strong> - Gestionnaire d'abonnements intelligent</p>
+                <p style="margin-top: 8px;">
+                    <a href="https://subly.cloud">Site web</a> •
+                    <a href="https://subly.cloud/contact">Contact</a> •
+                    <a href="https://subly.cloud/mentions-legales">Mentions légales</a>
+                </p>
+                <p style="margin-top: 15px; font-size: 12px; color: #9ca3af;">
+                    © {datetime.now().year} Subly Cloud. Tous droits réservés.
+                </p>
+            </div>
+        </div>
+    </body>
+    </html>
+    """
+
+    text_body = f"""
+    Message bien reçu !
+
+    Bonjour {name},
+
+    Nous avons bien reçu votre message et nous vous remercions de l'intérêt que vous portez à Subly Cloud.
+
+    ✓ Votre demande a été enregistrée
+    Notre équipe reviendra vers vous dans les 24 à 48 heures.
+
+    En attendant notre réponse, saviez-vous que Subly Cloud vous permet de :
+    ✓ Gérer tous vos abonnements en un seul endroit
+    ✓ Recevoir des notifications avant chaque renouvellement
+    ✓ Visualiser vos dépenses mensuelles en temps réel
+    ✓ Organiser par catégories avec logos personnalisés
+
+    Découvrir Subly Cloud : https://subly.cloud
+
+    Cet email confirme la réception de votre message. Vous n'avez aucune action à effectuer.
+
+    ---
+    Subly Cloud - Gestionnaire d'abonnements intelligent
+    Site web : https://subly.cloud
+    Contact : https://subly.cloud/contact
+
+    © {datetime.now().year} Subly Cloud. Tous droits réservés.
+    """
+
+    msg = Message(
+        subject='✓ Message reçu - Subly Cloud',
+        sender=os.getenv('MAIL_DEFAULT_SENDER', 'noreply@subly.cloud'),
+        recipients=[email],
+        body=text_body,
+        html=html_body
+    )
+
+    try:
+        mail.send(msg)
+        return True
+    except Exception as e:
+        print(f"Erreur lors de l'envoi de l'email de confirmation : {e}")
         return False
 
 
