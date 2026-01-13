@@ -193,14 +193,14 @@ def contact():
             from app import mail
 
             msg = Message(
-                subject=f"[Contact Subly Cloud] {subject or 'Sans objet'}",
+                subject=f"[Contact Budgee Family] {subject or 'Sans objet'}",
                 sender=current_app.config['MAIL_DEFAULT_SENDER'],
-                recipients=['contact@subly.cloud'],
+                recipients=['contact@budgeefamily.com'],
                 reply_to=email
             )
 
             msg.body = f"""
-Nouveau message de contact reçu sur Subly Cloud
+Nouveau message de contact reçu sur Budgee Family
 
 Nom: {name}
 Email: {email}
@@ -210,7 +210,7 @@ Message:
 {message}
 
 ---
-Envoyé depuis le formulaire de contact de Subly Cloud
+Envoyé depuis le formulaire de contact de Budgee Family
 """
 
             msg.html = f"""
@@ -233,7 +233,7 @@ Envoyé depuis le formulaire de contact de Subly Cloud
         </div>
 
         <p style="text-align: center; color: #666; font-size: 12px; margin-top: 20px;">
-            Envoyé depuis le formulaire de contact de Subly Cloud
+            Envoyé depuis le formulaire de contact de Budgee Family
         </p>
     </div>
 </body>

@@ -16,10 +16,10 @@ from openpyxl.utils import get_column_letter
 
 
 def add_pdf_header(elements, title, user):
-    """Ajoute l'en-tête standard avec logo Subly Cloud aux exports PDF"""
+    """Ajoute l'en-tête standard avec logo Budgee Family aux exports PDF"""
     styles = getSampleStyleSheet()
 
-    # Logo/Titre Subly Cloud
+    # Logo/Titre Budgee Family
     logo_style = ParagraphStyle(
         'LogoStyle',
         parent=styles['Normal'],
@@ -28,7 +28,7 @@ def add_pdf_header(elements, title, user):
         fontName='Helvetica-Bold',
         alignment=TA_LEFT
     )
-    logo = Paragraph("SUBLY CLOUD", logo_style)
+    logo = Paragraph("BUDGEE FAMILY", logo_style)
     elements.append(logo)
     elements.append(Spacer(1, 5))
 

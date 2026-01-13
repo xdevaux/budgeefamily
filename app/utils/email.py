@@ -58,12 +58,12 @@ def send_verification_email(user):
     <body>
         <div class="container">
             <div class="header">
-                <h1>Bienvenue sur Subly Cloud !</h1>
+                <h1>Bienvenue sur Budgee Family !</h1>
             </div>
             <div class="content">
                 <p>Bonjour {user.first_name or 'cher utilisateur'},</p>
 
-                <p>Merci de vous être inscrit sur <strong>Subly Cloud</strong>, votre gestionnaire d'abonnements intelligent !</p>
+                <p>Merci de vous être inscrit sur <strong>Budgee Family</strong>, votre gestionnaire d'abonnements intelligent !</p>
 
                 <p>Pour commencer à utiliser toutes nos fonctionnalités, veuillez confirmer votre adresse email en cliquant sur le bouton ci-dessous :</p>
 
@@ -71,12 +71,12 @@ def send_verification_email(user):
                     <a href="{verification_url}" class="button">Confirmer mon adresse email</a>
                 </div>
 
-                <p>Si vous n'avez pas créé de compte sur Subly Cloud, vous pouvez ignorer cet email.</p>
+                <p>Si vous n'avez pas créé de compte sur Budgee Family, vous pouvez ignorer cet email.</p>
 
-                <p>À bientôt,<br>L'équipe Subly Cloud</p>
+                <p>À bientôt,<br>L'équipe Budgee Family</p>
             </div>
             <div class="footer">
-                <p>Cet email a été envoyé par Subly Cloud</p>
+                <p>Cet email a été envoyé par Budgee Family</p>
                 <p>Si le bouton ne fonctionne pas, copiez ce lien dans votre navigateur :<br>
                 {verification_url}</p>
             </div>
@@ -86,24 +86,24 @@ def send_verification_email(user):
     """
 
     text_body = f"""
-    Bienvenue sur Subly Cloud !
+    Bienvenue sur Budgee Family !
 
     Bonjour {user.first_name or 'cher utilisateur'},
 
-    Merci de vous être inscrit sur Subly Cloud, votre gestionnaire d'abonnements intelligent !
+    Merci de vous être inscrit sur Budgee Family, votre gestionnaire d'abonnements intelligent !
 
     Pour commencer à utiliser toutes nos fonctionnalités, veuillez confirmer votre adresse email en cliquant sur ce lien :
     {verification_url}
 
-    Si vous n'avez pas créé de compte sur Subly Cloud, vous pouvez ignorer cet email.
+    Si vous n'avez pas créé de compte sur Budgee Family, vous pouvez ignorer cet email.
 
     À bientôt,
-    L'équipe Subly Cloud
+    L'équipe Budgee Family
     """
 
     msg = Message(
-        subject='Bienvenue sur Subly Cloud - Confirmez votre email',
-        sender=os.getenv('MAIL_DEFAULT_SENDER', 'noreply@subly.cloud'),
+        subject='Bienvenue sur Budgee Family - Confirmez votre email',
+        sender=os.getenv('MAIL_DEFAULT_SENDER', 'noreply@budgeefamily.com'),
         recipients=[user.email],
         body=text_body,
         html=html_body
@@ -207,10 +207,10 @@ def send_plan_downgrade_email(user, old_plan_name):
 
                 <p>Nous espérons vous revoir bientôt parmi nos utilisateurs Premium.</p>
 
-                <p>Cordialement,<br>L'équipe Subly Cloud</p>
+                <p>Cordialement,<br>L'équipe Budgee Family</p>
             </div>
             <div class="footer">
-                <p>Cet email a été envoyé par Subly Cloud</p>
+                <p>Cet email a été envoyé par Budgee Family</p>
                 <p>Si vous n'avez pas effectué cette action, veuillez nous contacter immédiatement.</p>
             </div>
         </div>
@@ -241,12 +241,12 @@ def send_plan_downgrade_email(user, old_plan_name):
     Nous espérons vous revoir bientôt parmi nos utilisateurs Premium.
 
     Cordialement,
-    L'équipe Subly Cloud
+    L'équipe Budgee Family
     """
 
     msg = Message(
-        subject='Confirmation de rétrogradation - Subly Cloud',
-        sender=os.getenv('MAIL_DEFAULT_SENDER', 'noreply@subly.cloud'),
+        subject='Confirmation de rétrogradation - Budgee Family',
+        sender=os.getenv('MAIL_DEFAULT_SENDER', 'noreply@budgeefamily.com'),
         recipients=[user.email],
         body=text_body,
         html=html_body
@@ -442,7 +442,7 @@ def send_plan_upgrade_email(user, new_plan_name):
             <div class="content">
                 <h2>Bonjour {user.first_name or user.email},</h2>
 
-                <p>Félicitations et bienvenue dans la famille <strong>Subly Cloud Premium</strong> !</p>
+                <p>Félicitations et bienvenue dans la famille <strong>Budgee Family Premium</strong> !</p>
 
                 <p>Nous sommes ravis de vous compter parmi nos membres Premium. Votre paiement a été traité avec succès et votre abonnement est désormais actif.</p>
 
@@ -513,14 +513,14 @@ def send_plan_upgrade_email(user, new_plan_name):
             </div>
 
             <div class="footer">
-                <p><strong>Subly Cloud</strong> - Gestionnaire d'abonnements intelligent</p>
+                <p><strong>Budgee Family</strong> - Gestionnaire d'abonnements intelligent</p>
                 <p style="margin-top: 8px;">
-                    <a href="https://subly.cloud">Site web</a> •
-                    <a href="https://subly.cloud/contact">Contact</a> •
-                    <a href="https://subly.cloud/mentions-legales">Mentions légales</a>
+                    <a href="https://budgeefamily.com">Site web</a> •
+                    <a href="https://budgeefamily.com/contact">Contact</a> •
+                    <a href="https://budgeefamily.com/mentions-legales">Mentions légales</a>
                 </p>
                 <p style="margin-top: 15px; font-size: 12px; color: #9ca3af;">
-                    © {datetime.now().year} Subly Cloud. Tous droits réservés.
+                    © {datetime.now().year} Budgee Family. Tous droits réservés.
                 </p>
             </div>
         </div>
@@ -533,7 +533,7 @@ def send_plan_upgrade_email(user, new_plan_name):
 
     Bonjour {user.first_name or user.email},
 
-    Félicitations et bienvenue dans la famille Subly Cloud Premium !
+    Félicitations et bienvenue dans la famille Budgee Family Premium !
 
     Nous sommes ravis de vous compter parmi nos membres Premium. Votre paiement a été traité avec succès et votre abonnement est désormais actif.
 
@@ -561,16 +561,16 @@ def send_plan_upgrade_email(user, new_plan_name):
     Merci de votre confiance ! Nous sommes là pour vous accompagner dans la gestion de vos abonnements.
 
     ---
-    Subly Cloud - Gestionnaire d'abonnements intelligent
-    Site web : https://subly.cloud
-    Contact : https://subly.cloud/contact
+    Budgee Family - Gestionnaire d'abonnements intelligent
+    Site web : https://budgeefamily.com
+    Contact : https://budgeefamily.com/contact
 
-    © {datetime.now().year} Subly Cloud. Tous droits réservés.
+    © {datetime.now().year} Budgee Family. Tous droits réservés.
     """
 
     msg = Message(
-        subject=f'✓ Bienvenue sur {new_plan_name} - Subly Cloud',
-        sender=os.getenv('MAIL_DEFAULT_SENDER', 'noreply@subly.cloud'),
+        subject=f'✓ Bienvenue sur {new_plan_name} - Budgee Family',
+        sender=os.getenv('MAIL_DEFAULT_SENDER', 'noreply@budgeefamily.com'),
         recipients=[user.email],
         body=text_body,
         html=html_body
@@ -727,14 +727,14 @@ def send_contact_confirmation_email(name, email):
             <div class="content">
                 <h2>Bonjour {name},</h2>
 
-                <p>Nous avons bien reçu votre message et nous vous remercions de l'intérêt que vous portez à <strong>Subly Cloud</strong>.</p>
+                <p>Nous avons bien reçu votre message et nous vous remercions de l'intérêt que vous portez à <strong>Budgee Family</strong>.</p>
 
                 <div class="info-box">
                     <p><strong>✓ Votre demande a été enregistrée</strong></p>
                     <p style="margin-top: 10px;">Notre équipe reviendra vers vous dans les <strong>24 à 48 heures</strong>.</p>
                 </div>
 
-                <p>En attendant notre réponse, saviez-vous que Subly Cloud vous permet de :</p>
+                <p>En attendant notre réponse, saviez-vous que Budgee Family vous permet de :</p>
 
                 <div class="feature-list">
                     <div class="feature-item">
@@ -752,8 +752,8 @@ def send_contact_confirmation_email(name, email):
                 </div>
 
                 <div style="text-align: center; margin: 30px 0;">
-                    <a href="https://subly.cloud" class="button" style="color: white;">
-                        🚀 Découvrir Subly Cloud
+                    <a href="https://budgeefamily.com" class="button" style="color: white;">
+                        🚀 Découvrir Budgee Family
                     </a>
                 </div>
 
@@ -763,14 +763,14 @@ def send_contact_confirmation_email(name, email):
             </div>
 
             <div class="footer">
-                <p><strong>Subly Cloud</strong> - Gestionnaire d'abonnements intelligent</p>
+                <p><strong>Budgee Family</strong> - Gestionnaire d'abonnements intelligent</p>
                 <p style="margin-top: 8px;">
-                    <a href="https://subly.cloud">Site web</a> •
-                    <a href="https://subly.cloud/contact">Contact</a> •
-                    <a href="https://subly.cloud/mentions-legales">Mentions légales</a>
+                    <a href="https://budgeefamily.com">Site web</a> •
+                    <a href="https://budgeefamily.com/contact">Contact</a> •
+                    <a href="https://budgeefamily.com/mentions-legales">Mentions légales</a>
                 </p>
                 <p style="margin-top: 15px; font-size: 12px; color: #9ca3af;">
-                    © {datetime.now().year} Subly Cloud. Tous droits réservés.
+                    © {datetime.now().year} Budgee Family. Tous droits réservés.
                 </p>
             </div>
         </div>
@@ -783,32 +783,32 @@ def send_contact_confirmation_email(name, email):
 
     Bonjour {name},
 
-    Nous avons bien reçu votre message et nous vous remercions de l'intérêt que vous portez à Subly Cloud.
+    Nous avons bien reçu votre message et nous vous remercions de l'intérêt que vous portez à Budgee Family.
 
     ✓ Votre demande a été enregistrée
     Notre équipe reviendra vers vous dans les 24 à 48 heures.
 
-    En attendant notre réponse, saviez-vous que Subly Cloud vous permet de :
+    En attendant notre réponse, saviez-vous que Budgee Family vous permet de :
     ✓ Gérer tous vos abonnements en un seul endroit
     ✓ Recevoir des notifications avant chaque renouvellement
     ✓ Visualiser vos dépenses mensuelles en temps réel
     ✓ Organiser par catégories avec logos personnalisés
 
-    Découvrir Subly Cloud : https://subly.cloud
+    Découvrir Budgee Family : https://budgeefamily.com
 
     Cet email confirme la réception de votre message. Vous n'avez aucune action à effectuer.
 
     ---
-    Subly Cloud - Gestionnaire d'abonnements intelligent
-    Site web : https://subly.cloud
-    Contact : https://subly.cloud/contact
+    Budgee Family - Gestionnaire d'abonnements intelligent
+    Site web : https://budgeefamily.com
+    Contact : https://budgeefamily.com/contact
 
-    © {datetime.now().year} Subly Cloud. Tous droits réservés.
+    © {datetime.now().year} Budgee Family. Tous droits réservés.
     """
 
     msg = Message(
-        subject='✓ Message reçu - Subly Cloud',
-        sender=os.getenv('MAIL_DEFAULT_SENDER', 'noreply@subly.cloud'),
+        subject='✓ Message reçu - Budgee Family',
+        sender=os.getenv('MAIL_DEFAULT_SENDER', 'noreply@budgeefamily.com'),
         recipients=[email],
         body=text_body,
         html=html_body
@@ -1091,14 +1091,14 @@ def send_welcome_email(user):
                         <text x="12" y="16" text-anchor="middle" font-size="10" font-weight="bold" fill="white">€</text>
                     </svg>
                 </div>
-                <h1>🎉 Bienvenue sur Subly Cloud !</h1>
+                <h1>🎉 Bienvenue sur Budgee Family !</h1>
                 <p>Votre compte a été créé avec succès</p>
             </div>
 
             <div class="content">
                 <h2>Bonjour {user.first_name or user.email},</h2>
 
-                <p>Merci de vous être inscrit sur <strong>Subly Cloud</strong>, votre gestionnaire d'abonnements intelligent !</p>
+                <p>Merci de vous être inscrit sur <strong>Budgee Family</strong>, votre gestionnaire d'abonnements intelligent !</p>
 
                 <p>Nous sommes ravis de vous accueillir et vous souhaitons la bienvenue dans notre communauté.</p>
 
@@ -1142,14 +1142,14 @@ def send_welcome_email(user):
             </div>
 
             <div class="footer">
-                <p><strong>Subly Cloud</strong> - Gestionnaire d'abonnements intelligent</p>
+                <p><strong>Budgee Family</strong> - Gestionnaire d'abonnements intelligent</p>
                 <p style="margin-top: 8px;">
-                    <a href="https://subly.cloud">Site web</a> •
-                    <a href="https://subly.cloud/contact">Contact</a> •
-                    <a href="https://subly.cloud/mentions-legales">Mentions légales</a>
+                    <a href="https://budgeefamily.com">Site web</a> •
+                    <a href="https://budgeefamily.com/contact">Contact</a> •
+                    <a href="https://budgeefamily.com/mentions-legales">Mentions légales</a>
                 </p>
                 <p style="margin-top: 15px; font-size: 12px; color: #9ca3af;">
-                    © {datetime.now().year} Subly Cloud. Tous droits réservés.
+                    © {datetime.now().year} Budgee Family. Tous droits réservés.
                 </p>
             </div>
         </div>
@@ -1158,11 +1158,11 @@ def send_welcome_email(user):
     """
 
     text_body = f"""
-    🎉 Bienvenue sur Subly Cloud !
+    🎉 Bienvenue sur Budgee Family !
 
     Bonjour {user.first_name or user.email},
 
-    Merci de vous être inscrit sur Subly Cloud, votre gestionnaire d'abonnements intelligent !
+    Merci de vous être inscrit sur Budgee Family, votre gestionnaire d'abonnements intelligent !
 
     Nous sommes ravis de vous accueillir et vous souhaitons la bienvenue dans notre communauté.
 
@@ -1183,16 +1183,16 @@ def send_welcome_email(user):
     Merci de votre confiance ! Nous sommes là pour vous accompagner dans la gestion de vos abonnements.
 
     ---
-    Subly Cloud - Gestionnaire d'abonnements intelligent
-    Site web : https://subly.cloud
-    Contact : https://subly.cloud/contact
+    Budgee Family - Gestionnaire d'abonnements intelligent
+    Site web : https://budgeefamily.com
+    Contact : https://budgeefamily.com/contact
 
-    © {datetime.now().year} Subly Cloud. Tous droits réservés.
+    © {datetime.now().year} Budgee Family. Tous droits réservés.
     """
 
     msg = Message(
-        subject=f'✓ Bienvenue sur Subly Cloud - Plan {plan_name}',
-        sender=os.getenv('MAIL_DEFAULT_SENDER', 'noreply@subly.cloud'),
+        subject=f'✓ Bienvenue sur Budgee Family - Plan {plan_name}',
+        sender=os.getenv('MAIL_DEFAULT_SENDER', 'noreply@budgeefamily.com'),
         recipients=[user.email],
         body=text_body,
         html=html_body
@@ -1317,7 +1317,7 @@ def send_new_subscription_notification(user):
         <div class="container">
             <div class="header">
                 <h1>🎉 Nouvelle inscription !</h1>
-                <p>Un nouveau client vient de s'inscrire sur Subly Cloud</p>
+                <p>Un nouveau client vient de s'inscrire sur Budgee Family</p>
             </div>
 
             <div class="content">
@@ -1364,8 +1364,8 @@ def send_new_subscription_notification(user):
             </div>
 
             <div class="footer">
-                <p><strong>Subly Cloud</strong> - Notification automatique d'inscription</p>
-                <p style="margin-top: 8px; color: #9ca3af;">© {datetime.now().year} Subly Cloud. Tous droits réservés.</p>
+                <p><strong>Budgee Family</strong> - Notification automatique d'inscription</p>
+                <p style="margin-top: 8px; color: #9ca3af;">© {datetime.now().year} Budgee Family. Tous droits réservés.</p>
             </div>
         </div>
     </body>
@@ -1373,7 +1373,7 @@ def send_new_subscription_notification(user):
     """
 
     text_body = f"""
-    🎉 NOUVELLE INSCRIPTION SUR SUBLY CLOUD
+    🎉 NOUVELLE INSCRIPTION SUR BUDGEE FAMILY
 
     Un nouveau client vient de s'inscrire !
 
@@ -1393,14 +1393,14 @@ def send_new_subscription_notification(user):
     {'💰 Ce client a souscrit à un plan payant !' if is_premium else ''}
 
     ---
-    Subly Cloud - Notification automatique d'inscription
-    © {datetime.now().year} Subly Cloud. Tous droits réservés.
+    Budgee Family - Notification automatique d'inscription
+    © {datetime.now().year} Budgee Family. Tous droits réservés.
     """
 
     msg = Message(
-        subject=f"{'⭐ ' if is_premium else ''}Nouvelle inscription Subly Cloud - {plan_name}",
-        sender=os.getenv('MAIL_DEFAULT_SENDER', 'noreply@subly.cloud'),
-        recipients=['contact@subly.cloud'],
+        subject=f"{'⭐ ' if is_premium else ''}Nouvelle inscription Budgee Family - {plan_name}",
+        sender=os.getenv('MAIL_DEFAULT_SENDER', 'noreply@budgeefamily.com'),
+        recipients=['contact@budgeefamily.com'],
         reply_to=user.email,
         body=text_body,
         html=html_body
@@ -1512,12 +1512,12 @@ def send_invoice_email(user, invoice_id):
         <body>
             <div class="container">
                 <div class="header">
-                    <h1>📄 Votre facture Subly Cloud</h1>
+                    <h1>📄 Votre facture Budgee Family</h1>
                 </div>
                 <div class="content">
                     <p>Bonjour {user.first_name or user.email},</p>
 
-                    <p>Merci pour votre paiement ! Voici votre facture pour votre abonnement <strong>Subly Cloud Premium</strong>.</p>
+                    <p>Merci pour votre paiement ! Voici votre facture pour votre abonnement <strong>Budgee Family Premium</strong>.</p>
 
                     <div class="invoice-box">
                         <div class="invoice-detail">
@@ -1550,10 +1550,10 @@ def send_invoice_email(user, invoice_id):
 
                     <p>Merci de votre confiance !</p>
 
-                    <p>Cordialement,<br>L'équipe Subly Cloud</p>
+                    <p>Cordialement,<br>L'équipe Budgee Family</p>
                 </div>
                 <div class="footer">
-                    <p>Cet email a été envoyé par Subly Cloud</p>
+                    <p>Cet email a été envoyé par Budgee Family</p>
                     <p>Si vous avez des questions concernant votre facture, n'hésitez pas à nous contacter.</p>
                 </div>
             </div>
@@ -1562,11 +1562,11 @@ def send_invoice_email(user, invoice_id):
         """
 
         text_body = f"""
-        Votre facture Subly Cloud
+        Votre facture Budgee Family
 
         Bonjour {user.first_name or user.email},
 
-        Merci pour votre paiement ! Voici votre facture pour votre abonnement Subly Cloud Premium.
+        Merci pour votre paiement ! Voici votre facture pour votre abonnement Budgee Family Premium.
 
         Détails de la facture :
         - Numéro : {invoice_number}
@@ -1585,12 +1585,12 @@ def send_invoice_email(user, invoice_id):
         Merci de votre confiance !
 
         Cordialement,
-        L'équipe Subly Cloud
+        L'équipe Budgee Family
         """
 
         msg = Message(
-            subject=f'Votre facture Subly Cloud #{invoice_number}',
-            sender=os.getenv('MAIL_DEFAULT_SENDER', 'noreply@subly.cloud'),
+            subject=f'Votre facture Budgee Family #{invoice_number}',
+            sender=os.getenv('MAIL_DEFAULT_SENDER', 'noreply@budgeefamily.com'),
             recipients=[user.email],
             body=text_body,
             html=html_body

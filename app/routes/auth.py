@@ -259,7 +259,7 @@ def verify_email(token):
     user.verify_email()
     db.session.commit()
 
-    flash('Votre adresse email a été confirmée avec succès ! Vous pouvez maintenant profiter pleinement de Subly Cloud.', 'success')
+    flash('Votre adresse email a été confirmée avec succès ! Vous pouvez maintenant profiter pleinement de Budgee Family.', 'success')
 
     if not current_user.is_authenticated:
         login_user(user)

@@ -1,4 +1,4 @@
-# Configuration Gunicorn pour Subly Cloud
+# Configuration Gunicorn pour Budgee Family
 
 import multiprocessing
 
@@ -15,12 +15,12 @@ worker_class = "sync"
 timeout = 120
 
 # Logs
-accesslog = "/opt/subly.cloud/logs/gunicorn_access.log"
-errorlog = "/opt/subly.cloud/logs/gunicorn_error.log"
+accesslog = "/opt/budgeefamily/logs/gunicorn_access.log"
+errorlog = "/opt/budgeefamily/logs/gunicorn_error.log"
 loglevel = "info"
 
 # Process naming
-proc_name = "subly_cloud"
+proc_name = "budgeefamily"
 
 # Reload on code changes (désactiver en production)
 reload = False
