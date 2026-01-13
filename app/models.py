@@ -414,3 +414,118 @@ class Notification(db.Model):
 
     def __repr__(self):
         return f'<Notification {self.title} - {self.user.email}>'
+
+
+class CreditType(db.Model):
+    __tablename__ = 'credit_types'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)  # NULL = type global
+
+    name = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.Text, nullable=True)
+    icon = db.Column(db.String(50), nullable=True)  # Font Awesome icon class
+    color = db.Column(db.String(7), default='#6c757d')  # Couleur en hex
+
+    is_active = db.Column(db.Boolean, default=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # Relations
+    user = db.relationship('User', backref=db.backref('custom_credit_types', lazy='dynamic', cascade='all, delete-orphan'))
+    credits = db.relationship('Credit', back_populates='credit_type_obj', lazy='dynamic')
+
+    def is_global(self):
+        """Vérifie si c'est un type global (par défaut)"""
+        return self.user_id is None
+
+    def is_custom(self):
+        """Vérifie si c'est un type personnalisé"""
+        return self.user_id is not None
+
+    def __repr__(self):
+        return f'<CreditType {self.name}>'
+
+
+class Credit(db.Model):
+    __tablename__ = 'credits'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    category_id = db.Column(db.Integer, db.ForeignKey('categories.id'), nullable=True)
+    credit_type_id = db.Column(db.Integer, db.ForeignKey('credit_types.id'), nullable=True)
+
+    # Informations du crédit
+    name = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.Text, nullable=True)
+    amount = db.Column(db.Float, nullable=False)
+    currency = db.Column(db.String(3), default='EUR')
+
+    # Type de crédit (legacy - gardé pour compatibilité)
+    credit_type = db.Column(db.String(50), nullable=True)  # 'loan', 'mortgage', 'car_loan', 'personal_loan', 'other'
+
+    # Périodicité
+    billing_cycle = db.Column(db.String(20), nullable=False)  # 'monthly', 'quarterly', 'yearly'
+    start_date = db.Column(db.Date, nullable=False, default=datetime.utcnow)
+    end_date = db.Column(db.Date, nullable=True)  # Date de fin du crédit
+    next_payment_date = db.Column(db.Date, nullable=False)
+
+    # Informations sur le crédit
+    total_amount = db.Column(db.Float, nullable=True)  # Montant total du crédit
+    remaining_amount = db.Column(db.Float, nullable=True)  # Montant restant à rembourser
+    interest_rate = db.Column(db.Float, nullable=True)  # Taux d'intérêt annuel (en %)
+
+    # État
+    is_active = db.Column(db.Boolean, default=True)
+
+    # Dates
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    closed_at = db.Column(db.DateTime, nullable=True)
+
+    # Relations
+    user = db.relationship('User', backref=db.backref('credits', lazy='dynamic', cascade='all, delete-orphan'))
+    category = db.relationship('Category', backref='credits')
+    credit_type_obj = db.relationship('CreditType', back_populates='credits')
+
+    def calculate_next_payment_date(self):
+        """Calcule la prochaine date de paiement"""
+        if self.billing_cycle == 'monthly':
+            return self.start_date + timedelta(days=30)
+        elif self.billing_cycle == 'quarterly':
+            return self.start_date + timedelta(days=90)
+        elif self.billing_cycle == 'yearly':
+            return self.start_date + timedelta(days=365)
+        return self.start_date
+
+    def get_total_paid(self):
+        """Calcule le montant total payé depuis le début"""
+        if not self.is_active and self.closed_at:
+            end_date = self.closed_at
+        else:
+            end_date = datetime.utcnow()
+
+        days_elapsed = (end_date - self.created_at).days
+
+        if self.billing_cycle == 'monthly':
+            cycles = days_elapsed / 30
+        elif self.billing_cycle == 'quarterly':
+            cycles = days_elapsed / 90
+        elif self.billing_cycle == 'yearly':
+            cycles = days_elapsed / 365
+        else:
+            cycles = 0
+
+        return round(cycles * self.amount, 2)
+
+    def get_progress_percentage(self):
+        """Calcule le pourcentage de remboursement"""
+        if not self.total_amount or self.total_amount == 0:
+            return 0
+        if not self.remaining_amount:
+            return 100
+        paid = self.total_amount - self.remaining_amount
+        return round((paid / self.total_amount) * 100, 2)
+
+    def __repr__(self):
+        return f'<Credit {self.name} - {self.user.email}>'

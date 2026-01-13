@@ -1,0 +1,234 @@
+{% extends "base.html" %}
+
+{% block title %}Mes crédits - Budgee Family{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-money-bill-wave"></i> Mes crédits</h2>
+        <div class="d-flex gap-2">
+            <a href="{{ url_for('credits.add') }}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Ajouter un crédit
+            </a>
+        </div>
+    </div>
+
+    <!-- Filtres -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="GET" class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">Statut</label>
+                    <select name="status" class="form-select" onchange="this.form.submit()">
+                        <option value="all" {% if filter_status == 'all' %}selected{% endif %}>Tous</option>
+                        <option value="active" {% if filter_status == 'active' %}selected{% endif %}>Actifs</option>
+                        <option value="inactive" {% if filter_status == 'inactive' %}selected{% endif %}>Clôturés</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Type de crédit</label>
+                    <select name="type" class="form-select" onchange="this.form.submit()">
+                        <option value="">Tous</option>
+                        {% for type in credit_types %}
+                            <option value="{{ type.id }}" {% if filter_type_id == type.id %}selected{% endif %}>
+                                {{ type.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">&nbsp;</label>
+                    <a href="{{ url_for('credits.list') }}" class="btn btn-secondary w-100">
+                        <i class="fas fa-redo"></i> Réinitialiser
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Liste des crédits -->
+    {% if credits.items %}
+        <div class="card">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Nom</th>
+                                <th>Type</th>
+                                <th class="text-end">Mensualité</th>
+                                <th class="text-end">Montant total</th>
+                                <th class="text-end">Restant</th>
+                                <th class="text-center">Progression</th>
+                                <th>Prochain paiement</th>
+                                <th>Statut</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for credit in credits.items %}
+                                <tr>
+                                    <td>
+                                        <strong>{{ credit.name }}</strong>
+                                        {% if credit.description %}
+                                            <br><small class="text-muted">{{ credit.description[:50] }}</small>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if credit.credit_type_obj %}
+                                            <span class="badge" style="background-color: {{ credit.credit_type_obj.color }};">
+                                                <i class="fas {{ credit.credit_type_obj.icon or 'fa-circle' }}"></i>
+                                                {{ credit.credit_type_obj.name }}
+                                            </span>
+                                        {% else %}
+                                            <span class="text-muted">-</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-end"><strong>{{ credit.amount | format_amount }} {{ credit.currency | currency_symbol }}</strong></td>
+                                    <td class="text-end">
+                                        {% if credit.total_amount %}
+                                            {{ credit.total_amount | format_amount }} {{ credit.currency | currency_symbol }}
+                                        {% else %}
+                                            <span class="text-muted">-</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-end">
+                                        {% if credit.remaining_amount %}
+                                            {{ credit.remaining_amount | format_amount }} {{ credit.currency | currency_symbol }}
+                                        {% else %}
+                                            <span class="text-muted">-</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-center">
+                                        {% if credit.total_amount and credit.remaining_amount %}
+                                            <div class="progress" style="height: 20px;">
+                                                <div class="progress-bar" role="progressbar"
+                                                     style="width: {{ credit.get_progress_percentage() }}%;"
+                                                     aria-valuenow="{{ credit.get_progress_percentage() }}"
+                                                     aria-valuemin="0" aria-valuemax="100">
+                                                    {{ credit.get_progress_percentage() }}%
+                                                </div>
+                                            </div>
+                                        {% else %}
+                                            <span class="text-muted">-</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ credit.next_payment_date.strftime('%d/%m/%Y') }}</td>
+                                    <td>
+                                        {% if credit.is_active %}
+                                            <span class="badge bg-success">Actif</span>
+                                        {% else %}
+                                            <span class="badge bg-danger">Clôturé</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-end">
+                                        <div class="btn-group">
+                                            <a href="{{ url_for('credits.detail', credit_id=credit.id) }}"
+                                               class="btn btn-sm btn-outline-primary" title="Voir">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="{{ url_for('credits.edit', credit_id=credit.id) }}"
+                                               class="btn btn-sm btn-outline-warning" title="Modifier">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <form method="POST" action="{{ url_for('credits.toggle', credit_id=credit.id) }}" class="d-inline">
+                                                <button type="submit" class="btn btn-sm btn-outline-info" title="Activer/Clôturer">
+                                                    <i class="fas fa-toggle-{% if credit.is_active %}on{% else %}off{% endif %}"></i>
+                                                </button>
+                                            </form>
+                                            <form method="POST" action="{{ url_for('credits.delete', credit_id=credit.id) }}"
+                                                  onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce crédit ?')" class="d-inline">
+                                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Supprimer">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                        <tfoot class="table-light">
+                            <tr>
+                                <td colspan="2" class="text-end"><strong>Total mensuel :</strong></td>
+                                <td class="text-end">
+                                    <strong>
+                                        {% set total_eur = namespace(value=0) %}
+                                        {% set total_usd = namespace(value=0) %}
+                                        {% set total_gbp = namespace(value=0) %}
+                                        {% for credit in credits.items %}
+                                            {% if credit.is_active %}
+                                                {% if credit.currency == 'EUR' %}
+                                                    {% set total_eur.value = total_eur.value + credit.amount %}
+                                                {% elif credit.currency == 'USD' %}
+                                                    {% set total_usd.value = total_usd.value + credit.amount %}
+                                                {% elif credit.currency == 'GBP' %}
+                                                    {% set total_gbp.value = total_gbp.value + credit.amount %}
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endfor %}
+                                        {% if total_eur.value > 0 %}
+                                            {{ total_eur.value | format_amount }} €
+                                        {% endif %}
+                                        {% if total_usd.value > 0 %}
+                                            {% if total_eur.value > 0 %}<br>{% endif %}
+                                            {{ total_usd.value | format_amount }} $
+                                        {% endif %}
+                                        {% if total_gbp.value > 0 %}
+                                            {% if total_eur.value > 0 or total_usd.value > 0 %}<br>{% endif %}
+                                            {{ total_gbp.value | format_amount }} £
+                                        {% endif %}
+                                        {% if total_eur.value == 0 and total_usd.value == 0 and total_gbp.value == 0 %}
+                                            0,00 €
+                                        {% endif %}
+                                    </strong>
+                                </td>
+                                <td colspan="5"></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        {% if credits.pages > 1 %}
+        <nav class="mt-4">
+            <ul class="pagination justify-content-center">
+                {% if credits.has_prev %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('credits.list', page=credits.prev_num) }}">Précédent</a>
+                    </li>
+                {% endif %}
+
+                {% for page_num in credits.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+                    {% if page_num %}
+                        <li class="page-item {% if page_num == credits.page %}active{% endif %}">
+                            <a class="page-link" href="{{ url_for('credits.list', page=page_num) }}">{{ page_num }}</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if credits.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('credits.list', page=credits.next_num) }}">Suivant</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+    {% else %}
+        <div class="card">
+            <div class="card-body text-center py-5">
+                <i class="fas fa-inbox fa-4x text-muted mb-3"></i>
+                <h4>Aucun crédit</h4>
+                <p class="text-muted">Commencez par ajouter votre premier crédit</p>
+                <a href="{{ url_for('credits.add') }}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Ajouter un crédit
+                </a>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

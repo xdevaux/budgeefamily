@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+
+{% block title %}Types de crédits - Budgee Family{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-tag"></i> Types de crédits</h2>
+        <a href="{{ url_for('credit_types.add') }}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Ajouter un type
+        </a>
+    </div>
+
+    <!-- Types par défaut -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0"><i class="fas fa-globe"></i> Types par défaut</h5>
+        </div>
+        <div class="card-body">
+            {% if global_types %}
+                <div class="row">
+                    {% for type in global_types %}
+                        <div class="col-md-4 mb-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <i class="fas {{ type.icon or 'fa-circle' }}" style="color: {{ type.color }};"></i>
+                                        {{ type.name }}
+                                    </h5>
+                                    {% if type.description %}
+                                        <p class="card-text text-muted small">{{ type.description }}</p>
+                                    {% endif %}
+                                    <span class="badge bg-secondary">Global</span>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-muted mb-0">Aucun type par défaut disponible.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Types personnalisés -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0"><i class="fas fa-user"></i> Mes types personnalisés</h5>
+        </div>
+        <div class="card-body">
+            {% if custom_types %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Nom</th>
+                                <th>Description</th>
+                                <th>Couleur</th>
+                                <th>Statut</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for type in custom_types %}
+                                <tr>
+                                    <td>
+                                        <i class="fas {{ type.icon or 'fa-circle' }}" style="color: {{ type.color }};"></i>
+                                        <strong>{{ type.name }}</strong>
+                                    </td>
+                                    <td>
+                                        {% if type.description %}
+                                            {{ type.description[:100] }}
+                                        {% else %}
+                                            <span class="text-muted">-</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <span class="badge" style="background-color: {{ type.color }};">{{ type.color }}</span>
+                                    </td>
+                                    <td>
+                                        {% if type.is_active %}
+                                            <span class="badge bg-success">Actif</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">Inactif</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-end">
+                                        <div class="btn-group">
+                                            <a href="{{ url_for('credit_types.edit', type_id=type.id) }}"
+                                               class="btn btn-sm btn-outline-warning" title="Modifier">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <form method="POST" action="{{ url_for('credit_types.toggle', type_id=type.id) }}" class="d-inline">
+                                                <button type="submit" class="btn btn-sm btn-outline-info" title="Activer/Désactiver">
+                                                    <i class="fas fa-toggle-{% if type.is_active %}on{% else %}off{% endif %}"></i>
+                                                </button>
+                                            </form>
+                                            <form method="POST" action="{{ url_for('credit_types.delete', type_id=type.id) }}"
+                                                  onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce type de crédit ?')" class="d-inline">
+                                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Supprimer">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-inbox fa-4x text-muted mb-3"></i>
+                    <h4>Aucun type personnalisé</h4>
+                    <p class="text-muted">Créez vos propres types de crédits pour mieux organiser vos finances</p>
+                    <a href="{{ url_for('credit_types.add') }}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Créer mon premier type
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

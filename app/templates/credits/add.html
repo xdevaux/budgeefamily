@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block title %}Ajouter un crédit - Budgee Family{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="fas fa-money-bill-wave"></i> Ajouter un crédit</h2>
+                <a href="{{ url_for('credits.list') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Retour
+                </a>
+            </div>
+
+            <div class="card">
+                <div class="card-body p-4">
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Nom du crédit *</label>
+                            <input type="text" class="form-control" id="name" name="name" required
+                                   placeholder="ex: Prêt immobilier, Crédit auto...">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="credit_type_id" class="form-label">Type de crédit</label>
+                            <select class="form-select" id="credit_type_id" name="credit_type_id">
+                                <option value="">-- Aucun type --</option>
+                                {% for type in credit_types %}
+                                    <option value="{{ type.id }}">
+                                        {{ type.name }}
+                                        {% if type.is_custom() %}(Personnalisé){% endif %}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                            <small class="text-muted">
+                                Vous pouvez créer vos propres types dans
+                                <a href="{{ url_for('credit_types.list') }}" target="_blank">Types de crédits</a>
+                            </small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" name="description" rows="3"
+                                      placeholder="Informations complémentaires sur le crédit"></textarea>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="amount" class="form-label">Mensualité *</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control text-end" id="amount" name="amount"
+                                           step="0.01" min="0" required placeholder="450.00">
+                                    <select class="form-select" id="currency" name="currency" style="max-width: 100px;">
+                                        <option value="EUR" {% if (current_user.default_currency or 'EUR') == 'EUR' %}selected{% endif %}>€ EUR</option>
+                                        <option value="USD" {% if current_user.default_currency == 'USD' %}selected{% endif %}>$ USD</option>
+                                        <option value="GBP" {% if current_user.default_currency == 'GBP' %}selected{% endif %}>£ GBP</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="billing_cycle" class="form-label">Périodicité *</label>
+                                <select class="form-select" id="billing_cycle" name="billing_cycle" required>
+                                    <option value="monthly" selected>Mensuel</option>
+                                    <option value="quarterly">Trimestriel</option>
+                                    <option value="yearly">Annuel</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="total_amount" class="form-label">Montant total du crédit</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control text-end" id="total_amount" name="total_amount"
+                                           step="0.01" min="0" placeholder="150000.00">
+                                    <span class="input-group-text">{{ (current_user.default_currency or 'EUR') | currency_symbol }}</span>
+                                </div>
+                                <small class="text-muted">Montant emprunté au départ</small>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="remaining_amount" class="form-label">Montant restant à rembourser</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control text-end" id="remaining_amount" name="remaining_amount"
+                                           step="0.01" min="0" placeholder="120000.00">
+                                    <span class="input-group-text">{{ (current_user.default_currency or 'EUR') | currency_symbol }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="interest_rate" class="form-label">Taux d'intérêt annuel</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control text-end" id="interest_rate" name="interest_rate"
+                                           step="0.01" min="0" max="100" placeholder="2.5">
+                                    <span class="input-group-text">%</span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="start_date" class="form-label">Date de début *</label>
+                                <input type="date" class="form-control" id="start_date" name="start_date"
+                                       value="{{ now.strftime('%Y-%m-%d') }}" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="end_date" class="form-label">Date de fin prévue</label>
+                            <input type="date" class="form-control" id="end_date" name="end_date">
+                            <small class="text-muted">Date prévue de fin de remboursement</small>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-plus"></i> Ajouter le crédit
+                            </button>
+                            <a href="{{ url_for('credits.list') }}" class="btn btn-outline-secondary">
+                                Annuler
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
