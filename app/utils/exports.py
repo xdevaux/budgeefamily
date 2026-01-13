@@ -82,10 +82,10 @@ def export_upcoming_renewals_excel(renewals, user):
     """Exporte les prochains renouvellements en Excel"""
     wb = create_excel_workbook()
     ws = wb.active
-    ws.title = "Prochains renouvellements"
+    ws.title = "Abonnements"
 
     # En-tête du document
-    ws['A1'] = f"Prochains renouvellements - {user.first_name} {user.last_name or ''}"
+    ws['A1'] = f"Abonnements : Prochains renouvellements - {user.first_name} {user.last_name or ''}"
     ws['A1'].font = Font(size=16, bold=True)
     ws['A2'] = f"Généré le {datetime.now().strftime('%d/%m/%Y à %H:%M')}"
     ws['A2'].font = Font(size=10, italic=True)
@@ -127,7 +127,7 @@ def export_upcoming_renewals_pdf(renewals, user):
     elements = []
 
     # Ajouter l'en-tête avec logo
-    add_pdf_header(elements, "Prochains renouvellements", user)
+    add_pdf_header(elements, "Abonnements : Prochains renouvellements", user)
 
     # Table
     data = [['Date', 'Abonnement', 'Montant', 'Cycle', 'Jours restants']]
@@ -555,6 +555,98 @@ def export_services_pdf(services, user):
         ])
 
     table = Table(data, colWidths=[1.5*inch, 1.3*inch, 2.2*inch, 0.8*inch, 1*inch])
+    table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#4472C4')),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, 0), 9),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 8),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+        ('GRID', (0, 0), (-1, -1), 1, colors.black),
+        ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
+        ('FONTSIZE', (0, 1), (-1, -1), 8),
+    ]))
+
+    elements.append(table)
+    doc.build(elements)
+    buffer.seek(0)
+    return buffer
+
+
+def export_upcoming_credits_excel(credits, user):
+    """Exporte les prochains prélèvements pour les crédits en Excel"""
+    wb = create_excel_workbook()
+    ws = wb.active
+    ws.title = "Crédits"
+
+    # En-tête du document
+    ws['A1'] = f"Crédits : Prochains prélèvements - {user.first_name} {user.last_name or ''}"
+    ws['A1'].font = Font(size=16, bold=True)
+    ws['A2'] = f"Généré le {datetime.now().strftime('%d/%m/%Y à %H:%M')}"
+    ws['A2'].font = Font(size=10, italic=True)
+
+    # En-têtes des colonnes
+    headers = ['Date de paiement', 'Nom du crédit', 'Montant', 'Devise', 'Cycle', 'Montant restant', 'Taux intérêt', 'Jours restants']
+    ws.append([])  # Ligne vide
+    ws.append(headers)
+    style_excel_header(ws, row=4)
+
+    # Données
+    now = datetime.now().date()
+    for credit in credits:
+        days_until = (credit.next_payment_date - now).days
+        ws.append([
+            credit.next_payment_date.strftime('%d/%m/%Y'),
+            credit.name,
+            credit.amount,
+            credit.currency,
+            credit.billing_cycle,
+            credit.remaining_amount if credit.remaining_amount else '-',
+            f"{credit.interest_rate}%" if credit.interest_rate else '-',
+            days_until
+        ])
+
+    # Ajuster la largeur des colonnes
+    for column in range(1, len(headers) + 1):
+        ws.column_dimensions[get_column_letter(column)].width = 18
+
+    # Sauvegarder dans un buffer
+    output = BytesIO()
+    wb.save(output)
+    output.seek(0)
+    return output
+
+
+def export_upcoming_credits_pdf(credits, user):
+    """Exporte les prochains prélèvements pour les crédits en PDF"""
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=landscape(A4))
+    elements = []
+
+    # Ajouter l'en-tête avec logo
+    add_pdf_header(elements, "Crédits : Prochains prélèvements", user)
+
+    # Table
+    data = [['Date paiement', 'Nom du crédit', 'Montant', 'Cycle', 'Restant', 'Taux', 'Jours']]
+    now = datetime.now().date()
+
+    for credit in credits:
+        days_until = (credit.next_payment_date - now).days
+        remaining = f"{credit.remaining_amount:.2f}" if credit.remaining_amount else '-'
+        interest = f"{credit.interest_rate}%" if credit.interest_rate else '-'
+
+        data.append([
+            credit.next_payment_date.strftime('%d/%m/%Y'),
+            credit.name[:25],  # Limiter la longueur
+            f"{credit.amount:.2f} {credit.currency}",
+            credit.billing_cycle,
+            remaining,
+            interest,
+            str(days_until)
+        ])
+
+    table = Table(data, colWidths=[1.2*inch, 2.5*inch, 1.2*inch, 1*inch, 1.2*inch, 0.8*inch, 0.8*inch])
     table.setStyle(TableStyle([
         ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#4472C4')),
         ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),

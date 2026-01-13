@@ -5,14 +5,15 @@ from flask import Blueprint, send_file, flash, redirect, url_for
 from flask_login import login_required, current_user
 from datetime import datetime, timedelta
 from functools import wraps
-from app.models import Subscription, Category, Service
+from app.models import Subscription, Category, Service, Credit
 from app.utils.exports import (
     export_upcoming_renewals_excel, export_upcoming_renewals_pdf,
     export_category_distribution_excel, export_category_distribution_pdf,
     export_monthly_evolution_excel, export_monthly_evolution_pdf,
     export_subscriptions_excel, export_subscriptions_pdf,
     export_categories_excel, export_categories_pdf,
-    export_services_excel, export_services_pdf
+    export_services_excel, export_services_pdf,
+    export_upcoming_credits_excel, export_upcoming_credits_pdf
 )
 
 bp = Blueprint('exports', __name__, url_prefix='/exports')
@@ -48,7 +49,7 @@ def export_upcoming_renewals(format):
             output,
             mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             as_attachment=True,
-            download_name=f'prochains_renouvellements_{datetime.now().strftime("%Y%m%d")}.xlsx'
+            download_name=f'abonnements_prochains_renouvellements_{datetime.now().strftime("%Y%m%d")}.xlsx'
         )
     elif format == 'pdf':
         output = export_upcoming_renewals_pdf(upcoming_renewals, current_user)
@@ -56,7 +57,39 @@ def export_upcoming_renewals(format):
             output,
             mimetype='application/pdf',
             as_attachment=True,
-            download_name=f'prochains_renouvellements_{datetime.now().strftime("%Y%m%d")}.pdf'
+            download_name=f'abonnements_prochains_renouvellements_{datetime.now().strftime("%Y%m%d")}.pdf'
+        )
+    else:
+        flash('Format non supporté', 'danger')
+        return redirect(url_for('main.dashboard'))
+
+
+@bp.route('/dashboard/upcoming-credits/<format>')
+@login_required
+@premium_required
+def export_upcoming_credits(format):
+    """Exporte les prochains prélèvements pour les crédits"""
+    # Récupérer tous les crédits actifs
+    upcoming_credits = Credit.query.filter_by(
+        user_id=current_user.id,
+        is_active=True
+    ).order_by(Credit.next_payment_date).all()
+
+    if format == 'excel':
+        output = export_upcoming_credits_excel(upcoming_credits, current_user)
+        return send_file(
+            output,
+            mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            as_attachment=True,
+            download_name=f'credits_prochains_prelevements_{datetime.now().strftime("%Y%m%d")}.xlsx'
+        )
+    elif format == 'pdf':
+        output = export_upcoming_credits_pdf(upcoming_credits, current_user)
+        return send_file(
+            output,
+            mimetype='application/pdf',
+            as_attachment=True,
+            download_name=f'credits_prochains_prelevements_{datetime.now().strftime("%Y%m%d")}.pdf'
         )
     else:
         flash('Format non supporté', 'danger')

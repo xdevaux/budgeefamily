@@ -1,9 +1,9 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash, current_app
 from flask_login import login_required, current_user
 from app import db
-from app.models import Subscription, Category, Plan, Notification
+from app.models import Subscription, Category, Plan, Notification, Credit
 from datetime import datetime, timedelta
-from sqlalchemy import func
+from sqlalchemy import func, case
 import stripe
 import os
 
@@ -35,15 +35,30 @@ def dashboard():
         Subscription.is_active == True
     ).order_by(Subscription.next_billing_date).all()
 
-    # Répartition par catégorie
+    # Prochains débits pour les crédits - tous les crédits actifs triés par date
+    upcoming_credits = current_user.credits.filter(
+        Credit.is_active == True
+    ).order_by(Credit.next_payment_date).all()
+
+    # Répartition par catégorie (abonnements + crédits)
     category_stats = db.session.query(
         Category.name,
         Category.color,
-        func.count(Subscription.id).label('count'),
-        func.sum(Subscription.amount).label('total')
-    ).join(Subscription).filter(
-        Subscription.user_id == current_user.id,
-        Subscription.is_active == True
+        func.count(Subscription.id).label('subscription_count'),
+        func.sum(Subscription.amount).label('subscription_total'),
+        func.count(Credit.id).label('credit_count'),
+        func.sum(Credit.amount).label('credit_total'),
+        (func.coalesce(func.sum(Subscription.amount), 0) + func.coalesce(func.sum(Credit.amount), 0)).label('total')
+    ).outerjoin(Subscription,
+        (Subscription.category_id == Category.id) &
+        (Subscription.user_id == current_user.id) &
+        (Subscription.is_active == True)
+    ).outerjoin(Credit,
+        (Credit.category_id == Category.id) &
+        (Credit.user_id == current_user.id) &
+        (Credit.is_active == True)
+    ).filter(
+        (Subscription.id != None) | (Credit.id != None)
     ).group_by(Category.id).all()
 
     # Notifications non lues
@@ -53,6 +68,7 @@ def dashboard():
                          active_subscriptions=active_subscriptions,
                          total_monthly_cost=round(total_monthly_cost, 2),
                          upcoming_renewals=upcoming_renewals,
+                         upcoming_credits=upcoming_credits,
                          category_stats=category_stats,
                          unread_notifications=unread_notifications,
                          now=datetime.utcnow())
