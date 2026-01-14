@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+
+{% block title %}Ajouter un employeur - Budgee Family{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="fas fa-building"></i> Ajouter un employeur</h2>
+                <a href="{{ url_for('employers.list') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Retour
+                </a>
+            </div>
+
+            <form method="POST" enctype="multipart/form-data">
+                <div class="row">
+                    <!-- Informations principales -->
+                    <div class="col-lg-6">
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <i class="fas fa-info-circle"></i> Informations de l'entreprise
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label for="name" class="form-label">Nom de l'entreprise *</label>
+                                    <input type="text" class="form-control" id="name" name="name" required
+                                           placeholder="ex: Google, Microsoft, Mon Entreprise...">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="logo" class="form-label">Logo</label>
+                                    <input type="file" class="form-control" id="logo" name="logo" accept="image/*">
+                                    <small class="text-muted">Format recommandé : PNG ou JPG, max 2 Mo</small>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="siret" class="form-label">SIRET</label>
+                                    <input type="text" class="form-control" id="siret" name="siret"
+                                           placeholder="ex: 123 456 789 00012">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="website" class="form-label">Site web</label>
+                                    <input type="url" class="form-control" id="website" name="website"
+                                           placeholder="https://www.example.com">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Coordonnées -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <i class="fas fa-map-marker-alt"></i> Coordonnées
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label for="address" class="form-label">Adresse</label>
+                                    <input type="text" class="form-control" id="address" name="address"
+                                           placeholder="ex: 123 Rue de la Paix">
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <label for="postal_code" class="form-label">Code postal</label>
+                                        <input type="text" class="form-control" id="postal_code" name="postal_code"
+                                               placeholder="75001">
+                                    </div>
+                                    <div class="col-md-8">
+                                        <label for="city" class="form-label">Ville</label>
+                                        <input type="text" class="form-control" id="city" name="city"
+                                               placeholder="Paris">
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="country" class="form-label">Pays</label>
+                                    <input type="text" class="form-control" id="country" name="country"
+                                           placeholder="France" value="France">
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="phone" class="form-label">Téléphone</label>
+                                        <input type="tel" class="form-control" id="phone" name="phone"
+                                               placeholder="+33 1 23 45 67 89">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="email" class="form-label">Email</label>
+                                        <input type="email" class="form-control" id="email" name="email"
+                                               placeholder="contact@example.com">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Informations sur l'emploi -->
+                    <div class="col-lg-6">
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <i class="fas fa-briefcase"></i> Informations sur l'emploi
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label for="job_title" class="form-label">Poste occupé</label>
+                                    <input type="text" class="form-control" id="job_title" name="job_title"
+                                           placeholder="ex: Développeur Full Stack, Chef de projet...">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="contract_type" class="form-label">Type de contrat</label>
+                                    <select class="form-select" id="contract_type" name="contract_type">
+                                        <option value="">-- Sélectionner --</option>
+                                        {% for code, name in contract_types %}
+                                            <option value="{{ code }}">{{ name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="hire_date" class="form-label">Date d'embauche</label>
+                                        <input type="date" class="form-control" id="hire_date" name="hire_date">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="end_date" class="form-label">Date de fin</label>
+                                        <input type="date" class="form-control" id="end_date" name="end_date">
+                                        <small class="text-muted">Laisser vide si encore en poste</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Notes -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <i class="fas fa-sticky-note"></i> Notes
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-0">
+                                    <textarea class="form-control" id="notes" name="notes" rows="5"
+                                              placeholder="Informations complémentaires, notes personnelles..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="fas fa-plus"></i> Ajouter l'employeur
+                    </button>
+                    <a href="{{ url_for('employers.list') }}" class="btn btn-outline-secondary">
+                        Annuler
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

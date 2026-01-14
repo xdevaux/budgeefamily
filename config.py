@@ -38,7 +38,7 @@ class Config:
     FREE_SUBSCRIPTION_LIMIT = 5
 
     # Upload
-    MAX_CONTENT_LENGTH = 5 * 1024 * 1024  # 5MB max pour les logos
+    MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB max pour les documents
     UPLOAD_FOLDER = os.path.join(basedir, 'app/static/uploads')
 
     # Timezone

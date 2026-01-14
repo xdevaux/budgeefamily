@@ -1,0 +1,293 @@
+{% extends "base.html" %}
+
+{% block title %}Mes employeurs - Budgee Family{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-building"></i> Mes employeurs</h2>
+        <div class="d-flex gap-2">
+            <!-- Boutons de basculement vue -->
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-outline-secondary active" id="gridViewBtn" onclick="switchView('grid')">
+                    <i class="fas fa-th"></i>
+                </button>
+                <button type="button" class="btn btn-outline-secondary" id="listViewBtn" onclick="switchView('list')">
+                    <i class="fas fa-list"></i>
+                </button>
+            </div>
+            <a href="{{ url_for('employers.add') }}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Ajouter un employeur
+            </a>
+        </div>
+    </div>
+
+    <!-- Filtres -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="GET" class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Statut</label>
+                    <select name="status" class="form-select" onchange="this.form.submit()">
+                        <option value="all" {% if filter_status == 'all' %}selected{% endif %}>Tous</option>
+                        <option value="active" {% if filter_status == 'active' %}selected{% endif %}>Actifs</option>
+                        <option value="inactive" {% if filter_status == 'inactive' %}selected{% endif %}>Anciens emplois</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">&nbsp;</label>
+                    <a href="{{ url_for('employers.list') }}" class="btn btn-secondary w-100">
+                        <i class="fas fa-redo"></i> Reinitialiser
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Liste des employeurs -->
+    {% if employers.items %}
+        <!-- Vue grille -->
+        <div class="row grid-view">
+            {% for employer in employers.items %}
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100 {% if not employer.is_active %}border-secondary{% endif %}">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                {% if employer.logo_data %}
+                                    <img src="data:{{ employer.logo_mime_type }};base64,{{ employer.logo_data }}"
+                                         alt="{{ employer.name }}"
+                                         class="rounded me-3"
+                                         style="width: 60px; height: 60px; object-fit: contain; background: #f8f9fa; padding: 5px;">
+                                {% else %}
+                                    <div class="rounded me-3 d-flex align-items-center justify-content-center"
+                                         style="width: 60px; height: 60px; background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; font-size: 1.5rem;">
+                                        <i class="fas fa-building"></i>
+                                    </div>
+                                {% endif %}
+                                <div class="flex-grow-1">
+                                    <h5 class="card-title mb-0">{{ employer.name }}</h5>
+                                    {% if employer.job_title %}
+                                        <small class="text-muted">{{ employer.job_title }}</small>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            {% if employer.city %}
+                                <p class="mb-2">
+                                    <i class="fas fa-map-marker-alt text-muted"></i>
+                                    {{ employer.city }}{% if employer.country %}, {{ employer.country }}{% endif %}
+                                </p>
+                            {% endif %}
+
+                            {% if employer.hire_date %}
+                                <p class="mb-2">
+                                    <i class="fas fa-calendar-alt text-muted"></i>
+                                    Depuis le {{ employer.hire_date.strftime('%d/%m/%Y') }}
+                                    {% if employer.end_date %}
+                                        <br><small class="text-muted">Jusqu'au {{ employer.end_date.strftime('%d/%m/%Y') }}</small>
+                                    {% endif %}
+                                </p>
+                            {% endif %}
+
+                            {% if employer.contract_type %}
+                                <span class="badge bg-primary">{{ employer.contract_type|upper }}</span>
+                            {% endif %}
+
+                            {% if not employer.is_active %}
+                                <span class="badge bg-secondary">Termine</span>
+                            {% endif %}
+
+                            <div class="mt-3">
+                                <small class="text-muted">
+                                    <i class="fas fa-file"></i> {{ employer.documents.count() }} document(s)
+                                </small>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <a href="{{ url_for('employers.detail', employer_id=employer.id) }}" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-eye"></i> Voir
+                            </a>
+                            <a href="{{ url_for('employers.edit', employer_id=employer.id) }}" class="btn btn-sm btn-outline-warning">
+                                <i class="fas fa-edit"></i> Modifier
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Vue liste -->
+        <div class="list-view d-none">
+            <div class="card">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Employeur</th>
+                                <th>Poste</th>
+                                <th>Localisation</th>
+                                <th>Contrat</th>
+                                <th>Date d'embauche</th>
+                                <th>Statut</th>
+                                <th>Documents</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for employer in employers.items %}
+                            <tr class="{% if not employer.is_active %}opacity-50{% endif %}">
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="me-2">
+                                            {% if employer.logo_data %}
+                                                <img src="data:{{ employer.logo_mime_type }};base64,{{ employer.logo_data }}"
+                                                     alt="{{ employer.name }}"
+                                                     style="width: 40px; height: 40px; object-fit: contain; background: #f8f9fa; padding: 3px; border-radius: 5px;">
+                                            {% else %}
+                                                <div class="d-flex align-items-center justify-content-center"
+                                                     style="width: 40px; height: 40px; background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; border-radius: 5px;">
+                                                    <i class="fas fa-building"></i>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                        <strong>{{ employer.name }}</strong>
+                                    </div>
+                                </td>
+                                <td>
+                                    {% if employer.job_title %}
+                                        {{ employer.job_title }}
+                                    {% else %}
+                                        <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if employer.city %}
+                                        {{ employer.city }}{% if employer.country %}, {{ employer.country }}{% endif %}
+                                    {% else %}
+                                        <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if employer.contract_type %}
+                                        <span class="badge bg-primary">{{ employer.contract_type|upper }}</span>
+                                    {% else %}
+                                        <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if employer.hire_date %}
+                                        {{ employer.hire_date.strftime('%d/%m/%Y') }}
+                                        {% if employer.end_date %}
+                                            <br><small class="text-muted">au {{ employer.end_date.strftime('%d/%m/%Y') }}</small>
+                                        {% endif %}
+                                    {% else %}
+                                        <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if employer.is_active %}
+                                        <span class="badge bg-success">Actif</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">Termine</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <span class="badge bg-info">{{ employer.documents.count() }}</span>
+                                </td>
+                                <td class="text-end">
+                                    <div class="btn-group">
+                                        <a href="{{ url_for('employers.detail', employer_id=employer.id) }}" class="btn btn-sm btn-outline-primary" title="Voir">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a href="{{ url_for('employers.edit', employer_id=employer.id) }}" class="btn btn-sm btn-outline-warning" title="Modifier">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <form method="POST" action="{{ url_for('employers.delete', employer_id=employer.id) }}"
+                                              onsubmit="return confirm('Etes-vous sur de vouloir supprimer cet employeur ?')" class="d-inline">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Supprimer">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        {% if employers.pages > 1 %}
+        <nav class="mt-4">
+            <ul class="pagination justify-content-center">
+                {% if employers.has_prev %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('employers.list', page=employers.prev_num, status=filter_status) }}">Precedent</a>
+                    </li>
+                {% endif %}
+
+                {% for page_num in employers.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+                    {% if page_num %}
+                        <li class="page-item {% if page_num == employers.page %}active{% endif %}">
+                            <a class="page-link" href="{{ url_for('employers.list', page=page_num, status=filter_status) }}">{{ page_num }}</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if employers.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('employers.list', page=employers.next_num, status=filter_status) }}">Suivant</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+    {% else %}
+        <div class="card">
+            <div class="card-body text-center py-5">
+                <i class="fas fa-building fa-4x text-muted mb-3"></i>
+                <h4>Aucun employeur</h4>
+                <p class="text-muted">Commencez par ajouter votre premier employeur</p>
+                <a href="{{ url_for('employers.add') }}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Ajouter un employeur
+                </a>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<script>
+// Fonction pour basculer entre les vues grille et liste
+function switchView(view) {
+    const gridViews = document.querySelectorAll('.grid-view');
+    const listViews = document.querySelectorAll('.list-view');
+    const gridBtn = document.getElementById('gridViewBtn');
+    const listBtn = document.getElementById('listViewBtn');
+
+    if (view === 'grid') {
+        gridViews.forEach(el => el.classList.remove('d-none'));
+        listViews.forEach(el => el.classList.add('d-none'));
+        gridBtn.classList.add('active');
+        listBtn.classList.remove('active');
+    } else {
+        gridViews.forEach(el => el.classList.add('d-none'));
+        listViews.forEach(el => el.classList.remove('d-none'));
+        gridBtn.classList.remove('active');
+        listBtn.classList.add('active');
+    }
+
+    // Sauvegarder la preference dans localStorage
+    localStorage.setItem('employersView', view);
+}
+
+// Restaurer la vue preferee au chargement de la page
+document.addEventListener('DOMContentLoaded', function() {
+    const savedView = localStorage.getItem('employersView') || 'grid';
+    switchView(savedView);
+});
+</script>
+{% endblock %}

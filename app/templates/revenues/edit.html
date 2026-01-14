@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}Modifier un revenu - Budgee Family{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="fas fa-wallet"></i> Modifier le revenu</h2>
+                <a href="{{ url_for('revenues.list') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Retour
+                </a>
+            </div>
+
+            <div class="card">
+                <div class="card-body p-4">
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Nom du revenu *</label>
+                            <input type="text" class="form-control" id="name" name="name" required
+                                   value="{{ revenue.name }}"
+                                   placeholder="ex: Salaire CDI, Freelance, Loyer perçu...">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="employer_id" class="form-label">Employeur</label>
+                            <select class="form-select" id="employer_id" name="employer_id">
+                                <option value="">-- Aucun employeur --</option>
+                                {% for employer in employers %}
+                                    <option value="{{ employer.id }}" {% if revenue.employer_id == employer.id %}selected{% endif %}>{{ employer.name }}{% if employer.job_title %} ({{ employer.job_title }}){% endif %}</option>
+                                {% endfor %}
+                            </select>
+                            <small class="text-muted">
+                                <a href="{{ url_for('employers.add') }}"><i class="fas fa-plus"></i> Créer un nouvel employeur</a>
+                            </small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="revenue_type" class="form-label">Type de revenu</label>
+                            <select class="form-select" id="revenue_type" name="revenue_type">
+                                <option value="">-- Aucun type --</option>
+                                {% for code, name, icon, color in revenue_types %}
+                                    <option value="{{ code }}" {% if revenue.revenue_type == code %}selected{% endif %}>{{ name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" name="description" rows="3"
+                                      placeholder="Informations complémentaires sur le revenu">{{ revenue.description or '' }}</textarea>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="amount" class="form-label">Montant *</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control text-end" id="amount" name="amount"
+                                           step="0.01" min="0" required value="{{ revenue.amount }}">
+                                    <select class="form-select" id="currency" name="currency" style="max-width: 100px;">
+                                        <option value="EUR" {% if revenue.currency == 'EUR' %}selected{% endif %}>€ EUR</option>
+                                        <option value="USD" {% if revenue.currency == 'USD' %}selected{% endif %}>$ USD</option>
+                                        <option value="GBP" {% if revenue.currency == 'GBP' %}selected{% endif %}>£ GBP</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="billing_cycle" class="form-label">Périodicité *</label>
+                                <select class="form-select" id="billing_cycle" name="billing_cycle" required>
+                                    <option value="monthly" {% if revenue.billing_cycle == 'monthly' %}selected{% endif %}>Mensuel</option>
+                                    <option value="quarterly" {% if revenue.billing_cycle == 'quarterly' %}selected{% endif %}>Trimestriel</option>
+                                    <option value="yearly" {% if revenue.billing_cycle == 'yearly' %}selected{% endif %}>Annuel</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Date de début</label>
+                            <input type="text" class="form-control" value="{{ revenue.start_date.strftime('%d/%m/%Y') }}" disabled>
+                            <small class="text-muted">La date de début ne peut pas être modifiée</small>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-save"></i> Enregistrer les modifications
+                            </button>
+                            <a href="{{ url_for('revenues.list') }}" class="btn btn-outline-secondary">
+                                Annuler
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

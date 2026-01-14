@@ -1,0 +1,450 @@
+{% extends "base.html" %}
+
+{% block title %}{{ employer.name }} - Budgee Family{% endblock %}
+
+{% block extra_css %}
+<style>
+    .document-card {
+        transition: all 0.2s ease;
+        border-left: 4px solid transparent;
+    }
+    .document-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .document-card.contract { border-left-color: #6366f1; }
+    .document-card.payslip { border-left-color: #10b981; }
+    .document-card.certificate { border-left-color: #f59e0b; }
+    .document-card.amendment { border-left-color: #8b5cf6; }
+    .document-card.other { border-left-color: #6c757d; }
+
+    .doc-type-badge {
+        font-size: 0.75rem;
+        padding: 0.35em 0.65em;
+    }
+
+    .year-separator {
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        margin: 1.5rem 0 1rem 0;
+        font-weight: 600;
+    }
+
+    .doc-stats-card {
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .doc-stats-card:hover {
+        transform: scale(1.02);
+    }
+    .doc-stats-card.active {
+        border: 2px solid #6366f1;
+    }
+
+    /* Styles pour la modal de preview */
+    .document-preview-modal .modal-dialog {
+        max-width: 80%;
+        max-height: 90vh;
+        margin: 2rem auto;
+    }
+    .document-preview-modal .modal-content {
+        height: 85vh;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+    .document-preview-modal .modal-header {
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        color: white;
+        border: none;
+        padding: 0.75rem 1rem;
+    }
+    .document-preview-modal .modal-header .btn-close {
+        filter: brightness(0) invert(1);
+        opacity: 0.8;
+    }
+    .document-preview-modal .modal-header .btn-close:hover {
+        opacity: 1;
+    }
+    .document-preview-modal .modal-body {
+        padding: 0;
+        height: calc(100% - 56px);
+        overflow: hidden;
+        background: #f8f9fa;
+    }
+    .document-preview-modal .modal-body iframe,
+    .document-preview-modal .modal-body embed {
+        width: 100%;
+        height: 100%;
+        border: none;
+    }
+    .document-preview-modal .modal-body img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+        display: block;
+        margin: auto;
+    }
+    .preview-image-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        padding: 1rem;
+        background: #2d2d2d;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- En-tete -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-auto">
+                    {% if employer.logo_data %}
+                        <img src="data:{{ employer.logo_mime_type }};base64,{{ employer.logo_data }}"
+                             alt="{{ employer.name }}"
+                             class="rounded"
+                             style="width: 100px; height: 100px; object-fit: contain; background: #f8f9fa; padding: 10px;">
+                    {% else %}
+                        <div class="rounded d-flex align-items-center justify-content-center"
+                             style="width: 100px; height: 100px; background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; font-size: 2.5rem;">
+                            <i class="fas fa-building"></i>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="col">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h2 class="mb-1">{{ employer.name }}</h2>
+                            {% if employer.job_title %}
+                                <p class="text-muted mb-2"><i class="fas fa-briefcase"></i> {{ employer.job_title }}</p>
+                            {% endif %}
+                            <div class="d-flex flex-wrap gap-2">
+                                {% if employer.contract_type %}
+                                    <span class="badge bg-primary">{{ employer.contract_type|upper }}</span>
+                                {% endif %}
+                                {% if employer.is_active %}
+                                    <span class="badge bg-success"><i class="fas fa-check"></i> En poste</span>
+                                {% else %}
+                                    <span class="badge bg-secondary"><i class="fas fa-times"></i> Termine</span>
+                                {% endif %}
+                                {% if employer.hire_date %}
+                                    <span class="badge bg-info">
+                                        <i class="fas fa-calendar"></i> Depuis {{ employer.hire_date.strftime('%d/%m/%Y') }}
+                                    </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <a href="{{ url_for('employers.edit', employer_id=employer.id) }}" class="btn btn-warning">
+                                <i class="fas fa-edit"></i> Modifier
+                            </a>
+                            <a href="{{ url_for('employers.list') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left"></i> Retour
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Colonne informations -->
+        <div class="col-lg-4">
+            <!-- Coordonnees -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-map-marker-alt"></i> Coordonnees
+                </div>
+                <div class="card-body">
+                    {% if employer.address or employer.city %}
+                        <p class="mb-2">
+                            <i class="fas fa-map text-muted"></i>
+                            {% if employer.address %}{{ employer.address }}<br>{% endif %}
+                            {% if employer.postal_code %}{{ employer.postal_code }} {% endif %}{{ employer.city or '' }}
+                            {% if employer.country %}<br>{{ employer.country }}{% endif %}
+                        </p>
+                    {% endif %}
+                    {% if employer.phone %}
+                        <p class="mb-2">
+                            <i class="fas fa-phone text-muted"></i>
+                            <a href="tel:{{ employer.phone }}">{{ employer.phone }}</a>
+                        </p>
+                    {% endif %}
+                    {% if employer.email %}
+                        <p class="mb-2">
+                            <i class="fas fa-envelope text-muted"></i>
+                            <a href="mailto:{{ employer.email }}">{{ employer.email }}</a>
+                        </p>
+                    {% endif %}
+                    {% if employer.website %}
+                        <p class="mb-2">
+                            <i class="fas fa-globe text-muted"></i>
+                            <a href="{{ employer.website }}" target="_blank">{{ employer.website }}</a>
+                        </p>
+                    {% endif %}
+                    {% if employer.siret %}
+                        <p class="mb-0">
+                            <i class="fas fa-building text-muted"></i>
+                            SIRET : {{ employer.siret }}
+                        </p>
+                    {% endif %}
+                    {% if not employer.address and not employer.city and not employer.phone and not employer.email and not employer.website and not employer.siret %}
+                        <p class="text-muted mb-0">Aucune coordonnee renseignee</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Notes -->
+            {% if employer.notes %}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-sticky-note"></i> Notes
+                </div>
+                <div class="card-body">
+                    <p class="mb-0" style="white-space: pre-wrap;">{{ employer.notes }}</p>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Statistiques documents -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-chart-pie"></i> Documents
+                </div>
+                <div class="card-body p-2">
+                    <div class="row g-2">
+                        {% for code, name, icon, color in document_types %}
+                            <div class="col-6">
+                                <a href="{{ url_for('employers.detail', employer_id=employer.id, doc_type=code) }}"
+                                   class="card doc-stats-card text-decoration-none {% if filter_type == code %}active{% endif %}"
+                                   style="border-left: 4px solid {{ color }};">
+                                    <div class="card-body p-2 text-center">
+                                        <i class="fas {{ icon }}" style="color: {{ color }};"></i>
+                                        <div class="fw-bold">{{ doc_counts.get(code, 0) }}</div>
+                                        <small class="text-muted">{{ name }}</small>
+                                    </div>
+                                </a>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Colonne documents -->
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span>
+                        <i class="fas fa-folder-open"></i> Documents
+                        {% if total_size > 0 %}
+                            <span class="badge bg-info ms-2">
+                                <i class="fas fa-hdd"></i>
+                                {% if total_size >= 1073741824 %}
+                                    {{ "%.2f"|format(total_size / 1073741824) }} Go
+                                {% elif total_size >= 1048576 %}
+                                    {{ "%.2f"|format(total_size / 1048576) }} Mo
+                                {% elif total_size >= 1024 %}
+                                    {{ "%.2f"|format(total_size / 1024) }} Ko
+                                {% else %}
+                                    {{ total_size }} octets
+                                {% endif %}
+                            </span>
+                        {% endif %}
+                    </span>
+                    <a href="{{ url_for('employers.add_document', employer_id=employer.id) }}" class="btn btn-sm btn-primary">
+                        <i class="fas fa-plus"></i> Ajouter un document
+                    </a>
+                </div>
+                <div class="card-body">
+                    <!-- Filtres et recherche -->
+                    <form method="GET" class="mb-4">
+                        <div class="row g-2">
+                            <div class="col-md-4">
+                                <select name="doc_type" class="form-select form-select-sm" onchange="this.form.submit()">
+                                    <option value="">Tous les types</option>
+                                    {% for code, name, icon, color in document_types %}
+                                        <option value="{{ code }}" {% if filter_type == code %}selected{% endif %}>{{ name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <select name="year" class="form-select form-select-sm" onchange="this.form.submit()">
+                                    <option value="">Toutes les annees</option>
+                                    {% for y in years %}
+                                        <option value="{{ y }}" {% if filter_year == y %}selected{% endif %}>{{ y }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="input-group input-group-sm">
+                                    <input type="text" class="form-control" name="search" placeholder="Rechercher..."
+                                           value="{{ search or '' }}">
+                                    <button class="btn btn-outline-secondary" type="submit">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-md-1">
+                                <a href="{{ url_for('employers.detail', employer_id=employer.id) }}" class="btn btn-sm btn-outline-secondary w-100">
+                                    <i class="fas fa-redo"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+
+                    {% if documents %}
+                        {% set current_year = namespace(value=None) %}
+                        {% for document in documents %}
+                            {% if document.year and document.year != current_year.value %}
+                                {% set current_year.value = document.year %}
+                                <div class="year-separator">
+                                    <i class="fas fa-calendar-alt"></i> {{ document.year }}
+                                </div>
+                            {% endif %}
+
+                            {% set doc_info = get_document_type_info(document.document_type) %}
+                            <div class="card document-card {{ document.document_type }} mb-2">
+                                <div class="card-body py-2 px-3">
+                                    <div class="d-flex align-items-center">
+                                        <div class="me-3" style="width: 40px; text-align: center;">
+                                            <i class="fas {{ doc_info.icon }} fa-lg" style="color: {{ doc_info.color }};"></i>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <div class="d-flex align-items-center">
+                                                <strong>{{ document.name }}</strong>
+                                                <span class="badge doc-type-badge ms-2" style="background-color: {{ doc_info.color }};">
+                                                    {{ doc_info.name }}
+                                                </span>
+                                                {% if document.month %}
+                                                    <span class="badge bg-light text-dark ms-2">
+                                                        {{ ['', 'Janv.', 'Fev.', 'Mars', 'Avr.', 'Mai', 'Juin', 'Juil.', 'Aout', 'Sept.', 'Oct.', 'Nov.', 'Dec.'][document.month] }} {{ document.year }}
+                                                    </span>
+                                                {% endif %}
+                                            </div>
+                                            {% if document.description %}
+                                                <small class="text-muted">{{ document.description[:80] }}{% if document.description|length > 80 %}...{% endif %}</small>
+                                            {% endif %}
+                                            <div class="mt-1">
+                                                <small class="text-muted">
+                                                    {% if document.file_name %}
+                                                        <i class="fas fa-paperclip"></i> {{ document.file_name }} ({{ document.get_file_size_display() }})
+                                                    {% endif %}
+                                                    {% if document.document_date %}
+                                                        <span class="ms-2"><i class="fas fa-calendar"></i> {{ document.document_date.strftime('%d/%m/%Y') }}</span>
+                                                    {% endif %}
+                                                </small>
+                                            </div>
+                                        </div>
+                                        <div class="btn-group">
+                                            {% if document.file_data %}
+                                                {% if document.file_mime_type and (document.file_mime_type.startswith('application/pdf') or document.file_mime_type.startswith('image/')) %}
+                                                    <button type="button"
+                                                       class="btn btn-sm btn-outline-primary"
+                                                       onclick="openPreviewModal('{{ url_for('employers.view_document', document_id=document.id) }}', '{{ document.name | e }}', '{{ document.file_mime_type }}')"
+                                                       title="Visualiser">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                {% endif %}
+                                                <a href="{{ url_for('employers.download_document', document_id=document.id) }}"
+                                                   class="btn btn-sm btn-outline-success" title="Telecharger">
+                                                    <i class="fas fa-download"></i>
+                                                </a>
+                                            {% endif %}
+                                            <a href="{{ url_for('employers.edit_document', document_id=document.id) }}"
+                                               class="btn btn-sm btn-outline-warning" title="Modifier">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <form method="POST" action="{{ url_for('employers.delete_document', document_id=document.id) }}"
+                                                  onsubmit="return confirm('Supprimer ce document ?')" class="d-inline">
+                                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Supprimer">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-folder-open fa-4x text-muted mb-3"></i>
+                            <h5>Aucun document</h5>
+                            <p class="text-muted">Ajoutez vos contrats, fiches de paie et autres documents</p>
+                            <a href="{{ url_for('employers.add_document', employer_id=employer.id) }}" class="btn btn-primary">
+                                <i class="fas fa-plus"></i> Ajouter un document
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de visualisation de document -->
+<div class="modal fade document-preview-modal" id="documentPreviewModal" tabindex="-1" aria-labelledby="documentPreviewModalLabel" aria-hidden="true" data-bs-backdrop="true" data-bs-keyboard="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="documentPreviewModalLabel">
+                    <i class="fas fa-file-alt me-2"></i>
+                    <span id="previewDocName">Document</span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body" id="documentPreviewContent">
+                <!-- Le contenu sera insere dynamiquement -->
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    function openPreviewModal(docUrl, docName, docType) {
+        const modalElement = document.getElementById('documentPreviewModal');
+        const previewContent = document.getElementById('documentPreviewContent');
+        const previewDocName = document.getElementById('previewDocName');
+
+        // Mettre a jour le titre
+        previewDocName.textContent = docName;
+
+        // Determiner le type de contenu
+        if (docType.startsWith('application/pdf')) {
+            previewContent.innerHTML = '<embed src="' + docUrl + '" type="application/pdf" />';
+        } else if (docType.startsWith('image/')) {
+            previewContent.innerHTML = '<div class="preview-image-container"><img src="' + docUrl + '" alt="' + docName + '" /></div>';
+        } else {
+            previewContent.innerHTML = '<div class="text-center p-5"><i class="fas fa-file fa-4x text-muted mb-3"></i><p>Apercu non disponible pour ce type de fichier</p><a href="' + docUrl + '" target="_blank" class="btn btn-primary">Ouvrir dans un nouvel onglet</a></div>';
+        }
+
+        // Utiliser l'API Bootstrap standard
+        var modal = bootstrap.Modal.getOrCreateInstance(modalElement);
+        modal.show();
+    }
+
+    // Nettoyage quand la modal est fermee
+    document.getElementById('documentPreviewModal').addEventListener('hidden.bs.modal', function() {
+        // Vider le contenu
+        document.getElementById('documentPreviewContent').innerHTML = '';
+
+        // Nettoyage force apres un court delai
+        setTimeout(function() {
+            document.body.classList.remove('modal-open');
+            document.body.style.overflow = '';
+            document.body.style.paddingRight = '';
+            document.querySelectorAll('.modal-backdrop').forEach(function(el) {
+                el.remove();
+            });
+        }, 150);
+    });
+</script>
+{% endblock %}
+{% endblock %}

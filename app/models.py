@@ -529,3 +529,152 @@ class Credit(db.Model):
 
     def __repr__(self):
         return f'<Credit {self.name} - {self.user.email}>'
+
+
+class Employer(db.Model):
+    __tablename__ = 'employers'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+
+    # Informations de l'employeur
+    name = db.Column(db.String(100), nullable=False)
+    logo_data = db.Column(db.Text, nullable=True)  # Logo en base64
+    logo_mime_type = db.Column(db.String(50), nullable=True)
+
+    # Coordonnees
+    address = db.Column(db.String(255), nullable=True)
+    postal_code = db.Column(db.String(20), nullable=True)
+    city = db.Column(db.String(100), nullable=True)
+    country = db.Column(db.String(100), nullable=True)
+    phone = db.Column(db.String(50), nullable=True)
+    email = db.Column(db.String(120), nullable=True)
+    website = db.Column(db.String(255), nullable=True)
+    siret = db.Column(db.String(50), nullable=True)
+
+    # Emploi
+    job_title = db.Column(db.String(100), nullable=True)  # Poste occupe
+    hire_date = db.Column(db.Date, nullable=True)  # Date d'embauche
+    end_date = db.Column(db.Date, nullable=True)  # Date de fin (si termine)
+    contract_type = db.Column(db.String(50), nullable=True)  # CDI, CDD, Freelance, etc.
+
+    # Notes
+    notes = db.Column(db.Text, nullable=True)
+
+    # Etat
+    is_active = db.Column(db.Boolean, default=True)
+
+    # Dates
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # Relations
+    user = db.relationship('User', backref=db.backref('employers', lazy='dynamic', cascade='all, delete-orphan'))
+    revenues = db.relationship('Revenue', back_populates='employer', lazy='dynamic')
+    documents = db.relationship('EmployerDocument', back_populates='employer', lazy='dynamic', cascade='all, delete-orphan')
+
+    def __repr__(self):
+        return f'<Employer {self.name}>'
+
+
+class EmployerDocument(db.Model):
+    __tablename__ = 'employer_documents'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    employer_id = db.Column(db.Integer, db.ForeignKey('employers.id'), nullable=False)
+
+    # Informations du document
+    name = db.Column(db.String(200), nullable=False)
+    description = db.Column(db.Text, nullable=True)
+    document_type = db.Column(db.String(50), nullable=False)  # 'contract', 'payslip', 'certificate', 'other'
+
+    # Fichier
+    file_data = db.Column(db.LargeBinary, nullable=True)  # Fichier stocke en binaire
+    file_name = db.Column(db.String(255), nullable=True)
+    file_mime_type = db.Column(db.String(100), nullable=True)
+    file_size = db.Column(db.Integer, nullable=True)  # Taille en bytes
+
+    # Metadonnees
+    document_date = db.Column(db.Date, nullable=True)  # Date du document (ex: mois de la fiche de paie)
+    year = db.Column(db.Integer, nullable=True)  # Annee pour classement
+    month = db.Column(db.Integer, nullable=True)  # Mois pour classement (fiches de paie)
+
+    # Dates
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # Relations
+    user = db.relationship('User', backref=db.backref('employer_documents', lazy='dynamic', cascade='all, delete-orphan'))
+    employer = db.relationship('Employer', back_populates='documents')
+
+    def get_file_size_display(self):
+        """Retourne la taille du fichier en format lisible"""
+        if not self.file_size:
+            return "0 Ko"
+        if self.file_size < 1024:
+            return f"{self.file_size} o"
+        elif self.file_size < 1024 * 1024:
+            return f"{self.file_size / 1024:.1f} Ko"
+        else:
+            return f"{self.file_size / (1024 * 1024):.1f} Mo"
+
+    def __repr__(self):
+        return f'<EmployerDocument {self.name}>'
+
+
+class Revenue(db.Model):
+    __tablename__ = 'revenues'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    employer_id = db.Column(db.Integer, db.ForeignKey('employers.id'), nullable=True)
+
+    # Informations du revenu
+    name = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.Text, nullable=True)
+    company = db.Column(db.String(100), nullable=True)  # Legacy - garde pour compatibilite
+    amount = db.Column(db.Float, nullable=False)
+    currency = db.Column(db.String(3), default='EUR')
+
+    # Type de revenu
+    revenue_type = db.Column(db.String(50), nullable=True)  # 'salary', 'freelance', 'rental', 'investment', 'other'
+
+    # Periodicite
+    billing_cycle = db.Column(db.String(20), nullable=False)  # 'monthly', 'quarterly', 'yearly'
+    start_date = db.Column(db.Date, nullable=False, default=datetime.utcnow)
+    next_payment_date = db.Column(db.Date, nullable=False)
+
+    # Etat
+    is_active = db.Column(db.Boolean, default=True)
+
+    # Dates
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # Relations
+    user = db.relationship('User', backref=db.backref('revenues', lazy='dynamic', cascade='all, delete-orphan'))
+    employer = db.relationship('Employer', back_populates='revenues')
+
+    def calculate_next_payment_date(self):
+        """Calcule la prochaine date de paiement"""
+        if self.billing_cycle == 'monthly':
+            return self.start_date + timedelta(days=30)
+        elif self.billing_cycle == 'quarterly':
+            return self.start_date + timedelta(days=90)
+        elif self.billing_cycle == 'yearly':
+            return self.start_date + timedelta(days=365)
+        return self.start_date
+
+    def get_monthly_amount(self):
+        """Calcule le montant mensuel equivalent"""
+        if self.billing_cycle == 'monthly':
+            return self.amount
+        elif self.billing_cycle == 'quarterly':
+            return self.amount / 3
+        elif self.billing_cycle == 'yearly':
+            return self.amount / 12
+        return self.amount
+
+    def __repr__(self):
+        return f'<Revenue {self.name} - {self.user.email}>'

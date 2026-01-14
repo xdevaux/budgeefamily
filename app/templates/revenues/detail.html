@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block title %}{{ revenue.name }} - Budgee Family{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="fas fa-wallet"></i> {{ revenue.name }}</h2>
+                <div class="d-flex gap-2">
+                    <a href="{{ url_for('revenues.edit', revenue_id=revenue.id) }}" class="btn btn-warning">
+                        <i class="fas fa-edit"></i> Modifier
+                    </a>
+                    <a href="{{ url_for('revenues.list') }}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left"></i> Retour
+                    </a>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5 class="text-muted mb-3">Informations générales</h5>
+
+                            <p><strong>Nom :</strong> {{ revenue.name }}</p>
+
+                            {% if revenue.employer %}
+                                <p>
+                                    <strong>Employeur :</strong>
+                                    <a href="{{ url_for('employers.detail', employer_id=revenue.employer.id) }}">
+                                        <span class="badge bg-secondary"><i class="fas fa-building"></i> {{ revenue.employer.name }}</span>
+                                    </a>
+                                </p>
+                            {% elif revenue.company %}
+                                <p>
+                                    <strong>Société :</strong>
+                                    <span class="badge bg-secondary"><i class="fas fa-building"></i> {{ revenue.company }}</span>
+                                </p>
+                            {% endif %}
+
+                            {% if revenue.description %}
+                                <p><strong>Description :</strong> {{ revenue.description }}</p>
+                            {% endif %}
+
+                            {% set type_info = get_revenue_type_info(revenue.revenue_type) %}
+                            <p>
+                                <strong>Type :</strong>
+                                {% if revenue.revenue_type %}
+                                    <span class="badge" style="background-color: {{ type_info.color }};">
+                                        <i class="fas {{ type_info.icon }}"></i>
+                                        {{ type_info.name }}
+                                    </span>
+                                {% else %}
+                                    <span class="text-muted">Non défini</span>
+                                {% endif %}
+                            </p>
+
+                            <p>
+                                <strong>Statut :</strong>
+                                {% if revenue.is_active %}
+                                    <span class="badge bg-success">Actif</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">Inactif</span>
+                                {% endif %}
+                            </p>
+                        </div>
+
+                        <div class="col-md-6">
+                            <h5 class="text-muted mb-3">Détails financiers</h5>
+
+                            <p>
+                                <strong>Montant :</strong>
+                                <span class="text-success fs-4">{{ revenue.amount | format_amount }} {{ revenue.currency | currency_symbol }}</span>
+                            </p>
+
+                            <p><strong>Périodicité :</strong> {{ revenue.billing_cycle | translate_cycle }}</p>
+
+                            <p>
+                                <strong>Équivalent mensuel :</strong>
+                                <span class="text-success">{{ revenue.get_monthly_amount() | format_amount }} {{ revenue.currency | currency_symbol }}</span>
+                            </p>
+
+                            <p><strong>Date de début :</strong> {{ revenue.start_date.strftime('%d/%m/%Y') }}</p>
+
+                            <p><strong>Prochain versement :</strong> {{ revenue.next_payment_date.strftime('%d/%m/%Y') }}</p>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <div class="row">
+                        <div class="col-12">
+                            <small class="text-muted">
+                                Créé le {{ revenue.created_at | format_datetime }}
+                                {% if revenue.updated_at and revenue.updated_at != revenue.created_at %}
+                                    | Modifié le {{ revenue.updated_at | format_datetime }}
+                                {% endif %}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h5 class="card-title">Actions</h5>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <form method="POST" action="{{ url_for('revenues.toggle', revenue_id=revenue.id) }}" class="d-inline">
+                            <button type="submit" class="btn btn-{% if revenue.is_active %}warning{% else %}success{% endif %}">
+                                <i class="fas fa-toggle-{% if revenue.is_active %}off{% else %}on{% endif %}"></i>
+                                {% if revenue.is_active %}Désactiver{% else %}Activer{% endif %}
+                            </button>
+                        </form>
+
+                        <form method="POST" action="{{ url_for('revenues.delete', revenue_id=revenue.id) }}"
+                              onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce revenu ?')" class="d-inline">
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-trash"></i> Supprimer
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
