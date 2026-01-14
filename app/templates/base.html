@@ -100,33 +100,6 @@
             background-color: #f9fafb;
         }
 
-        /* Animation pour les symboles monétaires */
-        @keyframes float {
-            0%, 100% {
-                transform: translateY(0px);
-            }
-            50% {
-                transform: translateY(-5px);
-            }
-        }
-
-        @keyframes pulse {
-            0%, 100% {
-                opacity: 0.6;
-            }
-            50% {
-                opacity: 1;
-            }
-        }
-
-        .currency-symbol {
-            animation: float 2s ease-in-out infinite, pulse 2s ease-in-out infinite;
-        }
-
-        .navbar-brand:hover .currency-symbol {
-            animation: float 1s ease-in-out infinite, pulse 1s ease-in-out infinite;
-        }
-
         /* Cookie Consent Banner */
         .cookie-consent {
             position: fixed;
@@ -227,40 +200,10 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm mb-4">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="{{ url_for('main.index') }}" style="gap: 10px;">
-                <!-- Logo SVG personnalisé avec maison et symboles monétaires -->
-                <svg width="45" height="45" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
-                    <!-- Maison -->
-                    <path d="M 25 8 L 10 20 L 10 40 L 40 40 L 40 20 Z" fill="#6366f1" opacity="0.9"/>
-                    <path d="M 25 8 L 10 20 L 10 40 L 40 40 L 40 20 Z" fill="none" stroke="#4f46e5" stroke-width="1.5"/>
-
-                    <!-- Toit -->
-                    <path d="M 5 20 L 25 5 L 45 20 L 40 20 L 25 8 L 10 20 Z" fill="#4f46e5"/>
-
-                    <!-- Porte -->
-                    <rect x="21" y="30" width="8" height="10" fill="#fff" opacity="0.9" rx="1"/>
-
-                    <!-- Fenêtres -->
-                    <rect x="14" y="24" width="6" height="6" fill="#fff" opacity="0.8" rx="1"/>
-                    <rect x="30" y="24" width="6" height="6" fill="#fff" opacity="0.8" rx="1"/>
-
-                    <!-- Symbole Dollar animé (en haut à droite) -->
-                    <g class="currency-symbol">
-                        <circle cx="38" cy="12" r="6" fill="#10b981" opacity="0.2"/>
-                        <text x="38" y="16" text-anchor="middle" font-size="10" font-weight="bold" fill="#10b981">$</text>
-                    </g>
-
-                    <!-- Symbole Euro animé (en haut à gauche) -->
-                    <g class="currency-symbol" style="animation-delay: 0.3s;">
-                        <circle cx="12" cy="12" r="6" fill="#f59e0b" opacity="0.2"/>
-                        <text x="12" y="16" text-anchor="middle" font-size="10" font-weight="bold" fill="#f59e0b">€</text>
-                    </g>
-
-                    <!-- Symbole Livre Sterling animé (en bas à droite) -->
-                    <g class="currency-symbol" style="animation-delay: 0.6s;">
-                        <circle cx="42" cy="38" r="5" fill="#8b5cf6" opacity="0.2"/>
-                        <text x="42" y="41" text-anchor="middle" font-size="8" font-weight="bold" fill="#8b5cf6">£</text>
-                    </g>
-                </svg>
+                <!-- Logo personnalisé -->
+                <img src="{{ url_for('static', filename='uploads/logos/budgee_family_logo_trsp.png') }}"
+                     alt="Budgee Family Logo"
+                     style="height: 45px; width: auto;">
 
                 <span style="font-size: 1.5rem; font-weight: 700; color: #6366f1;">
                     Budgee <span style="font-weight: 400; color: #8b5cf6;">Family</span>

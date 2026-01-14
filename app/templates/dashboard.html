@@ -113,36 +113,17 @@
                     {% if upcoming_renewals %}
                         <div class="list-group list-group-flush" style="max-height: 400px; overflow-y: auto;">
                             {% for sub in upcoming_renewals %}
-                                {% set days_until = (sub.next_billing_date - now.date()).days %}
-                                <div class="list-group-item subscription-item py-2 {% if days_until <= 7 %}border-start border-warning border-3{% endif %}">
+                                <div class="list-group-item subscription-item py-2">
                                     <div class="d-flex align-items-center gap-2">
-                                        <div class="flex-shrink-0" style="width: 100px;">
-                                            <small class="{% if days_until <= 7 %}text-warning fw-bold{% else %}text-muted{% endif %}">
+                                        <div class="flex-shrink-0 d-flex align-items-center" style="width: 100px;">
+                                            <small class="text-muted">
                                                 <i class="fas fa-calendar"></i> {{ sub.next_billing_date.strftime('%d/%m/%Y') }}
                                             </small>
                                         </div>
-                                        <div class="flex-grow-1 text-start" style="min-width: 0;">
-                                            <strong class="text-truncate d-inline-block" style="max-width: 80%;" title="{{ sub.name }}">{{ sub.name }}</strong>
+                                        <div class="flex-grow-1 text-start d-flex align-items-center" style="min-width: 0; gap: 0.5rem;">
+                                            <strong class="text-truncate" style="max-width: 70%;" title="{{ sub.name }}">{{ sub.name }}</strong>{% if sub.plan %} <span class="badge bg-primary text-white" style="padding: 0.15rem 0.4rem; font-size: 0.7rem;">{{ sub.plan.name }}</span>{% endif %}
                                         </div>
-                                        <div class="flex-shrink-0 text-start" style="width: 80px;">
-                                            {% if sub.plan %}
-                                                <span class="badge bg-primary text-white">{{ sub.plan.name }}</span>
-                                            {% else %}
-                                                <span class="badge bg-secondary text-white">-</span>
-                                            {% endif %}
-                                        </div>
-                                        <div class="flex-shrink-0 text-center" style="width: 80px;">
-                                            {% if days_until == 0 %}
-                                                <span class="badge bg-danger">Aujourd'hui</span>
-                                            {% elif days_until == 1 %}
-                                                <span class="badge bg-warning text-dark">Demain</span>
-                                            {% elif days_until > 0 and days_until <= 7 %}
-                                                <span class="badge bg-warning text-dark">{{ days_until }}j</span>
-                                            {% elif days_until < 0 %}
-                                                <span class="badge bg-danger">Retard</span>
-                                            {% endif %}
-                                        </div>
-                                        <div class="flex-shrink-0 text-end" style="width: 150px;">
+                                        <div class="flex-shrink-0 text-end d-flex align-items-center justify-content-end" style="width: 150px;">
                                             <strong class="me-1">{{ sub.amount | format_amount }} {{ sub.currency | currency_symbol }}</strong>
                                             <span class="badge bg-secondary">{{ sub.billing_cycle | translate_cycle }}</span>
                                         </div>
@@ -190,32 +171,20 @@
                     {% if upcoming_credits %}
                         <div class="list-group list-group-flush" style="max-height: 400px; overflow-y: auto;">
                             {% for credit in upcoming_credits %}
-                                {% set days_until = (credit.next_payment_date - now.date()).days %}
-                                <div class="list-group-item subscription-item py-2 {% if days_until <= 7 %}border-start border-warning border-3{% endif %}">
+                                <div class="list-group-item subscription-item py-2">
                                     <div class="d-flex align-items-center gap-2">
-                                        <div class="flex-shrink-0">
-                                            <small class="{% if days_until <= 7 %}text-warning fw-bold{% else %}text-muted{% endif %}">
+                                        <div class="flex-shrink-0 d-flex align-items-center" style="width: 100px;">
+                                            <small class="text-muted">
                                                 <i class="fas fa-calendar"></i> {{ credit.next_payment_date.strftime('%d/%m/%Y') }}
                                             </small>
                                         </div>
-                                        <div class="flex-grow-1 text-start" style="min-width: 0;">
-                                            <strong class="text-truncate d-inline-block" style="max-width: 100%;" title="{{ credit.name }}">{{ credit.name }}</strong>
+                                        <div class="flex-grow-1 text-start d-flex align-items-center" style="min-width: 0; gap: 0.5rem;">
+                                            <strong class="text-truncate" style="max-width: 70%;" title="{{ credit.name }}">{{ credit.name }}</strong>
                                             {% if credit.remaining_amount %}
-                                                <br><small class="text-muted">Restant: {{ credit.remaining_amount | format_amount }} {{ credit.currency | currency_symbol }}</small>
+                                                <span class="badge bg-warning text-dark" style="padding: 0.15rem 0.4rem; font-size: 0.7rem;">Restant: {{ credit.remaining_amount | format_amount }} {{ credit.currency | currency_symbol }}</span>
                                             {% endif %}
                                         </div>
-                                        <div class="flex-shrink-0">
-                                            {% if days_until == 0 %}
-                                                <span class="badge bg-danger">Aujourd'hui</span>
-                                            {% elif days_until == 1 %}
-                                                <span class="badge bg-warning text-dark">Demain</span>
-                                            {% elif days_until > 0 and days_until <= 7 %}
-                                                <span class="badge bg-warning text-dark">{{ days_until }}j</span>
-                                            {% elif days_until < 0 %}
-                                                <span class="badge bg-danger">Retard</span>
-                                            {% endif %}
-                                        </div>
-                                        <div class="flex-shrink-0 text-end">
+                                        <div class="flex-shrink-0 text-end d-flex align-items-center justify-content-end" style="width: 150px;">
                                             <strong class="me-1">{{ credit.amount | format_amount }} {{ credit.currency | currency_symbol }}</strong>
                                             <span class="badge bg-secondary">{{ credit.billing_cycle | translate_cycle }}</span>
                                         </div>
@@ -301,17 +270,29 @@ function formatAmount(amount) {
     parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
     return parts.join(',');
 }
-
 // Graphique par catégorie
 {% if category_stats %}
 const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+
+// Préparer les données avec la catégorie "Crédits"
+let categoryLabels = {{ category_stats|map(attribute='name')|list|tojson }};
+let categoryData = {{ category_stats|map(attribute='total')|list|tojson }};
+let categoryColors = {{ category_stats|map(attribute='color')|list|tojson }};
+
+// Ajouter la catégorie "Crédits" si elle a un montant
+{% if total_credits and total_credits > 0 %}
+categoryLabels.push('Crédits');
+categoryData.push({{ total_credits }});
+categoryColors.push('#ffc107'); // Jaune (Bootstrap warning)
+{% endif %}
+
 new Chart(categoryCtx, {
     type: 'doughnut',
     data: {
-        labels: {{ category_stats|map(attribute='name')|list|tojson }},
+        labels: categoryLabels,
         datasets: [{
-            data: {{ category_stats|map(attribute='total')|list|tojson }},
-            backgroundColor: {{ category_stats|map(attribute='color')|list|tojson }}
+            data: categoryData,
+            backgroundColor: categoryColors
         }]
     },
     options: {

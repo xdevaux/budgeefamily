@@ -61,6 +61,14 @@ def dashboard():
         (Subscription.id != None) | (Credit.id != None)
     ).group_by(Category.id).all()
 
+    # Calculer le total des crédits actifs pour la catégorie "Crédits"
+    total_credits = sum(
+        credit.amount if credit.billing_cycle == 'monthly' else
+        credit.amount / 3 if credit.billing_cycle == 'quarterly' else
+        credit.amount / 12 if credit.billing_cycle == 'yearly' else 0
+        for credit in upcoming_credits
+    )
+
     # Notifications non lues
     unread_notifications = current_user.notifications.filter_by(is_read=False).count()
 
@@ -70,6 +78,7 @@ def dashboard():
                          upcoming_renewals=upcoming_renewals,
                          upcoming_credits=upcoming_credits,
                          category_stats=category_stats,
+                         total_credits=round(total_credits, 2),
                          unread_notifications=unread_notifications,
                          now=datetime.utcnow())
 
