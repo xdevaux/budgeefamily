@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block title %}Ajouter une banque - Budgee Family{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="fas fa-university"></i> Ajouter une banque</h2>
+                <a href="{{ url_for('banks.list') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Retour
+                </a>
+            </div>
+
+            <div class="card">
+                <div class="card-body p-4">
+                    <form method="POST" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Nom de la banque *</label>
+                            <select class="form-select" id="name" name="name" required>
+                                <option value="">-- Sélectionner ou saisir --</option>
+                                {% for bank_name, info in french_banks.items() %}
+                                    <option value="{{ bank_name }}">{{ bank_name }}</option>
+                                {% endfor %}
+                            </select>
+                            <small class="text-muted">Ou saisir un nom personnalisé ci-dessous</small>
+                            <input type="text" class="form-control mt-2" id="name_custom" placeholder="Nom personnalisé (optionnel)">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="logo" class="form-label">Logo de la banque</label>
+                            <input type="file" class="form-control" id="logo" name="logo"
+                                   accept="image/png,image/jpeg,image/jpg,image/gif">
+                            <small class="text-muted">Format: PNG, JPG, GIF (max 2 Mo)</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="bic" class="form-label">Code BIC/SWIFT</label>
+                            <input type="text" class="form-control" id="bic" name="bic"
+                                   placeholder="ex: AGRIFRPP" maxlength="11">
+                            <small class="text-muted">Code d'identification bancaire international</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="address" class="form-label">Adresse</label>
+                            <textarea class="form-control" id="address" name="address" rows="3"
+                                      placeholder="Adresse complète de l'agence"></textarea>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="phone" class="form-label">Téléphone</label>
+                                <input type="tel" class="form-control" id="phone" name="phone"
+                                       placeholder="ex: 01 23 45 67 89">
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email" name="email"
+                                       placeholder="contact@banque.fr">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="website" class="form-label">Site web</label>
+                            <input type="url" class="form-control" id="website" name="website"
+                                   placeholder="https://www.banque.fr">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="notes" class="form-label">Notes</label>
+                            <textarea class="form-control" id="notes" name="notes" rows="3"
+                                      placeholder="Informations complémentaires"></textarea>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-plus"></i> Ajouter la banque
+                            </button>
+                            <a href="{{ url_for('banks.list') }}" class="btn btn-outline-secondary">
+                                Annuler
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    // Gestion du nom personnalisé
+    const nameSelect = document.getElementById('name');
+    const nameCustom = document.getElementById('name_custom');
+
+    nameCustom.addEventListener('input', function() {
+        if (this.value.trim()) {
+            nameSelect.value = '';
+            nameSelect.required = false;
+        } else {
+            nameSelect.required = true;
+        }
+    });
+
+    // Utiliser le nom personnalisé si rempli
+    document.querySelector('form').addEventListener('submit', function(e) {
+        if (nameCustom.value.trim()) {
+            nameSelect.value = nameCustom.value.trim();
+        }
+    });
+</script>
+{% endblock %}
+{% endblock %}

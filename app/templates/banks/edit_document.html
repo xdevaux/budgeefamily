@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}Modifier {{ document.name }} - Budgee Family{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2><i class="fas fa-file-edit"></i> Modifier le document</h2>
+                    <p class="text-muted mb-0">{{ bank.name }}</p>
+                </div>
+                <a href="{{ url_for('banks.detail', bank_id=bank.id) }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Retour
+                </a>
+            </div>
+
+            <div class="card">
+                <div class="card-body p-4">
+                    <form method="POST" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="document_type" class="form-label">Type de document *</label>
+                            <select class="form-select" id="document_type" name="document_type" required>
+                                <option value="">-- Sélectionner --</option>
+                                {% for code, name, icon, color in document_types %}
+                                    <option value="{{ code }}" {% if document.document_type == code %}selected{% endif %}>{{ name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Nom du document *</label>
+                            <input type="text" class="form-control" id="name" name="name" required
+                                   value="{{ document.name }}">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" name="description" rows="2">{{ document.description or '' }}</textarea>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label for="document_date" class="form-label">Date du document</label>
+                                <input type="date" class="form-control" id="document_date" name="document_date"
+                                       value="{{ document.document_date.strftime('%Y-%m-%d') if document.document_date else '' }}">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="year" class="form-label">Année</label>
+                                <select class="form-select" id="year" name="year">
+                                    <option value="">-- Année --</option>
+                                    {% for y in years %}
+                                        <option value="{{ y }}" {% if document.year == y %}selected{% endif %}>{{ y }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="month" class="form-label">Mois</label>
+                                <select class="form-select" id="month" name="month">
+                                    <option value="">-- Mois --</option>
+                                    {% for num, name in months %}
+                                        <option value="{{ num }}" {% if document.month == num %}selected{% endif %}>{{ name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="file" class="form-label">Fichier</label>
+                            {% if document.file_name %}
+                                <div class="alert alert-info mb-2">
+                                    <i class="fas fa-paperclip"></i> Fichier actuel : <strong>{{ document.file_name }}</strong>
+                                    {% if document.file_size %}
+                                        ({% if document.file_size < 1024 %}
+                                            {{ document.file_size }} B
+                                        {% elif document.file_size < 1048576 %}
+                                            {{ "%.2f"|format(document.file_size / 1024) }} KB
+                                        {% else %}
+                                            {{ "%.2f"|format(document.file_size / 1048576) }} MB
+                                        {% endif %})
+                                    {% endif %}
+                                    <a href="{{ url_for('banks.download_document', document_id=document.id) }}" class="ms-2">
+                                        <i class="fas fa-download"></i> Télécharger
+                                    </a>
+                                </div>
+                            {% endif %}
+                            <input type="file" class="form-control" id="file" name="file"
+                                   accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+                            <small class="text-muted">Formats acceptés : PDF, Word, Images (taille max : 16 Mo) - Laisser vide pour garder le fichier actuel</small>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-save"></i> Enregistrer les modifications
+                            </button>
+                            <a href="{{ url_for('banks.detail', bank_id=bank.id) }}" class="btn btn-outline-secondary">
+                                Annuler
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block title %}Ajouter un document - {{ credit.name }} - Budgee Family{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2><i class="fas fa-file-upload"></i> Ajouter un document</h2>
+                    <p class="text-muted mb-0">Pour {{ credit.name }}</p>
+                </div>
+                <a href="{{ url_for('credits.detail', credit_id=credit.id) }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Retour
+                </a>
+            </div>
+
+            <div class="card">
+                <div class="card-body p-4">
+                    <form method="POST" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="document_type" class="form-label">Type de document *</label>
+                            <select class="form-select" id="document_type" name="document_type" required>
+                                <option value="">-- Sélectionner --</option>
+                                {% for code, name, icon, color in document_types %}
+                                    <option value="{{ code }}" data-icon="{{ icon }}" data-color="{{ color }}">{{ name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Nom du document *</label>
+                            <input type="text" class="form-control" id="name" name="name" required
+                                   placeholder="ex: Contrat de prêt, Relevé Janvier 2024...">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" name="description" rows="2"
+                                      placeholder="Informations complémentaires..."></textarea>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label for="document_date" class="form-label">Date du document</label>
+                                <input type="date" class="form-control" id="document_date" name="document_date">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="year" class="form-label">Année</label>
+                                <select class="form-select" id="year" name="year">
+                                    <option value="">-- Année --</option>
+                                    {% for y in years %}
+                                        <option value="{{ y }}">{{ y }}</option>
+                                    {% endfor %}
+                                </select>
+                                <small class="text-muted">Pour le classement</small>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="month" class="form-label">Mois</label>
+                                <select class="form-select" id="month" name="month">
+                                    <option value="">-- Mois --</option>
+                                    {% for num, name in months %}
+                                        <option value="{{ num }}" data-name="{{ name }}">{{ name }}</option>
+                                    {% endfor %}
+                                </select>
+                                <small class="text-muted">Pour les relevés mensuels</small>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="file" class="form-label">Fichier</label>
+                            <input type="file" class="form-control" id="file" name="file"
+                                   accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+                            <small class="text-muted">Formats acceptés : PDF, Word, Images (taille max : 16 Mo)</small>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-plus"></i> Ajouter le document
+                            </button>
+                            <a href="{{ url_for('credits.detail', credit_id=credit.id) }}" class="btn btn-outline-secondary">
+                                Annuler
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    const documentDate = document.getElementById('document_date');
+    const yearSelect = document.getElementById('year');
+    const monthSelect = document.getElementById('month');
+
+    // Auto-remplir année et mois quand on change la date
+    documentDate.addEventListener('change', function() {
+        const date = new Date(this.value);
+        if (this.value) {
+            yearSelect.value = date.getFullYear();
+            monthSelect.value = date.getMonth() + 1;
+        }
+    });
+</script>
+{% endblock %}
+{% endblock %}

@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}{{ credit.name }} - Budgee Family{% endblock %}
+{% block title %}{{ bank.name }} - Budgee Family{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -12,10 +12,9 @@
         transform: translateY(-2px);
         box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
-    .document-card.contract { border-left-color: #6366f1; }
-    .document-card.statement { border-left-color: #10b981; }
-    .document-card.insurance { border-left-color: #f59e0b; }
-    .document-card.amendment { border-left-color: #8b5cf6; }
+    .document-card.rib { border-left-color: #6366f1; }
+    .document-card.contract { border-left-color: #10b981; }
+    .document-card.statement { border-left-color: #f59e0b; }
     .document-card.correspondence { border-left-color: #06b6d4; }
     .document-card.other { border-left-color: #6c757d; }
 
@@ -34,172 +33,119 @@
 
 {% block content %}
 <div class="container py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2><i class="fas fa-money-bill-wave"></i> {{ credit.name }}</h2>
-        <div class="btn-group">
-            <a href="{{ url_for('credits.edit', credit_id=credit.id) }}" class="btn btn-warning">
-                <i class="fas fa-edit"></i> Modifier
-            </a>
-            <a href="{{ url_for('credits.list') }}" class="btn btn-outline-secondary">
-                <i class="fas fa-arrow-left"></i> Retour
-            </a>
-        </div>
-    </div>
-
-    <!-- Informations principales -->
-    <div class="row mb-4">
-        <div class="col-md-4">
-            <div class="card text-center">
-                <div class="card-body">
-                    <h6 class="text-muted">Mensualité</h6>
-                    <h2 class="mb-0">{{ credit.amount | format_amount }} {{ credit.currency | currency_symbol }}</h2>
-                    <small class="text-muted">{{ credit.billing_cycle | translate_cycle }}</small>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-4">
-            <div class="card text-center">
-                <div class="card-body">
-                    <h6 class="text-muted">Montant total</h6>
-                    <h2 class="mb-0">
-                        {% if credit.total_amount %}
-                            {{ credit.total_amount | format_amount }} {{ credit.currency | currency_symbol }}
-                        {% else %}
-                            <span class="text-muted">-</span>
-                        {% endif %}
-                    </h2>
-                    <small class="text-muted">Emprunté au départ</small>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-4">
-            <div class="card text-center">
-                <div class="card-body">
-                    <h6 class="text-muted">Montant restant</h6>
-                    <h2 class="mb-0">
-                        {% if credit.remaining_amount %}
-                            {{ credit.remaining_amount | format_amount }} {{ credit.currency | currency_symbol }}
-                        {% else %}
-                            <span class="text-muted">-</span>
-                        {% endif %}
-                    </h2>
-                    <small class="text-muted">À rembourser</small>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Progression du remboursement -->
-    {% if credit.total_amount and credit.remaining_amount %}
+    <!-- En-tête -->
     <div class="card mb-4">
-        <div class="card-header">
-            <h5 class="mb-0"><i class="fas fa-chart-line"></i> Progression du remboursement</h5>
-        </div>
         <div class="card-body">
-            <div class="progress mb-3" style="height: 30px;">
-                <div class="progress-bar bg-success" role="progressbar"
-                     style="width: {{ credit.get_progress_percentage() }}%;"
-                     aria-valuenow="{{ credit.get_progress_percentage() }}"
-                     aria-valuemin="0" aria-valuemax="100">
-                    {{ credit.get_progress_percentage() }}%
+            <div class="row align-items-center">
+                <div class="col-auto">
+                    {% if bank.logo_data %}
+                        <img src="data:{{ bank.logo_mime_type }};base64,{{ bank.logo_data }}"
+                             alt="{{ bank.name }}"
+                             class="rounded"
+                             style="width: 100px; height: 100px; object-fit: contain; background: #f8f9fa; padding: 10px;">
+                    {% else %}
+                        <div class="rounded d-flex align-items-center justify-content-center"
+                             style="width: 100px; height: 100px; background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; font-size: 2.5rem;">
+                            <i class="fas fa-university"></i>
+                        </div>
+                    {% endif %}
                 </div>
-            </div>
-            <div class="row text-center">
                 <div class="col">
-                    <strong>Payé :</strong>
-                    {{ (credit.total_amount - credit.remaining_amount) | format_amount }} {{ credit.currency | currency_symbol }}
-                </div>
-                <div class="col">
-                    <strong>Restant :</strong>
-                    {{ credit.remaining_amount | format_amount }} {{ credit.currency | currency_symbol }}
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h2 class="mb-1">{{ bank.name }}</h2>
+                            <div class="d-flex flex-wrap gap-2">
+                                {% if bank.is_active %}
+                                    <span class="badge bg-success"><i class="fas fa-check"></i> Active</span>
+                                {% else %}
+                                    <span class="badge bg-secondary"><i class="fas fa-times"></i> Inactive</span>
+                                {% endif %}
+                                {% if bank.bic %}
+                                    <span class="badge bg-info">BIC: {{ bank.bic }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <a href="{{ url_for('banks.edit', bank_id=bank.id) }}" class="btn btn-warning">
+                                <i class="fas fa-edit"></i> Modifier
+                            </a>
+                            <a href="{{ url_for('banks.list') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left"></i> Retour
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    {% endif %}
 
     <div class="row">
         <!-- Colonne informations -->
         <div class="col-lg-4">
-            <!-- Détails du crédit -->
+            <!-- Informations de contact -->
             <div class="card mb-4">
                 <div class="card-header">
-                    <h5 class="mb-0"><i class="fas fa-info-circle"></i> Détails</h5>
+                    <i class="fas fa-info-circle"></i> Informations
                 </div>
                 <div class="card-body">
+                    {% if bank.address or bank.postal_code or bank.city %}
                     <div class="mb-3">
-                        <strong>Type de crédit :</strong><br>
-                        {% if credit.credit_type_obj %}
-                            <span class="badge" style="background-color: {{ credit.credit_type_obj.color }};">
-                                <i class="fas {{ credit.credit_type_obj.icon or 'fa-circle' }}"></i>
-                                {{ credit.credit_type_obj.name }}
-                            </span>
-                        {% else %}
-                            <span class="text-muted">Non défini</span>
+                        <strong>Adresse :</strong><br>
+                        {% if bank.address %}{{ bank.address }}<br>{% endif %}
+                        {% if bank.postal_code or bank.city %}
+                            {{ bank.postal_code }} {{ bank.city }}
                         {% endif %}
-                    </div>
-
-                    <div class="mb-3">
-                        <strong>Banque :</strong><br>
-                        {% if credit.bank %}
-                            <span class="text-primary">
-                                <i class="fas fa-university"></i> {{ credit.bank.name }}
-                            </span>
-                            {% if credit.bank.bic %}
-                                <br><small class="text-muted">{{ credit.bank.bic }}</small>
-                            {% endif %}
-                        {% else %}
-                            <span class="text-muted">Non renseignée</span>
-                        {% endif %}
-                    </div>
-
-                    <div class="mb-3">
-                        <strong>Statut :</strong><br>
-                        {% if credit.is_active %}
-                            <span class="badge bg-success">Actif</span>
-                        {% else %}
-                            <span class="badge bg-danger">Clôturé</span>
-                        {% endif %}
-                    </div>
-
-                    {% if credit.description %}
-                    <div class="mb-3">
-                        <strong>Description :</strong><br>
-                        <p class="mb-0">{{ credit.description }}</p>
                     </div>
                     {% endif %}
 
+                    {% if bank.phone %}
                     <div class="mb-3">
-                        <strong>Taux d'intérêt :</strong><br>
-                        {% if credit.interest_rate %}
-                            {{ credit.interest_rate }}%
-                        {% else %}
-                            <span class="text-muted">Non renseigné</span>
-                        {% endif %}
+                        <strong>Téléphone :</strong><br>
+                        <a href="tel:{{ bank.phone }}">{{ bank.phone }}</a>
                     </div>
+                    {% endif %}
 
+                    {% if bank.email %}
                     <div class="mb-3">
-                        <strong>Date de début :</strong><br>
-                        {{ credit.start_date.strftime('%d/%m/%Y') }}
+                        <strong>Email :</strong><br>
+                        <a href="mailto:{{ bank.email }}">{{ bank.email }}</a>
                     </div>
+                    {% endif %}
 
+                    {% if bank.website %}
                     <div class="mb-3">
-                        <strong>Date de fin prévue :</strong><br>
-                        {% if credit.end_date %}
-                            {{ credit.end_date.strftime('%d/%m/%Y') }}
-                        {% else %}
-                            <span class="text-muted">Non renseignée</span>
-                        {% endif %}
+                        <strong>Site web :</strong><br>
+                        <a href="{{ bank.website }}" target="_blank">{{ bank.website }}</a>
                     </div>
+                    {% endif %}
 
+                    {% if bank.iban %}
+                    <div class="mb-3">
+                        <strong>IBAN :</strong><br>
+                        <code>{{ bank.iban }}</code>
+                    </div>
+                    {% endif %}
+
+                    {% if bank.account_number %}
                     <div class="mb-0">
-                        <strong>Prochain paiement :</strong><br>
-                        {{ credit.next_payment_date.strftime('%d/%m/%Y') }}
+                        <strong>Numéro de compte :</strong><br>
+                        <code>{{ bank.account_number }}</code>
                     </div>
+                    {% endif %}
                 </div>
             </div>
+
+            <!-- Notes -->
+            {% if bank.notes %}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-sticky-note"></i> Notes
+                </div>
+                <div class="card-body">
+                    <p class="mb-0" style="white-space: pre-wrap;">{{ bank.notes }}</p>
+                </div>
+            </div>
+            {% endif %}
 
             <!-- Statistiques documents -->
             <div class="card mb-4">
@@ -210,7 +156,7 @@
                     <div class="row g-2">
                         {% for code, name, icon, color in document_types %}
                             <div class="col-6">
-                                <a href="{{ url_for('credits.detail', credit_id=credit.id, doc_type=code) }}"
+                                <a href="{{ url_for('banks.detail', bank_id=bank.id, doc_type=code) }}"
                                    class="card doc-stats-card text-decoration-none {% if filter_type == code %}active{% endif %}"
                                    style="border-left: 4px solid {{ color }};">
                                     <div class="card-body p-2 text-center">
@@ -221,33 +167,6 @@
                                 </a>
                             </div>
                         {% endfor %}
-                    </div>
-                </div>
-            </div>
-
-            <!-- Actions -->
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0"><i class="fas fa-cog"></i> Actions</h5>
-                </div>
-                <div class="card-body">
-                    <div class="d-grid gap-2">
-                        <form method="POST" action="{{ url_for('credits.toggle', credit_id=credit.id) }}">
-                            <button type="submit" class="btn btn-info w-100">
-                                <i class="fas fa-toggle-{% if credit.is_active %}on{% else %}off{% endif %}"></i>
-                                {% if credit.is_active %}
-                                    Marquer comme clôturé
-                                {% else %}
-                                    Réactiver
-                                {% endif %}
-                            </button>
-                        </form>
-                        <form method="POST" action="{{ url_for('credits.delete', credit_id=credit.id) }}"
-                              onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce crédit ?')">
-                            <button type="submit" class="btn btn-danger w-100">
-                                <i class="fas fa-trash"></i> Supprimer
-                            </button>
-                        </form>
                     </div>
                 </div>
             </div>
@@ -274,7 +193,7 @@
                             </span>
                         {% endif %}
                     </span>
-                    <a href="{{ url_for('credits.add_document', credit_id=credit.id) }}" class="btn btn-sm btn-primary">
+                    <a href="{{ url_for('banks.add_document', bank_id=bank.id) }}" class="btn btn-sm btn-primary">
                         <i class="fas fa-plus"></i> Ajouter un document
                     </a>
                 </div>
@@ -308,7 +227,7 @@
                                 </div>
                             </div>
                             <div class="col-md-1">
-                                <a href="{{ url_for('credits.detail', credit_id=credit.id) }}" class="btn btn-sm btn-outline-secondary w-100">
+                                <a href="{{ url_for('banks.detail', bank_id=bank.id) }}" class="btn btn-sm btn-outline-secondary w-100">
                                     <i class="fas fa-redo"></i>
                                 </a>
                             </div>
@@ -351,20 +270,20 @@
                                         </div>
                                         <div class="btn-group">
                                             {% if document.file_data %}
-                                                <a href="{{ url_for('credits.view_document', document_id=document.id) }}"
+                                                <a href="{{ url_for('banks.view_document', document_id=document.id) }}"
                                                    class="btn btn-sm btn-outline-primary" title="Voir" target="_blank">
                                                     <i class="fas fa-eye"></i>
                                                 </a>
-                                                <a href="{{ url_for('credits.download_document', document_id=document.id) }}"
+                                                <a href="{{ url_for('banks.download_document', document_id=document.id) }}"
                                                    class="btn btn-sm btn-outline-success" title="Télécharger">
                                                     <i class="fas fa-download"></i>
                                                 </a>
                                             {% endif %}
-                                            <a href="{{ url_for('credits.edit_document', document_id=document.id) }}"
+                                            <a href="{{ url_for('banks.edit_document', document_id=document.id) }}"
                                                class="btn btn-sm btn-outline-warning" title="Modifier">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            <form method="POST" action="{{ url_for('credits.delete_document', document_id=document.id) }}"
+                                            <form method="POST" action="{{ url_for('banks.delete_document', document_id=document.id) }}"
                                                   onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce document ?')" class="d-inline">
                                                 <button type="submit" class="btn btn-sm btn-outline-danger" title="Supprimer">
                                                     <i class="fas fa-trash"></i>
@@ -381,7 +300,7 @@
                             {% if filter_type or filter_year or search %}
                                 Aucun document ne correspond aux critères de recherche.
                             {% else %}
-                                Aucun document ajouté pour ce crédit.
+                                Aucun document ajouté pour cette banque.
                             {% endif %}
                         </div>
                     {% endif %}
