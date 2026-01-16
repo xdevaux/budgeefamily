@@ -4,10 +4,12 @@
 
 {% block content %}
 <div class="container py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="mb-4">
         <h2><i class="fas fa-chart-line"></i> Tableau de bord de <span class="text-success">{{ current_user.first_name }}</span></h2>
-        <a href="{{ url_for('subscriptions.add') }}" class="btn btn-primary">
-            <i class="fas fa-plus"></i> Ajouter un abonnement
+        <a href="{{ url_for('auth.profile') }}" class="text-decoration-none">
+            <span class="badge bg-secondary" style="font-size: 0.75rem; cursor: pointer;">
+                <i class="fas fa-crown"></i> Plan {{ current_user.plan.name }}
+            </span>
         </a>
     </div>
 
@@ -20,7 +22,7 @@
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
                                 <h6 class="text-uppercase mb-1 opacity-75">Abonnements actifs</h6>
-                                <h2 class="mb-0">{{ active_subscriptions|length }}</h2>
+                                <h2 class="mb-0">{{ total_subscriptions_cost | format_amount }} €</h2>
                             </div>
                             <div>
                                 <i class="fas fa-list fa-2x opacity-50"></i>
@@ -32,34 +34,16 @@
         </div>
 
         <div class="col-md-3">
-            <a href="{{ url_for('subscriptions.list') }}" class="text-decoration-none">
-                <div class="card stat-card bg-success text-white stat-card-clickable">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <h6 class="text-uppercase mb-1 opacity-75">Coût mensuel</h6>
-                                <h2 class="mb-0">{{ total_monthly_cost | format_amount }} €</h2>
-                            </div>
-                            <div>
-                                <i class="fas fa-euro-sign fa-2x opacity-50"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </a>
-        </div>
-
-        <div class="col-md-3">
-            <a href="{{ url_for('main.notifications') }}" class="text-decoration-none">
+            <a href="{{ url_for('credits.list') }}" class="text-decoration-none">
                 <div class="card stat-card bg-warning text-white stat-card-clickable">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <h6 class="text-uppercase mb-1 opacity-75">Notifications</h6>
-                                <h2 class="mb-0">{{ unread_notifications }}</h2>
+                                <h6 class="text-uppercase mb-1 opacity-75">Crédits en cours</h6>
+                                <h2 class="mb-0">{{ total_credits | format_amount }} €</h2>
                             </div>
                             <div>
-                                <i class="fas fa-bell fa-2x opacity-50"></i>
+                                <i class="fas fa-money-bill-wave fa-2x opacity-50"></i>
                             </div>
                         </div>
                     </div>
@@ -68,21 +52,37 @@
         </div>
 
         <div class="col-md-3">
-            <a href="{{ url_for('auth.profile') }}" class="text-decoration-none">
-                <div class="card stat-card bg-info text-white stat-card-clickable">
+            <a href="{{ url_for('revenues.list') }}" class="text-decoration-none">
+                <div class="card stat-card bg-success text-white stat-card-clickable">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <h6 class="text-uppercase mb-1 opacity-75">Plan actuel</h6>
-                                <h2 class="mb-0">{{ current_user.plan.name }}</h2>
+                                <h6 class="text-uppercase mb-1 opacity-75">Revenus actuels</h6>
+                                <h2 class="mb-0">{{ total_revenues | format_amount }} €</h2>
                             </div>
                             <div>
-                                <i class="fas fa-crown fa-2x opacity-50"></i>
+                                <i class="fas fa-hand-holding-usd fa-2x opacity-50"></i>
                             </div>
                         </div>
                     </div>
                 </div>
             </a>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card stat-card bg-danger text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-uppercase mb-1 opacity-75">Solde</h6>
+                            <h2 class="mb-0">{{ solde | format_amount }} €</h2>
+                        </div>
+                        <div>
+                            <i class="fas fa-calculator fa-2x opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -123,7 +123,7 @@
                                         <div class="flex-grow-1 text-start d-flex align-items-center" style="min-width: 0; gap: 0.5rem;">
                                             <strong class="text-truncate" style="max-width: 70%;" title="{{ sub.name }}">{{ sub.name }}</strong>{% if sub.plan %} <span class="badge bg-primary text-white" style="padding: 0.15rem 0.4rem; font-size: 0.7rem;">{{ sub.plan.name }}</span>{% endif %}
                                         </div>
-                                        <div class="flex-shrink-0 text-end d-flex align-items-center justify-content-end" style="width: 150px;">
+                                        <div class="flex-shrink-0 text-end d-flex align-items-center justify-content-end" style="width: 200px;">
                                             <strong class="me-1">{{ sub.amount | format_amount }} {{ sub.currency | currency_symbol }}</strong>
                                             <span class="badge bg-secondary">{{ sub.billing_cycle | translate_cycle }}</span>
                                         </div>
@@ -134,6 +134,9 @@
                         <div class="card-footer bg-white text-center">
                             <a href="{{ url_for('subscriptions.list') }}" class="btn btn-sm btn-outline-primary">
                                 <i class="fas fa-list"></i> Voir tous les abonnements
+                            </a>
+                            <a href="{{ url_for('subscriptions.add') }}" class="btn btn-sm btn-outline-primary ms-2">
+                                <i class="fas fa-plus"></i> Ajouter
                             </a>
                         </div>
                     {% else %}
@@ -184,7 +187,7 @@
                                                 <span class="badge bg-warning text-dark" style="padding: 0.15rem 0.4rem; font-size: 0.7rem;">Restant: {{ credit.remaining_amount | format_amount }} {{ credit.currency | currency_symbol }}</span>
                                             {% endif %}
                                         </div>
-                                        <div class="flex-shrink-0 text-end d-flex align-items-center justify-content-end" style="width: 150px;">
+                                        <div class="flex-shrink-0 text-end d-flex align-items-center justify-content-end" style="width: 200px;">
                                             <strong class="me-1">{{ credit.amount | format_amount }} {{ credit.currency | currency_symbol }}</strong>
                                             <span class="badge bg-secondary">{{ credit.billing_cycle | translate_cycle }}</span>
                                         </div>
@@ -195,6 +198,9 @@
                         <div class="card-footer bg-white text-center">
                             <a href="{{ url_for('credits.list') }}" class="btn btn-sm btn-outline-warning">
                                 <i class="fas fa-credit-card"></i> Voir tous les crédits
+                            </a>
+                            <a href="{{ url_for('credits.add') }}" class="btn btn-sm btn-outline-warning ms-2">
+                                <i class="fas fa-plus"></i> Ajouter
                             </a>
                         </div>
                     {% else %}
@@ -207,13 +213,77 @@
                     {% endif %}
                 </div>
             </div>
+
+            <!-- Revenus : Prochains versements -->
+            <div class="card mt-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-hand-holding-usd"></i> Revenus : Prochains versements</h5>
+                    <div class="d-flex align-items-center gap-2">
+                        {% if upcoming_revenues %}
+                            <span class="badge bg-success">{{ upcoming_revenues|length }}</span>
+                        {% endif %}
+                        {% if current_user.is_premium() %}
+                            <div class="btn-group btn-group-sm">
+                                <a href="{{ url_for('exports.export_upcoming_revenues', format='excel') }}" class="btn btn-outline-success" title="Exporter en Excel">
+                                    <i class="fas fa-file-excel"></i>
+                                </a>
+                                <a href="{{ url_for('exports.export_upcoming_revenues', format='pdf') }}" class="btn btn-outline-danger" title="Exporter en PDF">
+                                    <i class="fas fa-file-pdf"></i>
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    {% if upcoming_revenues %}
+                        <div class="list-group list-group-flush" style="max-height: 400px; overflow-y: auto;">
+                            {% for revenue in upcoming_revenues %}
+                                <div class="list-group-item subscription-item py-2">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="flex-shrink-0 d-flex align-items-center" style="width: 100px;">
+                                            <small class="text-muted">
+                                                <i class="fas fa-calendar"></i> {{ revenue.next_payment_date.strftime('%d/%m/%Y') }}
+                                            </small>
+                                        </div>
+                                        <div class="flex-grow-1 text-start d-flex align-items-center" style="min-width: 0; gap: 0.5rem;">
+                                            <strong class="text-truncate" style="max-width: 70%;" title="{{ revenue.name }}">{{ revenue.name }}</strong>
+                                            {% if revenue.employer %}
+                                                <span class="badge bg-success text-white" style="padding: 0.15rem 0.4rem; font-size: 0.7rem;">{{ revenue.employer.name }}</span>
+                                            {% endif %}
+                                        </div>
+                                        <div class="flex-shrink-0 text-end d-flex align-items-center justify-content-end" style="width: 200px;">
+                                            <strong class="me-1">{{ revenue.amount | format_amount }} {{ revenue.currency | currency_symbol }}</strong>
+                                            <span class="badge bg-secondary">{{ revenue.billing_cycle | translate_cycle }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <div class="card-footer bg-white text-center">
+                            <a href="{{ url_for('revenues.list') }}" class="btn btn-sm btn-outline-success">
+                                <i class="fas fa-hand-holding-usd"></i> Voir tous les revenus
+                            </a>
+                            <a href="{{ url_for('revenues.add') }}" class="btn btn-sm btn-outline-success ms-2">
+                                <i class="fas fa-plus"></i> Ajouter
+                            </a>
+                        </div>
+                    {% else %}
+                        <div class="card-body">
+                            <p class="text-muted text-center py-4 mb-0">
+                                <i class="fas fa-inbox fa-3x d-block mb-2"></i>
+                                Aucun revenu actif
+                            </p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
         </div>
 
         <!-- Colonne droite : Répartition par catégorie -->
         <div class="col-lg-6">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0"><i class="fas fa-chart-pie"></i> Répartition par catégorie</h5>
+                    <h5 class="mb-0"><i class="fas fa-chart-pie"></i> Répartition des Abonnements & Crédits</h5>
                     {% if current_user.is_premium() %}
                         <div class="btn-group btn-group-sm">
                             <a href="{{ url_for('exports.export_category_distribution', format='excel') }}" class="btn btn-outline-success" title="Exporter en Excel">
@@ -228,6 +298,30 @@
                 <div class="card-body">
                     {% if category_stats %}
                         <canvas id="categoryChart" height="200"></canvas>
+                    {% else %}
+                        <p class="text-muted text-center py-4">Aucune donnée disponible</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Répartition des versements (Revenus) -->
+            <div class="card mt-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-chart-pie"></i> Répartition des versements</h5>
+                    {% if current_user.is_premium() %}
+                        <div class="btn-group btn-group-sm">
+                            <a href="{{ url_for('exports.export_revenue_distribution', format='excel') }}" class="btn btn-outline-success" title="Exporter en Excel">
+                                <i class="fas fa-file-excel"></i>
+                            </a>
+                            <a href="{{ url_for('exports.export_revenue_distribution', format='pdf') }}" class="btn btn-outline-danger" title="Exporter en PDF">
+                                <i class="fas fa-file-pdf"></i>
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="card-body">
+                    {% if revenue_stats %}
+                        <canvas id="revenueChart" height="200"></canvas>
                     {% else %}
                         <p class="text-muted text-center py-4">Aucune donnée disponible</p>
                     {% endif %}
@@ -293,6 +387,48 @@ new Chart(categoryCtx, {
         datasets: [{
             data: categoryData,
             backgroundColor: categoryColors
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+            legend: {
+                position: 'bottom'
+            },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        let label = context.label || '';
+                        if (label) {
+                            label += ': ';
+                        }
+                        label += formatAmount(context.parsed) + ' €';
+                        return label;
+                    }
+                }
+            }
+        }
+    }
+});
+{% endif %}
+
+// Graphique des revenus
+{% if revenue_stats %}
+const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+
+// Préparer les données des revenus
+let revenueLabels = {{ revenue_stats|map(attribute='name')|list|tojson }};
+let revenueData = {{ revenue_stats|map(attribute='total')|list|tojson }};
+let revenueColors = {{ revenue_stats|map(attribute='color')|list|tojson }};
+
+new Chart(revenueCtx, {
+    type: 'doughnut',
+    data: {
+        labels: revenueLabels,
+        datasets: [{
+            data: revenueData,
+            backgroundColor: revenueColors
         }]
     },
     options: {

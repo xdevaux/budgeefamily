@@ -5,7 +5,9 @@ from flask import Blueprint, send_file, flash, redirect, url_for
 from flask_login import login_required, current_user
 from datetime import datetime, timedelta
 from functools import wraps
-from app.models import Subscription, Category, Service, Credit
+from sqlalchemy import func
+from app import db
+from app.models import Subscription, Category, Service, Credit, Revenue
 from app.utils.exports import (
     export_upcoming_renewals_excel, export_upcoming_renewals_pdf,
     export_category_distribution_excel, export_category_distribution_pdf,
@@ -13,7 +15,9 @@ from app.utils.exports import (
     export_subscriptions_excel, export_subscriptions_pdf,
     export_categories_excel, export_categories_pdf,
     export_services_excel, export_services_pdf,
-    export_upcoming_credits_excel, export_upcoming_credits_pdf
+    export_upcoming_credits_excel, export_upcoming_credits_pdf,
+    export_upcoming_revenues_excel, export_upcoming_revenues_pdf,
+    export_revenue_distribution_excel, export_revenue_distribution_pdf
 )
 
 bp = Blueprint('exports', __name__, url_prefix='/exports')
@@ -96,37 +100,98 @@ def export_upcoming_credits(format):
         return redirect(url_for('main.dashboard'))
 
 
+@bp.route('/dashboard/upcoming-revenues/<format>')
+@login_required
+@premium_required
+def export_upcoming_revenues(format):
+    """Exporte les prochains versements pour les revenus"""
+    # Récupérer tous les revenus actifs
+    upcoming_revenues = Revenue.query.filter_by(
+        user_id=current_user.id,
+        is_active=True
+    ).order_by(Revenue.next_payment_date).all()
+
+    if format == 'excel':
+        output = export_upcoming_revenues_excel(upcoming_revenues, current_user)
+        return send_file(
+            output,
+            mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            as_attachment=True,
+            download_name=f'revenus_prochains_versements_{datetime.now().strftime("%Y%m%d")}.xlsx'
+        )
+    elif format == 'pdf':
+        output = export_upcoming_revenues_pdf(upcoming_revenues, current_user)
+        return send_file(
+            output,
+            mimetype='application/pdf',
+            as_attachment=True,
+            download_name=f'revenus_prochains_versements_{datetime.now().strftime("%Y%m%d")}.pdf'
+        )
+    else:
+        flash('Format non supporté', 'danger')
+        return redirect(url_for('main.dashboard'))
+
+
 @bp.route('/dashboard/category-distribution/<format>')
 @login_required
 @premium_required
 def export_category_distribution(format):
-    """Exporte la répartition par catégorie"""
-    # Calculer la répartition
-    subscriptions = Subscription.query.filter_by(
+    """Exporte la répartition des abonnements et crédits par catégorie"""
+    # Utiliser la même logique que le dashboard
+    # Répartition par catégorie (abonnements + crédits) - même requête que le dashboard
+    category_stats = db.session.query(
+        Category.name,
+        Category.color,
+        func.count(Subscription.id).label('subscription_count'),
+        func.sum(Subscription.amount).label('subscription_total'),
+        func.count(Credit.id).label('credit_count'),
+        func.sum(Credit.amount).label('credit_total'),
+        (func.coalesce(func.sum(Subscription.amount), 0) + func.coalesce(func.sum(Credit.amount), 0)).label('total')
+    ).outerjoin(Subscription,
+        (Subscription.category_id == Category.id) &
+        (Subscription.user_id == current_user.id) &
+        (Subscription.is_active == True)
+    ).outerjoin(Credit,
+        (Credit.category_id == Category.id) &
+        (Credit.user_id == current_user.id) &
+        (Credit.is_active == True)
+    ).filter(
+        (Subscription.id != None) | (Credit.id != None)
+    ).group_by(Category.id).all()
+
+    # Convertir en liste de dictionnaires
+    category_data = []
+    for stat in category_stats:
+        category_data.append({
+            'name': stat.name,
+            'color': stat.color,
+            'count': (stat.subscription_count or 0) + (stat.credit_count or 0),
+            'amount': stat.total
+        })
+
+    # Calculer le total des crédits actifs pour la catégorie "Crédits"
+    credits = Credit.query.filter_by(
         user_id=current_user.id,
         is_active=True
     ).all()
 
-    category_data = {}
-    for sub in subscriptions:
-        cat_name = sub.category.name if sub.category else 'Sans catégorie'
-        monthly_cost = sub.amount
+    total_credits = sum(
+        credit.amount if credit.billing_cycle == 'monthly' else
+        credit.amount / 3 if credit.billing_cycle == 'quarterly' else
+        credit.amount / 12 if credit.billing_cycle == 'yearly' else 0
+        for credit in credits
+    )
 
-        # Convertir en coût mensuel selon le cycle
-        if sub.billing_cycle == 'yearly':
-            monthly_cost = sub.amount / 12
-        elif sub.billing_cycle == 'quarterly':
-            monthly_cost = sub.amount / 3
-        elif sub.billing_cycle == 'weekly':
-            monthly_cost = sub.amount * 4
+    # Ajouter la catégorie "Crédits" si elle a un montant
+    if total_credits > 0:
+        category_data.append({
+            'name': 'Crédits',
+            'color': '#ffc107',
+            'count': len(credits),
+            'amount': total_credits
+        })
 
-        if cat_name not in category_data:
-            category_data[cat_name] = {'name': cat_name, 'count': 0, 'amount': 0}
-
-        category_data[cat_name]['count'] += 1
-        category_data[cat_name]['amount'] += monthly_cost
-
-    category_list = sorted(category_data.values(), key=lambda x: x['amount'], reverse=True)
+    category_list = sorted(category_data, key=lambda x: x['amount'], reverse=True)
 
     if format == 'excel':
         output = export_category_distribution_excel(category_list, current_user)
@@ -143,6 +208,60 @@ def export_category_distribution(format):
             mimetype='application/pdf',
             as_attachment=True,
             download_name=f'repartition_categories_{datetime.now().strftime("%Y%m%d")}.pdf'
+        )
+    else:
+        flash('Format non supporté', 'danger')
+        return redirect(url_for('main.dashboard'))
+
+
+@bp.route('/dashboard/revenue-distribution/<format>')
+@login_required
+@premium_required
+def export_revenue_distribution(format):
+    """Exporte la répartition des versements (revenus)"""
+    # Calculer la répartition par employeur
+    revenues = Revenue.query.filter_by(
+        user_id=current_user.id,
+        is_active=True
+    ).all()
+
+    revenue_data = {}
+    for revenue in revenues:
+        if revenue.employer:
+            employer_name = revenue.employer.name
+        else:
+            employer_name = 'Autres revenus'
+
+        monthly_amount = revenue.amount
+
+        # Convertir en montant mensuel selon le cycle
+        if revenue.billing_cycle == 'yearly':
+            monthly_amount = revenue.amount / 12
+        elif revenue.billing_cycle == 'quarterly':
+            monthly_amount = revenue.amount / 3
+
+        if employer_name not in revenue_data:
+            revenue_data[employer_name] = {'name': employer_name, 'total': 0}
+
+        revenue_data[employer_name]['total'] += monthly_amount
+
+    revenue_list = sorted(revenue_data.values(), key=lambda x: x['total'], reverse=True)
+
+    if format == 'excel':
+        output = export_revenue_distribution_excel(revenue_list, current_user)
+        return send_file(
+            output,
+            mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            as_attachment=True,
+            download_name=f'repartition_revenus_{datetime.now().strftime("%Y%m%d")}.xlsx'
+        )
+    elif format == 'pdf':
+        output = export_revenue_distribution_pdf(revenue_list, current_user)
+        return send_file(
+            output,
+            mimetype='application/pdf',
+            as_attachment=True,
+            download_name=f'repartition_revenus_{datetime.now().strftime("%Y%m%d")}.pdf'
         )
     else:
         flash('Format non supporté', 'danger')

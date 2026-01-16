@@ -10,6 +10,9 @@ from reportlab.lib.units import inch
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, Image, KeepTogether
 from reportlab.pdfgen import canvas
 from reportlab.lib.enums import TA_LEFT
+from reportlab.graphics.shapes import Drawing
+from reportlab.graphics.charts.piecharts import Pie
+from reportlab.graphics.charts.legends import Legend
 from openpyxl import Workbook
 from openpyxl.styles import Font, Alignment, PatternFill, Border, Side
 from openpyxl.utils import get_column_letter
@@ -210,45 +213,84 @@ def export_category_distribution_excel(category_data, user):
 
 
 def export_category_distribution_pdf(category_data, user):
-    """Exporte la répartition par catégorie en PDF"""
+    """Exporte la répartition par catégorie en PDF avec graphique"""
     buffer = BytesIO()
     doc = SimpleDocTemplate(buffer, pagesize=A4)
     elements = []
 
     # Ajouter l'en-tête avec logo
-    add_pdf_header(elements, "Répartition par catégorie", user)
+    add_pdf_header(elements, "Répartition des Abonnements & Crédits", user)
 
-    # Table
-    data = [['Catégorie', 'Abonnements', 'Montant mensuel', 'Pourcentage']]
+    if not category_data:
+        elements.append(Paragraph("Aucune donnée disponible", getSampleStyleSheet()['Normal']))
+        doc.build(elements)
+        buffer.seek(0)
+        return buffer
+
+    # Calculer le total
     total = sum(cat['amount'] for cat in category_data)
+
+    # Créer le graphique en camembert
+    drawing = Drawing(400, 300)
+    pie = Pie()
+    pie.x = 100
+    pie.y = 50
+    pie.width = 200
+    pie.height = 200
+
+    # Préparer les données
+    pie.data = [cat['amount'] for cat in category_data]
+    pie.labels = [f"{cat['name'][:20]}\n{cat['amount']:.2f}€" for cat in category_data]
+
+    # Couleurs personnalisées basées sur les données
+    pie_colors = []
+    for cat in category_data:
+        # Utiliser les couleurs des catégories si disponibles
+        if 'color' in cat and cat['color']:
+            try:
+                pie_colors.append(colors.HexColor(cat['color']))
+            except:
+                pie_colors.append(colors.blue)
+        else:
+            pie_colors.append(colors.blue)
+
+    pie.slices.strokeWidth = 0.5
+    for i, color in enumerate(pie_colors):
+        pie.slices[i].fillColor = color
+
+    drawing.add(pie)
+    elements.append(drawing)
+    elements.append(Spacer(1, 20))
+
+    # Ajouter un tableau récapitulatif sous le graphique
+    data = [['Catégorie', 'Montant mensuel', 'Pourcentage']]
 
     for cat in category_data:
         percentage = (cat['amount'] / total * 100) if total > 0 else 0
         data.append([
-            cat['name'][:25],
-            str(cat['count']),
+            cat['name'][:30],
             f"{cat['amount']:.2f} €",
             f"{percentage:.1f}%"
         ])
 
     # Ligne de total
-    data.append(['TOTAL', str(sum(cat['count'] for cat in category_data)), f"{total:.2f} €", '100%'])
+    data.append(['TOTAL', f"{total:.2f} €", '100%'])
 
-    table = Table(data, colWidths=[2.5*inch, 1.5*inch, 1.5*inch, 1.5*inch])
+    table = Table(data, colWidths=[3*inch, 1.5*inch, 1.5*inch])
     table.setStyle(TableStyle([
         ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#4472C4')),
         ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
         ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
         ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-        ('FONTSIZE', (0, 0), (-1, 0), 9),
+        ('FONTSIZE', (0, 0), (-1, 0), 10),
         ('BOTTOMPADDING', (0, 0), (-1, 0), 8),
         ('BACKGROUND', (0, 1), (-1, -2), colors.beige),
         ('BACKGROUND', (0, -1), (-1, -1), colors.HexColor('#D9E2F3')),
         ('FONTNAME', (0, -1), (-1, -1), 'Helvetica-Bold'),
-        ('FONTSIZE', (0, -1), (-1, -1), 8),
+        ('FONTSIZE', (0, -1), (-1, -1), 10),
         ('GRID', (0, 0), (-1, -1), 1, colors.black),
         ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
-        ('FONTSIZE', (0, 1), (-1, -1), 8),
+        ('FONTSIZE', (0, 1), (-1, -1), 9),
     ]))
 
     elements.append(table)
@@ -658,6 +700,227 @@ def export_upcoming_credits_pdf(credits, user):
         ('GRID', (0, 0), (-1, -1), 1, colors.black),
         ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
         ('FONTSIZE', (0, 1), (-1, -1), 8),
+    ]))
+
+    elements.append(table)
+    doc.build(elements)
+    buffer.seek(0)
+    return buffer
+
+
+def export_upcoming_revenues_excel(revenues, user):
+    """Exporte les prochains versements pour les revenus en Excel"""
+    wb = create_excel_workbook()
+    ws = wb.active
+    ws.title = "Revenus"
+
+    # En-tête du document
+    ws['A1'] = f"Revenus : Prochains versements - {user.first_name} {user.last_name or ''}"
+    ws['A1'].font = Font(size=16, bold=True)
+    ws['A2'] = f"Généré le {datetime.now().strftime('%d/%m/%Y à %H:%M')}"
+    ws['A2'].font = Font(size=10, italic=True)
+
+    # En-têtes des colonnes
+    headers = ['Date de paiement', 'Nom du revenu', 'Montant', 'Devise', 'Cycle', 'Employeur', 'Jours restants']
+    ws.append([])  # Ligne vide
+    ws.append(headers)
+    style_excel_header(ws, row=4)
+
+    # Données
+    now = datetime.now().date()
+    for revenue in revenues:
+        days_until = (revenue.next_payment_date - now).days
+        employer_name = revenue.employer.name if revenue.employer else '-'
+        ws.append([
+            revenue.next_payment_date.strftime('%d/%m/%Y'),
+            revenue.name,
+            revenue.amount,
+            revenue.currency,
+            revenue.billing_cycle,
+            employer_name,
+            days_until
+        ])
+
+    # Ajuster la largeur des colonnes
+    for column in range(1, len(headers) + 1):
+        ws.column_dimensions[get_column_letter(column)].width = 18
+
+    # Sauvegarder dans un buffer
+    output = BytesIO()
+    wb.save(output)
+    output.seek(0)
+    return output
+
+
+def export_upcoming_revenues_pdf(revenues, user):
+    """Exporte les prochains versements pour les revenus en PDF"""
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=landscape(A4))
+    elements = []
+
+    # Ajouter l'en-tête avec logo
+    add_pdf_header(elements, "Revenus : Prochains versements", user)
+
+    # Table
+    data = [['Date paiement', 'Nom du revenu', 'Montant', 'Cycle', 'Employeur', 'Jours']]
+    now = datetime.now().date()
+
+    for revenue in revenues:
+        days_until = (revenue.next_payment_date - now).days
+        employer_name = revenue.employer.name[:20] if revenue.employer else '-'
+
+        data.append([
+            revenue.next_payment_date.strftime('%d/%m/%Y'),
+            revenue.name[:30],  # Limiter la longueur
+            f"{revenue.amount:.2f} {revenue.currency}",
+            revenue.billing_cycle,
+            employer_name,
+            str(days_until)
+        ])
+
+    table = Table(data, colWidths=[1.2*inch, 2.5*inch, 1.2*inch, 1*inch, 1.5*inch, 0.8*inch])
+    table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#4472C4')),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, 0), 9),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 8),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+        ('GRID', (0, 0), (-1, -1), 1, colors.black),
+        ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
+        ('FONTSIZE', (0, 1), (-1, -1), 8),
+    ]))
+
+    elements.append(table)
+    doc.build(elements)
+    buffer.seek(0)
+    return buffer
+
+
+def export_revenue_distribution_excel(revenue_list, user):
+    """Exporte la répartition des versements en Excel"""
+    wb = create_excel_workbook()
+    ws = wb.active
+    ws.title = "Répartition revenus"
+
+    # En-tête du document
+    ws['A1'] = f"Répartition des versements - {user.first_name} {user.last_name or ''}"
+    ws['A1'].font = Font(size=16, bold=True)
+    ws['A2'] = f"Généré le {datetime.now().strftime('%d/%m/%Y à %H:%M')}"
+    ws['A2'].font = Font(size=10, italic=True)
+
+    # En-têtes des colonnes
+    headers = ['Employeur / Source', 'Montant mensuel (€)']
+    ws.append([])  # Ligne vide
+    ws.append(headers)
+    style_excel_header(ws, row=4)
+
+    # Données
+    total = 0
+    for item in revenue_list:
+        ws.append([
+            item['name'],
+            round(item['total'], 2)
+        ])
+        total += item['total']
+
+    # Ligne de total
+    ws.append([])
+    total_row = ws.max_row
+    ws[f'A{total_row}'] = 'TOTAL'
+    ws[f'A{total_row}'].font = Font(bold=True, size=12)
+    ws[f'B{total_row}'] = round(total, 2)
+    ws[f'B{total_row}'].font = Font(bold=True, size=12)
+
+    # Ajuster la largeur des colonnes
+    ws.column_dimensions['A'].width = 30
+    ws.column_dimensions['B'].width = 20
+
+    # Sauvegarder dans un buffer
+    output = BytesIO()
+    wb.save(output)
+    output.seek(0)
+    return output
+
+
+def export_revenue_distribution_pdf(revenue_list, user):
+    """Exporte la répartition des versements en PDF avec graphique"""
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=A4)
+    elements = []
+
+    # Ajouter l'en-tête avec logo
+    add_pdf_header(elements, "Répartition des versements", user)
+
+    if not revenue_list:
+        elements.append(Paragraph("Aucune donnée disponible", getSampleStyleSheet()['Normal']))
+        doc.build(elements)
+        buffer.seek(0)
+        return buffer
+
+    # Calculer le total
+    total = sum(item['total'] for item in revenue_list)
+
+    # Créer le graphique en camembert
+    drawing = Drawing(400, 300)
+    pie = Pie()
+    pie.x = 100
+    pie.y = 50
+    pie.width = 200
+    pie.height = 200
+
+    # Préparer les données
+    pie.data = [item['total'] for item in revenue_list]
+    pie.labels = [f"{item['name'][:20]}\n{item['total']:.2f}€" for item in revenue_list]
+
+    # Couleurs personnalisées (palette verte pour les revenus)
+    colors_palette = [
+        colors.HexColor('#10b981'),
+        colors.HexColor('#22c55e'),
+        colors.HexColor('#34d399'),
+        colors.HexColor('#6ee7b7'),
+        colors.HexColor('#a7f3d0'),
+        colors.HexColor('#d1fae5')
+    ]
+
+    pie.slices.strokeWidth = 0.5
+    for i in range(len(revenue_list)):
+        pie.slices[i].fillColor = colors_palette[i % len(colors_palette)]
+
+    drawing.add(pie)
+    elements.append(drawing)
+    elements.append(Spacer(1, 20))
+
+    # Ajouter un tableau récapitulatif sous le graphique
+    data = [['Employeur / Source', 'Montant mensuel', 'Pourcentage']]
+
+    for item in revenue_list:
+        percentage = (item['total'] / total * 100) if total > 0 else 0
+        data.append([
+            item['name'][:30],
+            f"{item['total']:.2f} €",
+            f"{percentage:.1f}%"
+        ])
+
+    # Ligne de total
+    data.append(['TOTAL', f"{total:.2f} €", '100%'])
+
+    table = Table(data, colWidths=[3*inch, 1.5*inch, 1.5*inch])
+    table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#4472C4')),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, 0), 10),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 8),
+        ('BACKGROUND', (0, 1), (-1, -2), colors.beige),
+        ('BACKGROUND', (0, -1), (-1, -1), colors.HexColor('#D9E2F3')),
+        ('FONTNAME', (0, -1), (-1, -1), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, -1), (-1, -1), 10),
+        ('GRID', (0, 0), (-1, -1), 1, colors.black),
+        ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
+        ('FONTSIZE', (0, 1), (-1, -1), 9),
     ]))
 
     elements.append(table)

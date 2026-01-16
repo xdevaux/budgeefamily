@@ -8,6 +8,11 @@
         <div class="col-md-6 col-lg-5">
             <div class="card">
                 <div class="card-body p-5">
+                    <div class="text-center mb-4">
+                        <img src="{{ url_for('static', filename='uploads/logos/budgee_family_logo_text_rapproche_trsp.png') }}"
+                             alt="Budgee Family Logo"
+                             style="max-width: 275px; height: auto;">
+                    </div>
                     <h2 class="text-center mb-4">Connexion</h2>
 
                     <form method="POST" action="{{ url_for('auth.login') }}">

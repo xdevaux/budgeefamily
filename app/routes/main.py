@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash, current_app
 from flask_login import login_required, current_user
 from app import db
-from app.models import Subscription, Category, Plan, Notification, Credit
+from app.models import Subscription, Category, Plan, Notification, Credit, Revenue
 from datetime import datetime, timedelta
 from sqlalchemy import func, case
 import stripe
@@ -22,6 +22,17 @@ def index():
 def dashboard():
     # Statistiques
     active_subscriptions = current_user.subscriptions.filter_by(is_active=True).all()
+
+    # Calculer le total mensuel des abonnements actifs uniquement
+    total_subscriptions_cost = sum(
+        sub.amount if sub.billing_cycle == 'monthly' else
+        sub.amount / 3 if sub.billing_cycle == 'quarterly' else
+        sub.amount / 12 if sub.billing_cycle == 'yearly' else
+        sub.amount * 4 if sub.billing_cycle == 'weekly' else 0
+        for sub in active_subscriptions
+    )
+
+    # Calculer le coût mensuel total (abonnements + crédits + revenus, etc.)
     total_monthly_cost = sum(
         sub.amount if sub.billing_cycle == 'monthly' else
         sub.amount / 3 if sub.billing_cycle == 'quarterly' else
@@ -39,6 +50,11 @@ def dashboard():
     upcoming_credits = current_user.credits.filter(
         Credit.is_active == True
     ).order_by(Credit.next_payment_date).all()
+
+    # Prochains versements pour les revenus - tous les revenus actifs triés par date
+    upcoming_revenues = current_user.revenues.filter(
+        Revenue.is_active == True
+    ).order_by(Revenue.next_payment_date).all()
 
     # Répartition par catégorie (abonnements + crédits)
     category_stats = db.session.query(
@@ -69,16 +85,61 @@ def dashboard():
         for credit in upcoming_credits
     )
 
+    # Répartition des revenus par employeur
+    revenue_data = {}
+    colors_palette = ['#10b981', '#22c55e', '#34d399', '#6ee7b7', '#a7f3d0', '#d1fae5']
+
+    for revenue in upcoming_revenues:
+        if revenue.employer:
+            employer_name = revenue.employer.name
+        else:
+            employer_name = 'Autres revenus'
+
+        monthly_amount = revenue.amount
+
+        # Convertir en montant mensuel selon le cycle
+        if revenue.billing_cycle == 'yearly':
+            monthly_amount = revenue.amount / 12
+        elif revenue.billing_cycle == 'quarterly':
+            monthly_amount = revenue.amount / 3
+
+        if employer_name not in revenue_data:
+            revenue_data[employer_name] = {
+                'name': employer_name,
+                'total': 0,
+                'color': colors_palette[len(revenue_data) % len(colors_palette)]
+            }
+
+        revenue_data[employer_name]['total'] += monthly_amount
+
+    revenue_stats = sorted(revenue_data.values(), key=lambda x: x['total'], reverse=True)
+
+    # Calculer le total des revenus mensuels
+    total_revenues = sum(
+        revenue.amount if revenue.billing_cycle == 'monthly' else
+        revenue.amount / 3 if revenue.billing_cycle == 'quarterly' else
+        revenue.amount / 12 if revenue.billing_cycle == 'yearly' else 0
+        for revenue in upcoming_revenues
+    )
+
+    # Calculer le solde : revenus - (abonnements + crédits)
+    solde = total_revenues - (total_subscriptions_cost + total_credits)
+
     # Notifications non lues
     unread_notifications = current_user.notifications.filter_by(is_read=False).count()
 
     return render_template('dashboard.html',
                          active_subscriptions=active_subscriptions,
+                         total_subscriptions_cost=round(total_subscriptions_cost, 2),
                          total_monthly_cost=round(total_monthly_cost, 2),
                          upcoming_renewals=upcoming_renewals,
                          upcoming_credits=upcoming_credits,
+                         upcoming_revenues=upcoming_revenues,
                          category_stats=category_stats,
+                         revenue_stats=revenue_stats,
                          total_credits=round(total_credits, 2),
+                         total_revenues=round(total_revenues, 2),
+                         solde=round(solde, 2),
                          unread_notifications=unread_notifications,
                          now=datetime.utcnow())
 
