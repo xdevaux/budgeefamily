@@ -153,13 +153,9 @@
                     </div>
 
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-12">
                             <strong>Prochain paiement :</strong>
                             {{ credit.next_payment_date.strftime('%d/%m/%Y') }}
-                        </div>
-                        <div class="col-md-6">
-                            <strong>Total payé depuis le début :</strong>
-                            {{ credit.get_total_paid() | format_amount }} {{ credit.currency | currency_symbol }}
                         </div>
                     </div>
                 </div>

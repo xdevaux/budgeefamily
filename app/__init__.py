@@ -23,7 +23,7 @@ def create_app(config_class=Config):
     login_manager.login_message_category = 'info'
     mail.init_app(app)
 
-    from app.routes import auth, main, subscriptions, api, categories, services, admin, exports, credits, credit_types, revenues, employers
+    from app.routes import auth, main, subscriptions, api, categories, services, admin, exports, credits, credit_types, revenues, employers, banks
     app.register_blueprint(auth.bp)
     app.register_blueprint(main.bp)
     app.register_blueprint(subscriptions.bp)
@@ -36,6 +36,7 @@ def create_app(config_class=Config):
     app.register_blueprint(credit_types.bp)
     app.register_blueprint(revenues.bp)
     app.register_blueprint(employers.bp)
+    app.register_blueprint(banks.bp)
 
     # Ajouter datetime dans le contexte Jinja2
     from datetime import datetime
@@ -142,6 +143,10 @@ def create_app(config_class=Config):
 
     # Garder l'ancien filtre pour compatibilité
     app.template_filter('to_paris_time')(to_user_time)
+
+    # Enregistrer les commandes CLI
+    from app import commands
+    commands.init_app(app)
 
     return app
 

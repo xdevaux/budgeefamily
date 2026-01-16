@@ -22,21 +22,35 @@
                                    placeholder="ex: Prêt immobilier, Crédit auto...">
                         </div>
 
-                        <div class="mb-3">
-                            <label for="credit_type_id" class="form-label">Type de crédit</label>
-                            <select class="form-select" id="credit_type_id" name="credit_type_id">
-                                <option value="">-- Aucun type --</option>
-                                {% for type in credit_types %}
-                                    <option value="{{ type.id }}">
-                                        {{ type.name }}
-                                        {% if type.is_custom() %}(Personnalisé){% endif %}
-                                    </option>
-                                {% endfor %}
-                            </select>
-                            <small class="text-muted">
-                                Vous pouvez créer vos propres types dans
-                                <a href="{{ url_for('credit_types.list') }}" target="_blank">Types de crédits</a>
-                            </small>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="credit_type_id" class="form-label">Type de crédit</label>
+                                <select class="form-select" id="credit_type_id" name="credit_type_id">
+                                    <option value="">-- Aucun type --</option>
+                                    {% for type in credit_types %}
+                                        <option value="{{ type.id }}">
+                                            {{ type.name }}
+                                            {% if type.is_custom() %}(Personnalisé){% endif %}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                                <small class="text-muted">
+                                    <a href="{{ url_for('credit_types.list') }}" target="_blank">Gérer les types</a>
+                                </small>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="bank_id" class="form-label">Banque</label>
+                                <select class="form-select" id="bank_id" name="bank_id">
+                                    <option value="">-- Sélectionner une banque --</option>
+                                    {% for bank in banks %}
+                                        <option value="{{ bank.id }}">{{ bank.name }}</option>
+                                    {% endfor %}
+                                </select>
+                                <small class="text-muted">
+                                    <a href="{{ url_for('banks.add') }}" target="_blank">Ajouter une banque</a>
+                                </small>
+                            </div>
                         </div>
 
                         <div class="mb-3">

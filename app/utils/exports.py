@@ -300,19 +300,19 @@ def export_category_distribution_pdf(category_data, user):
 
 
 def export_monthly_evolution_excel(monthly_data, user):
-    """Exporte l'évolution des dépenses mensuelles en Excel"""
+    """Exporte l'évolution des revenus et dépenses mensuelles en Excel"""
     wb = create_excel_workbook()
     ws = wb.active
     ws.title = "Evolution mensuelle"
 
     # En-tête du document
-    ws['A1'] = f"Evolution des dépenses mensuelles - {user.first_name} {user.last_name or ''}"
+    ws['A1'] = f"Evolution des revenus et des dépenses mensuelles - {user.first_name} {user.last_name or ''}"
     ws['A1'].font = Font(size=16, bold=True)
     ws['A2'] = f"Généré le {datetime.now().strftime('%d/%m/%Y à %H:%M')}"
     ws['A2'].font = Font(size=10, italic=True)
 
     # En-têtes des colonnes
-    headers = ['Mois', 'Montant']
+    headers = ['Mois', 'Abonnements', 'Crédits', 'Revenus']
     ws.append([])
     ws.append(headers)
     style_excel_header(ws, row=4)
@@ -321,12 +321,16 @@ def export_monthly_evolution_excel(monthly_data, user):
     for month_data in monthly_data:
         ws.append([
             month_data['month'],
-            month_data['amount']
+            round(month_data['subscriptions'], 2),
+            round(month_data['credits'], 2),
+            round(month_data['revenues'], 2)
         ])
 
     # Ajuster la largeur des colonnes
     ws.column_dimensions['A'].width = 25
     ws.column_dimensions['B'].width = 20
+    ws.column_dimensions['C'].width = 20
+    ws.column_dimensions['D'].width = 20
 
     output = BytesIO()
     wb.save(output)
@@ -335,35 +339,110 @@ def export_monthly_evolution_excel(monthly_data, user):
 
 
 def export_monthly_evolution_pdf(monthly_data, user):
-    """Exporte l'évolution des dépenses mensuelles en PDF"""
+    """Exporte l'évolution des revenus et dépenses mensuelles en PDF avec graphique"""
+    from reportlab.graphics.charts.linecharts import HorizontalLineChart
+    from reportlab.graphics.widgets.markers import makeMarker
+
     buffer = BytesIO()
     doc = SimpleDocTemplate(buffer, pagesize=A4)
     elements = []
 
     # Ajouter l'en-tête avec logo
-    add_pdf_header(elements, "Evolution des dépenses mensuelles", user)
+    add_pdf_header(elements, "Évolution des revenus et des dépenses mensuelles", user)
 
-    # Table
-    data = [['Mois', 'Montant']]
+    if not monthly_data:
+        elements.append(Paragraph("Aucune donnée disponible", getSampleStyleSheet()['Normal']))
+        doc.build(elements)
+        buffer.seek(0)
+        return buffer
+
+    # Créer le graphique en lignes
+    drawing = Drawing(500, 300)
+    lc = HorizontalLineChart()
+    lc.x = 50
+    lc.y = 50
+    lc.height = 200
+    lc.width = 400
+
+    # Préparer les données (3 séries : abonnements, crédits, revenus)
+    subscriptions_data = [month['subscriptions'] for month in monthly_data]
+    credits_data = [month['credits'] for month in monthly_data]
+    revenues_data = [month['revenues'] for month in monthly_data]
+
+    lc.data = [subscriptions_data, credits_data, revenues_data]
+
+    # Configurer les catégories (labels des mois)
+    # Afficher seulement certains labels pour éviter le chevauchement
+    month_labels = [month['month'] for month in monthly_data]
+    # Afficher 1 label sur 2 pour la lisibilité
+    lc.categoryAxis.categoryNames = month_labels
+    lc.categoryAxis.labels.angle = 45
+    lc.categoryAxis.labels.fontSize = 7
+    lc.categoryAxis.labels.boxAnchor = 'e'
+
+    # Configurer l'axe des valeurs
+    lc.valueAxis.valueMin = 0
+    max_value = max(max(subscriptions_data + credits_data + revenues_data, default=0), 100)
+    lc.valueAxis.valueMax = max_value * 1.1
+    lc.valueAxis.valueStep = max_value / 5
+
+    # Couleurs des lignes (bleu pour abonnements, jaune pour crédits, vert pour revenus)
+    lc.lines[0].strokeColor = colors.HexColor('#0d6efd')  # Bleu
+    lc.lines[0].strokeWidth = 2
+    lc.lines[0].symbol = makeMarker('FilledCircle', size=4)
+
+    lc.lines[1].strokeColor = colors.HexColor('#ffc107')  # Jaune
+    lc.lines[1].strokeWidth = 2
+    lc.lines[1].symbol = makeMarker('FilledSquare', size=4)
+
+    lc.lines[2].strokeColor = colors.HexColor('#6f42c1')  # Vert
+    lc.lines[2].strokeWidth = 2
+    lc.lines[2].symbol = makeMarker('FilledDiamond', size=4)
+
+    drawing.add(lc)
+
+    # Ajouter une légende manuelle
+    legend = Legend()
+    legend.x = 50
+    legend.y = 270
+    legend.dx = 8
+    legend.dy = 8
+    legend.fontSize = 9
+    legend.columnMaximum = 3
+    legend.alignment = 'right'
+    legend.colorNamePairs = [
+        (colors.HexColor('#0d6efd'), 'Abonnements'),
+        (colors.HexColor('#ffc107'), 'Crédits'),
+        (colors.HexColor('#6f42c1'), 'Revenus')
+    ]
+    drawing.add(legend)
+
+    elements.append(drawing)
+    elements.append(Spacer(1, 20))
+
+    # Ajouter un tableau récapitulatif sous le graphique
+    table_data = [['Mois', 'Abonnements', 'Crédits', 'Revenus']]
 
     for month_data in monthly_data:
-        data.append([
-            month_data['month'],
-            f"{month_data['amount']:.2f} €"
+        table_data.append([
+            month_data['month'][:15],
+            f"{month_data['subscriptions']:.2f} €",
+            f"{month_data['credits']:.2f} €",
+            f"{month_data['revenues']:.2f} €"
         ])
 
-    table = Table(data, colWidths=[3*inch, 2*inch])
+    table = Table(table_data, colWidths=[2*inch, 1.5*inch, 1.5*inch, 1.5*inch])
     table.setStyle(TableStyle([
         ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#4472C4')),
         ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
         ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
         ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-        ('FONTSIZE', (0, 0), (-1, 0), 9),
+        ('FONTSIZE', (0, 0), (-1, 0), 8),
         ('BOTTOMPADDING', (0, 0), (-1, 0), 8),
         ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
         ('GRID', (0, 0), (-1, -1), 1, colors.black),
         ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
-        ('FONTSIZE', (0, 1), (-1, -1), 8),
+        ('FONTSIZE', (0, 1), (-1, -1), 7),
     ]))
 
     elements.append(table)
@@ -874,14 +953,14 @@ def export_revenue_distribution_pdf(revenue_list, user):
     pie.data = [item['total'] for item in revenue_list]
     pie.labels = [f"{item['name'][:20]}\n{item['total']:.2f}€" for item in revenue_list]
 
-    # Couleurs personnalisées (palette verte pour les revenus)
+    # Couleurs personnalisées (palette violette pour les revenus)
     colors_palette = [
-        colors.HexColor('#10b981'),
-        colors.HexColor('#22c55e'),
-        colors.HexColor('#34d399'),
-        colors.HexColor('#6ee7b7'),
-        colors.HexColor('#a7f3d0'),
-        colors.HexColor('#d1fae5')
+        colors.HexColor('#6f42c1'),
+        colors.HexColor('#8b5cf6'),
+        colors.HexColor('#a78bfa'),
+        colors.HexColor('#c4b5fd'),
+        colors.HexColor('#ddd6fe'),
+        colors.HexColor('#ede9fe')
     ]
 
     pie.slices.strokeWidth = 0.5

@@ -332,6 +332,7 @@ def stats():
     """API endpoint pour récupérer les statistiques"""
     from datetime import datetime, timedelta
     from sqlalchemy import func
+    from app.models import Credit, Revenue
 
     # Traduction des mois en français
     MONTHS_FR = {
@@ -339,12 +340,17 @@ def stats():
         7: 'Juil', 8: 'Août', 9: 'Sep', 10: 'Oct', 11: 'Nov', 12: 'Déc'
     }
 
-    # Dépenses des 12 derniers mois
-    monthly_stats = []
+    # Initialiser les listes pour les 12 derniers mois
+    monthly_subscriptions = []
+    monthly_credits_data = []
+    monthly_revenues_data = []
+
     for i in range(12):
         month_date = datetime.utcnow() - timedelta(days=30 * i)
         month_start = month_date.replace(day=1)
+        month_label = f"{MONTHS_FR[month_start.month]} {month_start.year}"
 
+        # Abonnements actifs pour ce mois
         subscriptions = current_user.subscriptions.filter(
             db.and_(
                 Subscription.is_active == True,
@@ -352,7 +358,7 @@ def stats():
             )
         ).all()
 
-        monthly_total = sum(
+        subscriptions_total = sum(
             sub.amount if sub.billing_cycle == 'monthly' else
             sub.amount / 3 if sub.billing_cycle == 'quarterly' else
             sub.amount / 12 if sub.billing_cycle == 'yearly' else
@@ -360,13 +366,56 @@ def stats():
             for sub in subscriptions
         )
 
-        monthly_stats.insert(0, {
-            'month': f"{MONTHS_FR[month_start.month]} {month_start.year}",
-            'total': round(monthly_total, 2)
+        # Crédits actifs pour ce mois
+        credits = Credit.query.filter(
+            Credit.user_id == current_user.id,
+            Credit.is_active == True,
+            Credit.start_date <= month_start.date(),
+            db.or_(
+                Credit.end_date == None,
+                Credit.end_date >= month_start.date()
+            )
+        ).all()
+
+        credits_total = sum(
+            credit.amount if credit.billing_cycle == 'monthly' else
+            credit.amount / 3 if credit.billing_cycle == 'quarterly' else
+            credit.amount / 12 if credit.billing_cycle == 'yearly' else 0
+            for credit in credits
+        )
+
+        # Revenus actifs pour ce mois
+        revenues = Revenue.query.filter(
+            Revenue.user_id == current_user.id,
+            Revenue.is_active == True,
+            Revenue.start_date <= month_start.date()
+        ).all()
+
+        revenues_total = sum(
+            revenue.amount if revenue.billing_cycle == 'monthly' else
+            revenue.amount / 3 if revenue.billing_cycle == 'quarterly' else
+            revenue.amount / 12 if revenue.billing_cycle == 'yearly' else 0
+            for revenue in revenues
+        )
+
+        # Insérer au début pour avoir l'ordre chronologique
+        monthly_subscriptions.insert(0, {
+            'month': month_label,
+            'total': round(subscriptions_total, 2)
+        })
+        monthly_credits_data.insert(0, {
+            'month': month_label,
+            'total': round(credits_total, 2)
+        })
+        monthly_revenues_data.insert(0, {
+            'month': month_label,
+            'total': round(revenues_total, 2)
         })
 
     return jsonify({
-        'monthly_spending': monthly_stats,
+        'monthly_spending': monthly_subscriptions,
+        'monthly_credits': monthly_credits_data,
+        'monthly_revenues': monthly_revenues_data,
         'total_subscriptions': current_user.get_active_subscriptions_count(),
         'plan': current_user.plan.name if current_user.plan else 'Free'
     })

@@ -77,6 +77,7 @@ def add():
         amount = float(request.form.get('amount'))
         currency = request.form.get('currency', 'EUR')
         credit_type_id = request.form.get('credit_type_id', type=int)
+        bank_id = request.form.get('bank_id', type=int)
         billing_cycle = request.form.get('billing_cycle')
         category_id = request.form.get('category_id', type=int)
         start_date_str = request.form.get('start_date')
@@ -95,6 +96,7 @@ def add():
             amount=amount,
             currency=currency,
             credit_type_id=credit_type_id if credit_type_id else None,
+            bank_id=bank_id if bank_id else None,
             billing_cycle=billing_cycle,
             category_id=category_id if category_id else None,
             start_date=start_date,
@@ -119,9 +121,11 @@ def add():
         flash(f'Le crédit "{name}" a été ajouté avec succès !', 'success')
         return redirect(url_for('credits.list'))
 
+    from app.models import Bank
     categories = get_user_categories()
     credit_types = get_user_credit_types()
-    return render_template('credits/add.html', categories=categories, credit_types=credit_types)
+    banks = Bank.query.filter_by(user_id=current_user.id, is_active=True).order_by(Bank.name).all()
+    return render_template('credits/add.html', categories=categories, credit_types=credit_types, banks=banks)
 
 
 @bp.route('/<int:credit_id>/edit', methods=['GET', 'POST'])
@@ -139,6 +143,7 @@ def edit(credit_id):
         credit.amount = float(request.form.get('amount'))
         credit.currency = request.form.get('currency', 'EUR')
         credit.credit_type_id = request.form.get('credit_type_id', type=int) or None
+        credit.bank_id = request.form.get('bank_id', type=int) or None
         credit.billing_cycle = request.form.get('billing_cycle')
         credit.category_id = request.form.get('category_id', type=int) or None
 

@@ -272,9 +272,19 @@ def export_revenue_distribution(format):
 @login_required
 @premium_required
 def export_monthly_evolution(format):
-    """Exporte l'évolution des dépenses mensuelles"""
-    # Calculer l'évolution sur les 12 derniers mois
+    """Exporte l'évolution des revenus et dépenses mensuelles"""
+    # Récupérer tous les éléments actifs
     subscriptions = Subscription.query.filter_by(
+        user_id=current_user.id,
+        is_active=True
+    ).all()
+
+    credits = Credit.query.filter_by(
+        user_id=current_user.id,
+        is_active=True
+    ).all()
+
+    revenues = Revenue.query.filter_by(
         user_id=current_user.id,
         is_active=True
     ).all()
@@ -286,22 +296,47 @@ def export_monthly_evolution(format):
         month_date = now - timedelta(days=30*i)
         month_name = month_date.strftime('%B %Y')
 
-        total = 0
+        # Calculer les abonnements
+        sub_total = 0
         for sub in subscriptions:
             if sub.start_date <= month_date.date():
                 monthly_cost = sub.amount
-
-                # Convertir en coût mensuel selon le cycle
                 if sub.billing_cycle == 'yearly':
                     monthly_cost = sub.amount / 12
                 elif sub.billing_cycle == 'quarterly':
                     monthly_cost = sub.amount / 3
                 elif sub.billing_cycle == 'weekly':
                     monthly_cost = sub.amount * 4
+                sub_total += monthly_cost
 
-                total += monthly_cost
+        # Calculer les crédits
+        credit_total = 0
+        for credit in credits:
+            if credit.start_date <= month_date.date() and (credit.end_date is None or credit.end_date >= month_date.date()):
+                monthly_cost = credit.amount
+                if credit.billing_cycle == 'yearly':
+                    monthly_cost = credit.amount / 12
+                elif credit.billing_cycle == 'quarterly':
+                    monthly_cost = credit.amount / 3
+                credit_total += monthly_cost
 
-        monthly_data.append({'month': month_name, 'amount': total})
+        # Calculer les revenus
+        revenue_total = 0
+        for revenue in revenues:
+            if revenue.start_date <= month_date.date():
+                monthly_amount = revenue.amount
+                if revenue.billing_cycle == 'yearly':
+                    monthly_amount = revenue.amount / 12
+                elif revenue.billing_cycle == 'quarterly':
+                    monthly_amount = revenue.amount / 3
+                revenue_total += monthly_amount
+
+        monthly_data.append({
+            'month': month_name,
+            'subscriptions': sub_total,
+            'credits': credit_total,
+            'revenues': revenue_total
+        })
 
     if format == 'excel':
         output = export_monthly_evolution_excel(monthly_data, current_user)

@@ -333,6 +333,9 @@ class Subscription(db.Model):
     is_active = db.Column(db.Boolean, default=True)
     auto_renew = db.Column(db.Boolean, default=True)
 
+    # Montant total payé
+    total_paid = db.Column(db.Float, default=0.0, nullable=False)
+
     # Dates
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -358,26 +361,8 @@ class Subscription(db.Model):
         return self.start_date
 
     def get_total_paid(self):
-        """Calcule le montant total payé depuis le début"""
-        if not self.is_active and self.cancelled_at:
-            end_date = self.cancelled_at
-        else:
-            end_date = datetime.utcnow()
-
-        days_elapsed = (end_date - self.created_at).days
-
-        if self.billing_cycle == 'monthly':
-            cycles = days_elapsed / 30
-        elif self.billing_cycle == 'quarterly':
-            cycles = days_elapsed / 90
-        elif self.billing_cycle == 'yearly':
-            cycles = days_elapsed / 365
-        elif self.billing_cycle == 'weekly':
-            cycles = days_elapsed / 7
-        else:
-            cycles = 0
-
-        return round(cycles * self.amount, 2)
+        """Retourne le montant total payé depuis le début"""
+        return round(self.total_paid, 2)
 
     def __repr__(self):
         return f'<Subscription {self.name} - {self.user.email}>'
@@ -454,6 +439,7 @@ class Credit(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     category_id = db.Column(db.Integer, db.ForeignKey('categories.id'), nullable=True)
     credit_type_id = db.Column(db.Integer, db.ForeignKey('credit_types.id'), nullable=True)
+    bank_id = db.Column(db.Integer, db.ForeignKey('banks.id'), nullable=True)
 
     # Informations du crédit
     name = db.Column(db.String(100), nullable=False)
@@ -478,6 +464,9 @@ class Credit(db.Model):
     # État
     is_active = db.Column(db.Boolean, default=True)
 
+    # Montant total payé
+    total_paid = db.Column(db.Float, default=0.0, nullable=False)
+
     # Dates
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -487,6 +476,8 @@ class Credit(db.Model):
     user = db.relationship('User', backref=db.backref('credits', lazy='dynamic', cascade='all, delete-orphan'))
     category = db.relationship('Category', backref='credits')
     credit_type_obj = db.relationship('CreditType', back_populates='credits')
+    bank = db.relationship('Bank', back_populates='credits')
+    documents = db.relationship('CreditDocument', back_populates='credit', lazy='dynamic', cascade='all, delete-orphan')
 
     def calculate_next_payment_date(self):
         """Calcule la prochaine date de paiement"""
@@ -499,24 +490,8 @@ class Credit(db.Model):
         return self.start_date
 
     def get_total_paid(self):
-        """Calcule le montant total payé depuis le début"""
-        if not self.is_active and self.closed_at:
-            end_date = self.closed_at
-        else:
-            end_date = datetime.utcnow()
-
-        days_elapsed = (end_date - self.created_at).days
-
-        if self.billing_cycle == 'monthly':
-            cycles = days_elapsed / 30
-        elif self.billing_cycle == 'quarterly':
-            cycles = days_elapsed / 90
-        elif self.billing_cycle == 'yearly':
-            cycles = days_elapsed / 365
-        else:
-            cycles = 0
-
-        return round(cycles * self.amount, 2)
+        """Retourne le montant total payé depuis le début"""
+        return round(self.total_paid, 2)
 
     def get_progress_percentage(self):
         """Calcule le pourcentage de remboursement"""
@@ -648,6 +623,9 @@ class Revenue(db.Model):
     # Etat
     is_active = db.Column(db.Boolean, default=True)
 
+    # Montant total reçu
+    total_paid = db.Column(db.Float, default=0.0, nullable=False)
+
     # Dates
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -676,5 +654,123 @@ class Revenue(db.Model):
             return self.amount / 12
         return self.amount
 
+    def get_total_paid(self):
+        """Retourne le montant total reçu depuis le début"""
+        return round(self.total_paid, 2)
+
     def __repr__(self):
         return f'<Revenue {self.name} - {self.user.email}>'
+
+
+class Bank(db.Model):
+    __tablename__ = 'banks'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+
+    # Informations de la banque
+    name = db.Column(db.String(100), nullable=False)
+    logo_data = db.Column(db.Text, nullable=True)  # Logo en base64
+    logo_mime_type = db.Column(db.String(50), nullable=True)
+
+    # Coordonnées
+    address = db.Column(db.String(255), nullable=True)
+    postal_code = db.Column(db.String(20), nullable=True)
+    city = db.Column(db.String(100), nullable=True)
+    country = db.Column(db.String(100), nullable=True)
+    phone = db.Column(db.String(50), nullable=True)
+    email = db.Column(db.String(120), nullable=True)
+    website = db.Column(db.String(255), nullable=True)
+
+    # Informations du compte
+    account_number = db.Column(db.String(100), nullable=True)  # Numéro de compte
+    iban = db.Column(db.String(34), nullable=True)
+    bic = db.Column(db.String(11), nullable=True)
+
+    # Notes
+    notes = db.Column(db.Text, nullable=True)
+
+    # État
+    is_active = db.Column(db.Boolean, default=True)
+
+    # Dates
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # Relations
+    user = db.relationship('User', backref=db.backref('banks', lazy='dynamic', cascade='all, delete-orphan'))
+    credits = db.relationship('Credit', back_populates='bank', lazy='dynamic')
+    documents = db.relationship('BankDocument', back_populates='bank', lazy='dynamic', cascade='all, delete-orphan')
+
+    def __repr__(self):
+        return f'<Bank {self.name}>'
+
+
+class BankDocument(db.Model):
+    __tablename__ = 'bank_documents'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    bank_id = db.Column(db.Integer, db.ForeignKey('banks.id'), nullable=False)
+
+    # Informations du document
+    name = db.Column(db.String(200), nullable=False)
+    description = db.Column(db.Text, nullable=True)
+    document_type = db.Column(db.String(50), nullable=False)  # 'contract', 'statement', 'other'
+
+    # Fichier
+    file_data = db.Column(db.LargeBinary, nullable=True)  # Fichier stocké en binaire
+    file_name = db.Column(db.String(255), nullable=True)
+    file_mime_type = db.Column(db.String(100), nullable=True)
+    file_size = db.Column(db.Integer, nullable=True)  # Taille en bytes
+
+    # Métadonnées
+    document_date = db.Column(db.Date, nullable=True)  # Date du document
+    year = db.Column(db.Integer, nullable=True)  # Année pour classement
+    month = db.Column(db.Integer, nullable=True)  # Mois pour classement
+
+    # Dates
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # Relations
+    user = db.relationship('User', backref=db.backref('bank_documents', lazy='dynamic', cascade='all, delete-orphan'))
+    bank = db.relationship('Bank', back_populates='documents')
+
+    def __repr__(self):
+        return f'<BankDocument {self.name}>'
+
+
+class CreditDocument(db.Model):
+    __tablename__ = 'credit_documents'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    credit_id = db.Column(db.Integer, db.ForeignKey('credits.id'), nullable=False)
+
+    # Informations du document
+    name = db.Column(db.String(200), nullable=False)
+    description = db.Column(db.Text, nullable=True)
+    document_type = db.Column(db.String(50), nullable=False)  # 'contract', 'statement', 'insurance', 'other'
+
+    # Fichier
+    file_data = db.Column(db.LargeBinary, nullable=True)  # Fichier stocké en binaire
+    file_name = db.Column(db.String(255), nullable=True)
+    file_mime_type = db.Column(db.String(100), nullable=True)
+    file_size = db.Column(db.Integer, nullable=True)  # Taille en bytes
+
+    # Métadonnées
+    document_date = db.Column(db.Date, nullable=True)  # Date du document
+    year = db.Column(db.Integer, nullable=True)  # Année pour classement
+    month = db.Column(db.Integer, nullable=True)  # Mois pour classement
+
+    # Dates
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # Relations
+    user = db.relationship('User', backref=db.backref('credit_documents', lazy='dynamic', cascade='all, delete-orphan'))
+    credit = db.relationship('Credit', back_populates='documents')
+
+    def __repr__(self):
+        return f'<CreditDocument {self.name}>'

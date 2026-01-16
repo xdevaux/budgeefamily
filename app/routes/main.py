@@ -87,7 +87,7 @@ def dashboard():
 
     # Répartition des revenus par employeur
     revenue_data = {}
-    colors_palette = ['#10b981', '#22c55e', '#34d399', '#6ee7b7', '#a7f3d0', '#d1fae5']
+    colors_palette = ['#6f42c1', '#8b5cf6', '#a78bfa', '#c4b5fd', '#ddd6fe', '#ede9fe']
 
     for revenue in upcoming_revenues:
         if revenue.employer:
