@@ -344,7 +344,7 @@ def stats():
     """API endpoint pour récupérer les statistiques"""
     from datetime import datetime, timedelta
     from sqlalchemy import func
-    from app.models import Credit, Revenue
+    from app.models import Credit, Revenue, InstallmentPayment
 
     # Traduction des mois en français
     MONTHS_FR = {
@@ -395,6 +395,28 @@ def stats():
             credit.amount / 12 if credit.billing_cycle == 'yearly' else 0
             for credit in credits
         )
+
+        # Paiements en plusieurs fois actifs pour ce mois
+        installments = InstallmentPayment.query.filter(
+            InstallmentPayment.user_id == current_user.id,
+            InstallmentPayment.is_active == True,
+            InstallmentPayment.start_date <= month_start.date(),
+            db.or_(
+                InstallmentPayment.is_completed == False,
+                db.and_(
+                    InstallmentPayment.is_completed == True,
+                    InstallmentPayment.completed_at >= month_start
+                )
+            )
+        ).all()
+
+        installments_total = sum(
+            installment.installment_amount
+            for installment in installments
+        )
+
+        # Ajouter les paiements en plusieurs fois aux crédits
+        credits_total += installments_total
 
         # Revenus actifs pour ce mois
         revenues = Revenue.query.filter(

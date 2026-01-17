@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash, current_app
 from flask_login import login_required, current_user
 from app import db
-from app.models import Subscription, Category, Plan, Notification, Credit, Revenue
+from app.models import Subscription, Category, Plan, Notification, Credit, Revenue, InstallmentPayment
 from datetime import datetime, timedelta
 from sqlalchemy import func, case
 import stripe
@@ -56,6 +56,11 @@ def dashboard():
         Revenue.is_active == True
     ).order_by(Revenue.next_payment_date).all()
 
+    # Prochains paiements pour les paiements en plusieurs fois - tous les paiements actifs triés par date
+    upcoming_installments = current_user.installment_payments.filter(
+        InstallmentPayment.is_active == True
+    ).order_by(InstallmentPayment.next_payment_date).all()
+
     # Répartition par catégorie (abonnements + crédits)
     category_stats = db.session.query(
         Category.name,
@@ -84,6 +89,14 @@ def dashboard():
         credit.amount / 12 if credit.billing_cycle == 'yearly' else 0
         for credit in upcoming_credits
     )
+
+    # Ajouter les paiements en plusieurs fois au total des crédits
+    total_installments = sum(
+        installment.installment_amount
+        for installment in upcoming_installments
+    )
+
+    total_credits += total_installments
 
     # Répartition des revenus par employeur
     revenue_data = {}
@@ -135,6 +148,7 @@ def dashboard():
                          upcoming_renewals=upcoming_renewals,
                          upcoming_credits=upcoming_credits,
                          upcoming_revenues=upcoming_revenues,
+                         upcoming_installments=upcoming_installments,
                          category_stats=category_stats,
                          revenue_stats=revenue_stats,
                          total_credits=round(total_credits, 2),
@@ -153,10 +167,32 @@ def pricing():
 @bp.route('/notifications')
 @login_required
 def notifications():
-    user_notifications = current_user.notifications.order_by(
-        Notification.created_at.desc()
-    ).all()
-    return render_template('notifications.html', notifications=user_notifications)
+    filter_type = request.args.get('filter', 'unread')  # 'unread', 'archived', 'all'
+
+    if filter_type == 'archived':
+        # Afficher uniquement les notifications archivées
+        user_notifications = current_user.notifications.filter_by(
+            archived=True
+        ).order_by(
+            Notification.created_at.desc()
+        ).all()
+    elif filter_type == 'all':
+        # Afficher toutes les notifications
+        user_notifications = current_user.notifications.order_by(
+            Notification.created_at.desc()
+        ).all()
+    else:  # 'unread' par défaut
+        # Afficher uniquement les notifications non lues
+        user_notifications = current_user.notifications.filter_by(
+            is_read=False,
+            archived=False
+        ).order_by(
+            Notification.created_at.desc()
+        ).all()
+
+    return render_template('notifications.html',
+                         notifications=user_notifications,
+                         filter_type=filter_type)
 
 
 @bp.route('/notifications/<int:notification_id>/read', methods=['POST'])
@@ -167,6 +203,102 @@ def mark_notification_read(notification_id):
         return redirect(url_for('main.notifications'))
 
     notification.mark_as_read()
+
+    # Récupérer le filtre actuel pour rediriger vers la même vue
+    filter_type = request.args.get('filter', 'unread')
+    return redirect(url_for('main.notifications', filter=filter_type))
+
+
+@bp.route('/notifications/<int:notification_id>/delete', methods=['POST'])
+@login_required
+def delete_notification(notification_id):
+    if not current_user.is_admin:
+        flash('Vous n\'avez pas les permissions pour supprimer des notifications.', 'danger')
+        return redirect(url_for('main.notifications'))
+
+    notification = Notification.query.get_or_404(notification_id)
+    db.session.delete(notification)
+    db.session.commit()
+
+    flash('La notification a été supprimée avec succès.', 'success')
+    return redirect(url_for('main.notifications'))
+
+
+@bp.route('/notifications/archive', methods=['POST'])
+@login_required
+def archive_notifications():
+    notification_ids = request.form.getlist('notification_ids[]')
+
+    if not notification_ids:
+        flash('Veuillez sélectionner au moins une notification à archiver.', 'warning')
+        return redirect(url_for('main.notifications'))
+
+    archived_count = 0
+    for notif_id in notification_ids:
+        notification = Notification.query.get(int(notif_id))
+        if notification and notification.user_id == current_user.id:
+            notification.archive()
+            archived_count += 1
+
+    if archived_count > 0:
+        flash(f'{archived_count} notification(s) archivée(s) avec succès.', 'success')
+    else:
+        flash('Aucune notification n\'a pu être archivée.', 'warning')
+
+    return redirect(url_for('main.notifications'))
+
+
+@bp.route('/notifications/mark-read', methods=['POST'])
+@login_required
+def mark_multiple_notifications_read():
+    notification_ids = request.form.getlist('notification_ids[]')
+
+    if not notification_ids:
+        flash('Veuillez sélectionner au moins une notification à marquer comme lue.', 'warning')
+        return redirect(url_for('main.notifications'))
+
+    marked_count = 0
+    for notif_id in notification_ids:
+        notification = Notification.query.get(int(notif_id))
+        if notification and notification.user_id == current_user.id and not notification.is_read:
+            notification.mark_as_read()
+            marked_count += 1
+
+    if marked_count > 0:
+        flash(f'{marked_count} notification(s) marquée(s) comme lue(s) avec succès.', 'success')
+    else:
+        flash('Aucune notification n\'a pu être marquée comme lue.', 'warning')
+
+    return redirect(url_for('main.notifications'))
+
+
+@bp.route('/notifications/delete-multiple', methods=['POST'])
+@login_required
+def delete_multiple_notifications():
+    if not current_user.is_admin:
+        flash('Vous n\'avez pas les permissions pour supprimer des notifications.', 'danger')
+        return redirect(url_for('main.notifications'))
+
+    notification_ids = request.form.getlist('notification_ids[]')
+
+    if not notification_ids:
+        flash('Veuillez sélectionner au moins une notification à supprimer.', 'warning')
+        return redirect(url_for('main.notifications'))
+
+    deleted_count = 0
+    for notif_id in notification_ids:
+        notification = Notification.query.get(int(notif_id))
+        if notification:
+            db.session.delete(notification)
+            deleted_count += 1
+
+    db.session.commit()
+
+    if deleted_count > 0:
+        flash(f'{deleted_count} notification(s) supprimée(s) avec succès.', 'success')
+    else:
+        flash('Aucune notification n\'a pu être supprimée.', 'warning')
+
     return redirect(url_for('main.notifications'))
 
 

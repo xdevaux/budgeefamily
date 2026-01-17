@@ -106,6 +106,130 @@
             background-color: #f9fafb;
         }
 
+        /* Menu Navigation Buttons */
+        .nav-menu-btn {
+            background-color: white;
+            color: black;
+            border: 1px solid #e5e7eb;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            margin: 0 0.25rem;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-menu-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            color: white;
+        }
+
+        .nav-menu-btn.dashboard:hover {
+            background-color: #10b981;
+            border-color: #10b981;
+        }
+
+        .nav-menu-btn.revenues:hover {
+            background-color: #a78bfa;
+            border-color: #a78bfa;
+        }
+
+        .nav-menu-btn.subscriptions:hover {
+            background-color: #3b82f6;
+            border-color: #3b82f6;
+        }
+
+        .nav-menu-btn.credits:hover {
+            background-color: #fbbf24;
+            border-color: #fbbf24;
+        }
+
+        .nav-menu-btn.user:hover,
+        .nav-menu-btn.notifications:hover {
+            background-color: #10b981;
+            border-color: #10b981;
+        }
+
+        /* Dropdown toggles */
+        .nav-menu-btn.dropdown-toggle::after {
+            margin-left: 0.5rem;
+        }
+
+        /* Amélioration des menus déroulants */
+        .navbar-nav .dropdown-menu {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            padding: 0.5rem;
+            margin-top: 0.5rem;
+            min-width: 220px;
+        }
+
+        .navbar-nav .dropdown-item {
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .navbar-nav .dropdown-item i {
+            width: 20px;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+
+        .navbar-nav .dropdown-item:hover {
+            transform: translateX(5px);
+            color: white;
+        }
+
+        /* Couleurs spécifiques pour chaque menu déroulant */
+        #revenuesDropdown + .dropdown-menu .dropdown-item:hover {
+            background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%);
+        }
+
+        #subscriptionsDropdown + .dropdown-menu .dropdown-item:hover {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        }
+
+        #creditsDropdown + .dropdown-menu .dropdown-item:hover {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+        }
+
+        #userDropdown + .dropdown-menu .dropdown-item:hover {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+
+        /* Séparateurs dans les menus */
+        .navbar-nav .dropdown-divider {
+            margin: 0.5rem 0;
+            border-top-color: #e5e7eb;
+        }
+
+        /* En-têtes de menu */
+        .navbar-nav .dropdown-header {
+            padding: 0.5rem 1rem;
+            font-weight: 700;
+            color: #6b7280;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Item de déconnexion */
+        .navbar-nav .dropdown-item.text-danger:hover {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white !important;
+        }
+
         /* Cookie Consent Banner */
         .cookie-consent {
             position: fixed;
@@ -346,15 +470,15 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
+                <ul class="navbar-nav ms-auto align-items-center">
                     {% if current_user.is_authenticated %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('main.dashboard') }}">
+                            <a class="nav-menu-btn dashboard" href="{{ url_for('main.dashboard') }}">
                                 <i class="fas fa-chart-line"></i> Tableau de bord
                             </a>
                         </li>
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="revenuesDropdown" role="button" data-bs-toggle="dropdown">
+                            <a class="nav-menu-btn revenues dropdown-toggle" href="#" id="revenuesDropdown" role="button" data-bs-toggle="dropdown">
                                 <i class="fas fa-hand-holding-usd"></i> Revenus
                             </a>
                             <ul class="dropdown-menu">
@@ -363,7 +487,7 @@
                             </ul>
                         </li>
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="subscriptionsDropdown" role="button" data-bs-toggle="dropdown">
+                            <a class="nav-menu-btn subscriptions dropdown-toggle" href="#" id="subscriptionsDropdown" role="button" data-bs-toggle="dropdown">
                                 <i class="fas fa-list"></i> Abonnements
                             </a>
                             <ul class="dropdown-menu">
@@ -373,17 +497,19 @@
                             </ul>
                         </li>
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="creditsDropdown" role="button" data-bs-toggle="dropdown">
+                            <a class="nav-menu-btn credits dropdown-toggle" href="#" id="creditsDropdown" role="button" data-bs-toggle="dropdown">
                                 <i class="fas fa-money-bill-wave"></i> Crédits
                             </a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="{{ url_for('credits.list_credits') }}"><i class="fas fa-money-bill-wave"></i> Mes crédits</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('installments.list') }}"><i class="fas fa-calendar-alt"></i> Paiements en plusieurs fois</a></li>
+                                <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="{{ url_for('credit_types.list') }}"><i class="fas fa-tag"></i> Types de crédits</a></li>
                                 <li><a class="dropdown-item" href="{{ url_for('banks.list_banks') }}"><i class="fas fa-university"></i> Banques</a></li>
                             </ul>
                         </li>
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                            <a class="nav-menu-btn user dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
                                 <i class="fas fa-user-circle"></i> {{ current_user.first_name or current_user.email }}
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end">
@@ -403,11 +529,11 @@
                             </ul>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link position-relative" href="{{ url_for('main.notifications') }}">
+                            <a class="nav-menu-btn notifications position-relative" href="{{ url_for('main.notifications') }}">
                                 <i class="fas fa-bell"></i>
                                 {% set unread_count = current_user.notifications.filter_by(is_read=False).count() %}
                                 {% if unread_count > 0 %}
-                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.65rem;">
                                         {{ unread_count }}
                                     </span>
                                 {% endif %}

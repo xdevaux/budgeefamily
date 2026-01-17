@@ -61,7 +61,7 @@ class User(UserMixin, db.Model):
     is_admin = db.Column(db.Boolean, default=False)
 
     # Notifications
-    email_notifications = db.Column(db.Boolean, default=True)  # Recevoir un email à chaque notification
+    email_notifications = db.Column(db.Boolean, default=False)  # Recevoir un email à chaque notification
 
     # Dates
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
@@ -71,7 +71,8 @@ class User(UserMixin, db.Model):
     # Relations
     subscriptions = db.relationship('Subscription', back_populates='user', lazy='dynamic',
                                    cascade='all, delete-orphan')
-    notifications = db.relationship('Notification', back_populates='user', lazy='dynamic',
+    notifications = db.relationship('Notification', foreign_keys='Notification.user_id',
+                                   back_populates='user', lazy='dynamic',
                                    cascade='all, delete-orphan')
     custom_categories = db.relationship('Category', back_populates='user', lazy='dynamic',
                                        cascade='all, delete-orphan')
@@ -106,6 +107,33 @@ class User(UserMixin, db.Model):
         if self.is_premium():
             return True
         return self.subscriptions.filter_by(is_active=True).count() < 5
+
+    def can_add_revenue(self):
+        """Vérifie si l'utilisateur peut ajouter un revenu
+        - Gratuit : max 1 revenu
+        - Premium : illimité
+        """
+        if self.is_premium():
+            return True
+        return self.revenues.filter_by(is_active=True).count() < 1
+
+    def can_add_credit(self):
+        """Vérifie si l'utilisateur peut ajouter un crédit
+        - Gratuit : max 1 crédit
+        - Premium : illimité
+        """
+        if self.is_premium():
+            return True
+        return self.credits.filter_by(is_active=True).count() < 1
+
+    def can_add_installment_payment(self):
+        """Vérifie si l'utilisateur peut ajouter un paiement en plusieurs fois
+        - Gratuit : max 1 paiement
+        - Premium : illimité
+        """
+        if self.is_premium():
+            return True
+        return self.installment_payments.filter_by(is_active=True).count() < 1
 
     def is_premium(self):
         """Vérifie si l'utilisateur a un plan Premium (mensuel ou annuel)"""
@@ -379,6 +407,12 @@ class Notification(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     subscription_id = db.Column(db.Integer, db.ForeignKey('subscriptions.id', ondelete='SET NULL'), nullable=True)
+    credit_id = db.Column(db.Integer, db.ForeignKey('credits.id', ondelete='SET NULL'), nullable=True)
+    revenue_id = db.Column(db.Integer, db.ForeignKey('revenues.id', ondelete='SET NULL'), nullable=True)
+    installment_payment_id = db.Column(db.Integer, db.ForeignKey('installment_payments.id', ondelete='SET NULL'), nullable=True)
+
+    # Utilisateur qui a créé l'action à l'origine de la notification
+    created_by_user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
 
     # Type de notification
     type = db.Column(db.String(50), nullable=False)  # 'renewal', 'expiry', 'payment_failed', etc.
@@ -388,18 +422,29 @@ class Notification(db.Model):
     # État
     is_read = db.Column(db.Boolean, default=False)
     is_sent = db.Column(db.Boolean, default=False)
+    archived = db.Column(db.Boolean, default=False)
 
     # Dates
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     read_at = db.Column(db.DateTime, nullable=True)
     sent_at = db.Column(db.DateTime, nullable=True)
+    archived_at = db.Column(db.DateTime, nullable=True)
 
     # Relations
-    user = db.relationship('User', back_populates='notifications')
+    user = db.relationship('User', foreign_keys=[user_id], back_populates='notifications')
+    created_by_user = db.relationship('User', foreign_keys=[created_by_user_id])
+    credit = db.relationship('Credit', foreign_keys=[credit_id])
+    revenue = db.relationship('Revenue', foreign_keys=[revenue_id])
 
     def mark_as_read(self):
         self.is_read = True
         self.read_at = datetime.utcnow()
+        db.session.commit()
+
+    def archive(self):
+        """Archive la notification"""
+        self.archived = True
+        self.archived_at = datetime.utcnow()
         db.session.commit()
 
     def __repr__(self):
@@ -779,3 +824,90 @@ class CreditDocument(db.Model):
 
     def __repr__(self):
         return f'<CreditDocument {self.name}>'
+
+
+class InstallmentPayment(db.Model):
+    """Modèle pour les paiements en plusieurs fois (type ALMA, Klarna, etc.)"""
+    __tablename__ = 'installment_payments'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    category_id = db.Column(db.Integer, db.ForeignKey('categories.id'), nullable=True)
+    credit_type_id = db.Column(db.Integer, db.ForeignKey('credit_types.id'), nullable=True)
+
+    # Informations du produit/service
+    name = db.Column(db.String(200), nullable=False)  # Ex: "Four Darty"
+    description = db.Column(db.Text, nullable=True)
+    merchant = db.Column(db.String(100), nullable=True)  # Ex: "Darty"
+
+    # Informations du paiement
+    total_amount = db.Column(db.Float, nullable=False)  # Montant total
+    installment_amount = db.Column(db.Float, nullable=False)  # Montant de chaque mensualité
+    number_of_installments = db.Column(db.Integer, nullable=False)  # Nombre de mensualités
+    installments_paid = db.Column(db.Integer, default=0)  # Nombre de mensualités payées
+
+    # Frais
+    has_fees = db.Column(db.Boolean, default=False)  # Avec ou sans frais
+    fees_amount = db.Column(db.Float, default=0.0)  # Montant total des frais
+
+    # Fournisseur du paiement
+    provider = db.Column(db.String(50), nullable=True)  # 'ALMA', 'Klarna', 'PayPal', 'Amazon', 'Autre'
+
+    # Catégorie de produit
+    product_category = db.Column(db.String(100), nullable=True)  # 'Informatique', 'Électroménager', etc.
+
+    # Dates
+    start_date = db.Column(db.Date, nullable=False)
+    next_payment_date = db.Column(db.Date, nullable=False)
+    end_date = db.Column(db.Date, nullable=True)  # Date de fin calculée
+
+    # Devise
+    currency = db.Column(db.String(3), default='EUR')
+
+    # État
+    is_active = db.Column(db.Boolean, default=True)
+    is_completed = db.Column(db.Boolean, default=False)
+
+    # Dates de suivi
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    completed_at = db.Column(db.DateTime, nullable=True)
+
+    # Relations
+    user = db.relationship('User', backref=db.backref('installment_payments', lazy='dynamic', cascade='all, delete-orphan'))
+    category = db.relationship('Category', backref='installment_payments')
+    credit_type_obj = db.relationship('CreditType', backref='installment_payments')
+
+    def calculate_remaining_amount(self):
+        """Calcule le montant restant à payer"""
+        remaining_installments = self.number_of_installments - self.installments_paid
+        return remaining_installments * self.installment_amount
+
+    def calculate_next_payment_date(self):
+        """Calcule la prochaine date de paiement (mensuel)"""
+        return self.next_payment_date + relativedelta(months=1)
+
+    def process_payment(self):
+        """Traite un paiement mensuel"""
+        if self.installments_paid < self.number_of_installments:
+            self.installments_paid += 1
+            self.next_payment_date = self.calculate_next_payment_date()
+
+            # Marquer comme terminé si toutes les mensualités sont payées
+            if self.installments_paid >= self.number_of_installments:
+                self.is_completed = True
+                self.is_active = False
+                self.completed_at = datetime.utcnow()
+
+            db.session.commit()
+            return True
+        return False
+
+    def get_progress_percentage(self):
+        """Retourne le pourcentage de progression"""
+        if self.number_of_installments == 0:
+            return 0
+        return int((self.installments_paid / self.number_of_installments) * 100)
+
+    def __repr__(self):
+        return f'<InstallmentPayment {self.name} - {self.installments_paid}/{self.number_of_installments}>'

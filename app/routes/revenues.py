@@ -66,6 +66,11 @@ def list():
 @login_required
 def add():
     if request.method == 'POST':
+        # Vérifier si l'utilisateur peut ajouter un revenu
+        if not current_user.can_add_revenue():
+            flash('Vous avez atteint la limite de revenus pour le plan gratuit. Passez au plan Premium pour ajouter des revenus illimités.', 'warning')
+            return redirect(url_for('revenues.list'))
+
         name = request.form.get('name')
         description = request.form.get('description')
         employer_id = request.form.get('employer_id', type=int)
@@ -104,6 +109,8 @@ def add():
         # Créer une notification
         notification = Notification(
             user_id=current_user.id,
+            revenue_id=revenue.id,
+            created_by_user_id=current_user.id,
             type='revenue_added',
             title='Nouveau revenu ajouté',
             message=f'Votre revenu "{name}" a été ajouté avec succès.'

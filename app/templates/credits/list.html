@@ -7,9 +7,18 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2><i class="fas fa-money-bill-wave"></i> Mes crédits</h2>
         <div class="d-flex gap-2">
-            <a href="{{ url_for('credits.add') }}" class="btn btn-primary">
-                <i class="fas fa-plus"></i> Ajouter un crédit
-            </a>
+            {% if current_user.can_add_credit() %}
+                <a href="{{ url_for('credits.add') }}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Ajouter un crédit
+                </a>
+            {% else %}
+                <button class="btn btn-secondary" disabled title="Limite atteinte pour le plan gratuit">
+                    <i class="fas fa-lock"></i> Limite atteinte (1/1)
+                </button>
+                <a href="{{ url_for('main.pricing') }}" class="btn btn-warning">
+                    <i class="fas fa-crown"></i> Passer Premium
+                </a>
+            {% endif %}
         </div>
     </div>
 

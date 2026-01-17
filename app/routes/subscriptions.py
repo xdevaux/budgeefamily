@@ -79,8 +79,8 @@ def list():
 @login_required
 def add():
     if not current_user.can_add_subscription():
-        flash('Vous avez atteint la limite de votre plan. Passez au plan Premium pour ajouter plus d\'abonnements.', 'warning')
-        return redirect(url_for('main.pricing'))
+        flash('Vous avez atteint la limite d\'abonnements pour le plan gratuit (5/5). Passez au plan Premium pour ajouter des abonnements illimités.', 'warning')
+        return redirect(url_for('subscriptions.list'))
 
     if request.method == 'POST':
         name = request.form.get('name')
@@ -126,6 +126,7 @@ def add():
         notification = Notification(
             user_id=current_user.id,
             subscription_id=subscription.id,
+            created_by_user_id=current_user.id,
             type='subscription_added',
             title='Nouvel abonnement ajouté',
             message=f'Votre abonnement "{name}" a été ajouté avec succès.'

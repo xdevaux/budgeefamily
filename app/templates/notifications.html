@@ -4,20 +4,76 @@
 
 {% block content %}
 <div class="container py-4">
-    <h2 class="mb-4">
-        <i class="fas fa-bell"></i> Notifications
-    </h2>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">
+            <i class="fas fa-bell"></i> Notifications
+        </h2>
+        <div class="btn-group" role="group">
+            <a href="{{ url_for('main.notifications', filter='unread') }}"
+               class="btn btn-sm {% if filter_type == 'unread' %}btn-success{% else %}btn-outline-success{% endif %}">
+                <i class="fas fa-envelope"></i> Non lues
+            </a>
+            <a href="{{ url_for('main.notifications', filter='archived') }}"
+               class="btn btn-sm {% if filter_type == 'archived' %}btn-secondary{% else %}btn-outline-secondary{% endif %}">
+                <i class="fas fa-archive"></i> Archivées
+            </a>
+            <a href="{{ url_for('main.notifications', filter='all') }}"
+               class="btn btn-sm {% if filter_type == 'all' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                <i class="fas fa-inbox"></i> Toutes
+            </a>
+        </div>
+    </div>
 
     {% if notifications %}
-        <div class="card">
-            <div class="list-group list-group-flush">
-                {% for notification in notifications %}
-                <div class="list-group-item {% if not notification.is_read %}bg-light{% endif %}">
-                    <div class="d-flex justify-content-between align-items-start">
+        <form id="archiveForm" method="POST" action="{{ url_for('main.archive_notifications') }}">
+            <div class="card">
+                {% if filter_type != 'archived' or current_user.is_admin %}
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="selectAll">
+                        <label class="form-check-label" for="selectAll">
+                            Tout sélectionner
+                        </label>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-sm btn-info" id="markReadBtn" disabled onclick="confirmMarkRead()">
+                            <i class="fas fa-check"></i> Marquer comme lu
+                        </button>
+                        {% if filter_type != 'archived' %}
+                        <button type="submit" class="btn btn-sm btn-warning" id="archiveBtn" disabled>
+                            <i class="fas fa-archive"></i> Archiver la sélection
+                        </button>
+                        {% endif %}
+                        {% if current_user.is_admin %}
+                        <button type="button" class="btn btn-sm btn-danger" id="deleteBtn" disabled onclick="confirmDelete()">
+                            <i class="fas fa-trash"></i> Supprimer la sélection
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+                <div class="list-group list-group-flush">
+                    {% for notification in notifications %}
+                <div class="list-group-item {% if notification.archived %}bg-secondary bg-opacity-25{% elif not notification.is_read %}bg-success bg-opacity-10{% endif %}">
+                    <div class="d-flex align-items-start gap-2">
+                        {% if not notification.archived or current_user.is_admin %}
+                        <div class="form-check mt-1">
+                            <input class="form-check-input notification-checkbox" type="checkbox"
+                                   name="notification_ids[]" value="{{ notification.id }}"
+                                   id="notif_{{ notification.id }}">
+                        </div>
+                        {% endif %}
+
                         <div class="flex-grow-1">
-                            <div class="d-flex align-items-center mb-2">
+                            <div class="d-flex align-items-center mb-1">
                                 {% if notification.type == 'subscription_added' %}
-                                    <span class="badge bg-success me-2"><i class="fas fa-plus"></i></span>
+                                    <span class="badge me-2" style="background-color: #0d6efd;"><i class="fas fa-list"></i></span>
+                                {% elif notification.type == 'credit_added' %}
+                                    <span class="badge me-2" style="background-color: #ffc107;"><i class="fas fa-money-bill-wave"></i></span>
+                                {% elif notification.type == 'revenue_added' %}
+                                    <span class="badge me-2" style="background-color: #6f42c1;"><i class="fas fa-hand-holding-usd"></i></span>
+                                {% elif notification.type == 'installment_added' %}
+                                    <span class="badge me-2" style="background-color: #ffc107;"><i class="fas fa-calendar-alt"></i></span>
                                 {% elif notification.type == 'renewal' %}
                                     <span class="badge bg-info me-2"><i class="fas fa-redo"></i></span>
                                 {% elif notification.type == 'payment_failed' %}
@@ -30,30 +86,46 @@
                                     <span class="badge bg-primary me-2"><i class="fas fa-info"></i></span>
                                 {% endif %}
 
-                                <h6 class="mb-0">{{ notification.title }}</h6>
-
-                                {% if not notification.is_read %}
-                                    <span class="badge bg-primary ms-2">Nouveau</span>
-                                {% endif %}
+                                <div>
+                                    <h6 class="mb-0">
+                                        {{ notification.title }}
+                                        {% if notification.created_by_user and notification.created_by_user.first_name %}
+                                            par <span style="color: #10b981; font-weight: bold;">{{ notification.created_by_user.first_name }}</span>
+                                        {% endif %}
+                                        {% if not notification.is_read %}
+                                            <span class="badge bg-primary ms-2">Nouveau</span>
+                                        {% endif %}
+                                        {% if notification.archived %}
+                                            <span class="badge bg-secondary ms-2"><i class="fas fa-archive"></i> Archivée</span>
+                                        {% endif %}
+                                    </h6>
+                                    <small class="text-muted">
+                                        <i class="fas fa-clock"></i>
+                                        {{ notification.created_at.strftime('%d/%m/%Y à %H:%M') }}
+                                    </small>
+                                </div>
                             </div>
 
-                            <p class="mb-1">{{ notification.message }}</p>
-
-                            <small class="text-muted">
-                                <i class="fas fa-clock"></i>
-                                {{ notification.created_at.strftime('%d/%m/%Y à %H:%M') }}
-                            </small>
+                            <p class="mb-0 mt-2">{{ notification.message }}</p>
                         </div>
 
-                        <div class="ms-3">
+                        <div class="ms-3 d-flex flex-column gap-2">
                             {% if not notification.is_read %}
-                            <form method="POST" action="{{ url_for('main.mark_notification_read', notification_id=notification.id) }}">
-                                <button type="submit" class="btn btn-sm btn-outline-primary">
-                                    <i class="fas fa-check"></i> Marquer comme lu
-                                </button>
-                            </form>
+                            <button type="button" class="btn btn-sm btn-outline-info"
+                                    onclick="markAsRead({{ notification.id }}, '{{ filter_type }}')"
+                                    title="Marquer comme lu">
+                                <i class="fas fa-check"></i>
+                            </button>
                             {% else %}
-                                <i class="fas fa-check-circle text-success"></i>
+                                <i class="fas fa-check-circle text-success" title="Notification lue"></i>
+                            {% endif %}
+
+                            {% if current_user.is_admin %}
+                            <button type="button" class="btn btn-sm btn-outline-danger"
+                                    onclick="deleteSingle({{ notification.id }})"
+                                    title="Supprimer">
+                                <i class="fas fa-trash"></i>
+                            </button>
                             {% endif %}
                         </div>
                     </div>
@@ -61,6 +133,7 @@
                 {% endfor %}
             </div>
         </div>
+        </form>
     {% else %}
         <div class="card">
             <div class="card-body text-center py-5">
@@ -71,4 +144,114 @@
         </div>
     {% endif %}
 </div>
+
+<script>
+    // Gestion de la sélection des notifications
+    document.addEventListener('DOMContentLoaded', function() {
+        const selectAllCheckbox = document.getElementById('selectAll');
+        const checkboxes = document.querySelectorAll('.notification-checkbox');
+        const archiveBtn = document.getElementById('archiveBtn');
+        const deleteBtn = document.getElementById('deleteBtn');
+        const markReadBtn = document.getElementById('markReadBtn');
+
+        // Fonction pour mettre à jour l'état des boutons
+        function updateButtons() {
+            const checkedBoxes = document.querySelectorAll('.notification-checkbox:checked');
+            const hasSelection = checkedBoxes.length > 0;
+
+            if (archiveBtn) {
+                archiveBtn.disabled = !hasSelection;
+            }
+            if (deleteBtn) {
+                deleteBtn.disabled = !hasSelection;
+            }
+            if (markReadBtn) {
+                markReadBtn.disabled = !hasSelection;
+            }
+        }
+
+        // Sélectionner/désélectionner toutes les cases
+        if (selectAllCheckbox) {
+            selectAllCheckbox.addEventListener('change', function() {
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = this.checked;
+                });
+                updateButtons();
+            });
+        }
+
+        // Mettre à jour les boutons quand une case est cochée/décochée
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                updateButtons();
+
+                // Mettre à jour la case "Tout sélectionner"
+                if (selectAllCheckbox) {
+                    const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+                    const someChecked = Array.from(checkboxes).some(cb => cb.checked);
+                    selectAllCheckbox.checked = allChecked;
+                    selectAllCheckbox.indeterminate = someChecked && !allChecked;
+                }
+            });
+        });
+    });
+
+    // Fonction pour marquer une notification individuelle comme lue
+    function markAsRead(notificationId, filterType) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `/notifications/${notificationId}/read?filter=${filterType}`;
+
+        document.body.appendChild(form);
+        form.submit();
+    }
+
+    // Fonction pour supprimer une notification individuelle
+    function deleteSingle(notificationId) {
+        if (confirm('Êtes-vous sûr de vouloir supprimer cette notification ?')) {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = `/notifications/${notificationId}/delete`;
+
+            document.body.appendChild(form);
+            form.submit();
+        }
+    }
+
+    // Fonction pour marquer comme lu la sélection
+    function confirmMarkRead() {
+        const checkedBoxes = document.querySelectorAll('.notification-checkbox:checked');
+        const count = checkedBoxes.length;
+
+        if (count === 0) {
+            return;
+        }
+
+        // Changer l'action du formulaire pour le marquage comme lu
+        const form = document.getElementById('archiveForm');
+        form.action = "{{ url_for('main.mark_multiple_notifications_read') }}";
+        form.submit();
+    }
+
+    // Fonction pour confirmer et soumettre la suppression
+    function confirmDelete() {
+        const checkedBoxes = document.querySelectorAll('.notification-checkbox:checked');
+        const count = checkedBoxes.length;
+
+        if (count === 0) {
+            return;
+        }
+
+        const message = count === 1
+            ? 'Êtes-vous sûr de vouloir supprimer cette notification ?'
+            : `Êtes-vous sûr de vouloir supprimer ces ${count} notifications ?`;
+
+        if (confirm(message)) {
+            // Changer l'action du formulaire pour la suppression
+            const form = document.getElementById('archiveForm');
+            form.action = "{{ url_for('main.delete_multiple_notifications') }}";
+            form.submit();
+        }
+    }
+</script>
 {% endblock %}
