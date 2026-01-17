@@ -138,6 +138,7 @@
                             <small class="text-muted">Fuseau horaire actuel: <strong>{{ current_user.timezone or 'Non défini' }}</strong></small>
                         </div>
 
+                        {% if current_user.plan.name != 'Free' %}
                         <div class="mb-3">
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="email_notifications" name="email_notifications" {% if current_user.email_notifications %}checked{% endif %}>
@@ -149,6 +150,17 @@
                                 </small>
                             </div>
                         </div>
+                        {% else %}
+                        <div class="mb-3">
+                            <div class="alert alert-info">
+                                <i class="fas fa-crown"></i> <strong>Fonctionnalité Premium</strong>
+                                <p class="mb-0 mt-2">Les notifications par email sont réservées aux abonnés Premium.</p>
+                                <a href="{{ url_for('main.pricing') }}" class="btn btn-primary btn-sm mt-2">
+                                    <i class="fas fa-arrow-up"></i> Passer à Premium
+                                </a>
+                            </div>
+                        </div>
+                        {% endif %}
 
                         {% if not current_user.oauth_provider %}
                         <hr>
@@ -224,6 +236,7 @@
                         <li>Catégories personnalisées : <strong>5 maximum</strong> (contre illimité)</li>
                         <li>Services personnalisés : <strong>5 maximum</strong> (contre illimité)</li>
                         <li>Plans personnalisés : <strong>10 maximum</strong> (contre illimité)</li>
+                        <li><strong>Notifications par email désactivées</strong> - Fonctionnalité réservée aux abonnés Premium</li>
                     </ul>
                 </div>
 

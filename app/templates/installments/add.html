@@ -1,0 +1,221 @@
+{% extends "base.html" %}
+
+{% block title %}Ajouter un paiement en plusieurs fois - Budgee Family{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-calendar-alt"></i> Ajouter un paiement en plusieurs fois</h2>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <form method="POST">
+                        <!-- Informations du produit -->
+                        <h5 class="mb-3"><i class="fas fa-shopping-cart"></i> Informations du produit/service</h5>
+
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Nom de l'article <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="name" name="name" required
+                                   placeholder="Ex: Four Darty">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" name="description" rows="2"
+                                      placeholder="Description optionnelle"></textarea>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="merchant" class="form-label">Marchand</label>
+                                <input type="text" class="form-control" id="merchant" name="merchant"
+                                       placeholder="Ex: Darty, Fnac, Amazon...">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="provider" class="form-label">Fournisseur de paiement</label>
+                                <select class="form-select" id="provider" name="provider">
+                                    <option value="">Sélectionner...</option>
+                                    <option value="ALMA">ALMA</option>
+                                    <option value="Amazon">Amazon</option>
+                                    <option value="Cetelem">Cetelem</option>
+                                    <option value="Klarna">Klarna</option>
+                                    <option value="Oney">Oney</option>
+                                    <option value="PayPal">PayPal</option>
+                                    <option value="Autre">Autre</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <!-- Informations du paiement -->
+                        <h5 class="mb-3"><i class="fas fa-money-bill-wave"></i> Informations du paiement</h5>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="total_amount" class="form-label">Montant total <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="total_amount" name="total_amount"
+                                           step="0.01" min="0" required oninput="calculateInstallment()">
+                                    <select class="form-select" name="currency" style="max-width: 100px;">
+                                        <option value="EUR" selected>€</option>
+                                        <option value="USD">$</option>
+                                        <option value="GBP">£</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="number_of_installments" class="form-label">Nombre de mensualités <span class="text-danger">*</span></label>
+                                <select class="form-select" id="number_of_installments" name="number_of_installments"
+                                        required onchange="calculateInstallment()">
+                                    <option value="">Sélectionner...</option>
+                                    <option value="2">2 fois</option>
+                                    <option value="3">3 fois</option>
+                                    <option value="4">4 fois</option>
+                                    <option value="6">6 fois</option>
+                                    <option value="10">10 fois</option>
+                                    <option value="12">12 fois</option>
+                                    <option value="24">24 fois</option>
+                                    <option value="36">36 fois</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="has_fees" name="has_fees"
+                                       onchange="toggleFees()">
+                                <label class="form-check-label" for="has_fees">
+                                    Avec frais
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="mb-3" id="fees_section" style="display: none;">
+                            <label for="fees_amount" class="form-label">Montant des frais</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" id="fees_amount" name="fees_amount"
+                                       step="0.01" min="0" value="0" oninput="calculateInstallment()">
+                                <span class="input-group-text">€</span>
+                            </div>
+                            <small class="text-muted">Frais appliqués sur le montant total</small>
+                        </div>
+
+                        <div class="alert alert-info" id="installment_preview" style="display: none;">
+                            <strong>Montant de chaque mensualité :</strong> <span id="installment_amount">0,00 €</span>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <!-- Catégorisation -->
+                        <h5 class="mb-3"><i class="fas fa-tags"></i> Catégorisation (optionnel)</h5>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="product_category" class="form-label">Catégorie de produit</label>
+                                <select class="form-select" id="product_category" name="product_category">
+                                    <option value="">Sélectionner...</option>
+                                    <option value="Alimentation">Alimentation</option>
+                                    <option value="Autre">Autre</option>
+                                    <option value="Automobile">Automobile</option>
+                                    <option value="Beauté & Santé">Beauté & Santé</option>
+                                    <option value="Électroménager">Électroménager</option>
+                                    <option value="Équipement de la maison">Équipement de la maison</option>
+                                    <option value="Études">Études</option>
+                                    <option value="Gaming">Gaming</option>
+                                    <option value="Informatique">Informatique</option>
+                                    <option value="Mobile">Mobile</option>
+                                    <option value="Mode">Mode</option>
+                                    <option value="Sport">Sport</option>
+                                    <option value="TV Son Hifi">TV Son Hifi</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="credit_type_id" class="form-label">Type de crédit</label>
+                                <select class="form-select" id="credit_type_id" name="credit_type_id">
+                                    <option value="">Aucun</option>
+                                    {% for type in credit_types %}
+                                        <option value="{{ type.id }}">{{ type.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <!-- Dates -->
+                        <h5 class="mb-3"><i class="fas fa-calendar"></i> Dates</h5>
+
+                        <div class="mb-3">
+                            <label for="start_date" class="form-label">Date du premier paiement <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control" id="start_date" name="start_date" required
+                                   value="{{ now.strftime('%Y-%m-%d') }}">
+                        </div>
+
+                        <div class="d-flex gap-2 justify-content-end mt-4">
+                            <a href="{{ url_for('installments.list') }}" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Annuler
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Enregistrer
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-info-circle"></i> Aide</h5>
+                    <p class="card-text">
+                        <strong>Qu'est-ce qu'un paiement en plusieurs fois ?</strong><br>
+                        Il s'agit d'un achat que vous payez en plusieurs mensualités (ALMA, Klarna, PayPal...).
+                    </p>
+                    <p class="card-text">
+                        <strong>Comment ça marche ?</strong><br>
+                        Les mensualités seront automatiquement traitées chaque mois et vous recevrez une notification.
+                    </p>
+                    <p class="card-text">
+                        <strong>Avec ou sans frais ?</strong><br>
+                        Certains paiements fractionnés incluent des frais. Cochez l'option si c'est votre cas.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleFees() {
+        const hasFees = document.getElementById('has_fees').checked;
+        document.getElementById('fees_section').style.display = hasFees ? 'block' : 'none';
+        if (!hasFees) {
+            document.getElementById('fees_amount').value = 0;
+        }
+        calculateInstallment();
+    }
+
+    function calculateInstallment() {
+        const totalAmount = parseFloat(document.getElementById('total_amount').value) || 0;
+        const numberOfInstallments = parseInt(document.getElementById('number_of_installments').value) || 0;
+        const hasFees = document.getElementById('has_fees').checked;
+        const feesAmount = hasFees ? (parseFloat(document.getElementById('fees_amount').value) || 0) : 0;
+
+        if (totalAmount > 0 && numberOfInstallments > 0) {
+            const totalWithFees = totalAmount + feesAmount;
+            const installmentAmount = totalWithFees / numberOfInstallments;
+
+            document.getElementById('installment_amount').textContent =
+                installmentAmount.toLocaleString('fr-FR', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' €';
+            document.getElementById('installment_preview').style.display = 'block';
+        } else {
+            document.getElementById('installment_preview').style.display = 'none';
+        }
+    }
+</script>
+{% endblock %}

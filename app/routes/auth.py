@@ -250,8 +250,11 @@ def profile():
         if country:
             current_user.set_country(country)
 
-        # Mettre à jour les préférences de notification par email
-        current_user.email_notifications = request.form.get('email_notifications') == 'on'
+        # Mettre à jour les préférences de notification par email (réservé aux utilisateurs Premium)
+        if current_user.plan.name != 'Free':
+            current_user.email_notifications = request.form.get('email_notifications') == 'on'
+        else:
+            current_user.email_notifications = False
 
         # Changement de mot de passe
         current_password = request.form.get('current_password')
@@ -339,6 +342,9 @@ def downgrade_to_free():
 
     # Rétrograder immédiatement
     current_user.plan = free_plan
+
+    # Désactiver les notifications par email (fonctionnalité Premium)
+    current_user.email_notifications = False
 
     # Créer une notification
     from app.models import Notification

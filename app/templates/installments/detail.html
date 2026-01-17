@@ -1,0 +1,212 @@
+{% extends "base.html" %}
+
+{% block title %}{{ payment.name }} - Budgee Family{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-calendar-alt"></i> {{ payment.name }}</h2>
+        <div class="d-flex gap-2">
+            {% if not payment.is_completed %}
+            <a href="{{ url_for('installments.edit', payment_id=payment.id) }}" class="btn btn-secondary">
+                <i class="fas fa-edit"></i> Modifier
+            </a>
+            <form method="POST" action="{{ url_for('installments.process', payment_id=payment.id) }}" style="display: inline;">
+                <button type="submit" class="btn btn-success" onclick="return confirm('Traiter le paiement de ce mois ?')">
+                    <i class="fas fa-check-circle"></i> Traiter le paiement
+                </button>
+            </form>
+            {% endif %}
+            <form method="POST" action="{{ url_for('installments.delete', payment_id=payment.id) }}" style="display: inline;">
+                <button type="submit" class="btn btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce paiement ?')">
+                    <i class="fas fa-trash"></i> Supprimer
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Informations principales -->
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-info-circle"></i> Informations</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <strong>Article :</strong><br>
+                            {{ payment.name }}
+                        </div>
+                        <div class="col-md-6">
+                            <strong>Marchand :</strong><br>
+                            {% if payment.merchant %}
+                                <span class="badge bg-secondary">{{ payment.merchant }}</span>
+                            {% else %}
+                                <span class="text-muted">Non renseigné</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    {% if payment.description %}
+                    <div class="mb-3">
+                        <strong>Description :</strong><br>
+                        {{ payment.description }}
+                    </div>
+                    {% endif %}
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <strong>Fournisseur de paiement :</strong><br>
+                            {% if payment.provider %}
+                                <span class="badge bg-info">{{ payment.provider }}</span>
+                            {% else %}
+                                <span class="text-muted">Non renseigné</span>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <strong>Statut :</strong><br>
+                            {% if payment.is_completed %}
+                                <span class="badge bg-success"><i class="fas fa-check-circle"></i> Terminé</span>
+                            {% elif payment.is_active %}
+                                <span class="badge bg-warning"><i class="fas fa-hourglass-half"></i> En cours</span>
+                            {% else %}
+                                <span class="badge bg-secondary"><i class="fas fa-times-circle"></i> Inactif</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progression -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-chart-line"></i> Progression</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span><strong>{{ payment.installments_paid }}</strong> / {{ payment.number_of_installments }} mensualités payées</span>
+                        <span class="badge bg-primary">{{ payment.get_progress_percentage() }}%</span>
+                    </div>
+                    <div class="progress" style="height: 25px;">
+                        <div class="progress-bar bg-warning" role="progressbar"
+                             style="width: {{ payment.get_progress_percentage() }}%"
+                             aria-valuenow="{{ payment.get_progress_percentage() }}"
+                             aria-valuemin="0" aria-valuemax="100">
+                            {{ payment.get_progress_percentage() }}%
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <div class="text-center p-3 bg-light rounded">
+                                <small class="text-muted">Montant payé</small><br>
+                                <strong class="h5">{{ (payment.installment_amount * payment.installments_paid) | format_amount }} €</strong>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="text-center p-3 bg-light rounded">
+                                <small class="text-muted">Montant restant</small><br>
+                                <strong class="h5">{{ payment.calculate_remaining_amount() | format_amount }} €</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Détails financiers -->
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0"><i class="fas fa-euro-sign"></i> Détails financiers</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <small class="text-muted">Montant total</small><br>
+                        <strong class="h4">{{ payment.total_amount | format_amount }} {{ payment.currency | currency_symbol }}</strong>
+                    </div>
+
+                    {% if payment.has_fees %}
+                    <div class="mb-3">
+                        <small class="text-muted">Frais</small><br>
+                        <span class="text-danger">+ {{ payment.fees_amount | format_amount }} {{ payment.currency | currency_symbol }}</span>
+                    </div>
+                    {% endif %}
+
+                    <hr>
+
+                    <div class="mb-3">
+                        <small class="text-muted">Mensualité</small><br>
+                        <strong class="h4 text-warning">{{ payment.installment_amount | format_amount }} {{ payment.currency | currency_symbol }}</strong>
+                    </div>
+
+                    <div class="mb-3">
+                        <small class="text-muted">Nombre de mensualités</small><br>
+                        <strong>{{ payment.number_of_installments }} fois</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-calendar"></i> Dates</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <small class="text-muted">Date de début</small><br>
+                        <strong>{{ payment.start_date.strftime('%d/%m/%Y') }}</strong>
+                    </div>
+
+                    {% if not payment.is_completed %}
+                    <div class="mb-3">
+                        <small class="text-muted">Prochain paiement</small><br>
+                        <span class="badge bg-primary">{{ payment.next_payment_date.strftime('%d/%m/%Y') }}</span>
+                    </div>
+                    {% endif %}
+
+                    {% if payment.end_date %}
+                    <div class="mb-3">
+                        <small class="text-muted">Date de fin prévue</small><br>
+                        <strong>{{ payment.end_date.strftime('%d/%m/%Y') }}</strong>
+                    </div>
+                    {% endif %}
+
+                    {% if payment.completed_at %}
+                    <div class="mb-3">
+                        <small class="text-muted">Terminé le</small><br>
+                        <span class="badge bg-success">{{ payment.completed_at.strftime('%d/%m/%Y') }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if payment.product_category or payment.credit_type_obj %}
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-tags"></i> Catégorisation</h5>
+                </div>
+                <div class="card-body">
+                    {% if payment.product_category %}
+                    <div class="mb-2">
+                        <small class="text-muted">Catégorie de produit</small><br>
+                        <span class="badge bg-secondary">{{ payment.product_category }}</span>
+                    </div>
+                    {% endif %}
+
+                    {% if payment.credit_type_obj %}
+                    <div>
+                        <small class="text-muted">Type de crédit</small><br>
+                        <span class="badge" style="background-color: {{ payment.credit_type_obj.color }};">
+                            <i class="fas {{ payment.credit_type_obj.icon or 'fa-circle' }}"></i>
+                            {{ payment.credit_type_obj.name }}
+                        </span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
