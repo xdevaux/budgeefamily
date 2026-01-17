@@ -8,7 +8,7 @@
         <div class="col-lg-8">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h2><i class="fas fa-money-bill-wave"></i> Ajouter un crédit</h2>
-                <a href="{{ url_for('credits.list') }}" class="btn btn-outline-secondary">
+                <a href="{{ url_for('credits.list_credits') }}" class="btn btn-outline-secondary">
                     <i class="fas fa-arrow-left"></i> Retour
                 </a>
             </div>
@@ -87,8 +87,8 @@
                             <div class="col-md-6">
                                 <label for="total_amount" class="form-label">Montant total du crédit</label>
                                 <div class="input-group">
-                                    <input type="number" class="form-control text-end" id="total_amount" name="total_amount"
-                                           step="0.01" min="0" placeholder="150000.00">
+                                    <input type="text" class="form-control text-end format-amount-input" id="total_amount" name="total_amount"
+                                           placeholder="150 000,00" data-raw-name="total_amount">
                                     <span class="input-group-text">{{ (current_user.default_currency or 'EUR') | currency_symbol }}</span>
                                 </div>
                                 <small class="text-muted">Montant emprunté au départ</small>
@@ -97,8 +97,8 @@
                             <div class="col-md-6">
                                 <label for="remaining_amount" class="form-label">Montant restant à rembourser</label>
                                 <div class="input-group">
-                                    <input type="number" class="form-control text-end" id="remaining_amount" name="remaining_amount"
-                                           step="0.01" min="0" placeholder="120000.00">
+                                    <input type="text" class="form-control text-end format-amount-input" id="remaining_amount" name="remaining_amount"
+                                           placeholder="120 000,00" data-raw-name="remaining_amount">
                                     <span class="input-group-text">{{ (current_user.default_currency or 'EUR') | currency_symbol }}</span>
                                 </div>
                             </div>
@@ -131,7 +131,7 @@
                             <button type="submit" class="btn btn-primary btn-lg">
                                 <i class="fas fa-plus"></i> Ajouter le crédit
                             </button>
-                            <a href="{{ url_for('credits.list') }}" class="btn btn-outline-secondary">
+                            <a href="{{ url_for('credits.list_credits') }}" class="btn btn-outline-secondary">
                                 Annuler
                             </a>
                         </div>
@@ -141,4 +141,69 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Fonction pour formater un nombre avec des espaces comme séparateurs de milliers
+    function formatAmount(value) {
+        // Retirer tous les espaces et remplacer la virgule par un point
+        let num = value.replace(/\s/g, '').replace(',', '.');
+
+        // Vérifier si c'est un nombre valide
+        if (num === '' || isNaN(num)) {
+            return value;
+        }
+
+        // Séparer la partie entière et décimale
+        let parts = num.split('.');
+        let integerPart = parts[0];
+        let decimalPart = parts[1] || '';
+
+        // Ajouter les espaces comme séparateurs de milliers
+        integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+
+        // Retourner le nombre formaté
+        return decimalPart ? integerPart + ',' + decimalPart : integerPart;
+    }
+
+    // Fonction pour nettoyer le montant (retirer les espaces et remplacer virgule par point)
+    function cleanAmount(value) {
+        return value.replace(/\s/g, '').replace(',', '.');
+    }
+
+    // Appliquer le formatage à tous les champs avec la classe format-amount-input
+    document.querySelectorAll('.format-amount-input').forEach(function(input) {
+        // Formater pendant la saisie
+        input.addEventListener('input', function(e) {
+            let cursorPosition = this.selectionStart;
+            let oldValue = this.value;
+            let formatted = formatAmount(this.value);
+
+            if (formatted !== oldValue) {
+                this.value = formatted;
+                // Ajuster la position du curseur
+                let diff = formatted.length - oldValue.length;
+                this.setSelectionRange(cursorPosition + diff, cursorPosition + diff);
+            }
+        });
+
+        // Formater quand on quitte le champ
+        input.addEventListener('blur', function() {
+            if (this.value) {
+                this.value = formatAmount(this.value);
+            }
+        });
+    });
+
+    // Nettoyer les valeurs avant la soumission du formulaire
+    document.querySelector('form').addEventListener('submit', function(e) {
+        document.querySelectorAll('.format-amount-input').forEach(function(input) {
+            if (input.value) {
+                input.value = cleanAmount(input.value);
+            }
+        });
+    });
+});
+</script>
+
 {% endblock %}

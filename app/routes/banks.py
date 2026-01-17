@@ -36,7 +36,7 @@ FRENCH_BANKS_LOGOS = {
     'Caisse d\'Épargne': {'color': '#00965E', 'initials': 'CE', 'bic': 'CEPAFRPP'},
     'LCL': {'color': '#003D7A', 'initials': 'LCL', 'bic': 'CRLYFRPP'},
     'CIC': {'color': '#003D7A', 'initials': 'CIC', 'bic': 'CMCIFRPP'},
-    'Boursorama': {'color': '#0E52A0', 'initials': 'BRS', 'bic': 'BOUSFRPP'},
+    'BoursoBank': {'color': '#0E52A0', 'initials': 'BRS', 'bic': 'BOUSFRPP'},
     'Banque Populaire': {'color': '#E30513', 'initials': 'BP', 'bic': 'CCBPFRPP'},
     'Hello bank!': {'color': '#FF6600', 'initials': 'HB', 'bic': 'BNPAFRPP'},
     'ING Direct': {'color': '#FF6200', 'initials': 'ING', 'bic': 'INGBFRPP'},
@@ -67,7 +67,7 @@ def get_document_type_info(type_code):
 
 @bp.route('/')
 @login_required
-def list():
+def list_banks():
     """Liste des banques de l'utilisateur"""
     page = request.args.get('page', 1, type=int)
     filter_status = request.args.get('status', 'all')
@@ -132,7 +132,7 @@ def detail(bank_id):
 
     if bank.user_id != current_user.id:
         flash('Vous n\'avez pas accès à cette banque.', 'danger')
-        return redirect(url_for('banks.list'))
+        return redirect(url_for('banks.list_banks'))
 
     # Récupérer les documents avec filtres
     filter_type = request.args.get('doc_type', None)
@@ -188,7 +188,7 @@ def edit(bank_id):
 
     if bank.user_id != current_user.id:
         flash('Vous n\'avez pas accès à cette banque.', 'danger')
-        return redirect(url_for('banks.list'))
+        return redirect(url_for('banks.list_banks'))
 
     if request.method == 'POST':
         bank.name = request.form.get('name')
@@ -234,14 +234,14 @@ def toggle(bank_id):
 
     if bank.user_id != current_user.id:
         flash('Vous n\'avez pas accès à cette banque.', 'danger')
-        return redirect(url_for('banks.list'))
+        return redirect(url_for('banks.list_banks'))
 
     bank.is_active = not bank.is_active
     db.session.commit()
 
     status = 'activée' if bank.is_active else 'désactivée'
     flash(f'La banque "{bank.name}" a été {status}.', 'success')
-    return redirect(url_for('banks.list'))
+    return redirect(url_for('banks.list_banks'))
 
 
 @bp.route('/<int:bank_id>/delete', methods=['POST'])
@@ -252,18 +252,18 @@ def delete(bank_id):
 
     if bank.user_id != current_user.id:
         flash('Vous n\'avez pas accès à cette banque.', 'danger')
-        return redirect(url_for('banks.list'))
+        return redirect(url_for('banks.list_banks'))
 
     # Vérifier si la banque est utilisée par des crédits
     if bank.credits.count() > 0:
         flash('Impossible de supprimer cette banque car elle est utilisée par des crédits.', 'warning')
-        return redirect(url_for('banks.list'))
+        return redirect(url_for('banks.list_banks'))
 
     db.session.delete(bank)
     db.session.commit()
 
     flash('Banque supprimée avec succès !', 'success')
-    return redirect(url_for('banks.list'))
+    return redirect(url_for('banks.list_banks'))
 
 
 @bp.route('/api/list')
@@ -285,7 +285,7 @@ def add_document(bank_id):
 
     if bank.user_id != current_user.id:
         flash('Vous n\'avez pas accès à cette banque.', 'danger')
-        return redirect(url_for('banks.list'))
+        return redirect(url_for('banks.list_banks'))
 
     if request.method == 'POST':
         name = request.form.get('name')
@@ -348,7 +348,7 @@ def download_document(document_id):
 
     if document.user_id != current_user.id:
         flash('Vous n\'avez pas accès à ce document.', 'danger')
-        return redirect(url_for('banks.list'))
+        return redirect(url_for('banks.list_banks'))
 
     if not document.file_data:
         flash('Ce document n\'a pas de fichier attaché.', 'warning')
@@ -368,7 +368,7 @@ def view_document(document_id):
 
     if document.user_id != current_user.id:
         flash('Vous n\'avez pas accès à ce document.', 'danger')
-        return redirect(url_for('banks.list'))
+        return redirect(url_for('banks.list_banks'))
 
     if not document.file_data:
         flash('Ce document n\'a pas de fichier attaché.', 'warning')
@@ -388,7 +388,7 @@ def edit_document(document_id):
 
     if document.user_id != current_user.id:
         flash('Vous n\'avez pas accès à ce document.', 'danger')
-        return redirect(url_for('banks.list'))
+        return redirect(url_for('banks.list_banks'))
 
     if request.method == 'POST':
         document.name = request.form.get('name')
@@ -432,7 +432,7 @@ def delete_document(document_id):
 
     if document.user_id != current_user.id:
         flash('Vous n\'avez pas accès à ce document.', 'danger')
-        return redirect(url_for('banks.list'))
+        return redirect(url_for('banks.list_banks'))
 
     bank_id = document.bank_id
     document_name = document.name

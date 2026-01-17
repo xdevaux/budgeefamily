@@ -42,7 +42,7 @@
                         <img src="data:{{ bank.logo_mime_type }};base64,{{ bank.logo_data }}"
                              alt="{{ bank.name }}"
                              class="rounded"
-                             style="width: 100px; height: 100px; object-fit: contain; background: #f8f9fa; padding: 10px;">
+                             style="width: 100px; height: 100px; object-fit: contain;">
                     {% else %}
                         <div class="rounded d-flex align-items-center justify-content-center"
                              style="width: 100px; height: 100px; background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; font-size: 2.5rem;">
@@ -69,7 +69,7 @@
                             <a href="{{ url_for('banks.edit', bank_id=bank.id) }}" class="btn btn-warning">
                                 <i class="fas fa-edit"></i> Modifier
                             </a>
-                            <a href="{{ url_for('banks.list') }}" class="btn btn-outline-secondary">
+                            <a href="{{ url_for('banks.list_banks') }}" class="btn btn-outline-secondary">
                                 <i class="fas fa-arrow-left"></i> Retour
                             </a>
                         </div>

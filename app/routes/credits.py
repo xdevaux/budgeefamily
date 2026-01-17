@@ -58,7 +58,7 @@ def get_user_credit_types():
 
 @bp.route('/')
 @login_required
-def list():
+def list_credits():
     page = request.args.get('page', 1, type=int)
     filter_status = request.args.get('status', 'all')
     filter_category = request.args.get('category', None, type=int)
@@ -144,7 +144,7 @@ def add():
         db.session.commit()
 
         flash(f'Le crédit "{name}" a été ajouté avec succès !', 'success')
-        return redirect(url_for('credits.list'))
+        return redirect(url_for('credits.list_credits'))
 
     from app.models import Bank
     categories = get_user_categories()
@@ -160,7 +160,7 @@ def edit(credit_id):
 
     if credit.user_id != current_user.id:
         flash('Vous n\'avez pas accès à ce crédit.', 'danger')
-        return redirect(url_for('credits.list'))
+        return redirect(url_for('credits.list_credits'))
 
     if request.method == 'POST':
         credit.name = request.form.get('name')
@@ -182,7 +182,7 @@ def edit(credit_id):
         db.session.commit()
 
         flash(f'Le crédit "{credit.name}" a été mis à jour.', 'success')
-        return redirect(url_for('credits.list'))
+        return redirect(url_for('credits.list_credits'))
 
     from app.models import Bank
     categories = get_user_categories()
@@ -202,14 +202,14 @@ def delete(credit_id):
 
     if credit.user_id != current_user.id:
         flash('Vous n\'avez pas accès à ce crédit.', 'danger')
-        return redirect(url_for('credits.list'))
+        return redirect(url_for('credits.list_credits'))
 
     credit_name = credit.name
     db.session.delete(credit)
     db.session.commit()
 
     flash(f'Le crédit "{credit_name}" a été supprimé.', 'success')
-    return redirect(url_for('credits.list'))
+    return redirect(url_for('credits.list_credits'))
 
 
 @bp.route('/<int:credit_id>/toggle', methods=['POST'])
@@ -219,7 +219,7 @@ def toggle(credit_id):
 
     if credit.user_id != current_user.id:
         flash('Vous n\'avez pas accès à ce crédit.', 'danger')
-        return redirect(url_for('credits.list'))
+        return redirect(url_for('credits.list_credits'))
 
     credit.is_active = not credit.is_active
     if not credit.is_active:
@@ -231,7 +231,7 @@ def toggle(credit_id):
 
     status = 'activé' if credit.is_active else 'clôturé'
     flash(f'Le crédit "{credit.name}" a été {status}.', 'success')
-    return redirect(url_for('credits.list'))
+    return redirect(url_for('credits.list_credits'))
 
 
 @bp.route('/<int:credit_id>')
@@ -241,7 +241,7 @@ def detail(credit_id):
 
     if credit.user_id != current_user.id:
         flash('Vous n\'avez pas accès à ce crédit.', 'danger')
-        return redirect(url_for('credits.list'))
+        return redirect(url_for('credits.list_credits'))
 
     # Récupérer les documents avec filtres
     filter_type = request.args.get('doc_type', None)
@@ -296,7 +296,7 @@ def add_document(credit_id):
 
     if credit.user_id != current_user.id:
         flash('Vous n\'avez pas accès à ce crédit.', 'danger')
-        return redirect(url_for('credits.list'))
+        return redirect(url_for('credits.list_credits'))
 
     if request.method == 'POST':
         name = request.form.get('name')
@@ -359,7 +359,7 @@ def download_document(document_id):
 
     if document.user_id != current_user.id:
         flash('Vous n\'avez pas accès à ce document.', 'danger')
-        return redirect(url_for('credits.list'))
+        return redirect(url_for('credits.list_credits'))
 
     if not document.file_data:
         flash('Ce document n\'a pas de fichier attaché.', 'warning')
@@ -379,7 +379,7 @@ def view_document(document_id):
 
     if document.user_id != current_user.id:
         flash('Vous n\'avez pas accès à ce document.', 'danger')
-        return redirect(url_for('credits.list'))
+        return redirect(url_for('credits.list_credits'))
 
     if not document.file_data:
         flash('Ce document n\'a pas de fichier attaché.', 'warning')
@@ -399,7 +399,7 @@ def edit_document(document_id):
 
     if document.user_id != current_user.id:
         flash('Vous n\'avez pas accès à ce document.', 'danger')
-        return redirect(url_for('credits.list'))
+        return redirect(url_for('credits.list_credits'))
 
     if request.method == 'POST':
         document.name = request.form.get('name')
@@ -443,7 +443,7 @@ def delete_document(document_id):
 
     if document.user_id != current_user.id:
         flash('Vous n\'avez pas accès à ce document.', 'danger')
-        return redirect(url_for('credits.list'))
+        return redirect(url_for('credits.list_credits'))
 
     credit_id = document.credit_id
     document_name = document.name

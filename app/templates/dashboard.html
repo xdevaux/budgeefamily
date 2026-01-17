@@ -68,7 +68,7 @@
         </div>
 
         <div class="col-md-3">
-            <a href="{{ url_for('credits.list') }}" class="text-decoration-none">
+            <a href="{{ url_for('credits.list_credits') }}" class="text-decoration-none">
                 <div class="card stat-card bg-warning text-white stat-card-clickable">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
@@ -260,7 +260,7 @@
                             {% endfor %}
                         </div>
                         <div class="card-footer bg-white text-center">
-                            <a href="{{ url_for('credits.list') }}" class="btn btn-sm btn-outline-warning">
+                            <a href="{{ url_for('credits.list_credits') }}" class="btn btn-sm btn-outline-warning">
                                 <i class="fas fa-money-bill-wave"></i> Voir tous les crédits
                             </a>
                             <a href="{{ url_for('credits.add') }}" class="btn btn-sm btn-outline-warning ms-2">

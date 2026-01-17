@@ -67,9 +67,10 @@
                                 <th>Nom</th>
                                 <th>Formule</th>
                                 <th>Catégorie</th>
-                                <th class="text-end">Montant</th>
-                                <th>Cycle</th>
-                                <th>Prochain paiement</th>
+                                <th class="text-end">Mensuel</th>
+                                <th class="text-end">Annuel</th>
+                                <th>Périodicité</th>
+                                <th>Prochain</th>
                                 <th>Statut</th>
                                 <th class="text-end">Actions</th>
                             </tr>
@@ -101,7 +102,38 @@
                                             <span class="text-muted">-</span>
                                         {% endif %}
                                     </td>
-                                    <td class="text-end"><strong>{{ sub.amount | format_amount }} {{ sub.currency | currency_symbol }}</strong></td>
+                                    <td class="text-end">
+                                        <strong>
+                                            {% if sub.billing_cycle == 'monthly' %}
+                                                {{ sub.amount | format_amount }}
+                                            {% elif sub.billing_cycle == 'quarterly' %}
+                                                {{ (sub.amount / 3) | format_amount }}
+                                            {% elif sub.billing_cycle == 'semi_annual' %}
+                                                {{ (sub.amount / 6) | format_amount }}
+                                            {% elif sub.billing_cycle == 'yearly' %}
+                                                {{ (sub.amount / 12) | format_amount }}
+                                            {% else %}
+                                                {{ sub.amount | format_amount }}
+                                            {% endif %}
+                                            {{ sub.currency | currency_symbol }}
+                                        </strong>
+                                    </td>
+                                    <td class="text-end">
+                                        <strong>
+                                            {% if sub.billing_cycle == 'monthly' %}
+                                                {{ (sub.amount * 12) | format_amount }}
+                                            {% elif sub.billing_cycle == 'quarterly' %}
+                                                {{ (sub.amount * 4) | format_amount }}
+                                            {% elif sub.billing_cycle == 'semi_annual' %}
+                                                {{ (sub.amount * 2) | format_amount }}
+                                            {% elif sub.billing_cycle == 'yearly' %}
+                                                {{ sub.amount | format_amount }}
+                                            {% else %}
+                                                {{ (sub.amount * 12) | format_amount }}
+                                            {% endif %}
+                                            {{ sub.currency | currency_symbol }}
+                                        </strong>
+                                    </td>
                                     <td>
                                         <span class="badge bg-secondary">{{ sub.billing_cycle | translate_cycle }}</span>
                                     </td>
@@ -144,30 +176,82 @@
                                 <td colspan="3" class="text-end"><strong>Total :</strong></td>
                                 <td class="text-end">
                                     <strong>
-                                        {% set total_eur = namespace(value=0) %}
-                                        {% set total_usd = namespace(value=0) %}
-                                        {% set total_gbp = namespace(value=0) %}
+                                        {% set total_monthly_eur = namespace(value=0) %}
+                                        {% set total_monthly_usd = namespace(value=0) %}
+                                        {% set total_monthly_gbp = namespace(value=0) %}
                                         {% for sub in subscriptions.items %}
+                                            {% if sub.billing_cycle == 'monthly' %}
+                                                {% set monthly_amount = sub.amount %}
+                                            {% elif sub.billing_cycle == 'quarterly' %}
+                                                {% set monthly_amount = sub.amount / 3 %}
+                                            {% elif sub.billing_cycle == 'semi_annual' %}
+                                                {% set monthly_amount = sub.amount / 6 %}
+                                            {% elif sub.billing_cycle == 'yearly' %}
+                                                {% set monthly_amount = sub.amount / 12 %}
+                                            {% else %}
+                                                {% set monthly_amount = sub.amount %}
+                                            {% endif %}
                                             {% if sub.currency == 'EUR' %}
-                                                {% set total_eur.value = total_eur.value + sub.amount %}
+                                                {% set total_monthly_eur.value = total_monthly_eur.value + monthly_amount %}
                                             {% elif sub.currency == 'USD' %}
-                                                {% set total_usd.value = total_usd.value + sub.amount %}
+                                                {% set total_monthly_usd.value = total_monthly_usd.value + monthly_amount %}
                                             {% elif sub.currency == 'GBP' %}
-                                                {% set total_gbp.value = total_gbp.value + sub.amount %}
+                                                {% set total_monthly_gbp.value = total_monthly_gbp.value + monthly_amount %}
                                             {% endif %}
                                         {% endfor %}
-                                        {% if total_eur.value > 0 %}
-                                            {{ total_eur.value | format_amount }} €
+                                        {% if total_monthly_eur.value > 0 %}
+                                            {{ total_monthly_eur.value | format_amount }} €
                                         {% endif %}
-                                        {% if total_usd.value > 0 %}
-                                            {% if total_eur.value > 0 %}<br>{% endif %}
-                                            {{ total_usd.value | format_amount }} $
+                                        {% if total_monthly_usd.value > 0 %}
+                                            {% if total_monthly_eur.value > 0 %}<br>{% endif %}
+                                            {{ total_monthly_usd.value | format_amount }} $
                                         {% endif %}
-                                        {% if total_gbp.value > 0 %}
-                                            {% if total_eur.value > 0 or total_usd.value > 0 %}<br>{% endif %}
-                                            {{ total_gbp.value | format_amount }} £
+                                        {% if total_monthly_gbp.value > 0 %}
+                                            {% if total_monthly_eur.value > 0 or total_monthly_usd.value > 0 %}<br>{% endif %}
+                                            {{ total_monthly_gbp.value | format_amount }} £
                                         {% endif %}
-                                        {% if total_eur.value == 0 and total_usd.value == 0 and total_gbp.value == 0 %}
+                                        {% if total_monthly_eur.value == 0 and total_monthly_usd.value == 0 and total_monthly_gbp.value == 0 %}
+                                            0,00 €
+                                        {% endif %}
+                                    </strong>
+                                </td>
+                                <td class="text-end">
+                                    <strong>
+                                        {% set total_yearly_eur = namespace(value=0) %}
+                                        {% set total_yearly_usd = namespace(value=0) %}
+                                        {% set total_yearly_gbp = namespace(value=0) %}
+                                        {% for sub in subscriptions.items %}
+                                            {% if sub.billing_cycle == 'monthly' %}
+                                                {% set yearly_amount = sub.amount * 12 %}
+                                            {% elif sub.billing_cycle == 'quarterly' %}
+                                                {% set yearly_amount = sub.amount * 4 %}
+                                            {% elif sub.billing_cycle == 'semi_annual' %}
+                                                {% set yearly_amount = sub.amount * 2 %}
+                                            {% elif sub.billing_cycle == 'yearly' %}
+                                                {% set yearly_amount = sub.amount %}
+                                            {% else %}
+                                                {% set yearly_amount = sub.amount * 12 %}
+                                            {% endif %}
+                                            {% if sub.currency == 'EUR' %}
+                                                {% set total_yearly_eur.value = total_yearly_eur.value + yearly_amount %}
+                                            {% elif sub.currency == 'USD' %}
+                                                {% set total_yearly_usd.value = total_yearly_usd.value + yearly_amount %}
+                                            {% elif sub.currency == 'GBP' %}
+                                                {% set total_yearly_gbp.value = total_yearly_gbp.value + yearly_amount %}
+                                            {% endif %}
+                                        {% endfor %}
+                                        {% if total_yearly_eur.value > 0 %}
+                                            {{ total_yearly_eur.value | format_amount }} €
+                                        {% endif %}
+                                        {% if total_yearly_usd.value > 0 %}
+                                            {% if total_yearly_eur.value > 0 %}<br>{% endif %}
+                                            {{ total_yearly_usd.value | format_amount }} $
+                                        {% endif %}
+                                        {% if total_yearly_gbp.value > 0 %}
+                                            {% if total_yearly_eur.value > 0 or total_yearly_usd.value > 0 %}<br>{% endif %}
+                                            {{ total_yearly_gbp.value | format_amount }} £
+                                        {% endif %}
+                                        {% if total_yearly_eur.value == 0 and total_yearly_usd.value == 0 and total_yearly_gbp.value == 0 %}
                                             0,00 €
                                         {% endif %}
                                     </strong>

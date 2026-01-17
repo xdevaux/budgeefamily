@@ -214,6 +214,15 @@ def profile():
         current_user.last_name = request.form.get('last_name')
         current_user.default_currency = request.form.get('default_currency', 'EUR')
 
+        # Mettre à jour la date de naissance
+        date_of_birth = request.form.get('date_of_birth')
+        if date_of_birth:
+            from datetime import datetime
+            try:
+                current_user.date_of_birth = datetime.strptime(date_of_birth, '%Y-%m-%d').date()
+            except ValueError:
+                pass  # Ignorer si le format est invalide
+
         # Mettre à jour le pays et le fuseau horaire
         country = request.form.get('country')
         if country:

@@ -27,7 +27,7 @@
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">&nbsp;</label>
-                    <a href="{{ url_for('banks.list') }}" class="btn btn-secondary w-100">
+                    <a href="{{ url_for('banks.list_banks') }}" class="btn btn-secondary w-100">
                         <i class="fas fa-redo"></i> Réinitialiser
                     </a>
                 </div>
@@ -55,10 +55,25 @@
                             {% for bank in banks.items %}
                                 <tr>
                                     <td>
-                                        <strong>{{ bank.name }}</strong>
-                                        {% if bank.address %}
-                                            <br><small class="text-muted">{{ bank.address[:50] }}</small>
-                                        {% endif %}
+                                        <div class="d-flex align-items-center gap-2">
+                                            {% if bank.logo_data %}
+                                                <img src="data:{{ bank.logo_mime_type }};base64,{{ bank.logo_data }}"
+                                                     alt="{{ bank.name }}"
+                                                     class="rounded"
+                                                     style="width: 40px; height: 40px; object-fit: contain;">
+                                            {% else %}
+                                                <div class="rounded d-flex align-items-center justify-content-center"
+                                                     style="width: 40px; height: 40px; background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; font-size: 1rem;">
+                                                    <i class="fas fa-university"></i>
+                                                </div>
+                                            {% endif %}
+                                            <div>
+                                                <strong>{{ bank.name }}</strong>
+                                                {% if bank.address %}
+                                                    <br><small class="text-muted">{{ bank.address[:50] }}</small>
+                                                {% endif %}
+                                            </div>
+                                        </div>
                                     </td>
                                     <td>
                                         {% if bank.bic %}

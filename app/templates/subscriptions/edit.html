@@ -55,6 +55,13 @@
                             <textarea class="form-control" id="description" name="description" rows="3">{{ subscription.description or '' }}</textarea>
                         </div>
 
+                        <div class="mb-3">
+                            <label for="date_of_birth" class="form-label">Date de naissance du bénéficiaire</label>
+                            <input type="date" class="form-control" id="date_of_birth" name="date_of_birth"
+                                   value="{{ subscription.date_of_birth.strftime('%Y-%m-%d') if subscription.date_of_birth else '' }}">
+                            <small class="text-muted">Si l'abonnement concerne une personne spécifique (ex: enfant, conjoint)</small>
+                        </div>
+
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label for="amount" class="form-label">Montant *</label>

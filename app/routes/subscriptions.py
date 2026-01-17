@@ -84,6 +84,7 @@ def add():
     if request.method == 'POST':
         name = request.form.get('name')
         description = request.form.get('description')
+        date_of_birth_str = request.form.get('date_of_birth')
         amount = float(request.form.get('amount'))
         currency = request.form.get('currency', 'EUR')
         billing_cycle = request.form.get('billing_cycle')
@@ -93,11 +94,18 @@ def add():
         start_date_str = request.form.get('start_date')
 
         start_date = datetime.strptime(start_date_str, '%Y-%m-%d').date()
+        date_of_birth = None
+        if date_of_birth_str:
+            try:
+                date_of_birth = datetime.strptime(date_of_birth_str, '%Y-%m-%d').date()
+            except ValueError:
+                pass
 
         subscription = Subscription(
             user_id=current_user.id,
             name=name,
             description=description,
+            date_of_birth=date_of_birth,
             amount=amount,
             currency=currency,
             billing_cycle=billing_cycle,
@@ -152,6 +160,17 @@ def edit(subscription_id):
     if request.method == 'POST':
         subscription.name = request.form.get('name')
         subscription.description = request.form.get('description')
+
+        # Mettre à jour la date de naissance
+        date_of_birth_str = request.form.get('date_of_birth')
+        if date_of_birth_str:
+            try:
+                subscription.date_of_birth = datetime.strptime(date_of_birth_str, '%Y-%m-%d').date()
+            except ValueError:
+                pass
+        else:
+            subscription.date_of_birth = None
+
         subscription.amount = float(request.form.get('amount'))
         subscription.currency = request.form.get('currency', 'EUR')
         subscription.billing_cycle = request.form.get('billing_cycle')

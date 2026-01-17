@@ -37,6 +37,7 @@ class User(UserMixin, db.Model):
     # Profile
     first_name = db.Column(db.String(50), nullable=True)
     last_name = db.Column(db.String(50), nullable=True)
+    date_of_birth = db.Column(db.Date, nullable=True)  # Date de naissance
     avatar_url = db.Column(db.String(500), nullable=True)
     default_currency = db.Column(db.String(3), default='EUR')  # Devise par défaut
     country = db.Column(db.String(2), nullable=True)  # Code pays ISO 3166-1 alpha-2 (FR, US, etc.)
@@ -321,6 +322,7 @@ class Subscription(db.Model):
     # Informations de l'abonnement
     name = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text, nullable=True)
+    date_of_birth = db.Column(db.Date, nullable=True)  # Date de naissance du bénéficiaire
     amount = db.Column(db.Float, nullable=False)
     currency = db.Column(db.String(3), default='EUR')
 
