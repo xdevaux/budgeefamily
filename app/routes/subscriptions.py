@@ -3,6 +3,7 @@ from flask_login import login_required, current_user
 from app import db
 from app.models import Subscription, Category, Notification, Service
 from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
 
 bp = Blueprint('subscriptions', __name__, url_prefix='/subscriptions')
 
@@ -84,7 +85,6 @@ def add():
     if request.method == 'POST':
         name = request.form.get('name')
         description = request.form.get('description')
-        date_of_birth_str = request.form.get('date_of_birth')
         amount = float(request.form.get('amount'))
         currency = request.form.get('currency', 'EUR')
         billing_cycle = request.form.get('billing_cycle')
@@ -94,18 +94,11 @@ def add():
         start_date_str = request.form.get('start_date')
 
         start_date = datetime.strptime(start_date_str, '%Y-%m-%d').date()
-        date_of_birth = None
-        if date_of_birth_str:
-            try:
-                date_of_birth = datetime.strptime(date_of_birth_str, '%Y-%m-%d').date()
-            except ValueError:
-                pass
 
         subscription = Subscription(
             user_id=current_user.id,
             name=name,
             description=description,
-            date_of_birth=date_of_birth,
             amount=amount,
             currency=currency,
             billing_cycle=billing_cycle,
@@ -118,13 +111,13 @@ def add():
 
         # Calculer la prochaine date de facturation
         if billing_cycle == 'monthly':
-            subscription.next_billing_date = start_date + timedelta(days=30)
+            subscription.next_billing_date = start_date + relativedelta(months=1)
         elif billing_cycle == 'quarterly':
-            subscription.next_billing_date = start_date + timedelta(days=90)
+            subscription.next_billing_date = start_date + relativedelta(months=3)
         elif billing_cycle == 'yearly':
-            subscription.next_billing_date = start_date + timedelta(days=365)
+            subscription.next_billing_date = start_date + relativedelta(years=1)
         elif billing_cycle == 'weekly':
-            subscription.next_billing_date = start_date + timedelta(days=7)
+            subscription.next_billing_date = start_date + timedelta(weeks=1)
 
         db.session.add(subscription)
         db.session.commit()
@@ -139,6 +132,10 @@ def add():
         )
         db.session.add(notification)
         db.session.commit()
+
+        # Envoyer un email de notification si activé
+        from app.utils.email import send_notification_email
+        send_notification_email(current_user, notification)
 
         flash(f'L\'abonnement "{name}" a été ajouté avec succès !', 'success')
         return redirect(url_for('subscriptions.list'))
@@ -160,17 +157,6 @@ def edit(subscription_id):
     if request.method == 'POST':
         subscription.name = request.form.get('name')
         subscription.description = request.form.get('description')
-
-        # Mettre à jour la date de naissance
-        date_of_birth_str = request.form.get('date_of_birth')
-        if date_of_birth_str:
-            try:
-                subscription.date_of_birth = datetime.strptime(date_of_birth_str, '%Y-%m-%d').date()
-            except ValueError:
-                pass
-        else:
-            subscription.date_of_birth = None
-
         subscription.amount = float(request.form.get('amount'))
         subscription.currency = request.form.get('currency', 'EUR')
         subscription.billing_cycle = request.form.get('billing_cycle')

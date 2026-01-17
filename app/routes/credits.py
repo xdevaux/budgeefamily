@@ -1,8 +1,9 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request, Response
 from flask_login import login_required, current_user
 from app import db
-from app.models import Credit, Category, CreditType, CreditDocument, Bank
+from app.models import Credit, Category, CreditType, CreditDocument, Bank, Notification
 from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
 
 bp = Blueprint('credits', __name__, url_prefix='/credits')
 
@@ -134,14 +135,28 @@ def add():
 
         # Calculer la prochaine date de paiement
         if billing_cycle == 'monthly':
-            credit.next_payment_date = start_date + timedelta(days=30)
+            credit.next_payment_date = start_date + relativedelta(months=1)
         elif billing_cycle == 'quarterly':
-            credit.next_payment_date = start_date + timedelta(days=90)
+            credit.next_payment_date = start_date + relativedelta(months=3)
         elif billing_cycle == 'yearly':
-            credit.next_payment_date = start_date + timedelta(days=365)
+            credit.next_payment_date = start_date + relativedelta(years=1)
 
         db.session.add(credit)
         db.session.commit()
+
+        # Créer une notification
+        notification = Notification(
+            user_id=current_user.id,
+            type='credit_added',
+            title='Nouveau crédit ajouté',
+            message=f'Votre crédit "{name}" a été ajouté avec succès.'
+        )
+        db.session.add(notification)
+        db.session.commit()
+
+        # Envoyer un email de notification si activé
+        from app.utils.email import send_notification_email
+        send_notification_email(current_user, notification)
 
         flash(f'Le crédit "{name}" a été ajouté avec succès !', 'success')
         return redirect(url_for('credits.list_credits'))

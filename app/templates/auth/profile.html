@@ -138,6 +138,18 @@
                             <small class="text-muted">Fuseau horaire actuel: <strong>{{ current_user.timezone or 'Non défini' }}</strong></small>
                         </div>
 
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="email_notifications" name="email_notifications" {% if current_user.email_notifications %}checked{% endif %}>
+                                <label class="form-check-label" for="email_notifications">
+                                    <i class="fas fa-envelope"></i> Recevoir un email à chaque notification créée
+                                </label>
+                                <small class="form-text text-muted d-block mt-1">
+                                    Vous recevrez un email automatique pour toutes les notifications (nouveaux abonnements, crédits, revenus, etc.)
+                                </small>
+                            </div>
+                        </div>
+
                         {% if not current_user.oauth_provider %}
                         <hr>
                         <h6 class="mb-3">Changer le mot de passe</h6>

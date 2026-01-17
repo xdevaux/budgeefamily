@@ -6,7 +6,8 @@ from dateutil.relativedelta import relativedelta
 import click
 from flask.cli import with_appcontext
 from app import db
-from app.models import Subscription, Credit, Revenue
+from app.models import Subscription, Credit, Revenue, Notification, User
+from collections import defaultdict
 
 
 def calculate_next_date(current_date, billing_cycle):
@@ -33,6 +34,15 @@ def update_payment_dates():
     updated_credits = 0
     updated_revenues = 0
 
+    # Dictionnaire pour suivre les modifications par utilisateur
+    # Format: {user_id: {'subscriptions': [...], 'credits': [...], 'revenues': [...], 'credits_terminated': [...]}}
+    user_updates = defaultdict(lambda: {
+        'subscriptions': [],
+        'credits': [],
+        'revenues': [],
+        'credits_terminated': []
+    })
+
     # Mise à jour des abonnements
     subscriptions = Subscription.query.filter_by(is_active=True).all()
     for sub in subscriptions:
@@ -46,6 +56,14 @@ def update_payment_dates():
             # Incrémenter le total payé
             sub.total_paid += (sub.amount * payments_count)
             updated_subscriptions += 1
+
+            # Enregistrer la modification pour cet utilisateur
+            user_updates[sub.user_id]['subscriptions'].append({
+                'name': sub.name,
+                'amount': sub.amount,
+                'payments_count': payments_count,
+                'next_date': sub.next_billing_date
+            })
 
     # Mise à jour des crédits
     credits = Credit.query.filter_by(is_active=True).all()
@@ -61,11 +79,26 @@ def update_payment_dates():
             credit.total_paid += (credit.amount * payments_count)
 
             # Vérifier si le crédit est terminé
+            is_terminated = False
             if credit.end_date and credit.next_payment_date > credit.end_date:
                 credit.is_active = False
+                is_terminated = True
                 click.echo(f"Crédit '{credit.name}' terminé")
 
             updated_credits += 1
+
+            # Enregistrer la modification pour cet utilisateur
+            if is_terminated:
+                user_updates[credit.user_id]['credits_terminated'].append({
+                    'name': credit.name
+                })
+            else:
+                user_updates[credit.user_id]['credits'].append({
+                    'name': credit.name,
+                    'amount': credit.amount,
+                    'payments_count': payments_count,
+                    'next_date': credit.next_payment_date
+                })
 
     # Mise à jour des revenus
     revenues = Revenue.query.filter_by(is_active=True).all()
@@ -81,13 +114,83 @@ def update_payment_dates():
             revenue.total_paid += (revenue.amount * payments_count)
             updated_revenues += 1
 
+            # Enregistrer la modification pour cet utilisateur
+            user_updates[revenue.user_id]['revenues'].append({
+                'name': revenue.name,
+                'amount': revenue.amount,
+                'payments_count': payments_count,
+                'next_date': revenue.next_payment_date
+            })
+
     # Sauvegarder les modifications
     db.session.commit()
+
+    # Créer des notifications et envoyer des emails pour chaque utilisateur concerné
+    notifications_created = 0
+    for user_id, updates in user_updates.items():
+        user = User.query.get(user_id)
+        if not user:
+            continue
+
+        # Construire le message récapitulatif
+        message_parts = []
+
+        if updates['subscriptions']:
+            message_parts.append(f"📅 {len(updates['subscriptions'])} abonnement(s) mis à jour")
+            for sub in updates['subscriptions']:
+                message_parts.append(f"  • {sub['name']}: {sub['payments_count']} paiement(s) de {sub['amount']:.2f}€")
+
+        if updates['credits']:
+            message_parts.append(f"💳 {len(updates['credits'])} crédit(s) mis à jour")
+            for credit in updates['credits']:
+                message_parts.append(f"  • {credit['name']}: {credit['payments_count']} paiement(s) de {credit['amount']:.2f}€")
+
+        if updates['credits_terminated']:
+            message_parts.append(f"✅ {len(updates['credits_terminated'])} crédit(s) terminé(s)")
+            for credit in updates['credits_terminated']:
+                message_parts.append(f"  • {credit['name']}")
+
+        if updates['revenues']:
+            message_parts.append(f"💰 {len(updates['revenues'])} revenu(s) mis à jour")
+            for revenue in updates['revenues']:
+                message_parts.append(f"  • {revenue['name']}: {revenue['payments_count']} versement(s) de {revenue['amount']:.2f}€")
+
+        if message_parts:
+            message = "\n".join(message_parts)
+            message += "\n\n⚙️ Traitement automatisé par Budgee Family"
+
+            # Créer la notification
+            notification = Notification(
+                user_id=user_id,
+                type='daily_update',
+                title='Mise à jour automatique quotidienne',
+                message=message
+            )
+            db.session.add(notification)
+            notifications_created += 1
+
+    db.session.commit()
+
+    # Envoyer les emails de notification
+    if notifications_created > 0:
+        from app.utils.email import send_notification_email
+        for user_id in user_updates.keys():
+            user = User.query.get(user_id)
+            if user:
+                # Récupérer la dernière notification créée pour cet utilisateur
+                notification = Notification.query.filter_by(
+                    user_id=user_id,
+                    type='daily_update'
+                ).order_by(Notification.created_at.desc()).first()
+
+                if notification:
+                    send_notification_email(user, notification)
 
     click.echo(f"✓ Dates mises à jour avec succès:")
     click.echo(f"  - Abonnements: {updated_subscriptions}")
     click.echo(f"  - Crédits: {updated_credits}")
     click.echo(f"  - Revenus: {updated_revenues}")
+    click.echo(f"  - Notifications créées: {notifications_created}")
 
 
 def init_app(app):

@@ -58,6 +58,7 @@ def send_verification_email(user):
     <body>
         <div class="container">
             <div class="header">
+                <img src="{url_for('static', filename='uploads/logos/budgee_family_logo_trsp.png', _external=True)}" alt="Budgee Family" width="120" style="display: block; margin: 0 auto 20px auto;">
                 <h1>Bienvenue sur Budgee Family !</h1>
             </div>
             <div class="content">
@@ -178,6 +179,7 @@ def send_plan_downgrade_email(user, old_plan_name):
     <body>
         <div class="container">
             <div class="header">
+                <img src="{url_for('static', filename='uploads/logos/budgee_family_logo_trsp.png', _external=True)}" alt="Budgee Family" width="120" style="display: block; margin: 0 auto 20px auto;">
                 <h1>Rétrogradation confirmée</h1>
             </div>
             <div class="content">
@@ -417,23 +419,7 @@ def send_plan_upgrade_email(user, new_plan_name):
         <div class="container">
             <div class="header">
                 <div class="logo-container">
-                    <svg width="60" height="60" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
-                        <!-- Maison -->
-                        <path d="M 25 8 L 10 20 L 10 40 L 40 40 L 40 20 Z" fill="white" opacity="0.9"/>
-                        <path d="M 25 8 L 10 20 L 10 40 L 40 40 L 40 20 Z" fill="none" stroke="white" stroke-width="1.5"/>
-                        <!-- Toit -->
-                        <path d="M 5 20 L 25 5 L 45 20 L 40 20 L 25 8 L 10 20 Z" fill="white"/>
-                        <!-- Porte -->
-                        <rect x="21" y="30" width="8" height="10" fill="#6366f1" opacity="0.9" rx="1"/>
-                        <!-- Fenêtres -->
-                        <rect x="14" y="24" width="6" height="6" fill="#6366f1" opacity="0.8" rx="1"/>
-                        <rect x="30" y="24" width="6" height="6" fill="#6366f1" opacity="0.8" rx="1"/>
-                        <!-- Symboles -->
-                        <circle cx="38" cy="12" r="6" fill="#10b981" opacity="0.3"/>
-                        <text x="38" y="16" text-anchor="middle" font-size="10" font-weight="bold" fill="white">$</text>
-                        <circle cx="12" cy="12" r="6" fill="#f59e0b" opacity="0.3"/>
-                        <text x="12" y="16" text-anchor="middle" font-size="10" font-weight="bold" fill="white">€</text>
-                    </svg>
+                    <img src="{url_for('static', filename='uploads/logos/budgee_family_logo_trsp.png', _external=True)}" alt="Budgee Family" width="120" style="display: block; margin: 0 auto;">
                 </div>
                 <h1>🎉 Bienvenue chez Premium !</h1>
                 <p>Votre abonnement a été activé avec succès</p>
@@ -702,23 +688,7 @@ def send_contact_confirmation_email(name, email):
         <div class="container">
             <div class="header">
                 <div class="logo-container">
-                    <svg width="60" height="60" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
-                        <!-- Maison -->
-                        <path d="M 25 8 L 10 20 L 10 40 L 40 40 L 40 20 Z" fill="white" opacity="0.9"/>
-                        <path d="M 25 8 L 10 20 L 10 40 L 40 40 L 40 20 Z" fill="none" stroke="white" stroke-width="1.5"/>
-                        <!-- Toit -->
-                        <path d="M 5 20 L 25 5 L 45 20 L 40 20 L 25 8 L 10 20 Z" fill="white"/>
-                        <!-- Porte -->
-                        <rect x="21" y="30" width="8" height="10" fill="#6366f1" opacity="0.9" rx="1"/>
-                        <!-- Fenêtres -->
-                        <rect x="14" y="24" width="6" height="6" fill="#6366f1" opacity="0.8" rx="1"/>
-                        <rect x="30" y="24" width="6" height="6" fill="#6366f1" opacity="0.8" rx="1"/>
-                        <!-- Symboles -->
-                        <circle cx="38" cy="12" r="6" fill="#10b981" opacity="0.3"/>
-                        <text x="38" y="16" text-anchor="middle" font-size="10" font-weight="bold" fill="white">$</text>
-                        <circle cx="12" cy="12" r="6" fill="#f59e0b" opacity="0.3"/>
-                        <text x="12" y="16" text-anchor="middle" font-size="10" font-weight="bold" fill="white">€</text>
-                    </svg>
+                    <img src="{url_for('static', filename='uploads/logos/budgee_family_logo_trsp.png', _external=True)}" alt="Budgee Family" width="120" style="display: block; margin: 0 auto;">
                 </div>
                 <h1>Message bien reçu !</h1>
                 <p>Merci de nous avoir contactés</p>
@@ -1073,23 +1043,7 @@ def send_welcome_email(user):
         <div class="container">
             <div class="header">
                 <div class="logo-container">
-                    <svg width="60" height="60" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
-                        <!-- Maison -->
-                        <path d="M 25 8 L 10 20 L 10 40 L 40 40 L 40 20 Z" fill="white" opacity="0.9"/>
-                        <path d="M 25 8 L 10 20 L 10 40 L 40 40 L 40 20 Z" fill="none" stroke="white" stroke-width="1.5"/>
-                        <!-- Toit -->
-                        <path d="M 5 20 L 25 5 L 45 20 L 40 20 L 25 8 L 10 20 Z" fill="white"/>
-                        <!-- Porte -->
-                        <rect x="21" y="30" width="8" height="10" fill="#6366f1" opacity="0.9" rx="1"/>
-                        <!-- Fenêtres -->
-                        <rect x="14" y="24" width="6" height="6" fill="#6366f1" opacity="0.8" rx="1"/>
-                        <rect x="30" y="24" width="6" height="6" fill="#6366f1" opacity="0.8" rx="1"/>
-                        <!-- Symboles -->
-                        <circle cx="38" cy="12" r="6" fill="#10b981" opacity="0.3"/>
-                        <text x="38" y="16" text-anchor="middle" font-size="10" font-weight="bold" fill="white">$</text>
-                        <circle cx="12" cy="12" r="6" fill="#f59e0b" opacity="0.3"/>
-                        <text x="12" y="16" text-anchor="middle" font-size="10" font-weight="bold" fill="white">€</text>
-                    </svg>
+                    <img src="{url_for('static', filename='uploads/logos/budgee_family_logo_trsp.png', _external=True)}" alt="Budgee Family" width="120" style="display: block; margin: 0 auto;">
                 </div>
                 <h1>🎉 Bienvenue sur Budgee Family !</h1>
                 <p>Votre compte a été créé avec succès</p>
@@ -1316,6 +1270,7 @@ def send_new_subscription_notification(user):
     <body>
         <div class="container">
             <div class="header">
+                <img src="{url_for('static', filename='uploads/logos/budgee_family_logo_trsp.png', _external=True)}" alt="Budgee Family" width="120" style="display: block; margin: 0 auto 20px auto;">
                 <h1>🎉 Nouvelle inscription !</h1>
                 <p>Un nouveau client vient de s'inscrire sur Budgee Family</p>
             </div>
@@ -1512,6 +1467,7 @@ def send_invoice_email(user, invoice_id):
         <body>
             <div class="container">
                 <div class="header">
+                    <img src="{url_for('static', filename='uploads/logos/budgee_family_logo_trsp.png', _external=True)}" alt="Budgee Family" width="120" style="display: block; margin: 0 auto 20px auto;">
                     <h1>📄 Votre facture Budgee Family</h1>
                 </div>
                 <div class="content">
@@ -1601,4 +1557,163 @@ def send_invoice_email(user, invoice_id):
 
     except Exception as e:
         print(f"Erreur lors de l'envoi de la facture par email : {e}")
+        return False
+
+
+def send_notification_email(user, notification):
+    """Envoie un email de notification à l'utilisateur"""
+    try:
+        # Ne pas envoyer d'email si l'utilisateur n'a pas activé les notifications par email
+        if not user.email_notifications:
+            return False
+
+        # Définir l'icône et la couleur selon le type de notification
+        notification_types = {
+            'subscription_added': {'icon': '🔔', 'color': '#10b981'},
+            'credit_added': {'icon': '💳', 'color': '#6366f1'},
+            'revenue_added': {'icon': '💰', 'color': '#10b981'},
+            'upgrade': {'icon': '⭐', 'color': '#f59e0b'},
+            'downgrade': {'icon': '⬇️', 'color': '#ef4444'},
+            'payment_failed': {'icon': '❌', 'color': '#ef4444'},
+            'renewal': {'icon': '🔄', 'color': '#3b82f6'},
+            'expiry': {'icon': '⚠️', 'color': '#f59e0b'},
+            'daily_update': {'icon': '⚙️', 'color': '#3b82f6'},
+        }
+
+        notif_info = notification_types.get(notification.type, {'icon': '🔔', 'color': '#6366f1'})
+
+        html_body = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <style>
+                body {{
+                    font-family: Arial, sans-serif;
+                    line-height: 1.6;
+                    color: #333;
+                    margin: 0;
+                    padding: 0;
+                    background-color: #f8f9fa;
+                }}
+                .container {{
+                    max-width: 600px;
+                    margin: 20px auto;
+                    background-color: #ffffff;
+                    border-radius: 15px;
+                    overflow: hidden;
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                }}
+                .header {{
+                    background: linear-gradient(135deg, {notif_info['color']} 0%, {notif_info['color']}dd 100%);
+                    color: white;
+                    padding: 30px;
+                    text-align: center;
+                }}
+                .header h1 {{
+                    margin: 0;
+                    font-size: 24px;
+                    font-weight: bold;
+                }}
+                .content {{
+                    padding: 30px;
+                }}
+                .notification-box {{
+                    background: #f8f9fa;
+                    border-left: 4px solid {notif_info['color']};
+                    border-radius: 8px;
+                    padding: 20px;
+                    margin: 20px 0;
+                }}
+                .notification-box h3 {{
+                    color: {notif_info['color']};
+                    margin-top: 0;
+                }}
+                .notification-box p {{
+                    white-space: pre-line;
+                }}
+                .button {{
+                    display: inline-block;
+                    padding: 12px 30px;
+                    background: {notif_info['color']};
+                    color: white;
+                    text-decoration: none;
+                    border-radius: 8px;
+                    margin: 20px 0;
+                    font-weight: 600;
+                }}
+                .footer {{
+                    background-color: #f8f9fa;
+                    padding: 20px;
+                    text-align: center;
+                    color: #6b7280;
+                    font-size: 12px;
+                    border-top: 1px solid #e5e7eb;
+                }}
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header">
+                    <img src="{url_for('static', filename='uploads/logos/budgee_family_logo_trsp.png', _external=True)}" alt="Budgee Family" width="120" style="display: block; margin: 0 auto 20px auto;">
+                    <h1>{notif_info['icon']} Nouvelle notification</h1>
+                </div>
+                <div class="content">
+                    <p>Bonjour {user.first_name or user.email},</p>
+
+                    <div class="notification-box">
+                        <h3>{notification.title}</h3>
+                        <p>{notification.message}</p>
+                    </div>
+
+                    <div style="text-align: center;">
+                        <a href="{url_for('main.dashboard', _external=True)}" class="button" style="color: white;">
+                            Voir mon tableau de bord
+                        </a>
+                    </div>
+
+                    <p style="color: #6b7280; font-size: 14px; margin-top: 30px;">
+                        <em>Vous recevez cet email car vous avez activé les notifications par email dans vos préférences. Vous pouvez désactiver cette option à tout moment depuis votre <a href="{url_for('auth.profile', _external=True)}">profil</a>.</em>
+                    </p>
+                </div>
+                <div class="footer">
+                    <p><strong>Budgee Family</strong> - Gestionnaire d'abonnements intelligent</p>
+                    <p style="margin-top: 8px; color: #9ca3af;">© {datetime.now().year} Budgee Family. Tous droits réservés.</p>
+                </div>
+            </div>
+        </body>
+        </html>
+        """
+
+        text_body = f"""
+        {notif_info['icon']} Nouvelle notification - Budgee Family
+
+        Bonjour {user.first_name or user.email},
+
+        {notification.title}
+
+        {notification.message}
+
+        Voir mon tableau de bord : {url_for('main.dashboard', _external=True)}
+
+        ---
+        Vous recevez cet email car vous avez activé les notifications par email dans vos préférences.
+        Vous pouvez désactiver cette option à tout moment depuis votre profil : {url_for('auth.profile', _external=True)}
+
+        Budgee Family - Gestionnaire d'abonnements intelligent
+        © {datetime.now().year} Budgee Family. Tous droits réservés.
+        """
+
+        msg = Message(
+            subject=f'{notif_info["icon"]} {notification.title} - Budgee Family',
+            sender=os.getenv('MAIL_DEFAULT_SENDER', 'noreply@budgeefamily.com'),
+            recipients=[user.email],
+            body=text_body,
+            html=html_body
+        )
+
+        mail.send(msg)
+        return True
+
+    except Exception as e:
+        print(f"Erreur lors de l'envoi de l'email de notification : {e}")
         return False

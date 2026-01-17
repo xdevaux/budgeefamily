@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
 from app import db, login_manager
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -58,6 +59,9 @@ class User(UserMixin, db.Model):
 
     # Admin
     is_admin = db.Column(db.Boolean, default=False)
+
+    # Notifications
+    email_notifications = db.Column(db.Boolean, default=True)  # Recevoir un email à chaque notification
 
     # Dates
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
@@ -322,7 +326,6 @@ class Subscription(db.Model):
     # Informations de l'abonnement
     name = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text, nullable=True)
-    date_of_birth = db.Column(db.Date, nullable=True)  # Date de naissance du bénéficiaire
     amount = db.Column(db.Float, nullable=False)
     currency = db.Column(db.String(3), default='EUR')
 
@@ -348,18 +351,18 @@ class Subscription(db.Model):
     category = db.relationship('Category', back_populates='subscriptions')
     service = db.relationship('Service', back_populates='subscriptions')
     plan = db.relationship('ServicePlan', backref='subscriptions')
-    notifications = db.relationship('Notification', backref='subscription', cascade='all, delete-orphan')
+    notifications = db.relationship('Notification', backref='subscription')
 
     def calculate_next_billing_date(self):
         """Calcule la prochaine date de facturation"""
         if self.billing_cycle == 'monthly':
-            return self.start_date + timedelta(days=30)
+            return self.start_date + relativedelta(months=1)
         elif self.billing_cycle == 'quarterly':
-            return self.start_date + timedelta(days=90)
+            return self.start_date + relativedelta(months=3)
         elif self.billing_cycle == 'yearly':
-            return self.start_date + timedelta(days=365)
+            return self.start_date + relativedelta(years=1)
         elif self.billing_cycle == 'weekly':
-            return self.start_date + timedelta(days=7)
+            return self.start_date + timedelta(weeks=1)
         return self.start_date
 
     def get_total_paid(self):
@@ -375,7 +378,7 @@ class Notification(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    subscription_id = db.Column(db.Integer, db.ForeignKey('subscriptions.id'), nullable=True)
+    subscription_id = db.Column(db.Integer, db.ForeignKey('subscriptions.id', ondelete='SET NULL'), nullable=True)
 
     # Type de notification
     type = db.Column(db.String(50), nullable=False)  # 'renewal', 'expiry', 'payment_failed', etc.
@@ -484,11 +487,11 @@ class Credit(db.Model):
     def calculate_next_payment_date(self):
         """Calcule la prochaine date de paiement"""
         if self.billing_cycle == 'monthly':
-            return self.start_date + timedelta(days=30)
+            return self.start_date + relativedelta(months=1)
         elif self.billing_cycle == 'quarterly':
-            return self.start_date + timedelta(days=90)
+            return self.start_date + relativedelta(months=3)
         elif self.billing_cycle == 'yearly':
-            return self.start_date + timedelta(days=365)
+            return self.start_date + relativedelta(years=1)
         return self.start_date
 
     def get_total_paid(self):
@@ -639,11 +642,11 @@ class Revenue(db.Model):
     def calculate_next_payment_date(self):
         """Calcule la prochaine date de paiement"""
         if self.billing_cycle == 'monthly':
-            return self.start_date + timedelta(days=30)
+            return self.start_date + relativedelta(months=1)
         elif self.billing_cycle == 'quarterly':
-            return self.start_date + timedelta(days=90)
+            return self.start_date + relativedelta(months=3)
         elif self.billing_cycle == 'yearly':
-            return self.start_date + timedelta(days=365)
+            return self.start_date + relativedelta(years=1)
         return self.start_date
 
     def get_monthly_amount(self):

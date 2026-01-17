@@ -58,6 +58,7 @@ def register():
         password_confirm = request.form.get('password_confirm')
         first_name = request.form.get('first_name')
         last_name = request.form.get('last_name')
+        date_of_birth_str = request.form.get('date_of_birth')
         default_currency = request.form.get('default_currency', 'EUR')
         country = request.form.get('country', 'FR')
 
@@ -87,10 +88,20 @@ def register():
             db.session.add(free_plan)
             db.session.commit()
 
+        # Traiter la date de naissance
+        date_of_birth = None
+        if date_of_birth_str:
+            try:
+                from datetime import datetime
+                date_of_birth = datetime.strptime(date_of_birth_str, '%Y-%m-%d').date()
+            except ValueError:
+                pass
+
         user = User(
             email=email,
             first_name=first_name,
             last_name=last_name,
+            date_of_birth=date_of_birth,
             default_currency=default_currency,
             plan=free_plan
         )
@@ -137,6 +148,7 @@ def api_register():
         password = data.get('password')
         first_name = data.get('first_name')
         last_name = data.get('last_name')
+        date_of_birth_str = data.get('date_of_birth')
         country = data.get('country', 'FR')
         plan_type = data.get('plan_type', '')  # 'monthly' ou 'yearly'
 
@@ -163,10 +175,20 @@ def api_register():
             db.session.add(free_plan)
             db.session.commit()
 
+        # Traiter la date de naissance
+        date_of_birth = None
+        if date_of_birth_str:
+            try:
+                from datetime import datetime
+                date_of_birth = datetime.strptime(date_of_birth_str, '%Y-%m-%d').date()
+            except ValueError:
+                pass
+
         user = User(
             email=email,
             first_name=first_name,
             last_name=last_name,
+            date_of_birth=date_of_birth,
             default_currency='EUR',
             plan=free_plan
         )
@@ -227,6 +249,9 @@ def profile():
         country = request.form.get('country')
         if country:
             current_user.set_country(country)
+
+        # Mettre à jour les préférences de notification par email
+        current_user.email_notifications = request.form.get('email_notifications') == 'on'
 
         # Changement de mot de passe
         current_password = request.form.get('current_password')
@@ -326,8 +351,11 @@ def downgrade_to_free():
     db.session.add(notification)
     db.session.commit()
 
+    # Envoyer un email de notification si activé
+    from app.utils.email import send_notification_email, send_plan_downgrade_email
+    send_notification_email(current_user, notification)
+
     # Envoyer l'email de confirmation
-    from app.utils.email import send_plan_downgrade_email
     send_plan_downgrade_email(current_user, old_plan_name)
 
     flash(f'Vous avez été rétrogradé du plan {old_plan_name} vers le plan gratuit avec succès. Un email de confirmation vous a été envoyé.', 'success')

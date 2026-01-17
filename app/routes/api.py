@@ -113,7 +113,10 @@ def checkout_success():
                 db.session.commit()
 
                 # Envoyer les emails appropriés selon le contexte
-                from app.utils.email import send_plan_upgrade_email, send_welcome_email, send_new_subscription_notification
+                from app.utils.email import send_plan_upgrade_email, send_welcome_email, send_new_subscription_notification, send_notification_email
+
+                # Envoyer un email de notification si activé
+                send_notification_email(current_user, notification)
 
                 if not was_premium:
                     # Nouveau client Premium : envoyer l'email de bienvenue avec récapitulatif
@@ -235,11 +238,13 @@ def handle_subscription_updated(stripe_subscription):
 
             # Envoyer l'email de confirmation uniquement si c'est un nouveau passage à Premium
             if not was_premium:
-                from app.utils.email import send_welcome_email, send_new_subscription_notification
+                from app.utils.email import send_welcome_email, send_new_subscription_notification, send_notification_email
                 # Nouveau client Premium : envoyer l'email de bienvenue avec récapitulatif
                 send_welcome_email(user)
                 # Envoyer la notification à l'équipe
                 send_new_subscription_notification(user)
+                # Envoyer un email de notification si activé
+                send_notification_email(user, notification)
 
 
 def handle_subscription_deleted(stripe_subscription):
@@ -262,8 +267,11 @@ def handle_subscription_deleted(stripe_subscription):
         db.session.add(notification)
         db.session.commit()
 
+        # Envoyer un email de notification si activé
+        from app.utils.email import send_plan_downgrade_email, send_notification_email
+        send_notification_email(user, notification)
+
         # Envoyer l'email de confirmation de rétrogradation
-        from app.utils.email import send_plan_downgrade_email
         send_plan_downgrade_email(user, old_plan_name)
 
 
@@ -279,6 +287,10 @@ def handle_payment_failed(invoice):
         )
         db.session.add(notification)
         db.session.commit()
+
+        # Envoyer un email de notification si activé
+        from app.utils.email import send_notification_email
+        send_notification_email(user, notification)
 
 
 def handle_invoice_payment_succeeded(invoice):

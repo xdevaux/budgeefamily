@@ -1,8 +1,9 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_required, current_user
 from app import db
-from app.models import Revenue, Employer
+from app.models import Revenue, Employer, Notification
 from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
 
 bp = Blueprint('revenues', __name__, url_prefix='/revenues')
 
@@ -91,14 +92,28 @@ def add():
 
         # Calculer la prochaine date de paiement
         if billing_cycle == 'monthly':
-            revenue.next_payment_date = start_date + timedelta(days=30)
+            revenue.next_payment_date = start_date + relativedelta(months=1)
         elif billing_cycle == 'quarterly':
-            revenue.next_payment_date = start_date + timedelta(days=90)
+            revenue.next_payment_date = start_date + relativedelta(months=3)
         elif billing_cycle == 'yearly':
-            revenue.next_payment_date = start_date + timedelta(days=365)
+            revenue.next_payment_date = start_date + relativedelta(years=1)
 
         db.session.add(revenue)
         db.session.commit()
+
+        # Créer une notification
+        notification = Notification(
+            user_id=current_user.id,
+            type='revenue_added',
+            title='Nouveau revenu ajouté',
+            message=f'Votre revenu "{name}" a été ajouté avec succès.'
+        )
+        db.session.add(notification)
+        db.session.commit()
+
+        # Envoyer un email de notification si activé
+        from app.utils.email import send_notification_email
+        send_notification_email(current_user, notification)
 
         flash(f'Le revenu "{name}" a été ajouté avec succès !', 'success')
         return redirect(url_for('revenues.list'))
