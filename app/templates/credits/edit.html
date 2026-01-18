@@ -62,16 +62,18 @@
 
                         <div class="row mb-3">
                             <div class="col-md-6">
-                                <label for="amount" class="form-label">Mensualité *</label>
+                                <label for="amount_display" class="form-label">Mensualité *</label>
                                 <div class="input-group">
-                                    <input type="number" class="form-control text-end" id="amount" name="amount"
-                                           step="0.01" min="0" required value="{{ credit.amount }}">
+                                    <input type="text" class="form-control text-end" id="amount_display"
+                                           required placeholder="450,00">
+                                    <input type="hidden" id="amount" name="amount" value="{{ credit.amount }}">
                                     <select class="form-select" id="currency" name="currency" style="max-width: 100px;">
                                         <option value="EUR" {% if credit.currency == 'EUR' %}selected{% endif %}>€ EUR</option>
                                         <option value="USD" {% if credit.currency == 'USD' %}selected{% endif %}>$ USD</option>
                                         <option value="GBP" {% if credit.currency == 'GBP' %}selected{% endif %}>£ GBP</option>
                                     </select>
                                 </div>
+                                <small class="text-muted">Format : espace pour les milliers, virgule pour les décimales</small>
                             </div>
 
                             <div class="col-md-6">

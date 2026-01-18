@@ -57,16 +57,18 @@
 
                         <div class="row mb-3">
                             <div class="col-md-6">
-                                <label for="amount" class="form-label">Montant *</label>
+                                <label for="amount_display" class="form-label">Montant *</label>
                                 <div class="input-group">
-                                    <input type="number" class="form-control text-end" id="amount" name="amount"
-                                           step="0.01" min="0" required value="{{ subscription.amount }}">
+                                    <input type="text" class="form-control text-end" id="amount_display"
+                                           required placeholder="9,99">
+                                    <input type="hidden" id="amount" name="amount" value="{{ subscription.amount }}">
                                     <select class="form-select" id="currency" name="currency" style="max-width: 100px;">
                                         <option value="EUR" {% if subscription.currency == 'EUR' %}selected{% endif %}>€ EUR</option>
                                         <option value="USD" {% if subscription.currency == 'USD' %}selected{% endif %}>$ USD</option>
                                         <option value="GBP" {% if subscription.currency == 'GBP' %}selected{% endif %}>£ GBP</option>
                                     </select>
                                 </div>
+                                <small class="text-muted">Format : espace pour les milliers, virgule pour les décimales</small>
                             </div>
 
                             <div class="col-md-6">
@@ -109,7 +111,66 @@
 </div>
 
 <script>
-// Fonction pour formater les montants au format français
+// Formatage du montant avec espace pour milliers et virgule pour décimales
+const amountDisplay = document.getElementById('amount_display');
+const amountHidden = document.getElementById('amount');
+
+function formatAmountInput(value) {
+    // Enlever tout sauf les chiffres, virgules et points
+    let cleaned = value.replace(/[^\d,\.]/g, '');
+
+    // Remplacer le point par une virgule
+    cleaned = cleaned.replace('.', ',');
+
+    // S'assurer qu'il n'y a qu'une seule virgule
+    const parts = cleaned.split(',');
+    if (parts.length > 2) {
+        cleaned = parts[0] + ',' + parts.slice(1).join('');
+    }
+
+    // Séparer la partie entière et décimale
+    const [integerPart, decimalPart] = cleaned.split(',');
+
+    // Formater la partie entière avec des espaces pour les milliers
+    let formatted = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+
+    // Ajouter la partie décimale si elle existe
+    if (decimalPart !== undefined) {
+        formatted += ',' + decimalPart.substring(0, 2); // Limiter à 2 décimales
+    }
+
+    return formatted;
+}
+
+function unformatAmount(value) {
+    // Enlever les espaces et remplacer la virgule par un point
+    return value.replace(/\s/g, '').replace(',', '.');
+}
+
+amountDisplay.addEventListener('input', function(e) {
+    const cursorPosition = e.target.selectionStart;
+    const oldLength = e.target.value.length;
+
+    // Formater la valeur
+    const formatted = formatAmountInput(e.target.value);
+    e.target.value = formatted;
+
+    // Convertir et stocker dans le champ caché
+    const unformatted = unformatAmount(formatted);
+    amountHidden.value = unformatted;
+
+    // Ajuster la position du curseur
+    const newLength = formatted.length;
+    const diff = newLength - oldLength;
+    e.target.setSelectionRange(cursorPosition + diff, cursorPosition + diff);
+});
+
+// Initialiser le champ display avec la valeur formatée
+if (amountHidden.value) {
+    amountDisplay.value = formatAmountInput(amountHidden.value);
+}
+
+// Fonction pour formater les montants au format français (pour affichage)
 function formatAmount(amount) {
     const formatted = amount.toFixed(2);
     const parts = formatted.split('.');
@@ -269,6 +330,20 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }, 100);
     }
+});
+
+// Protection contre les doubles soumissions et validation
+document.querySelector('form').addEventListener('submit', function(e) {
+    // Vérifier que le montant est valide
+    const unformatted = unformatAmount(amountDisplay.value);
+    if (!unformatted || isNaN(parseFloat(unformatted)) || parseFloat(unformatted) <= 0) {
+        e.preventDefault();
+        alert('Veuillez entrer un montant valide');
+        return false;
+    }
+
+    // S'assurer que le champ caché a la bonne valeur
+    amountHidden.value = unformatted;
 });
 </script>
 {% endblock %}

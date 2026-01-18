@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_required, current_user
 from app import db
 from app.models import Revenue, Employer, Notification
-from app.utils.transactions import generate_future_transactions, update_future_transactions, cancel_future_transactions
+from app.utils.transactions import generate_future_transactions, update_future_transactions, cancel_future_transactions, calculate_next_future_date, delete_all_transactions
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 
@@ -83,6 +83,9 @@ def add():
 
         start_date = datetime.strptime(start_date_str, '%Y-%m-%d').date()
 
+        # Calculer la prochaine date de paiement future
+        next_payment_date = calculate_next_future_date(start_date, billing_cycle)
+
         revenue = Revenue(
             user_id=current_user.id,
             name=name,
@@ -93,16 +96,8 @@ def add():
             revenue_type=revenue_type if revenue_type else None,
             billing_cycle=billing_cycle,
             start_date=start_date,
-            next_payment_date=start_date
+            next_payment_date=next_payment_date
         )
-
-        # Calculer la prochaine date de paiement
-        if billing_cycle == 'monthly':
-            revenue.next_payment_date = start_date + relativedelta(months=1)
-        elif billing_cycle == 'quarterly':
-            revenue.next_payment_date = start_date + relativedelta(months=3)
-        elif billing_cycle == 'yearly':
-            revenue.next_payment_date = start_date + relativedelta(years=1)
 
         db.session.add(revenue)
         db.session.commit()
@@ -152,6 +147,9 @@ def edit(revenue_id):
         revenue.revenue_type = request.form.get('revenue_type') or None
         revenue.billing_cycle = request.form.get('billing_cycle')
 
+        # Recalculer la prochaine date de paiement future basée sur la start_date et le nouveau billing_cycle
+        revenue.next_payment_date = calculate_next_future_date(revenue.start_date, revenue.billing_cycle)
+
         db.session.commit()
 
         # Mettre à jour les transactions futures
@@ -179,13 +177,18 @@ def delete(revenue_id):
 
     revenue_name = revenue.name
 
-    # Annuler les transactions futures avant suppression
-    cancel_future_transactions(revenue.id, 'revenue')
+    # Supprimer toutes les transactions associées
+    delete_all_transactions(revenue.id, 'revenue')
 
     db.session.delete(revenue)
     db.session.commit()
 
-    flash(f'Le revenu "{revenue_name}" a été supprimé.', 'success')
+    flash(f'Le revenu "{revenue_name}" et toutes ses transactions ont été supprimés.', 'success')
+
+    # Rediriger vers la page balance si le paramètre est présent
+    redirect_to = request.args.get('redirect_to', 'revenues.list')
+    if redirect_to == 'balance':
+        return redirect(url_for('main.balance'))
     return redirect(url_for('revenues.list'))
 
 

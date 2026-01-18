@@ -129,6 +129,12 @@
                                                class="btn btn-outline-secondary" title="Modifier">
                                                 <i class="fas fa-edit"></i>
                                             </a>
+                                            <form method="POST" action="{{ url_for('installments.delete', payment_id=payment.id) }}"
+                                                  onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce paiement en plusieurs fois ?')" class="d-inline">
+                                                <button type="submit" class="btn btn-outline-danger" title="Supprimer">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
                                         </div>
                                     </td>
                                 </tr>
@@ -194,10 +200,18 @@
                                     {% endif %}
                                 </td>
                                 <td class="text-end">
-                                    <a href="{{ url_for('installments.detail', payment_id=payment.id) }}"
-                                       class="btn btn-sm btn-outline-primary">
-                                        <i class="fas fa-eye"></i> Détails
-                                    </a>
+                                    <div class="btn-group btn-group-sm">
+                                        <a href="{{ url_for('installments.detail', payment_id=payment.id) }}"
+                                           class="btn btn-outline-primary" title="Détails">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <form method="POST" action="{{ url_for('installments.delete', payment_id=payment.id) }}"
+                                              onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce paiement en plusieurs fois ?')" class="d-inline">
+                                            <button type="submit" class="btn btn-outline-danger" title="Supprimer">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                         {% endfor %}

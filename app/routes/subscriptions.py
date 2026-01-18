@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_required, current_user
 from app import db
 from app.models import Subscription, Category, Notification, Service
-from app.utils.transactions import generate_future_transactions, update_future_transactions, cancel_future_transactions
+from app.utils.transactions import generate_future_transactions, update_future_transactions, cancel_future_transactions, calculate_next_future_date, delete_all_transactions
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 
@@ -96,6 +96,9 @@ def add():
 
         start_date = datetime.strptime(start_date_str, '%Y-%m-%d').date()
 
+        # Calculer la prochaine date de facturation future
+        next_billing_date = calculate_next_future_date(start_date, billing_cycle)
+
         subscription = Subscription(
             user_id=current_user.id,
             name=name,
@@ -107,18 +110,8 @@ def add():
             service_id=service_id if service_id else None,
             plan_id=plan_id if plan_id else None,
             start_date=start_date,
-            next_billing_date=start_date
+            next_billing_date=next_billing_date
         )
-
-        # Calculer la prochaine date de facturation
-        if billing_cycle == 'monthly':
-            subscription.next_billing_date = start_date + relativedelta(months=1)
-        elif billing_cycle == 'quarterly':
-            subscription.next_billing_date = start_date + relativedelta(months=3)
-        elif billing_cycle == 'yearly':
-            subscription.next_billing_date = start_date + relativedelta(years=1)
-        elif billing_cycle == 'weekly':
-            subscription.next_billing_date = start_date + timedelta(weeks=1)
 
         db.session.add(subscription)
         db.session.commit()
@@ -170,6 +163,9 @@ def edit(subscription_id):
         subscription.service_id = request.form.get('service_id', type=int) or None
         subscription.plan_id = request.form.get('plan_id', type=int) or None
 
+        # Recalculer la prochaine date de facturation future basée sur la start_date et le nouveau billing_cycle
+        subscription.next_billing_date = calculate_next_future_date(subscription.start_date, subscription.billing_cycle)
+
         db.session.commit()
 
         # Mettre à jour les transactions futures
@@ -198,13 +194,18 @@ def delete(subscription_id):
 
     subscription_name = subscription.name
 
-    # Annuler les transactions futures avant suppression
-    cancel_future_transactions(subscription.id, 'subscription')
+    # Supprimer toutes les transactions associées
+    delete_all_transactions(subscription.id, 'subscription')
 
     db.session.delete(subscription)
     db.session.commit()
 
-    flash(f'L\'abonnement "{subscription_name}" a été supprimé.', 'success')
+    flash(f'L\'abonnement "{subscription_name}" et toutes ses transactions ont été supprimés.', 'success')
+
+    # Rediriger vers la page balance si le paramètre est présent
+    redirect_to = request.args.get('redirect_to', 'subscriptions.list')
+    if redirect_to == 'balance':
+        return redirect(url_for('main.balance'))
     return redirect(url_for('subscriptions.list'))
 
 

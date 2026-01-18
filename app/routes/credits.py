@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, redirect, url_for, flash, request,
 from flask_login import login_required, current_user
 from app import db
 from app.models import Credit, Category, CreditType, CreditDocument, Bank, Notification
-from app.utils.transactions import generate_future_transactions, update_future_transactions, cancel_future_transactions
+from app.utils.transactions import generate_future_transactions, update_future_transactions, cancel_future_transactions, calculate_next_future_date, delete_all_transactions
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 
@@ -121,6 +121,9 @@ def add():
         start_date = datetime.strptime(start_date_str, '%Y-%m-%d').date()
         end_date = datetime.strptime(end_date_str, '%Y-%m-%d').date() if end_date_str else None
 
+        # Calculer la prochaine date de paiement future
+        next_payment_date = calculate_next_future_date(start_date, billing_cycle)
+
         credit = Credit(
             user_id=current_user.id,
             name=name,
@@ -133,19 +136,11 @@ def add():
             category_id=category_id if category_id else None,
             start_date=start_date,
             end_date=end_date,
-            next_payment_date=start_date,
+            next_payment_date=next_payment_date,
             total_amount=total_amount,
             remaining_amount=remaining_amount,
             interest_rate=interest_rate
         )
-
-        # Calculer la prochaine date de paiement
-        if billing_cycle == 'monthly':
-            credit.next_payment_date = start_date + relativedelta(months=1)
-        elif billing_cycle == 'quarterly':
-            credit.next_payment_date = start_date + relativedelta(months=3)
-        elif billing_cycle == 'yearly':
-            credit.next_payment_date = start_date + relativedelta(years=1)
 
         db.session.add(credit)
         db.session.commit()
@@ -206,6 +201,9 @@ def edit(credit_id):
         credit.remaining_amount = request.form.get('remaining_amount', type=float)
         credit.interest_rate = request.form.get('interest_rate', type=float)
 
+        # Recalculer la prochaine date de paiement future basée sur la start_date et le nouveau billing_cycle
+        credit.next_payment_date = calculate_next_future_date(credit.start_date, credit.billing_cycle)
+
         db.session.commit()
 
         # Mettre à jour les transactions futures
@@ -237,13 +235,18 @@ def delete(credit_id):
 
     credit_name = credit.name
 
-    # Annuler les transactions futures avant suppression
-    cancel_future_transactions(credit.id, 'credit')
+    # Supprimer toutes les transactions associées
+    delete_all_transactions(credit.id, 'credit')
 
     db.session.delete(credit)
     db.session.commit()
 
-    flash(f'Le crédit "{credit_name}" a été supprimé.', 'success')
+    flash(f'Le crédit "{credit_name}" et toutes ses transactions ont été supprimés.', 'success')
+
+    # Rediriger vers la page balance si le paramètre est présent
+    redirect_to = request.args.get('redirect_to', 'credits.list_credits')
+    if redirect_to == 'balance':
+        return redirect(url_for('main.balance'))
     return redirect(url_for('credits.list_credits'))
 
 

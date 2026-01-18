@@ -170,22 +170,30 @@ def balance():
     """Page d'affichage du solde avec tous les mouvements (depuis la table transactions)"""
     from calendar import monthrange
 
-    # Récupérer les paramètres de filtre (mois et année)
+    # Récupérer les paramètres de filtre (mois, année et statut)
     now = datetime.utcnow()
     selected_month = request.args.get('month', type=int, default=now.month)
     selected_year = request.args.get('year', type=int, default=now.year)
+    selected_status = request.args.get('status', default='all')
 
     # Calculer le premier et dernier jour du mois sélectionné
     first_day = datetime(selected_year, selected_month, 1).date()
     last_day_num = monthrange(selected_year, selected_month)[1]
     last_day = datetime(selected_year, selected_month, last_day_num).date()
 
-    # Récupérer toutes les transactions du mois (sauf les annulées)
-    transactions = current_user.transactions.filter(
+    # Construire la requête de base (transactions du mois, sauf les annulées)
+    query = current_user.transactions.filter(
         Transaction.transaction_date >= first_day,
         Transaction.transaction_date <= last_day,
         Transaction.status != 'cancelled'
-    ).order_by(Transaction.transaction_date.desc()).all()
+    )
+
+    # Ajouter le filtre de statut si nécessaire
+    if selected_status != 'all':
+        query = query.filter(Transaction.status == selected_status)
+
+    # Récupérer les transactions
+    transactions = query.order_by(Transaction.transaction_date.desc()).all()
 
     # Convertir les transactions en dictionnaire pour le template
     movements = []
@@ -193,6 +201,8 @@ def balance():
         movements.append({
             'id': transaction.id,
             'type': transaction.transaction_type,
+            'source_id': transaction.source_id,
+            'source_type': transaction.source_type,
             'date': transaction.transaction_date,
             'name': transaction.name,
             'description': transaction.description or '',
@@ -225,6 +235,7 @@ def balance():
                          movements=movements,
                          selected_month=selected_month,
                          selected_year=selected_year,
+                         selected_status=selected_status,
                          total_revenues=round(total_revenues, 2),
                          total_expenses=round(total_expenses, 2),
                          final_balance=round(final_balance, 2),
@@ -245,6 +256,110 @@ def toggle_point(transaction_id):
     # Basculer l'état de pointage
     transaction.is_pointed = not transaction.is_pointed
     db.session.commit()
+
+    # Retourner à la page balance avec les mêmes filtres
+    month = request.args.get('month', type=int)
+    year = request.args.get('year', type=int)
+    return redirect(url_for('main.balance', month=month, year=year))
+
+
+@bp.route('/balance/delete-transaction/<int:transaction_id>', methods=['POST'])
+@login_required
+def delete_transaction(transaction_id):
+    """Supprimer/annuler une transaction spécifique sans supprimer l'objet source"""
+    transaction = Transaction.query.get_or_404(transaction_id)
+
+    # Vérifier que l'utilisateur est propriétaire de la transaction
+    if transaction.user_id != current_user.id:
+        flash('Vous n\'avez pas accès à cette transaction.', 'danger')
+        return redirect(url_for('main.balance'))
+
+    # Marquer la transaction comme annulée (au lieu de la supprimer)
+    transaction.status = 'cancelled'
+    db.session.commit()
+
+    flash(f'La transaction "{transaction.name}" a été annulée.', 'success')
+
+    # Retourner à la page balance avec les mêmes filtres
+    month = request.args.get('month', type=int)
+    year = request.args.get('year', type=int)
+    return redirect(url_for('main.balance', month=month, year=year))
+
+
+@bp.route('/balance/delete-transactions-bulk/<int:transaction_id>', methods=['POST'])
+@login_required
+def delete_transactions_bulk(transaction_id):
+    """Supprimer des transactions selon différents modes"""
+    transaction = Transaction.query.get_or_404(transaction_id)
+
+    # Vérifier que l'utilisateur est propriétaire de la transaction
+    if transaction.user_id != current_user.id:
+        flash('Vous n\'avez pas accès à cette transaction.', 'danger')
+        return redirect(url_for('main.balance'))
+
+    delete_mode = request.args.get('delete_mode', 'single')
+    source_id = transaction.source_id
+    source_type = transaction.source_type
+    transaction_date = transaction.transaction_date
+
+    count = 0
+
+    if delete_mode == 'single':
+        # Supprimer uniquement cette transaction
+        transaction.status = 'cancelled'
+        count = 1
+        db.session.commit()
+        flash(f'La transaction a été annulée.', 'success')
+
+    elif delete_mode == 'past':
+        # Supprimer toutes les transactions passées (inclus celle-ci)
+        past_transactions = Transaction.query.filter(
+            Transaction.user_id == current_user.id,
+            Transaction.source_id == source_id,
+            Transaction.source_type == source_type,
+            Transaction.transaction_date <= transaction_date,
+            Transaction.status != 'cancelled'
+        ).all()
+
+        for t in past_transactions:
+            t.status = 'cancelled'
+            count += 1
+
+        db.session.commit()
+        flash(f'{count} transaction(s) passée(s) ont été annulée(s).', 'success')
+
+    elif delete_mode == 'future':
+        # Supprimer toutes les transactions futures (inclus celle-ci)
+        future_transactions = Transaction.query.filter(
+            Transaction.user_id == current_user.id,
+            Transaction.source_id == source_id,
+            Transaction.source_type == source_type,
+            Transaction.transaction_date >= transaction_date,
+            Transaction.status != 'cancelled'
+        ).all()
+
+        for t in future_transactions:
+            t.status = 'cancelled'
+            count += 1
+
+        db.session.commit()
+        flash(f'{count} transaction(s) future(s) ont été annulée(s).', 'success')
+
+    elif delete_mode == 'all':
+        # Supprimer toutes les transactions liées
+        all_transactions = Transaction.query.filter(
+            Transaction.user_id == current_user.id,
+            Transaction.source_id == source_id,
+            Transaction.source_type == source_type,
+            Transaction.status != 'cancelled'
+        ).all()
+
+        for t in all_transactions:
+            t.status = 'cancelled'
+            count += 1
+
+        db.session.commit()
+        flash(f'{count} transaction(s) ont été annulée(s).', 'success')
 
     # Retourner à la page balance avec les mêmes filtres
     month = request.args.get('month', type=int)

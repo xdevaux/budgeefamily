@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_required, current_user
 from app import db
 from app.models import InstallmentPayment, Category, CreditType, Notification
-from app.utils.transactions import generate_future_transactions, update_future_transactions, cancel_future_transactions
+from app.utils.transactions import generate_future_transactions, update_future_transactions, cancel_future_transactions, calculate_next_future_date, delete_all_transactions
 from datetime import datetime, date
 from dateutil.relativedelta import relativedelta
 
@@ -69,6 +69,9 @@ def add():
         # Calculer la date de fin
         end_date = start_date + relativedelta(months=number_of_installments - 1)
 
+        # Calculer la prochaine date de paiement future (les paiements en plusieurs fois sont toujours mensuels)
+        next_payment_date = calculate_next_future_date(start_date, 'monthly')
+
         # Créer le paiement
         payment = InstallmentPayment(
             user_id=current_user.id,
@@ -84,7 +87,7 @@ def add():
             product_category=product_category,
             credit_type_id=credit_type_id,
             start_date=start_date,
-            next_payment_date=start_date,
+            next_payment_date=next_payment_date,
             end_date=end_date,
             currency=currency
         )
@@ -156,6 +159,9 @@ def edit(payment_id):
         payment.product_category = request.form.get('product_category') or None
         payment.credit_type_id = request.form.get('credit_type_id') or None
 
+        # Recalculer la prochaine date de paiement future basée sur la start_date (toujours mensuel)
+        payment.next_payment_date = calculate_next_future_date(payment.start_date, 'monthly')
+
         db.session.commit()
 
         # Mettre à jour les transactions futures
@@ -186,13 +192,18 @@ def delete(payment_id):
 
     name = payment.name
 
-    # Annuler les transactions futures avant suppression
-    cancel_future_transactions(payment.id, 'installment')
+    # Supprimer toutes les transactions associées
+    delete_all_transactions(payment.id, 'installment')
 
     db.session.delete(payment)
     db.session.commit()
 
-    flash(f'Le paiement "{name}" a été supprimé avec succès.', 'success')
+    flash(f'Le paiement "{name}" et toutes ses transactions ont été supprimés avec succès.', 'success')
+
+    # Rediriger vers la page balance si le paramètre est présent
+    redirect_to = request.args.get('redirect_to', 'installments.list')
+    if redirect_to == 'balance':
+        return redirect(url_for('main.balance'))
     return redirect(url_for('installments.list'))
 
 

@@ -1,10 +1,54 @@
 """
 Fonctions utilitaires pour la gestion des transactions financières
 """
-from datetime import datetime
+from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 from app import db
 from app.models import Transaction, Revenue, Subscription, Credit, InstallmentPayment
+
+
+def calculate_next_future_date(start_date, billing_cycle):
+    """
+    Calcule la prochaine date de renouvellement future à partir d'une date de début.
+    Si la date de début est dans le passé, calcule la prochaine occurrence future.
+
+    Args:
+        start_date: Date de début (peut être dans le passé)
+        billing_cycle: Cycle de facturation ('weekly', 'monthly', 'quarterly', 'yearly')
+
+    Returns:
+        La prochaine date de renouvellement future (> aujourd'hui)
+    """
+    today = datetime.now().date()
+    next_date = start_date
+
+    # Si la date de début est déjà dans le futur, on calcule juste le premier renouvellement
+    if start_date > today:
+        if billing_cycle == 'weekly':
+            return start_date + timedelta(weeks=1)
+        elif billing_cycle == 'monthly':
+            return start_date + relativedelta(months=1)
+        elif billing_cycle == 'quarterly':
+            return start_date + relativedelta(months=3)
+        elif billing_cycle == 'yearly':
+            return start_date + relativedelta(years=1)
+        return start_date
+
+    # Sinon, on calcule la prochaine occurrence future
+    while next_date <= today:
+        if billing_cycle == 'weekly':
+            next_date = next_date + timedelta(weeks=1)
+        elif billing_cycle == 'monthly':
+            next_date = next_date + relativedelta(months=1)
+        elif billing_cycle == 'quarterly':
+            next_date = next_date + relativedelta(months=3)
+        elif billing_cycle == 'yearly':
+            next_date = next_date + relativedelta(years=1)
+        else:
+            # Si le cycle n'est pas reconnu, retourner la date de début
+            return start_date
+
+    return next_date
 
 
 def create_transaction_from_revenue(revenue, transaction_date=None, status='pending'):
@@ -155,19 +199,21 @@ def create_transaction_from_installment(installment, transaction_date=None, stat
     return transaction
 
 
-def generate_future_transactions(source_object, source_type, months_ahead=12):
+def generate_future_transactions(source_object, source_type, months_ahead=12, include_past=True):
     """
-    Génère des transactions futures pour un objet source
+    Génère des transactions pour un objet source (passées et futures)
 
     Args:
         source_object: Objet Revenue, Subscription, Credit ou InstallmentPayment
         source_type: Type de l'objet ('revenue', 'subscription', 'credit', 'installment')
-        months_ahead: Nombre de mois à générer (défaut: 12)
+        months_ahead: Nombre de mois futurs à générer (défaut: 12)
+        include_past: Générer aussi les transactions passées depuis start_date (défaut: True)
 
     Returns:
         Liste des transactions créées
     """
     transactions = []
+    today = datetime.now().date()
 
     # Fonction de création selon le type
     create_func = {
@@ -180,30 +226,44 @@ def generate_future_transactions(source_object, source_type, months_ahead=12):
     if not create_func:
         return transactions
 
-    # Déterminer la date de début et le cycle
+    # Déterminer la date de début, le cycle et la start_date
     if source_type == 'revenue':
-        current_date = source_object.next_payment_date
+        start_date = source_object.start_date
         billing_cycle = source_object.billing_cycle
     elif source_type == 'subscription':
-        current_date = source_object.next_billing_date
+        start_date = source_object.start_date
         billing_cycle = source_object.billing_cycle
     elif source_type == 'credit':
-        current_date = source_object.next_payment_date
+        start_date = source_object.start_date
         billing_cycle = source_object.billing_cycle
     elif source_type == 'installment':
-        current_date = source_object.next_payment_date
-        # Les paiements en plusieurs fois sont toujours mensuels
+        start_date = source_object.start_date
+        billing_cycle = 'monthly'  # Toujours mensuel
         remaining_installments = source_object.number_of_installments - source_object.installments_paid
-        months_ahead = min(months_ahead, remaining_installments)
-        billing_cycle = 'monthly'
 
-    # Générer les transactions futures
-    end_date = datetime.now().date() + relativedelta(months=months_ahead)
+    # Commencer par la start_date si on inclut le passé, sinon par next_payment_date
+    if include_past:
+        current_date = start_date
+    else:
+        if source_type == 'revenue':
+            current_date = source_object.next_payment_date
+        elif source_type == 'subscription':
+            current_date = source_object.next_billing_date
+        elif source_type == 'credit':
+            current_date = source_object.next_payment_date
+        elif source_type == 'installment':
+            current_date = source_object.next_payment_date
 
+    # Date de fin : aujourd'hui + months_ahead
+    end_date = today + relativedelta(months=months_ahead)
+
+    # Générer les transactions
+    transaction_count = 0
     while current_date <= end_date:
         # Créer la transaction
         transaction = create_func(source_object, transaction_date=current_date, status='pending')
         transactions.append(transaction)
+        transaction_count += 1
 
         # Calculer la prochaine date selon le cycle
         if billing_cycle == 'monthly':
@@ -219,7 +279,7 @@ def generate_future_transactions(source_object, source_type, months_ahead=12):
 
         # Pour les paiements en plusieurs fois, arrêter quand toutes les mensualités sont créées
         if source_type == 'installment':
-            if len(transactions) >= remaining_installments:
+            if transaction_count >= source_object.number_of_installments:
                 break
 
     return transactions
@@ -246,6 +306,27 @@ def cancel_future_transactions(source_id, source_type):
     # Marquer comme annulées
     for transaction in future_transactions:
         transaction.status = 'cancelled'
+
+    db.session.commit()
+
+
+def delete_all_transactions(source_id, source_type):
+    """
+    Supprime toutes les transactions (passées et futures) pour un objet source
+
+    Args:
+        source_id: ID de l'objet source
+        source_type: Type de l'objet ('revenue', 'subscription', 'credit', 'installment')
+    """
+    # Récupérer toutes les transactions liées à cet objet
+    transactions = Transaction.query.filter(
+        Transaction.source_id == source_id,
+        Transaction.source_type == source_type
+    ).all()
+
+    # Supprimer toutes les transactions
+    for transaction in transactions:
+        db.session.delete(transaction)
 
     db.session.commit()
 
