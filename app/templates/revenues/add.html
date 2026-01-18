@@ -83,7 +83,7 @@
                         </div>
 
                         <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary btn-lg">
+                            <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
                                 <i class="fas fa-plus"></i> Ajouter le revenu
                             </button>
                             <a href="{{ url_for('revenues.list') }}" class="btn btn-outline-secondary">
@@ -96,4 +96,17 @@
         </div>
     </div>
 </div>
+
+<script>
+// Protection contre les doubles soumissions
+document.querySelector('form').addEventListener('submit', function(e) {
+    const submitBtn = document.getElementById('submitBtn');
+    if (submitBtn.disabled) {
+        e.preventDefault();
+        return false;
+    }
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enregistrement en cours...';
+});
+</script>
 {% endblock %}

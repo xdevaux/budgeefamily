@@ -911,3 +911,64 @@ class InstallmentPayment(db.Model):
 
     def __repr__(self):
         return f'<InstallmentPayment {self.name} - {self.installments_paid}/{self.number_of_installments}>'
+
+
+class Transaction(db.Model):
+    """Modèle pour l'historique de toutes les transactions financières"""
+    __tablename__ = 'transactions'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
+
+    # Date de la transaction (date réelle du mouvement)
+    transaction_date = db.Column(db.Date, nullable=False, index=True)
+
+    # Type de transaction
+    transaction_type = db.Column(db.String(20), nullable=False)  # 'revenue', 'subscription', 'credit', 'installment'
+
+    # Référence vers l'entité source (pour traçabilité)
+    source_id = db.Column(db.Integer, nullable=False)
+    source_type = db.Column(db.String(20), nullable=False)  # 'revenue', 'subscription', 'credit', 'installment'
+
+    # Informations du mouvement (snapshot au moment de la transaction)
+    name = db.Column(db.String(200), nullable=False)
+    description = db.Column(db.Text, nullable=True)
+    amount = db.Column(db.Float, nullable=False)
+    currency = db.Column(db.String(3), default='EUR', nullable=False)
+
+    # Positif (revenu) ou négatif (dépense)
+    is_positive = db.Column(db.Boolean, nullable=False)
+
+    # Catégorie (snapshot)
+    category_name = db.Column(db.String(100), nullable=True)
+
+    # Pointage
+    is_pointed = db.Column(db.Boolean, default=False, nullable=False)
+
+    # Statut
+    status = db.Column(db.String(20), default='pending', nullable=False, index=True)  # 'pending', 'completed', 'cancelled'
+
+    # Notes optionnelles
+    notes = db.Column(db.Text, nullable=True)
+
+    # Dates
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+
+    # Relations
+    user = db.relationship('User', backref=db.backref('transactions', lazy='dynamic', cascade='all, delete-orphan'))
+
+    def get_source_object(self):
+        """Retourne l'objet source de la transaction"""
+        if self.source_type == 'revenue':
+            return Revenue.query.get(self.source_id)
+        elif self.source_type == 'subscription':
+            return Subscription.query.get(self.source_id)
+        elif self.source_type == 'credit':
+            return Credit.query.get(self.source_id)
+        elif self.source_type == 'installment':
+            return InstallmentPayment.query.get(self.source_id)
+        return None
+
+    def __repr__(self):
+        return f'<Transaction {self.name} - {self.amount} {self.currency} - {self.transaction_date}>'

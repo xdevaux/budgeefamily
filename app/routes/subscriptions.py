@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_required, current_user
 from app import db
 from app.models import Subscription, Category, Notification, Service
+from app.utils.transactions import generate_future_transactions, update_future_transactions, cancel_future_transactions
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 
@@ -122,6 +123,10 @@ def add():
         db.session.add(subscription)
         db.session.commit()
 
+        # Générer les transactions futures (12 mois)
+        generate_future_transactions(subscription, 'subscription', 12)
+        db.session.commit()
+
         # Créer une notification
         notification = Notification(
             user_id=current_user.id,
@@ -167,6 +172,10 @@ def edit(subscription_id):
 
         db.session.commit()
 
+        # Mettre à jour les transactions futures
+        update_future_transactions(subscription, 'subscription')
+        db.session.commit()
+
         flash(f'L\'abonnement "{subscription.name}" a été mis à jour.', 'success')
         return redirect(url_for('subscriptions.list'))
 
@@ -188,6 +197,10 @@ def delete(subscription_id):
         return redirect(url_for('subscriptions.list'))
 
     subscription_name = subscription.name
+
+    # Annuler les transactions futures avant suppression
+    cancel_future_transactions(subscription.id, 'subscription')
+
     db.session.delete(subscription)
     db.session.commit()
 
@@ -207,8 +220,12 @@ def toggle(subscription_id):
     subscription.is_active = not subscription.is_active
     if not subscription.is_active:
         subscription.cancelled_at = datetime.utcnow()
+        # Annuler les transactions futures
+        cancel_future_transactions(subscription.id, 'subscription')
     else:
         subscription.cancelled_at = None
+        # Régénérer les transactions futures
+        generate_future_transactions(subscription, 'subscription', 12)
 
     db.session.commit()
 

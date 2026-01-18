@@ -6,7 +6,8 @@ from dateutil.relativedelta import relativedelta
 import click
 from flask.cli import with_appcontext
 from app import db
-from app.models import Subscription, Credit, Revenue, Notification, User, InstallmentPayment
+from app.models import Subscription, Credit, Revenue, Notification, User, InstallmentPayment, Transaction
+from app.utils.transactions import generate_future_transactions, create_transaction_from_revenue, create_transaction_from_subscription, create_transaction_from_credit, create_transaction_from_installment, check_and_regenerate_transactions
 from collections import defaultdict
 
 
@@ -50,9 +51,12 @@ def update_payment_dates():
     subscriptions = Subscription.query.filter_by(is_active=True).all()
     for sub in subscriptions:
         if sub.next_billing_date and sub.next_billing_date <= today:
-            # Compter le nombre de paiements passés
+            # Compter le nombre de paiements passés et créer des transactions
             payments_count = 0
             while sub.next_billing_date <= today:
+                # Créer une transaction pour ce paiement
+                create_transaction_from_subscription(sub, transaction_date=sub.next_billing_date, status='completed')
+
                 sub.next_billing_date = calculate_next_date(sub.next_billing_date, sub.billing_cycle)
                 payments_count += 1
 
@@ -72,9 +76,12 @@ def update_payment_dates():
     credits = Credit.query.filter_by(is_active=True).all()
     for credit in credits:
         if credit.next_payment_date and credit.next_payment_date <= today:
-            # Compter le nombre de paiements passés
+            # Compter le nombre de paiements passés et créer des transactions
             payments_count = 0
             while credit.next_payment_date <= today:
+                # Créer une transaction pour ce paiement
+                create_transaction_from_credit(credit, transaction_date=credit.next_payment_date, status='completed')
+
                 credit.next_payment_date = calculate_next_date(credit.next_payment_date, credit.billing_cycle)
                 payments_count += 1
 
@@ -107,9 +114,12 @@ def update_payment_dates():
     revenues = Revenue.query.filter_by(is_active=True).all()
     for revenue in revenues:
         if revenue.next_payment_date and revenue.next_payment_date <= today:
-            # Compter le nombre de versements passés
+            # Compter le nombre de versements passés et créer des transactions
             payments_count = 0
             while revenue.next_payment_date <= today:
+                # Créer une transaction pour ce versement
+                create_transaction_from_revenue(revenue, transaction_date=revenue.next_payment_date, status='completed')
+
                 revenue.next_payment_date = calculate_next_date(revenue.next_payment_date, revenue.billing_cycle)
                 payments_count += 1
 
@@ -129,8 +139,11 @@ def update_payment_dates():
     installments = InstallmentPayment.query.filter_by(is_active=True).all()
     for installment in installments:
         if installment.next_payment_date and installment.next_payment_date <= today:
-            # Traiter les paiements en retard
+            # Traiter les paiements en retard et créer des transactions
             while installment.next_payment_date <= today and installment.installments_paid < installment.number_of_installments:
+                # Créer une transaction pour ce paiement
+                create_transaction_from_installment(installment, transaction_date=installment.next_payment_date, status='completed')
+
                 installment.installments_paid += 1
                 installment.next_payment_date = installment.calculate_next_payment_date()
                 updated_installments += 1
@@ -158,6 +171,35 @@ def update_payment_dates():
                         'next_date': installment.next_payment_date
                     })
 
+    # Vérifier et régénérer les transactions futures si nécessaire (< 3 mois restants)
+    click.echo("Vérification et régénération des transactions futures...")
+    regenerated_count = 0
+
+    # Vérifier tous les revenus actifs
+    for revenue in Revenue.query.filter_by(is_active=True).all():
+        if check_and_regenerate_transactions(revenue, 'revenue', min_months=3, generate_months=12):
+            regenerated_count += 1
+
+    # Vérifier tous les abonnements actifs
+    for subscription in Subscription.query.filter_by(is_active=True).all():
+        if check_and_regenerate_transactions(subscription, 'subscription', min_months=3, generate_months=12):
+            regenerated_count += 1
+
+    # Vérifier tous les crédits actifs
+    for credit in Credit.query.filter_by(is_active=True).all():
+        if check_and_regenerate_transactions(credit, 'credit', min_months=3, generate_months=12):
+            regenerated_count += 1
+
+    # Vérifier tous les paiements en plusieurs fois actifs
+    for installment in InstallmentPayment.query.filter_by(is_active=True).all():
+        # Pour les installments, on ne génère que les mensualités restantes
+        remaining = installment.number_of_installments - installment.installments_paid
+        if remaining > 0 and check_and_regenerate_transactions(installment, 'installment', min_months=1, generate_months=remaining):
+            regenerated_count += 1
+
+    if regenerated_count > 0:
+        click.echo(f"✓ {regenerated_count} entité(s) ont eu leurs transactions régénérées")
+
     # Sauvegarder les modifications
     db.session.commit()
 
@@ -169,41 +211,47 @@ def update_payment_dates():
             continue
 
         # Construire le message récapitulatif
-        message_parts = []
+        message_sections = []
 
         if updates['subscriptions']:
-            message_parts.append(f"📅 {len(updates['subscriptions'])} abonnement(s) mis à jour")
+            section = f"📅 {len(updates['subscriptions'])} abonnement(s) mis à jour\n"
             for sub in updates['subscriptions']:
-                message_parts.append(f"  • {sub['name']}: {sub['payments_count']} paiement(s) de {sub['amount']:.2f}€")
-
-        if updates['credits']:
-            message_parts.append(f"💳 {len(updates['credits'])} crédit(s) mis à jour")
-            for credit in updates['credits']:
-                message_parts.append(f"  • {credit['name']}: {credit['payments_count']} paiement(s) de {credit['amount']:.2f}€")
-
-        if updates['credits_terminated']:
-            message_parts.append(f"✅ {len(updates['credits_terminated'])} crédit(s) terminé(s)")
-            for credit in updates['credits_terminated']:
-                message_parts.append(f"  • {credit['name']}")
+                section += f"  • {sub['name']}: {sub['payments_count']} paiement(s) de {sub['amount']:.2f}€\n"
+            message_sections.append(section.rstrip())
 
         if updates['revenues']:
-            message_parts.append(f"💰 {len(updates['revenues'])} revenu(s) mis à jour")
+            section = f"💰 {len(updates['revenues'])} revenu(s) mis à jour\n"
             for revenue in updates['revenues']:
-                message_parts.append(f"  • {revenue['name']}: {revenue['payments_count']} versement(s) de {revenue['amount']:.2f}€")
+                section += f"  • {revenue['name']}: {revenue['payments_count']} versement(s) de {revenue['amount']:.2f}€\n"
+            message_sections.append(section.rstrip())
+
+        if updates['credits']:
+            section = f"💳 {len(updates['credits'])} crédit(s) mis à jour\n"
+            for credit in updates['credits']:
+                section += f"  • {credit['name']}: {credit['payments_count']} paiement(s) de {credit['amount']:.2f}€\n"
+            message_sections.append(section.rstrip())
+
+        if updates['credits_terminated']:
+            section = f"✅ {len(updates['credits_terminated'])} crédit(s) terminé(s)\n"
+            for credit in updates['credits_terminated']:
+                section += f"  • {credit['name']}\n"
+            message_sections.append(section.rstrip())
 
         if updates['installments']:
             total_installments = len(updates['installments'])
-            message_parts.append(f"📆 {total_installments} paiement(s) en plusieurs fois traité(s)")
+            section = f"📆 {total_installments} paiement(s) en plusieurs fois traité(s)\n"
             for installment in updates['installments']:
-                message_parts.append(f"  • {installment['name']}: {installment['installments_paid']}/{installment['number_of_installments']} - {installment['amount']:.2f}€")
+                section += f"  • {installment['name']}: {installment['installments_paid']}/{installment['number_of_installments']} - {installment['amount']:.2f}€\n"
+            message_sections.append(section.rstrip())
 
         if updates['installments_completed']:
-            message_parts.append(f"🎉 {len(updates['installments_completed'])} paiement(s) en plusieurs fois terminé(s)")
+            section = f"🎉 {len(updates['installments_completed'])} paiement(s) en plusieurs fois terminé(s)\n"
             for installment in updates['installments_completed']:
-                message_parts.append(f"  • {installment['name']}")
+                section += f"  • {installment['name']}\n"
+            message_sections.append(section.rstrip())
 
-        if message_parts:
-            message = "\n".join(message_parts)
+        if message_sections:
+            message = "\n\n".join(message_sections)
             message += "\n\n⚙️ Traitement automatisé par Budgee Family"
 
             # Créer la notification
@@ -221,17 +269,21 @@ def update_payment_dates():
     # Envoyer les emails de notification
     if notifications_created > 0:
         from app.utils.email import send_notification_email
-        for user_id in user_updates.keys():
-            user = User.query.get(user_id)
-            if user:
-                # Récupérer la dernière notification créée pour cet utilisateur
-                notification = Notification.query.filter_by(
-                    user_id=user_id,
-                    type='daily_update'
-                ).order_by(Notification.created_at.desc()).first()
+        from flask import current_app
 
-                if notification:
-                    send_notification_email(user, notification)
+        # Créer un contexte de requête pour permettre l'utilisation de url_for()
+        with current_app.test_request_context():
+            for user_id in user_updates.keys():
+                user = User.query.get(user_id)
+                if user:
+                    # Récupérer la dernière notification créée pour cet utilisateur
+                    notification = Notification.query.filter_by(
+                        user_id=user_id,
+                        type='daily_update'
+                    ).order_by(Notification.created_at.desc()).first()
+
+                    if notification:
+                        send_notification_email(user, notification)
 
     click.echo(f"✓ Dates mises à jour avec succès:")
     click.echo(f"  - Abonnements: {updated_subscriptions}")
@@ -265,7 +317,49 @@ def archive_old_notifications():
     click.echo(f"✓ {archived_count} notification(s) archivée(s)")
 
 
+@click.command('generate-initial-transactions')
+@click.option('--months', default=12, help='Nombre de mois de transactions à générer')
+@with_appcontext
+def generate_initial_transactions(months):
+    """Génère les transactions initiales pour toutes les entités actives"""
+    click.echo(f"Génération des transactions pour les {months} prochains mois...")
+
+    total_transactions = 0
+
+    # Générer les transactions pour les revenus
+    revenues = Revenue.query.filter_by(is_active=True).all()
+    for revenue in revenues:
+        transactions = generate_future_transactions(revenue, 'revenue', months_ahead=months)
+        total_transactions += len(transactions)
+    click.echo(f"  - Revenus: {len(revenues)} revenus traités")
+
+    # Générer les transactions pour les abonnements
+    subscriptions = Subscription.query.filter_by(is_active=True).all()
+    for subscription in subscriptions:
+        transactions = generate_future_transactions(subscription, 'subscription', months_ahead=months)
+        total_transactions += len(transactions)
+    click.echo(f"  - Abonnements: {len(subscriptions)} abonnements traités")
+
+    # Générer les transactions pour les crédits
+    credits = Credit.query.filter_by(is_active=True).all()
+    for credit in credits:
+        transactions = generate_future_transactions(credit, 'credit', months_ahead=months)
+        total_transactions += len(transactions)
+    click.echo(f"  - Crédits: {len(credits)} crédits traités")
+
+    # Générer les transactions pour les paiements en plusieurs fois
+    installments = InstallmentPayment.query.filter_by(is_active=True).all()
+    for installment in installments:
+        transactions = generate_future_transactions(installment, 'installment', months_ahead=months)
+        total_transactions += len(transactions)
+    click.echo(f"  - Paiements en plusieurs fois: {len(installments)} paiements traités")
+
+    db.session.commit()
+    click.echo(f"✓ {total_transactions} transactions générées avec succès")
+
+
 def init_app(app):
     """Enregistre les commandes dans l'application Flask"""
     app.cli.add_command(update_payment_dates)
     app.cli.add_command(archive_old_notifications)
+    app.cli.add_command(generate_initial_transactions)

@@ -159,7 +159,7 @@
                             <a href="{{ url_for('installments.list') }}" class="btn btn-secondary">
                                 <i class="fas fa-times"></i> Annuler
                             </a>
-                            <button type="submit" class="btn btn-primary">
+                            <button type="submit" class="btn btn-primary" id="submitBtn">
                                 <i class="fas fa-save"></i> Enregistrer
                             </button>
                         </div>
@@ -217,5 +217,16 @@
             document.getElementById('installment_preview').style.display = 'none';
         }
     }
+
+    // Protection contre les doubles soumissions
+    document.querySelector('form').addEventListener('submit', function(e) {
+        const submitBtn = document.getElementById('submitBtn');
+        if (submitBtn.disabled) {
+            e.preventDefault();
+            return false;
+        }
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enregistrement en cours...';
+    });
 </script>
 {% endblock %}

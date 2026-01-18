@@ -107,7 +107,7 @@
                             <a href="{{ url_for('subscriptions.list') }}" class="btn btn-outline-secondary">
                                 Annuler
                             </a>
-                            <button type="submit" class="btn btn-primary">
+                            <button type="submit" class="btn btn-primary" id="submitBtn">
                                 <i class="fas fa-save"></i> Enregistrer l'abonnement
                             </button>
                         </div>
@@ -259,5 +259,16 @@ function updateFromPlan() {
         document.getElementById('plan_id').value = '';
     }
 }
+
+// Protection contre les doubles soumissions
+document.querySelector('form').addEventListener('submit', function(e) {
+    const submitBtn = document.getElementById('submitBtn');
+    if (submitBtn.disabled) {
+        e.preventDefault();
+        return false;
+    }
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enregistrement en cours...';
+});
 </script>
 {% endblock %}

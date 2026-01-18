@@ -128,7 +128,7 @@
                         </div>
 
                         <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary btn-lg">
+                            <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
                                 <i class="fas fa-plus"></i> Ajouter le crédit
                             </button>
                             <a href="{{ url_for('credits.list_credits') }}" class="btn btn-outline-secondary">
@@ -195,13 +195,22 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Nettoyer les valeurs avant la soumission du formulaire
+    // Nettoyer les valeurs avant la soumission du formulaire et protection contre les doubles soumissions
     document.querySelector('form').addEventListener('submit', function(e) {
+        const submitBtn = document.getElementById('submitBtn');
+        if (submitBtn.disabled) {
+            e.preventDefault();
+            return false;
+        }
+
         document.querySelectorAll('.format-amount-input').forEach(function(input) {
             if (input.value) {
                 input.value = cleanAmount(input.value);
             }
         });
+
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enregistrement en cours...';
     });
 });
 </script>

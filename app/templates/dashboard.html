@@ -16,19 +16,21 @@
     <!-- Stats Cards -->
     <div class="row mb-4">
         <div class="col-md-3">
-            <div class="card stat-card {% if solde >= 0 %}bg-success{% else %}bg-danger{% endif %} text-white" style="{% if solde >= 0 %}background-color: #28a745 !important;{% else %}background-color: #dc3545 !important;{% endif %}">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 class="text-uppercase mb-1 opacity-75">Solde</h6>
-                            <h2 class="mb-0">{{ solde | format_amount }} €</h2>
-                        </div>
-                        <div>
-                            <i class="fas fa-calculator fa-2x opacity-50"></i>
+            <a href="{{ url_for('main.balance') }}" class="text-decoration-none">
+                <div class="card stat-card {% if solde >= 0 %}bg-success{% else %}bg-danger{% endif %} text-white stat-card-clickable" style="{% if solde >= 0 %}background-color: #28a745 !important;{% else %}background-color: #dc3545 !important;{% endif %}">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="text-uppercase mb-1 opacity-75">Solde</h6>
+                                <h2 class="mb-0">{{ solde | format_amount }} €</h2>
+                            </div>
+                            <div>
+                                <i class="fas fa-calculator fa-2x opacity-50"></i>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </a>
         </div>
 
         <div class="col-md-3">

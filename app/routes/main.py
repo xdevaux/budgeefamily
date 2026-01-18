@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash, current_app
 from flask_login import login_required, current_user
 from app import db
-from app.models import Subscription, Category, Plan, Notification, Credit, Revenue, InstallmentPayment
+from app.models import Subscription, Category, Plan, Notification, Credit, Revenue, InstallmentPayment, Transaction
 from datetime import datetime, timedelta
 from sqlalchemy import func, case
 import stripe
@@ -164,15 +164,111 @@ def pricing():
     return render_template('pricing.html', plans=plans)
 
 
+@bp.route('/balance')
+@login_required
+def balance():
+    """Page d'affichage du solde avec tous les mouvements (depuis la table transactions)"""
+    from calendar import monthrange
+
+    # Récupérer les paramètres de filtre (mois et année)
+    now = datetime.utcnow()
+    selected_month = request.args.get('month', type=int, default=now.month)
+    selected_year = request.args.get('year', type=int, default=now.year)
+
+    # Calculer le premier et dernier jour du mois sélectionné
+    first_day = datetime(selected_year, selected_month, 1).date()
+    last_day_num = monthrange(selected_year, selected_month)[1]
+    last_day = datetime(selected_year, selected_month, last_day_num).date()
+
+    # Récupérer toutes les transactions du mois (sauf les annulées)
+    transactions = current_user.transactions.filter(
+        Transaction.transaction_date >= first_day,
+        Transaction.transaction_date <= last_day,
+        Transaction.status != 'cancelled'
+    ).order_by(Transaction.transaction_date.desc()).all()
+
+    # Convertir les transactions en dictionnaire pour le template
+    movements = []
+    for transaction in transactions:
+        movements.append({
+            'id': transaction.id,
+            'type': transaction.transaction_type,
+            'date': transaction.transaction_date,
+            'name': transaction.name,
+            'description': transaction.description or '',
+            'amount': transaction.amount,
+            'currency': transaction.currency,
+            'is_positive': transaction.is_positive,
+            'is_pointed': transaction.is_pointed,
+            'category': transaction.category_name or 'Non catégorisé',
+            'status': transaction.status
+        })
+
+    # Calculer le solde progressif (du plus ancien au plus récent)
+    balance = 0
+    for movement in reversed(movements):
+        if movement['is_positive']:
+            balance += movement['amount']
+        else:
+            balance -= movement['amount']
+        movement['balance'] = balance
+
+    # Inverser à nouveau pour garder l'ordre du plus récent en haut
+    movements.reverse()
+
+    # Calculer les totaux
+    total_revenues = sum(m['amount'] for m in movements if m['is_positive'])
+    total_expenses = sum(m['amount'] for m in movements if not m['is_positive'])
+    final_balance = total_revenues - total_expenses
+
+    return render_template('balance.html',
+                         movements=movements,
+                         selected_month=selected_month,
+                         selected_year=selected_year,
+                         total_revenues=round(total_revenues, 2),
+                         total_expenses=round(total_expenses, 2),
+                         final_balance=round(final_balance, 2),
+                         now=datetime.utcnow())
+
+
+@bp.route('/balance/toggle-point/<int:transaction_id>', methods=['POST'])
+@login_required
+def toggle_point(transaction_id):
+    """Pointer/dépointer une transaction"""
+    transaction = Transaction.query.get_or_404(transaction_id)
+
+    # Vérifier que l'utilisateur est propriétaire de la transaction
+    if transaction.user_id != current_user.id:
+        flash('Vous n\'avez pas accès à cette transaction.', 'danger')
+        return redirect(url_for('main.balance'))
+
+    # Basculer l'état de pointage
+    transaction.is_pointed = not transaction.is_pointed
+    db.session.commit()
+
+    # Retourner à la page balance avec les mêmes filtres
+    month = request.args.get('month', type=int)
+    year = request.args.get('year', type=int)
+    return redirect(url_for('main.balance', month=month, year=year))
+
+
 @bp.route('/notifications')
 @login_required
 def notifications():
-    filter_type = request.args.get('filter', 'unread')  # 'unread', 'archived', 'all'
+    filter_type = request.args.get('filter', 'unread')  # 'unread', 'read', 'archived', 'all'
 
     if filter_type == 'archived':
         # Afficher uniquement les notifications archivées
         user_notifications = current_user.notifications.filter_by(
             archived=True
+        ).order_by(
+            Notification.created_at.desc()
+        ).all()
+    elif filter_type == 'read':
+        # Afficher uniquement les notifications lues (non archivées)
+        user_notifications = current_user.notifications.filter_by(
+            is_read=True,
+            archived=False
         ).order_by(
             Notification.created_at.desc()
         ).all()

@@ -34,6 +34,11 @@ class Config:
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
     MAIL_DEFAULT_SENDER = os.environ.get('MAIL_DEFAULT_SENDER', 'noreply@budgeefamily.com')
 
+    # Configuration pour les URLs en dehors des requêtes HTTP (pour les emails via cron)
+    SERVER_NAME = os.environ.get('SERVER_NAME', 'budgeefamily.com')
+    PREFERRED_URL_SCHEME = os.environ.get('PREFERRED_URL_SCHEME', 'https')
+    APPLICATION_ROOT = os.environ.get('APPLICATION_ROOT', '/')
+
     # Limites d'abonnements
     FREE_SUBSCRIPTION_LIMIT = 5
 

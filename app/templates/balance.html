@@ -1,0 +1,189 @@
+{% extends "base.html" %}
+
+{% block title %}Solde - Budgee Family{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="mb-4">
+        <h2><i class="fas fa-balance-scale"></i> Solde et Mouvements</h2>
+        <p class="text-muted">Consultez l'ensemble de vos mouvements financiers et pointez-les au fur et à mesure</p>
+    </div>
+
+    <!-- Filtre par mois/année -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" action="{{ url_for('main.balance') }}" class="row g-3">
+                <div class="col-md-4">
+                    <label for="month" class="form-label">Mois</label>
+                    <select name="month" id="month" class="form-select">
+                        {% for m in range(1, 13) %}
+                            <option value="{{ m }}" {% if m == selected_month %}selected{% endif %}>
+                                {{ ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'][m-1] }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label for="year" class="form-label">Année</label>
+                    <select name="year" id="year" class="form-select">
+                        {% for y in range(now.year - 5, now.year + 2) %}
+                            <option value="{{ y }}" {% if y == selected_year %}selected{% endif %}>{{ y }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-filter"></i> Filtrer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Résumé des totaux -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card text-white" style="background-color: #6f42c1 !important;">
+                <div class="card-body">
+                    <h6 class="text-uppercase mb-1 opacity-75">Total Revenus</h6>
+                    <h3 class="mb-0">{{ total_revenues | format_amount }} €</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-danger text-white">
+                <div class="card-body">
+                    <h6 class="text-uppercase mb-1 opacity-75">Total Dépenses</h6>
+                    <h3 class="mb-0">{{ total_expenses | format_amount }} €</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card {% if final_balance >= 0 %}bg-success{% else %}bg-danger{% endif %} text-white">
+                <div class="card-body">
+                    <h6 class="text-uppercase mb-1 opacity-75">Solde</h6>
+                    <h3 class="mb-0">{{ final_balance | format_amount }} €</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tableau des mouvements -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">
+                <i class="fas fa-list"></i> Mouvements de {{ ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'][selected_month-1] }} {{ selected_year }}
+            </h5>
+        </div>
+        <div class="card-body p-0">
+            {% if movements %}
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th style="width: 50px;">
+                                    <i class="fas fa-check-circle" title="Pointer"></i>
+                                </th>
+                                <th style="width: 120px;">Date</th>
+                                <th>Description</th>
+                                <th>Catégorie</th>
+                                <th style="width: 150px;" class="text-end">Montant</th>
+                                <th style="width: 150px;" class="text-end">Solde</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for movement in movements %}
+                                <tr class="{% if movement.is_pointed %}table-secondary{% endif %}">
+                                    <td class="text-center">
+                                        <form method="post" action="{{ url_for('main.toggle_point', transaction_id=movement.id, month=selected_month, year=selected_year) }}" style="display: inline;">
+                                            <button type="submit" class="btn btn-sm btn-link p-0" title="{% if movement.is_pointed %}Dépointer{% else %}Pointer{% endif %}">
+                                                {% if movement.is_pointed %}
+                                                    <i class="fas fa-check-circle text-success" style="font-size: 1.2rem;"></i>
+                                                {% else %}
+                                                    <i class="far fa-circle text-muted" style="font-size: 1.2rem;"></i>
+                                                {% endif %}
+                                            </button>
+                                        </form>
+                                    </td>
+                                    <td>
+                                        <small class="text-muted">{{ movement.date.strftime('%d/%m/%Y') }}</small>
+                                    </td>
+                                    <td>
+                                        <div>
+                                            <strong>{{ movement.name }}</strong>
+                                            {% if movement.type == 'revenue' %}
+                                                <span class="badge text-white ms-1" style="background-color: #6f42c1; font-size: 0.7rem;">Revenu</span>
+                                            {% elif movement.type == 'subscription' %}
+                                                <span class="badge bg-primary ms-1" style="font-size: 0.7rem;">Abonnement</span>
+                                            {% elif movement.type == 'credit' %}
+                                                <span class="badge bg-warning text-dark ms-1" style="font-size: 0.7rem;">Crédit</span>
+                                            {% elif movement.type == 'installment' %}
+                                                <span class="badge bg-info text-white ms-1" style="font-size: 0.7rem;">Paiement en plusieurs fois</span>
+                                            {% endif %}
+                                        </div>
+                                        {% if movement.description %}
+                                            <small class="text-muted">{{ movement.description }}</small>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <small class="text-muted">{{ movement.category }}</small>
+                                    </td>
+                                    <td class="text-end">
+                                        {% if movement.is_positive %}
+                                            <strong class="text-success">+ {{ movement.amount | format_amount }} {{ movement.currency | currency_symbol }}</strong>
+                                        {% else %}
+                                            <strong class="text-danger">- {{ movement.amount | format_amount }} {{ movement.currency | currency_symbol }}</strong>
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-end">
+                                        <strong class="{% if movement.balance >= 0 %}text-success{% else %}text-danger{% endif %}">
+                                            {{ movement.balance | format_amount }} {{ movement.currency | currency_symbol }}
+                                        </strong>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="card-body text-center py-5">
+                    <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                    <p class="text-muted mb-0">Aucun mouvement pour cette période</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Bouton retour -->
+    <div class="mt-4">
+        <a href="{{ url_for('main.dashboard') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Retour au tableau de bord
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .table tbody tr {
+        transition: background-color 0.2s;
+    }
+
+    .table tbody tr:hover {
+        background-color: rgba(0, 0, 0, 0.02);
+    }
+
+    .table-secondary {
+        background-color: rgba(108, 117, 125, 0.1) !important;
+    }
+
+    .btn-link {
+        text-decoration: none;
+    }
+
+    .btn-link:hover i {
+        transform: scale(1.1);
+        transition: transform 0.2s;
+    }
+</style>
+{% endblock %}

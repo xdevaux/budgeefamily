@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_required, current_user
 from app import db
 from app.models import InstallmentPayment, Category, CreditType, Notification
+from app.utils.transactions import generate_future_transactions, update_future_transactions, cancel_future_transactions
 from datetime import datetime, date
 from dateutil.relativedelta import relativedelta
 
@@ -91,6 +92,10 @@ def add():
         db.session.add(payment)
         db.session.commit()
 
+        # Générer les transactions futures (nombre de mensualités restantes)
+        generate_future_transactions(payment, 'installment', number_of_installments)
+        db.session.commit()
+
         # Créer une notification
         notification = Notification(
             user_id=current_user.id,
@@ -152,6 +157,11 @@ def edit(payment_id):
         payment.credit_type_id = request.form.get('credit_type_id') or None
 
         db.session.commit()
+
+        # Mettre à jour les transactions futures
+        update_future_transactions(payment, 'installment')
+        db.session.commit()
+
         flash('Le paiement a été mis à jour avec succès.', 'success')
         return redirect(url_for('installments.detail', payment_id=payment.id))
 
@@ -175,6 +185,10 @@ def delete(payment_id):
         return redirect(url_for('installments.list'))
 
     name = payment.name
+
+    # Annuler les transactions futures avant suppression
+    cancel_future_transactions(payment.id, 'installment')
+
     db.session.delete(payment)
     db.session.commit()
 

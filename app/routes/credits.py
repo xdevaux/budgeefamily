@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, redirect, url_for, flash, request,
 from flask_login import login_required, current_user
 from app import db
 from app.models import Credit, Category, CreditType, CreditDocument, Bank, Notification
+from app.utils.transactions import generate_future_transactions, update_future_transactions, cancel_future_transactions
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 
@@ -149,6 +150,10 @@ def add():
         db.session.add(credit)
         db.session.commit()
 
+        # Générer les transactions futures (12 mois)
+        generate_future_transactions(credit, 'credit', 12)
+        db.session.commit()
+
         # Créer une notification
         notification = Notification(
             user_id=current_user.id,
@@ -203,6 +208,10 @@ def edit(credit_id):
 
         db.session.commit()
 
+        # Mettre à jour les transactions futures
+        update_future_transactions(credit, 'credit')
+        db.session.commit()
+
         flash(f'Le crédit "{credit.name}" a été mis à jour.', 'success')
         return redirect(url_for('credits.list_credits'))
 
@@ -227,6 +236,10 @@ def delete(credit_id):
         return redirect(url_for('credits.list_credits'))
 
     credit_name = credit.name
+
+    # Annuler les transactions futures avant suppression
+    cancel_future_transactions(credit.id, 'credit')
+
     db.session.delete(credit)
     db.session.commit()
 
@@ -246,8 +259,12 @@ def toggle(credit_id):
     credit.is_active = not credit.is_active
     if not credit.is_active:
         credit.closed_at = datetime.utcnow()
+        # Annuler les transactions futures
+        cancel_future_transactions(credit.id, 'credit')
     else:
         credit.closed_at = None
+        # Régénérer les transactions futures
+        generate_future_transactions(credit, 'credit', 12)
 
     db.session.commit()
 

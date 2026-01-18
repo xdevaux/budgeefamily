@@ -13,6 +13,10 @@
                class="btn btn-sm {% if filter_type == 'unread' %}btn-success{% else %}btn-outline-success{% endif %}">
                 <i class="fas fa-envelope"></i> Non lues
             </a>
+            <a href="{{ url_for('main.notifications', filter='read') }}"
+               class="btn btn-sm {% if filter_type == 'read' %}btn-info{% else %}btn-outline-info{% endif %}">
+                <i class="fas fa-check-circle"></i> Lues
+            </a>
             <a href="{{ url_for('main.notifications', filter='archived') }}"
                class="btn btn-sm {% if filter_type == 'archived' %}btn-secondary{% else %}btn-outline-secondary{% endif %}">
                 <i class="fas fa-archive"></i> Archivées
