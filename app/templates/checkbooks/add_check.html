@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}Nouveau chèque - Budgee Family{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2><i class="fas fa-file-invoice text-danger"></i> Nouveau chèque</h2>
+                    <p class="text-muted mb-0">{{ checkbook.name }}</p>
+                </div>
+                <a href="{{ url_for('checkbooks.detail', checkbook_id=checkbook.id) }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Retour
+                </a>
+            </div>
+
+            <div class="card">
+                <div class="card-body p-4">
+                    <form method="POST">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="check_number" class="form-label">Numéro du chèque *</label>
+                                <input type="number" class="form-control" id="check_number" name="check_number" required
+                                       min="{{ checkbook.start_number }}" max="{{ checkbook.end_number }}"
+                                       placeholder="Entre {{ checkbook.start_number }} et {{ checkbook.end_number }}">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="check_date" class="form-label">Date du chèque *</label>
+                                <input type="date" class="form-control" id="check_date" name="check_date" required
+                                       value="{{ now.strftime('%Y-%m-%d') }}">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="amount" class="form-label">Montant *</label>
+                                <input type="number" class="form-control" id="amount" name="amount" required
+                                       step="0.01" min="0" placeholder="0.00">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="currency" class="form-label">Devise</label>
+                                <select class="form-select" id="currency" name="currency">
+                                    <option value="EUR" selected>EUR (€)</option>
+                                    <option value="USD">USD ($)</option>
+                                    <option value="GBP">GBP (£)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="payee" class="form-label">Bénéficiaire</label>
+                            <input type="text" class="form-control" id="payee" name="payee"
+                                   placeholder="Ex: EDF, Orange, etc.">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" name="description" rows="2"
+                                      placeholder="Ex: Paiement facture électricité"></textarea>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="status" class="form-label">Statut *</label>
+                            <select class="form-select" id="status" name="status" required>
+                                <option value="pending">En attente d'encaissement</option>
+                                <option value="cashed">Encaissé (ajouté à la balance)</option>
+                                <option value="cancelled">Annulé</option>
+                            </select>
+                            <small class="text-muted">
+                                Si vous sélectionnez "Encaissé", une transaction sera automatiquement créée dans la balance
+                            </small>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-danger btn-lg">
+                                <i class="fas fa-save"></i> Enregistrer
+                            </button>
+                            <a href="{{ url_for('checkbooks.detail', checkbook_id=checkbook.id) }}" class="btn btn-outline-secondary">
+                                Annuler
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -146,7 +146,7 @@
                                     <td>
                                         <span class="badge bg-secondary">{{ sub.billing_cycle | translate_cycle }}</span>
                                     </td>
-                                    <td>{{ sub.next_billing_date.strftime('%d/%m/%Y') }}</td>
+                                    <td>{{ sub.get_display_date().strftime('%d/%m/%Y') }}</td>
                                     <td>
                                         {% if sub.is_active %}
                                             <span class="badge bg-success">Actif</span>

@@ -17,7 +17,7 @@
     <div class="row mb-4">
         <div class="col-md-3">
             <a href="{{ url_for('main.balance') }}" class="text-decoration-none">
-                <div class="card stat-card {% if solde >= 0 %}bg-success{% else %}bg-danger{% endif %} text-white stat-card-clickable" style="{% if solde >= 0 %}background-color: #28a745 !important;{% else %}background-color: #dc3545 !important;{% endif %}">
+                <div class="card stat-card text-white stat-card-clickable" style="background-color: #8b5cf6 !important;">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
@@ -35,7 +35,7 @@
 
         <div class="col-md-3">
             <a href="{{ url_for('revenues.list') }}" class="text-decoration-none">
-                <div class="card stat-card text-white stat-card-clickable" style="background-color: #6f42c1 !important;">
+                <div class="card stat-card text-white stat-card-clickable" style="background-color: #10b981 !important;">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
@@ -97,7 +97,7 @@
                     <h5 class="mb-0"><i class="fas fa-hand-holding-usd"></i> Revenus : Prochains versements</h5>
                     <div class="d-flex align-items-center gap-2">
                         {% if upcoming_revenues %}
-                            <span class="badge text-white" style="background-color: #6f42c1;">{{ upcoming_revenues|length }}</span>
+                            <span class="badge text-white" style="background-color: #10b981;">{{ upcoming_revenues|length }}</span>
                         {% endif %}
                         {% if current_user.is_premium() %}
                             <div class="btn-group btn-group-sm">
@@ -125,7 +125,7 @@
                                         <div class="flex-grow-1 text-start d-flex align-items-center" style="min-width: 0; gap: 0.5rem;">
                                             <strong class="text-truncate" style="max-width: 70%;" title="{{ revenue.name }}">{{ revenue.name }}</strong>
                                             {% if revenue.employer %}
-                                                <span class="badge text-white" style="background-color: #6f42c1; padding: 0.15rem 0.4rem; font-size: 0.7rem;">{{ revenue.employer.name }}</span>
+                                                <span class="badge text-white" style="background-color: #10b981; padding: 0.15rem 0.4rem; font-size: 0.7rem;">{{ revenue.employer.name }}</span>
                                             {% endif %}
                                         </div>
                                         <div class="flex-shrink-0 text-end d-flex align-items-center justify-content-end" style="width: 200px;">
@@ -137,10 +137,10 @@
                             {% endfor %}
                         </div>
                         <div class="card-footer bg-white text-center">
-                            <a href="{{ url_for('revenues.list') }}" class="btn btn-sm text-white" style="border: 1px solid #6f42c1; background-color: transparent; color: #6f42c1 !important;" onmouseover="this.style.backgroundColor='#6f42c1'; this.style.color='#fff !important';" onmouseout="this.style.backgroundColor='transparent'; this.style.color='#6f42c1 !important';">
+                            <a href="{{ url_for('revenues.list') }}" class="btn btn-sm text-white" style="border: 1px solid #10b981; background-color: transparent; color: #10b981 !important;" onmouseover="this.style.backgroundColor='#10b981'; this.style.color='#fff !important';" onmouseout="this.style.backgroundColor='transparent'; this.style.color='#10b981 !important';">
                                 <i class="fas fa-hand-holding-usd"></i> Voir tous les revenus
                             </a>
-                            <a href="{{ url_for('revenues.add') }}" class="btn btn-sm text-white ms-2" style="border: 1px solid #6f42c1; background-color: transparent; color: #6f42c1 !important;" onmouseover="this.style.backgroundColor='#6f42c1'; this.style.color='#fff !important';" onmouseout="this.style.backgroundColor='transparent'; this.style.color='#6f42c1 !important';">
+                            <a href="{{ url_for('revenues.add') }}" class="btn btn-sm text-white ms-2" style="border: 1px solid #10b981; background-color: transparent; color: #10b981 !important;" onmouseover="this.style.backgroundColor='#10b981'; this.style.color='#fff !important';" onmouseout="this.style.backgroundColor='transparent'; this.style.color='#10b981 !important';">
                                 <i class="fas fa-plus"></i> Ajouter
                             </a>
                         </div>
@@ -183,7 +183,7 @@
                                     <div class="d-flex align-items-center gap-2">
                                         <div class="flex-shrink-0 d-flex align-items-center" style="width: 100px;">
                                             <small class="text-muted">
-                                                <i class="fas fa-calendar"></i> {{ sub.next_billing_date.strftime('%d/%m/%Y') }}
+                                                <i class="fas fa-calendar"></i> {{ sub.get_display_date().strftime('%d/%m/%Y') }}
                                             </small>
                                         </div>
                                         <div class="flex-grow-1 text-start d-flex align-items-center" style="min-width: 0; gap: 0.5rem;">
@@ -511,8 +511,8 @@ fetch('/api/stats')
                     {
                         label: 'Revenus (€)',
                         data: data.monthly_revenues.map(item => item.total),
-                        borderColor: '#6f42c1',
-                        backgroundColor: 'rgba(111, 66, 193, 0.1)',
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
                         tension: 0.4,
                         fill: true
                     }

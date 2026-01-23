@@ -14,4 +14,5 @@ requests==2.31.0
 WTForms==3.1.1
 reportlab==4.0.7
 openpyxl==3.1.2
+xlrd==2.0.1
 Pillow==10.2.0

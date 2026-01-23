@@ -69,14 +69,14 @@
                         </div>
 
                         <div class="mb-4">
-                            <label for="file" class="form-label">Fichier</label>
-                            <input type="file" class="form-control" id="file" name="file"
-                                   accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
-                            <small class="text-muted">Formats acceptes : PDF, Word, Images (taille max : 16 Mo)</small>
+                            <label for="file" class="form-label">Fichier *</label>
+                            <input type="file" class="form-control" id="file" name="file" required
+                                   accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png">
+                            <small class="text-muted">Formats acceptés : PDF, Word, Excel, Images (taille max : 16 Mo)</small>
                         </div>
 
                         <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary btn-lg">
+                            <button type="submit" id="submitBtn" class="btn btn-primary btn-lg" disabled>
                                 <i class="fas fa-plus"></i> Ajouter le document
                             </button>
                             <a href="{{ url_for('employers.detail', employer_id=employer.id) }}" class="btn btn-outline-secondary">
@@ -97,6 +97,8 @@
     const documentDate = document.getElementById('document_date');
     const yearSelect = document.getElementById('year');
     const monthSelect = document.getElementById('month');
+    const fileInput = document.getElementById('file');
+    const submitBtn = document.getElementById('submitBtn');
 
     // Mois en toutes lettres
     const monthNames = {
@@ -105,8 +107,8 @@
         9: 'Septembre', 10: 'Octobre', 11: 'Novembre', 12: 'Decembre'
     };
 
-    // Fonction pour auto-remplir le nom si c'est une fiche de paie
-    function updatePayslipName() {
+    // Fonction pour auto-remplir le nom si c'est une fiche de paie ou fiche de frais
+    function updateDocumentName() {
         if (documentType.value === 'payslip') {
             const month = monthSelect.value;
             const year = yearSelect.value;
@@ -122,6 +124,21 @@
             } else {
                 nameField.value = 'Fiche de paie';
             }
+        } else if (documentType.value === 'expense_report') {
+            const month = monthSelect.value;
+            const year = yearSelect.value;
+
+            if (month && year) {
+                const monthName = monthNames[parseInt(month)];
+                nameField.value = 'Fiche de frais ' + monthName + ' ' + year;
+            } else if (month) {
+                const monthName = monthNames[parseInt(month)];
+                nameField.value = 'Fiche de frais ' + monthName;
+            } else if (year) {
+                nameField.value = 'Fiche de frais ' + year;
+            } else {
+                nameField.value = 'Fiche de frais';
+            }
         }
     }
 
@@ -131,20 +148,25 @@
         if (this.value) {
             yearSelect.value = date.getFullYear();
             monthSelect.value = date.getMonth() + 1;
-            updatePayslipName();
+            updateDocumentName();
         }
     });
 
     // Auto-remplir le nom quand on change le type de document
     documentType.addEventListener('change', function() {
-        if (this.value === 'payslip') {
-            updatePayslipName();
+        if (this.value === 'payslip' || this.value === 'expense_report') {
+            updateDocumentName();
         }
     });
 
     // Mettre a jour le nom quand on change le mois ou l'annee
-    monthSelect.addEventListener('change', updatePayslipName);
-    yearSelect.addEventListener('change', updatePayslipName);
+    monthSelect.addEventListener('change', updateDocumentName);
+    yearSelect.addEventListener('change', updateDocumentName);
+
+    // Activer/désactiver le bouton submit selon la sélection du fichier
+    fileInput.addEventListener('change', function() {
+        submitBtn.disabled = !this.files || this.files.length === 0;
+    });
 </script>
 {% endblock %}
 {% endblock %}

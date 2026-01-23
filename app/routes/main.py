@@ -263,6 +263,88 @@ def toggle_point(transaction_id):
     return redirect(url_for('main.balance', month=month, year=year))
 
 
+@bp.route('/balance/mark-as-completed/<int:transaction_id>', methods=['POST'])
+@login_required
+def mark_as_completed(transaction_id):
+    """Marquer une transaction comme complétée"""
+    transaction = Transaction.query.get_or_404(transaction_id)
+
+    # Vérifier que l'utilisateur est propriétaire de la transaction
+    if transaction.user_id != current_user.id:
+        flash('Vous n\'avez pas accès à cette transaction.', 'danger')
+        return redirect(url_for('main.balance'))
+
+    # Passer le statut en completed
+    old_status = transaction.status
+    transaction.status = 'completed'
+    db.session.commit()
+
+    flash(f'Transaction "{transaction.name}" passée en statut complété.', 'success')
+
+    # Retourner à la page balance avec les mêmes filtres
+    month = request.args.get('month', type=int)
+    year = request.args.get('year', type=int)
+    return redirect(url_for('main.balance', month=month, year=year))
+
+
+@bp.route('/balance/toggle-all-month', methods=['POST'])
+@login_required
+def toggle_all_month():
+    """Pointer/dépointer toutes les transactions d'un mois"""
+    from calendar import monthrange
+
+    # Récupérer les paramètres de filtre
+    month = request.form.get('month', type=int)
+    year = request.form.get('year', type=int)
+    status_filter = request.form.get('status', 'all')
+    action = request.form.get('action', 'point')  # 'point' ou 'unpoint'
+
+    if not month or not year:
+        flash('Paramètres invalides.', 'danger')
+        return redirect(url_for('main.balance'))
+
+    # Calculer le premier et dernier jour du mois
+    first_day = datetime(year, month, 1).date()
+    last_day_num = monthrange(year, month)[1]
+    last_day = datetime(year, month, last_day_num).date()
+
+    # Construire la requête de base (transactions du mois, sauf les annulées)
+    query = current_user.transactions.filter(
+        Transaction.transaction_date >= first_day,
+        Transaction.transaction_date <= last_day,
+        Transaction.status != 'cancelled'
+    )
+
+    # Ajouter le filtre de statut si nécessaire
+    if status_filter != 'all':
+        query = query.filter(Transaction.status == status_filter)
+
+    # Récupérer toutes les transactions
+    transactions = query.all()
+
+    # Pointer ou dépointer selon l'action
+    count = 0
+    if action == 'point':
+        for transaction in transactions:
+            if not transaction.is_pointed:
+                transaction.is_pointed = True
+                count += 1
+    else:  # unpoint
+        for transaction in transactions:
+            if transaction.is_pointed:
+                transaction.is_pointed = False
+                count += 1
+
+    db.session.commit()
+
+    if action == 'point':
+        flash(f'{count} transaction(s) pointée(s) avec succès.', 'success')
+    else:
+        flash(f'{count} transaction(s) dépointée(s) avec succès.', 'success')
+
+    return redirect(url_for('main.balance', month=month, year=year, status=status_filter))
+
+
 @bp.route('/balance/delete-transaction/<int:transaction_id>', methods=['POST'])
 @login_required
 def delete_transaction(transaction_id):

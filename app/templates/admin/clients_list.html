@@ -41,6 +41,7 @@
                                     <th>Email</th>
                                     <th>Nom</th>
                                     <th>Plan</th>
+                                    <th>Stockage</th>
                                     <th>Admin</th>
                                     <th>Actif</th>
                                     <th>Inscrit le</th>
@@ -66,6 +67,18 @@
                                         {% else %}
                                         <span class="badge bg-secondary">Aucun</span>
                                         {% endif %}
+                                    </td>
+                                    <td>
+                                        <small>{{ user.get_storage_used_gb() }} / {{ user.get_storage_limit_gb() }} Go</small>
+                                        <div class="progress" style="height: 5px; width: 80px;">
+                                            <div class="progress-bar {% if user.get_storage_percentage() < 80 %}bg-success{% elif user.get_storage_percentage() < 95 %}bg-warning{% else %}bg-danger{% endif %}"
+                                                 role="progressbar"
+                                                 style="width: {{ user.get_storage_percentage() }}%"
+                                                 aria-valuenow="{{ user.get_storage_percentage() }}"
+                                                 aria-valuemin="0"
+                                                 aria-valuemax="100">
+                                            </div>
+                                        </div>
                                     </td>
                                     <td>
                                         {% if user.is_admin %}

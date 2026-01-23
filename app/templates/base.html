@@ -129,13 +129,18 @@
         }
 
         .nav-menu-btn.dashboard:hover {
+            background-color: #8b5cf6;
+            border-color: #8b5cf6;
+        }
+
+        .nav-menu-btn.revenues:hover {
             background-color: #10b981;
             border-color: #10b981;
         }
 
-        .nav-menu-btn.revenues:hover {
-            background-color: #a78bfa;
-            border-color: #a78bfa;
+        .nav-menu-btn.expenses:hover {
+            background-color: #ef4444;
+            border-color: #ef4444;
         }
 
         .nav-menu-btn.subscriptions:hover {
@@ -148,7 +153,27 @@
             border-color: #fbbf24;
         }
 
-        .nav-menu-btn.user:hover,
+        .nav-menu-btn.user {
+            color: #8b5cf6;
+            width: 60px;
+            height: 44px;
+            justify-content: center;
+            padding: 0.5rem;
+        }
+
+        .nav-menu-btn.user:hover {
+            background-color: #8b5cf6;
+            border-color: #8b5cf6;
+            color: white;
+        }
+
+        .nav-menu-btn.notifications {
+            width: 44px;
+            height: 44px;
+            justify-content: center;
+            padding: 0.5rem;
+        }
+
         .nav-menu-btn.notifications:hover {
             background-color: #10b981;
             border-color: #10b981;
@@ -193,7 +218,11 @@
 
         /* Couleurs spécifiques pour chaque menu déroulant */
         #revenuesDropdown + .dropdown-menu .dropdown-item:hover {
-            background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%);
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+
+        #expensesDropdown + .dropdown-menu .dropdown-item:hover {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
         }
 
         #subscriptionsDropdown + .dropdown-menu .dropdown-item:hover {
@@ -487,6 +516,14 @@
                             </ul>
                         </li>
                         <li class="nav-item dropdown">
+                            <a class="nav-menu-btn expenses dropdown-toggle" href="#" id="expensesDropdown" role="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-receipt"></i> Dépenses
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{{ url_for('checkbooks.list_checkbooks') }}"><i class="fas fa-check"></i> Mes chéquiers</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
                             <a class="nav-menu-btn subscriptions dropdown-toggle" href="#" id="subscriptionsDropdown" role="button" data-bs-toggle="dropdown">
                                 <i class="fas fa-list"></i> Abonnements
                             </a>
@@ -509,8 +546,8 @@
                             </ul>
                         </li>
                         <li class="nav-item dropdown">
-                            <a class="nav-menu-btn user dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
-                                <i class="fas fa-user-circle"></i> {{ current_user.first_name or current_user.email }}
+                            <a class="nav-menu-btn user dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" title="{{ current_user.first_name or current_user.email }}">
+                                <i class="fas fa-user-circle"></i>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end">
                                 <li><a class="dropdown-item" href="{{ url_for('auth.profile') }}"><i class="fas fa-user"></i> Mon profil</a></li>

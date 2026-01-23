@@ -23,6 +23,7 @@ CONTRACT_TYPES = [
 DOCUMENT_TYPES = [
     ('contract', 'Contrat de travail', 'fa-file-signature', '#6366f1'),
     ('payslip', 'Fiche de paie', 'fa-file-invoice-dollar', '#10b981'),
+    ('expense_report', 'Fiche de frais', 'fa-receipt', '#ec4899'),
     ('certificate', 'Attestation', 'fa-certificate', '#f59e0b'),
     ('amendment', 'Avenant', 'fa-file-contract', '#8b5cf6'),
     ('other', 'Autre document', 'fa-file', '#6c757d'),

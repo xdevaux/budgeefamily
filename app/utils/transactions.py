@@ -51,6 +51,56 @@ def calculate_next_future_date(start_date, billing_cycle):
     return next_date
 
 
+def update_or_create_transaction(source_object, source_type, transaction_date, status='completed'):
+    """
+    Met à jour une transaction existante ou en crée une nouvelle si elle n'existe pas
+
+    Args:
+        source_object: Objet Revenue, Subscription, Credit ou InstallmentPayment
+        source_type: Type de l'objet ('revenue', 'subscription', 'credit', 'installment')
+        transaction_date: Date de la transaction
+        status: Statut de la transaction ('pending', 'completed', 'cancelled')
+
+    Returns:
+        Transaction créée ou mise à jour
+    """
+    # Chercher une transaction existante pour cette date et cette source
+    existing_transaction = Transaction.query.filter_by(
+        source_id=source_object.id,
+        source_type=source_type,
+        transaction_date=transaction_date
+    ).first()
+
+    if existing_transaction:
+        # Mettre à jour le statut de la transaction existante
+        old_status = existing_transaction.status
+        existing_transaction.status = status
+
+        # Forcer SQLAlchemy à détecter le changement
+        db.session.add(existing_transaction)
+        db.session.flush()
+
+        # Log si le statut a changé
+        if old_status != status:
+            print(f"✓ Transaction mise à jour: {source_type} #{source_object.id} du {transaction_date} - {old_status} → {status}")
+
+        return existing_transaction
+    else:
+        # Créer une nouvelle transaction si elle n'existe pas
+        create_func = {
+            'revenue': create_transaction_from_revenue,
+            'subscription': create_transaction_from_subscription,
+            'credit': create_transaction_from_credit,
+            'installment': create_transaction_from_installment
+        }.get(source_type)
+
+        if create_func:
+            transaction = create_func(source_object, transaction_date=transaction_date, status=status)
+            print(f"✓ Transaction créée: {source_type} #{source_object.id} du {transaction_date} - statut: {status}")
+            return transaction
+        return None
+
+
 def create_transaction_from_revenue(revenue, transaction_date=None, status='pending'):
     """
     Crée une transaction à partir d'un revenu
@@ -260,9 +310,28 @@ def generate_future_transactions(source_object, source_type, months_ahead=12, in
     # Générer les transactions
     transaction_count = 0
     while current_date <= end_date:
-        # Créer la transaction
-        transaction = create_func(source_object, transaction_date=current_date, status='pending')
-        transactions.append(transaction)
+        # Déterminer le statut : 'completed' pour les transactions passées, 'pending' pour les futures
+        transaction_status = 'completed' if current_date < today else 'pending'
+
+        # Vérifier si une transaction existe déjà pour cette date
+        existing_transaction = Transaction.query.filter_by(
+            source_id=source_object.id,
+            source_type=source_type,
+            transaction_date=current_date
+        ).first()
+
+        if existing_transaction:
+            # Si la transaction existe déjà, mettre à jour son statut si nécessaire
+            if existing_transaction.status != transaction_status:
+                existing_transaction.status = transaction_status
+                db.session.add(existing_transaction)
+                db.session.flush()
+            transactions.append(existing_transaction)
+        else:
+            # Créer une nouvelle transaction
+            transaction = create_func(source_object, transaction_date=current_date, status=transaction_status)
+            transactions.append(transaction)
+
         transaction_count += 1
 
         # Calculer la prochaine date selon le cycle

@@ -100,7 +100,7 @@
                                 </tr>
                                 <tr>
                                     <td><strong>Prochain paiement :</strong></td>
-                                    <td><strong>{{ subscription.next_billing_date.strftime('%d/%m/%Y') }}</strong></td>
+                                    <td><strong>{{ subscription.get_display_date().strftime('%d/%m/%Y') }}</strong></td>
                                 </tr>
                                 <tr>
                                     <td><strong>Total payé :</strong></td>

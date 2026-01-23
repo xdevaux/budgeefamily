@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Modifier {{ checkbook.name }} - Budgee Family{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2><i class="fas fa-edit text-danger"></i> Modifier le chéquier</h2>
+                    <p class="text-muted mb-0">{{ checkbook.name }}</p>
+                </div>
+                <a href="{{ url_for('checkbooks.detail', checkbook_id=checkbook.id) }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Retour
+                </a>
+            </div>
+
+            <div class="card">
+                <div class="card-body p-4">
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Nom du chéquier *</label>
+                            <input type="text" class="form-control" id="name" name="name" required
+                                   value="{{ checkbook.name }}">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="bank_id" class="form-label">Banque</label>
+                            <select class="form-select" id="bank_id" name="bank_id">
+                                <option value="">-- Sélectionner une banque --</option>
+                                {% for bank in banks %}
+                                    <option value="{{ bank.id }}" {% if checkbook.bank_id == bank.id %}selected{% endif %}>
+                                        {{ bank.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i> Les numéros de chèques ne peuvent pas être modifiés.
+                            Numéros : {{ checkbook.start_number }} - {{ checkbook.end_number }}
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-danger btn-lg">
+                                <i class="fas fa-save"></i> Enregistrer
+                            </button>
+                            <a href="{{ url_for('checkbooks.detail', checkbook_id=checkbook.id) }}" class="btn btn-outline-secondary">
+                                Annuler
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

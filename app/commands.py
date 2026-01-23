@@ -7,7 +7,7 @@ import click
 from flask.cli import with_appcontext
 from app import db
 from app.models import Subscription, Credit, Revenue, Notification, User, InstallmentPayment, Transaction
-from app.utils.transactions import generate_future_transactions, create_transaction_from_revenue, create_transaction_from_subscription, create_transaction_from_credit, create_transaction_from_installment, check_and_regenerate_transactions
+from app.utils.transactions import generate_future_transactions, create_transaction_from_revenue, create_transaction_from_subscription, create_transaction_from_credit, create_transaction_from_installment, check_and_regenerate_transactions, update_or_create_transaction
 from collections import defaultdict
 
 
@@ -49,13 +49,15 @@ def update_payment_dates():
 
     # Mise à jour des abonnements
     subscriptions = Subscription.query.filter_by(is_active=True).all()
+    click.echo(f"Traitement de {len(subscriptions)} abonnement(s) actif(s)...")
     for sub in subscriptions:
         if sub.next_billing_date and sub.next_billing_date <= today:
-            # Compter le nombre de paiements passés et créer des transactions
+            click.echo(f"  → Abonnement '{sub.name}' (ID: {sub.id}) - Date: {sub.next_billing_date}")
+            # Compter le nombre de paiements passés et mettre à jour/créer des transactions
             payments_count = 0
             while sub.next_billing_date <= today:
-                # Créer une transaction pour ce paiement
-                create_transaction_from_subscription(sub, transaction_date=sub.next_billing_date, status='completed')
+                # Mettre à jour ou créer une transaction pour ce paiement
+                update_or_create_transaction(sub, 'subscription', transaction_date=sub.next_billing_date, status='completed')
 
                 sub.next_billing_date = calculate_next_date(sub.next_billing_date, sub.billing_cycle)
                 payments_count += 1
@@ -63,6 +65,7 @@ def update_payment_dates():
             # Incrémenter le total payé
             sub.total_paid += (sub.amount * payments_count)
             updated_subscriptions += 1
+            click.echo(f"    ✓ {payments_count} paiement(s) traité(s), prochaine date: {sub.next_billing_date}")
 
             # Enregistrer la modification pour cet utilisateur
             user_updates[sub.user_id]['subscriptions'].append({
@@ -74,13 +77,15 @@ def update_payment_dates():
 
     # Mise à jour des crédits
     credits = Credit.query.filter_by(is_active=True).all()
+    click.echo(f"Traitement de {len(credits)} crédit(s) actif(s)...")
     for credit in credits:
         if credit.next_payment_date and credit.next_payment_date <= today:
-            # Compter le nombre de paiements passés et créer des transactions
+            click.echo(f"  → Crédit '{credit.name}' (ID: {credit.id}) - Date: {credit.next_payment_date}")
+            # Compter le nombre de paiements passés et mettre à jour/créer des transactions
             payments_count = 0
             while credit.next_payment_date <= today:
-                # Créer une transaction pour ce paiement
-                create_transaction_from_credit(credit, transaction_date=credit.next_payment_date, status='completed')
+                # Mettre à jour ou créer une transaction pour ce paiement
+                update_or_create_transaction(credit, 'credit', transaction_date=credit.next_payment_date, status='completed')
 
                 credit.next_payment_date = calculate_next_date(credit.next_payment_date, credit.billing_cycle)
                 payments_count += 1
@@ -93,9 +98,10 @@ def update_payment_dates():
             if credit.end_date and credit.next_payment_date > credit.end_date:
                 credit.is_active = False
                 is_terminated = True
-                click.echo(f"Crédit '{credit.name}' terminé")
+                click.echo(f"    ✗ Crédit '{credit.name}' terminé")
 
             updated_credits += 1
+            click.echo(f"    ✓ {payments_count} paiement(s) traité(s), prochaine date: {credit.next_payment_date}")
 
             # Enregistrer la modification pour cet utilisateur
             if is_terminated:
@@ -112,13 +118,15 @@ def update_payment_dates():
 
     # Mise à jour des revenus
     revenues = Revenue.query.filter_by(is_active=True).all()
+    click.echo(f"Traitement de {len(revenues)} revenu(s) actif(s)...")
     for revenue in revenues:
         if revenue.next_payment_date and revenue.next_payment_date <= today:
-            # Compter le nombre de versements passés et créer des transactions
+            click.echo(f"  → Revenu '{revenue.name}' (ID: {revenue.id}) - Date: {revenue.next_payment_date}")
+            # Compter le nombre de versements passés et mettre à jour/créer des transactions
             payments_count = 0
             while revenue.next_payment_date <= today:
-                # Créer une transaction pour ce versement
-                create_transaction_from_revenue(revenue, transaction_date=revenue.next_payment_date, status='completed')
+                # Mettre à jour ou créer une transaction pour ce versement
+                update_or_create_transaction(revenue, 'revenue', transaction_date=revenue.next_payment_date, status='completed')
 
                 revenue.next_payment_date = calculate_next_date(revenue.next_payment_date, revenue.billing_cycle)
                 payments_count += 1
@@ -126,6 +134,7 @@ def update_payment_dates():
             # Incrémenter le total reçu
             revenue.total_paid += (revenue.amount * payments_count)
             updated_revenues += 1
+            click.echo(f"    ✓ {payments_count} versement(s) traité(s), prochaine date: {revenue.next_payment_date}")
 
             # Enregistrer la modification pour cet utilisateur
             user_updates[revenue.user_id]['revenues'].append({
@@ -137,12 +146,14 @@ def update_payment_dates():
 
     # Mise à jour des paiements en plusieurs fois
     installments = InstallmentPayment.query.filter_by(is_active=True).all()
+    click.echo(f"Traitement de {len(installments)} paiement(s) en plusieurs fois actif(s)...")
     for installment in installments:
         if installment.next_payment_date and installment.next_payment_date <= today:
-            # Traiter les paiements en retard et créer des transactions
+            click.echo(f"  → Paiement '{installment.name}' (ID: {installment.id}) - Date: {installment.next_payment_date}")
+            # Traiter les paiements en retard et mettre à jour/créer des transactions
             while installment.next_payment_date <= today and installment.installments_paid < installment.number_of_installments:
-                # Créer une transaction pour ce paiement
-                create_transaction_from_installment(installment, transaction_date=installment.next_payment_date, status='completed')
+                # Mettre à jour ou créer une transaction pour ce paiement
+                update_or_create_transaction(installment, 'installment', transaction_date=installment.next_payment_date, status='completed')
 
                 installment.installments_paid += 1
                 installment.next_payment_date = installment.calculate_next_payment_date()
@@ -159,7 +170,7 @@ def update_payment_dates():
                         'name': installment.name,
                         'total_amount': installment.total_amount
                     })
-                    click.echo(f"Paiement en plusieurs fois '{installment.name}' terminé")
+                    click.echo(f"    ✗ Paiement en plusieurs fois '{installment.name}' terminé")
                     break
                 else:
                     # Ajouter aux paiements traités
@@ -170,6 +181,7 @@ def update_payment_dates():
                         'number_of_installments': installment.number_of_installments,
                         'next_date': installment.next_payment_date
                     })
+            click.echo(f"    ✓ Paiement traité, {installment.installments_paid}/{installment.number_of_installments} échéances")
 
     # Vérifier et régénérer les transactions futures si nécessaire (< 3 mois restants)
     click.echo("Vérification et régénération des transactions futures...")

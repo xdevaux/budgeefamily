@@ -130,6 +130,11 @@ def clients_edit(user_id):
         plan_id = request.form.get('plan_id', type=int)
         user.plan = Plan.query.get(plan_id) if plan_id else None
 
+        # Mettre à jour la limite de stockage (en Go, convertir en octets)
+        storage_limit_gb = request.form.get('storage_limit_gb', type=float)
+        if storage_limit_gb:
+            user.storage_limit = int(storage_limit_gb * 1024 * 1024 * 1024)
+
         # Changer le mot de passe si fourni
         new_password = request.form.get('new_password')
         if new_password:

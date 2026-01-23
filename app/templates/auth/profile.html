@@ -56,6 +56,42 @@
                 </div>
             </div>
 
+            <!-- Stockage -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-hdd"></i> Espace de stockage</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span><strong>Utilisation :</strong> {{ current_user.get_storage_used_gb() }} Go / {{ current_user.get_storage_limit_gb() }} Go</span>
+                            <span class="badge {% if current_user.get_storage_percentage() < 80 %}bg-success{% elif current_user.get_storage_percentage() < 95 %}bg-warning{% else %}bg-danger{% endif %}">
+                                {{ current_user.get_storage_percentage() }}%
+                            </span>
+                        </div>
+                        <div class="progress" style="height: 25px;">
+                            <div class="progress-bar {% if current_user.get_storage_percentage() < 80 %}bg-success{% elif current_user.get_storage_percentage() < 95 %}bg-warning{% else %}bg-danger{% endif %}"
+                                 role="progressbar"
+                                 style="width: {{ current_user.get_storage_percentage() }}%"
+                                 aria-valuenow="{{ current_user.get_storage_percentage() }}"
+                                 aria-valuemin="0"
+                                 aria-valuemax="100">
+                                {{ current_user.get_storage_used_gb() }} Go
+                            </div>
+                        </div>
+                    </div>
+                    <div class="alert alert-info mb-0">
+                        <i class="fas fa-info-circle"></i>
+                        {% if current_user.plan.name == 'Free' %}
+                            <strong>Plan Gratuit :</strong> Vous disposez de 5 Go de stockage pour vos documents.
+                            Passez à Premium pour bénéficier de 20 Go de stockage.
+                        {% else %}
+                            <strong>Plan Premium :</strong> Vous disposez de 20 Go de stockage pour vos documents (fiches de paie, contrats, relevés bancaires, etc.).
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
             <!-- Informations personnelles -->
             <div class="card mb-4">
                 <div class="card-header">

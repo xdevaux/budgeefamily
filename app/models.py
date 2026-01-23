@@ -63,6 +63,9 @@ class User(UserMixin, db.Model):
     # Notifications
     email_notifications = db.Column(db.Boolean, default=False)  # Recevoir un email à chaque notification
 
+    # Stockage
+    storage_limit = db.Column(db.BigInteger, default=5368709120)  # Limite de stockage en octets (5 Go par défaut)
+
     # Dates
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -184,6 +187,59 @@ class User(UserMixin, db.Model):
 
     def get_active_subscriptions_count(self):
         return self.subscriptions.filter_by(is_active=True).count()
+
+    def get_storage_used(self):
+        """Calcule l'espace de stockage utilisé par tous les documents de l'utilisateur (en octets)"""
+        total_size = 0
+
+        # Documents des employeurs
+        for doc in self.employer_documents.all():
+            if doc.file_size:
+                total_size += doc.file_size
+
+        # Documents des banques
+        for doc in self.bank_documents.all():
+            if doc.file_size:
+                total_size += doc.file_size
+
+        # Documents des crédits
+        for doc in self.credit_documents.all():
+            if doc.file_size:
+                total_size += doc.file_size
+
+        return total_size
+
+    def get_storage_used_mb(self):
+        """Retourne l'espace utilisé en Mo"""
+        return round(self.get_storage_used() / (1024 * 1024), 2)
+
+    def get_storage_used_gb(self):
+        """Retourne l'espace utilisé en Go"""
+        return round(self.get_storage_used() / (1024 * 1024 * 1024), 2)
+
+    def get_storage_limit_gb(self):
+        """Retourne la limite de stockage en Go"""
+        limit = self.storage_limit if self.storage_limit is not None else self.get_default_storage_limit()
+        return round(limit / (1024 * 1024 * 1024), 2)
+
+    def get_storage_percentage(self):
+        """Retourne le pourcentage d'espace utilisé"""
+        limit = self.storage_limit if self.storage_limit is not None else self.get_default_storage_limit()
+        if limit == 0:
+            return 0
+        return round((self.get_storage_used() / limit) * 100, 2)
+
+    def has_storage_available(self, file_size):
+        """Vérifie si l'utilisateur a suffisamment d'espace pour un nouveau fichier"""
+        limit = self.storage_limit if self.storage_limit is not None else self.get_default_storage_limit()
+        return (self.get_storage_used() + file_size) <= limit
+
+    def get_default_storage_limit(self):
+        """Retourne la limite de stockage par défaut selon le plan"""
+        if self.is_premium():
+            return 21474836480  # 20 Go en octets
+        else:
+            return 5368709120  # 5 Go en octets
 
     def is_category_hidden(self, category_id):
         """Vérifie si une catégorie est masquée pour cet utilisateur"""
@@ -396,6 +452,14 @@ class Subscription(db.Model):
     def get_total_paid(self):
         """Retourne le montant total payé depuis le début"""
         return round(self.total_paid, 2)
+
+    def get_display_date(self):
+        """Retourne la date à afficher : start_date si future ou égale à aujourd'hui, sinon next_billing_date"""
+        from datetime import date
+        today = date.today()
+        if self.start_date >= today:
+            return self.start_date
+        return self.next_billing_date
 
     def __repr__(self):
         return f'<Subscription {self.name} - {self.user.email}>'
@@ -968,7 +1032,83 @@ class Transaction(db.Model):
             return Credit.query.get(self.source_id)
         elif self.source_type == 'installment':
             return InstallmentPayment.query.get(self.source_id)
+        elif self.source_type == 'check':
+            return Check.query.get(self.source_id)
         return None
 
     def __repr__(self):
         return f'<Transaction {self.name} - {self.amount} {self.currency} - {self.transaction_date}>'
+
+
+class Checkbook(db.Model):
+    """Modèle pour les chéquiers"""
+    __tablename__ = 'checkbooks'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
+
+    # Informations du chéquier
+    name = db.Column(db.String(200), nullable=False)  # Nom du chéquier (ex: "Chéquier 2024")
+    bank_id = db.Column(db.Integer, db.ForeignKey('banks.id'), nullable=True)  # Banque associée
+    start_number = db.Column(db.Integer, nullable=False)  # Numéro du premier chèque
+    end_number = db.Column(db.Integer, nullable=False)  # Numéro du dernier chèque
+
+    # Statut
+    is_active = db.Column(db.Boolean, default=True, nullable=False)
+
+    # Dates
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+
+    # Relations
+    user = db.relationship('User', backref=db.backref('checkbooks', lazy='dynamic', cascade='all, delete-orphan'))
+    bank = db.relationship('Bank', backref=db.backref('checkbooks', lazy='dynamic'))
+    checks = db.relationship('Check', back_populates='checkbook', lazy='dynamic', cascade='all, delete-orphan')
+
+    def total_checks(self):
+        """Retourne le nombre total de chèques dans le chéquier"""
+        return self.end_number - self.start_number + 1
+
+    def used_checks_count(self):
+        """Retourne le nombre de chèques utilisés"""
+        return self.checks.count()
+
+    def remaining_checks_count(self):
+        """Retourne le nombre de chèques restants"""
+        return self.total_checks() - self.used_checks_count()
+
+    def __repr__(self):
+        return f'<Checkbook {self.name} - {self.start_number} to {self.end_number}>'
+
+
+class Check(db.Model):
+    """Modèle pour les chèques individuels"""
+    __tablename__ = 'checks'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
+    checkbook_id = db.Column(db.Integer, db.ForeignKey('checkbooks.id'), nullable=False, index=True)
+
+    # Informations du chèque
+    check_number = db.Column(db.Integer, nullable=False)  # Numéro du chèque
+    amount = db.Column(db.Float, nullable=False)  # Montant du chèque
+    currency = db.Column(db.String(3), default='EUR', nullable=False)
+    payee = db.Column(db.String(200), nullable=True)  # Bénéficiaire
+    description = db.Column(db.Text, nullable=True)  # Description/Memo
+
+    # Date
+    check_date = db.Column(db.Date, nullable=False)  # Date du chèque
+
+    # Statut
+    status = db.Column(db.String(20), default='pending', nullable=False)  # 'pending', 'cashed', 'cancelled'
+
+    # Dates système
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+
+    # Relations
+    user = db.relationship('User', backref=db.backref('checks', lazy='dynamic', cascade='all, delete-orphan'))
+    checkbook = db.relationship('Checkbook', back_populates='checks')
+
+    def __repr__(self):
+        return f'<Check #{self.check_number} - {self.amount} {self.currency} - {self.payee}>'

@@ -69,14 +69,14 @@
                         </div>
 
                         <div class="mb-4">
-                            <label for="file" class="form-label">Fichier</label>
-                            <input type="file" class="form-control" id="file" name="file"
-                                   accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
-                            <small class="text-muted">Formats acceptés : PDF, Word, Images (taille max : 16 Mo)</small>
+                            <label for="file" class="form-label">Fichier *</label>
+                            <input type="file" class="form-control" id="file" name="file" required
+                                   accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png">
+                            <small class="text-muted">Formats acceptés : PDF, Word, Excel, Images (taille max : 16 Mo)</small>
                         </div>
 
                         <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary btn-lg">
+                            <button type="submit" id="submitBtn" class="btn btn-primary btn-lg" disabled>
                                 <i class="fas fa-plus"></i> Ajouter le document
                             </button>
                             <a href="{{ url_for('credits.detail', credit_id=credit.id) }}" class="btn btn-outline-secondary">
@@ -95,6 +95,8 @@
     const documentDate = document.getElementById('document_date');
     const yearSelect = document.getElementById('year');
     const monthSelect = document.getElementById('month');
+    const fileInput = document.getElementById('file');
+    const submitBtn = document.getElementById('submitBtn');
 
     // Auto-remplir année et mois quand on change la date
     documentDate.addEventListener('change', function() {
@@ -103,6 +105,11 @@
             yearSelect.value = date.getFullYear();
             monthSelect.value = date.getMonth() + 1;
         }
+    });
+
+    // Activer/désactiver le bouton submit selon la sélection du fichier
+    fileInput.addEventListener('change', function() {
+        submitBtn.disabled = !this.files || this.files.length === 0;
     });
 </script>
 {% endblock %}
