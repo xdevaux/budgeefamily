@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+
+{% block title %}Validation des achats CB{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <h2 class="mb-4">
+        <i class="fas fa-check-double"></i> Vérifier et valider les achats
+    </h2>
+
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle"></i>
+        Vérifiez les données extraites automatiquement. Vous pouvez les modifier avant d'enregistrer.
+    </div>
+
+    <form method="post" action="{{ url_for('card_purchases.validate_purchases') }}">
+        <div class="card">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th style="width: 40px;">
+                                    <input type="checkbox" id="selectAll" checked>
+                                </th>
+                                <th>Date</th>
+                                <th>Heure</th>
+                                <th>Commerçant</th>
+                                <th>Montant</th>
+                                <th>Catégorie</th>
+                                <th>Confiance OCR</th>
+                                <th style="width: 200px;">Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for receipt in receipts %}
+                            <tr data-index="{{ loop.index0 }}">
+                                <td class="text-center">
+                                    <input type="checkbox"
+                                           class="purchase-checkbox"
+                                           checked
+                                           data-index="{{ loop.index0 }}">
+                                </td>
+                                <td>
+                                    <input type="date"
+                                           class="form-control form-control-sm"
+                                           name="purchase_date_{{ loop.index0 }}"
+                                           value="{{ receipt.purchase_date }}"
+                                           required>
+                                </td>
+                                <td>
+                                    <input type="time"
+                                           class="form-control form-control-sm"
+                                           name="purchase_time_{{ loop.index0 }}"
+                                           value="{{ receipt.purchase_time }}">
+                                </td>
+                                <td>
+                                    <input type="text"
+                                           class="form-control form-control-sm"
+                                           name="merchant_name_{{ loop.index0 }}"
+                                           value="{{ receipt.merchant_name }}"
+                                           required>
+                                </td>
+                                <td>
+                                    <input type="number"
+                                           class="form-control form-control-sm"
+                                           name="amount_{{ loop.index0 }}"
+                                           value="{{ receipt.amount }}"
+                                           step="0.01"
+                                           min="0"
+                                           required>
+                                </td>
+                                <td>
+                                    <select class="form-select form-select-sm"
+                                            name="category_{{ loop.index0 }}">
+                                        <option value="">-- Aucune --</option>
+                                        {% for category in categories %}
+                                            <option value="{{ category.id }}"
+                                                    {% if category.name == receipt.category_name %}selected{% endif %}>
+                                                {{ category.name }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </td>
+                                <td class="text-center">
+                                    {% if receipt.ocr_confidence >= 80 %}
+                                        <span class="badge bg-success">{{ receipt.ocr_confidence|int }}%</span>
+                                    {% elif receipt.ocr_confidence >= 50 %}
+                                        <span class="badge bg-warning">{{ receipt.ocr_confidence|int }}%</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">{{ receipt.ocr_confidence|int }}%</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <input type="text"
+                                           class="form-control form-control-sm"
+                                           name="description_{{ loop.index0 }}"
+                                           placeholder="Notes...">
+                                    <!-- Hidden fields pour les données du fichier -->
+                                    <input type="hidden" name="file_data_{{ loop.index0 }}" value="{{ receipt.file_data_base64 }}">
+                                    <input type="hidden" name="file_name_{{ loop.index0 }}" value="{{ receipt.file_name }}">
+                                    <input type="hidden" name="file_mime_type_{{ loop.index0 }}" value="{{ receipt.file_mime_type }}">
+                                    <input type="hidden" name="file_size_{{ loop.index0 }}" value="{{ receipt.file_size }}">
+                                    <input type="hidden" name="ocr_confidence_{{ loop.index0 }}" value="{{ receipt.ocr_confidence }}">
+                                    <input type="hidden" name="category_name_{{ loop.index0 }}" value="{{ receipt.category_name }}">
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-4 d-flex justify-content-between align-items-center">
+            <a href="{{ url_for('card_purchases.upload_receipts') }}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left"></i> Annuler
+            </a>
+            <div>
+                <span id="selectedCount" class="me-3">
+                    <strong>{{ receipts|length }}</strong> achat(s) sélectionné(s)
+                </span>
+                <button type="submit" class="btn btn-success btn-lg">
+                    <i class="fas fa-save"></i> Enregistrer les achats
+                </button>
+            </div>
+        </div>
+
+        <input type="hidden" name="purchases_json" id="purchases_json">
+    </form>
+</div>
+
+<script>
+// Sélection/désélection globale
+document.getElementById('selectAll').addEventListener('change', function() {
+    const checkboxes = document.querySelectorAll('.purchase-checkbox');
+    checkboxes.forEach(cb => cb.checked = this.checked);
+    updateSelectedCount();
+});
+
+// Mise à jour du compteur
+document.querySelectorAll('.purchase-checkbox').forEach(cb => {
+    cb.addEventListener('change', updateSelectedCount);
+});
+
+function updateSelectedCount() {
+    const checked = document.querySelectorAll('.purchase-checkbox:checked').length;
+    document.getElementById('selectedCount').innerHTML = `<strong>${checked}</strong> achat(s) sélectionné(s)`;
+}
+
+// Soumettre le formulaire
+document.querySelector('form').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const purchases = [];
+    const checkboxes = document.querySelectorAll('.purchase-checkbox');
+
+    checkboxes.forEach((cb, index) => {
+        if (cb.checked) {
+            purchases.push({
+                keep: true,
+                purchase_date: document.querySelector(`[name="purchase_date_${index}"]`).value,
+                purchase_time: document.querySelector(`[name="purchase_time_${index}"]`).value,
+                merchant_name: document.querySelector(`[name="merchant_name_${index}"]`).value,
+                amount: document.querySelector(`[name="amount_${index}"]`).value,
+                category_id: document.querySelector(`[name="category_${index}"]`).value,
+                category_name: document.querySelector(`[name="category_name_${index}"]`).value,
+                description: document.querySelector(`[name="description_${index}"]`).value,
+                file_data_base64: document.querySelector(`[name="file_data_${index}"]`).value,
+                file_name: document.querySelector(`[name="file_name_${index}"]`).value,
+                file_mime_type: document.querySelector(`[name="file_mime_type_${index}"]`).value,
+                file_size: document.querySelector(`[name="file_size_${index}"]`).value,
+                ocr_confidence: document.querySelector(`[name="ocr_confidence_${index}"]`).value,
+                was_edited: true
+            });
+        }
+    });
+
+    document.getElementById('purchases_json').value = JSON.stringify(purchases);
+    this.submit();
+});
+</script>
+{% endblock %}

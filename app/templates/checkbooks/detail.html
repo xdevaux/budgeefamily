@@ -13,13 +13,19 @@
         </div>
         <div>
             <a href="{{ url_for('checkbooks.add_check', checkbook_id=checkbook.id) }}" class="btn btn-danger">
-                <i class="fas fa-plus"></i> Nouveau chèque
+                <i class="fas fa-check"></i> Utiliser un chèque
             </a>
             <a href="{{ url_for('checkbooks.list_checkbooks') }}" class="btn btn-outline-secondary">
                 <i class="fas fa-arrow-left"></i> Retour
             </a>
         </div>
     </div>
+
+    {% if checkbook.status == 'finished' %}
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle"></i> Ce chéquier est terminé. Tous les chèques ont été utilisés ou annulés.
+    </div>
+    {% endif %}
 
     <!-- Statistiques -->
     <div class="row mb-4">
@@ -33,18 +39,18 @@
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card bg-danger text-white">
+            <div class="card bg-success text-white">
                 <div class="card-body">
-                    <h6 class="text-uppercase mb-1 opacity-75">Utilisés</h6>
-                    <h3 class="mb-0">{{ checkbook.used_checks_count() }}</h3>
+                    <h6 class="text-uppercase mb-1 opacity-75">Disponibles</h6>
+                    <h3 class="mb-0">{{ checkbook.available_checks_count() }}</h3>
                 </div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card bg-success text-white">
+            <div class="card bg-danger text-white">
                 <div class="card-body">
-                    <h6 class="text-uppercase mb-1 opacity-75">Restants</h6>
-                    <h3 class="mb-0">{{ checkbook.remaining_checks_count() }}</h3>
+                    <h6 class="text-uppercase mb-1 opacity-75">Utilisés</h6>
+                    <h3 class="mb-0">{{ checkbook.used_checks_count() }}</h3>
                 </div>
             </div>
         </div>
@@ -68,13 +74,13 @@
                    class="btn btn-outline-secondary {% if filter_status == 'all' %}active{% endif %}">
                     Tous
                 </a>
-                <a href="{{ url_for('checkbooks.detail', checkbook_id=checkbook.id, status='pending') }}"
-                   class="btn btn-outline-warning {% if filter_status == 'pending' %}active{% endif %}">
-                    En attente
+                <a href="{{ url_for('checkbooks.detail', checkbook_id=checkbook.id, status='available') }}"
+                   class="btn btn-outline-success {% if filter_status == 'available' %}active{% endif %}">
+                    Disponibles
                 </a>
-                <a href="{{ url_for('checkbooks.detail', checkbook_id=checkbook.id, status='cashed') }}"
-                   class="btn btn-outline-success {% if filter_status == 'cashed' %}active{% endif %}">
-                    Encaissés
+                <a href="{{ url_for('checkbooks.detail', checkbook_id=checkbook.id, status='used') }}"
+                   class="btn btn-outline-primary {% if filter_status == 'used' %}active{% endif %}">
+                    Utilisés
                 </a>
                 <a href="{{ url_for('checkbooks.detail', checkbook_id=checkbook.id, status='cancelled') }}"
                    class="btn btn-outline-danger {% if filter_status == 'cancelled' %}active{% endif %}">
@@ -115,10 +121,10 @@
                                     <strong>{{ check.amount | format_amount }} {{ check.currency | currency_symbol }}</strong>
                                 </td>
                                 <td class="text-center">
-                                    {% if check.status == 'pending' %}
-                                        <span class="badge bg-warning">En attente</span>
-                                    {% elif check.status == 'cashed' %}
-                                        <span class="badge bg-success">Encaissé</span>
+                                    {% if check.status == 'available' %}
+                                        <span class="badge bg-success">Disponible</span>
+                                    {% elif check.status == 'used' %}
+                                        <span class="badge bg-primary">Utilisé</span>
                                     {% elif check.status == 'cancelled' %}
                                         <span class="badge bg-danger">Annulé</span>
                                     {% endif %}

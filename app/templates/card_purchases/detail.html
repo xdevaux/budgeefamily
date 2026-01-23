@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block title %}Détail de l'achat CB{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="fas fa-credit-card"></i> Détail de l'achat</h2>
+                <a href="{{ url_for('card_purchases.list_purchases') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Retour
+                </a>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <strong>Date :</strong>
+                        </div>
+                        <div class="col-md-8">
+                            {{ purchase.purchase_date.strftime('%d/%m/%Y à %H:%M') }}
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <strong>Commerçant :</strong>
+                        </div>
+                        <div class="col-md-8">
+                            {{ purchase.merchant_name }}
+                            {% if purchase.was_manually_edited %}
+                                <i class="fas fa-user-edit text-muted" title="Modifié manuellement"></i>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <strong>Montant :</strong>
+                        </div>
+                        <div class="col-md-8">
+                            <span class="text-danger fs-4">
+                                <strong>{{ "%.2f"|format(purchase.amount) }} {{ purchase.currency }}</strong>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <strong>Catégorie :</strong>
+                        </div>
+                        <div class="col-md-8">
+                            <span class="badge bg-secondary">
+                                {{ purchase.category_name or 'Non catégorisé' }}
+                            </span>
+                        </div>
+                    </div>
+
+                    {% if purchase.description %}
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <strong>Description :</strong>
+                        </div>
+                        <div class="col-md-8">
+                            {{ purchase.description }}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if purchase.notes %}
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <strong>Notes :</strong>
+                        </div>
+                        <div class="col-md-8">
+                            {{ purchase.notes }}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <strong>Confiance OCR :</strong>
+                        </div>
+                        <div class="col-md-8">
+                            {% if purchase.ocr_confidence >= 80 %}
+                                <span class="badge bg-success">{{ purchase.ocr_confidence|int }}%</span>
+                            {% elif purchase.ocr_confidence >= 50 %}
+                                <span class="badge bg-warning">{{ purchase.ocr_confidence|int }}%</span>
+                            {% else %}
+                                <span class="badge bg-danger">{{ purchase.ocr_confidence|int }}%</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    {% if purchase.receipt_image_data %}
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <strong>Reçu :</strong>
+                        </div>
+                        <div class="col-md-8">
+                            <a href="{{ url_for('card_purchases.view_receipt', purchase_id=purchase.id) }}"
+                               target="_blank"
+                               class="btn btn-primary">
+                                <i class="fas fa-image"></i> Voir le reçu
+                            </a>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <hr>
+
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('card_purchases.edit', purchase_id=purchase.id) }}"
+                           class="btn btn-warning">
+                            <i class="fas fa-edit"></i> Modifier
+                        </a>
+                        <form method="post"
+                              action="{{ url_for('card_purchases.delete', purchase_id=purchase.id) }}"
+                              onsubmit="return confirm('Confirmer la suppression ?');">
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-trash"></i> Supprimer
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

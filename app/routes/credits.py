@@ -1,8 +1,9 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request, Response
 from flask_login import login_required, current_user
-from app import db
+from app import db, limiter
 from app.models import Credit, Category, CreditType, CreditDocument, Bank, Notification
 from app.utils.transactions import generate_future_transactions, update_future_transactions, cancel_future_transactions, calculate_next_future_date, delete_all_transactions
+from app.utils.file_security import validate_upload, get_safe_content_disposition
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 
@@ -333,6 +334,7 @@ def detail(credit_id):
 
 @bp.route('/<int:credit_id>/documents/add', methods=['GET', 'POST'])
 @login_required
+@limiter.limit("100 per hour")
 def add_document(credit_id):
     credit = Credit.query.get_or_404(credit_id)
 
@@ -369,14 +371,19 @@ def add_document(credit_id):
             month=month
         )
 
-        # Gestion du fichier
+        # Gestion du fichier avec validation de sécurité
         if 'file' in request.files:
             file = request.files['file']
             if file and file.filename:
-                document.file_data = file.read()
-                document.file_name = file.filename
+                success, error, file_data, safe_filename = validate_upload(file)
+                if not success:
+                    flash(error, 'danger')
+                    return redirect(url_for('credits.add_document', credit_id=credit_id))
+
+                document.file_data = file_data
+                document.file_name = safe_filename
                 document.file_mime_type = file.content_type
-                document.file_size = len(document.file_data)
+                document.file_size = len(file_data)
 
         db.session.add(document)
         db.session.commit()
@@ -410,7 +417,7 @@ def download_document(document_id):
     return Response(
         document.file_data,
         mimetype=document.file_mime_type or 'application/octet-stream',
-        headers={'Content-Disposition': f'attachment; filename="{document.file_name}"'}
+        headers={'Content-Disposition': get_safe_content_disposition(document.file_name, inline=False)}
     )
 
 
@@ -430,7 +437,7 @@ def view_document(document_id):
     return Response(
         document.file_data,
         mimetype=document.file_mime_type or 'application/octet-stream',
-        headers={'Content-Disposition': f'inline; filename="{document.file_name}"'}
+        headers={'Content-Disposition': get_safe_content_disposition(document.file_name, inline=True)}
     )
 
 
@@ -453,14 +460,19 @@ def edit_document(document_id):
         document_date_str = request.form.get('document_date')
         document.document_date = datetime.strptime(document_date_str, '%Y-%m-%d').date() if document_date_str else None
 
-        # Gestion du fichier
+        # Gestion du fichier avec validation de sécurité
         if 'file' in request.files:
             file = request.files['file']
             if file and file.filename:
-                document.file_data = file.read()
-                document.file_name = file.filename
+                success, error, file_data, safe_filename = validate_upload(file)
+                if not success:
+                    flash(error, 'danger')
+                    return redirect(url_for('credits.edit_document', document_id=document_id))
+
+                document.file_data = file_data
+                document.file_name = safe_filename
                 document.file_mime_type = file.content_type
-                document.file_size = len(document.file_data)
+                document.file_size = len(file_data)
 
         db.session.commit()
 

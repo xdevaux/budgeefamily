@@ -4,8 +4,9 @@ Routes pour gérer les banques
 from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify, Response
 from flask_login import login_required, current_user
 from datetime import datetime
-from app import db
+from app import db, limiter
 from app.models import Bank, BankDocument
+from app.utils.file_security import validate_upload, get_safe_content_disposition
 import base64
 
 bp = Blueprint('banks', __name__, url_prefix='/banks')
@@ -280,6 +281,7 @@ def api_list():
 # Routes pour les documents
 @bp.route('/<int:bank_id>/documents/add', methods=['GET', 'POST'])
 @login_required
+@limiter.limit("100 per hour")
 def add_document(bank_id):
     bank = Bank.query.get_or_404(bank_id)
 
@@ -316,14 +318,21 @@ def add_document(bank_id):
             month=month
         )
 
-        # Gestion du fichier
+        # Gestion du fichier avec validation de sécurité
         if 'file' in request.files:
             file = request.files['file']
             if file and file.filename:
-                document.file_data = file.read()
-                document.file_name = file.filename
+                # Validation stricte du fichier
+                success, error, file_data, safe_filename = validate_upload(file)
+
+                if not success:
+                    flash(error, 'danger')
+                    return redirect(url_for('banks.add_document', bank_id=bank_id))
+
+                document.file_data = file_data
+                document.file_name = safe_filename
                 document.file_mime_type = file.content_type
-                document.file_size = len(document.file_data)
+                document.file_size = len(file_data)
 
         db.session.add(document)
         db.session.commit()
@@ -357,7 +366,7 @@ def download_document(document_id):
     return Response(
         document.file_data,
         mimetype=document.file_mime_type or 'application/octet-stream',
-        headers={'Content-Disposition': f'attachment; filename="{document.file_name}"'}
+        headers={'Content-Disposition': get_safe_content_disposition(document.file_name, inline=False)}
     )
 
 
@@ -377,12 +386,13 @@ def view_document(document_id):
     return Response(
         document.file_data,
         mimetype=document.file_mime_type or 'application/octet-stream',
-        headers={'Content-Disposition': f'inline; filename="{document.file_name}"'}
+        headers={'Content-Disposition': get_safe_content_disposition(document.file_name, inline=True)}
     )
 
 
 @bp.route('/documents/<int:document_id>/edit', methods=['GET', 'POST'])
 @login_required
+@limiter.limit("100 per hour")
 def edit_document(document_id):
     document = BankDocument.query.get_or_404(document_id)
 
@@ -400,14 +410,21 @@ def edit_document(document_id):
         document_date_str = request.form.get('document_date')
         document.document_date = datetime.strptime(document_date_str, '%Y-%m-%d').date() if document_date_str else None
 
-        # Gestion du fichier
+        # Gestion du fichier avec validation de sécurité
         if 'file' in request.files:
             file = request.files['file']
             if file and file.filename:
-                document.file_data = file.read()
-                document.file_name = file.filename
+                # Validation stricte du fichier
+                success, error, file_data, safe_filename = validate_upload(file)
+
+                if not success:
+                    flash(error, 'danger')
+                    return redirect(url_for('banks.edit_document', document_id=document_id))
+
+                document.file_data = file_data
+                document.file_name = safe_filename
                 document.file_mime_type = file.content_type
-                document.file_size = len(document.file_data)
+                document.file_size = len(file_data)
 
         db.session.commit()
 

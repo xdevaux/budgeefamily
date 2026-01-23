@@ -23,12 +23,12 @@
                     Tous
                 </a>
                 <a href="{{ url_for('checkbooks.list_checkbooks', status='active') }}"
-                   class="btn btn-outline-success {% if filter_status == 'active' %}active{% endif %}">
-                    Actifs
+                   class="btn btn-outline-info {% if filter_status == 'active' %}active{% endif %}">
+                    <i class="fas fa-check-circle"></i> Actifs
                 </a>
-                <a href="{{ url_for('checkbooks.list_checkbooks', status='inactive') }}"
-                   class="btn btn-outline-secondary {% if filter_status == 'inactive' %}active{% endif %}">
-                    Inactifs
+                <a href="{{ url_for('checkbooks.list_checkbooks', status='finished') }}"
+                   class="btn btn-outline-secondary {% if filter_status == 'finished' %}active{% endif %}">
+                    <i class="fas fa-archive"></i> Terminés
                 </a>
             </div>
         </div>
@@ -36,70 +36,76 @@
 
     <!-- Liste des chéquiers -->
     {% if checkbooks.items %}
-        <div class="row">
-            {% for checkbook in checkbooks.items %}
-            <div class="col-md-6 col-lg-4 mb-4">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-start mb-3">
-                            <h5 class="card-title mb-0">{{ checkbook.name }}</h5>
-                            <div class="form-check form-switch">
-                                <form method="post" action="{{ url_for('checkbooks.toggle', checkbook_id=checkbook.id) }}">
-                                    <input class="form-check-input" type="checkbox"
-                                           {% if checkbook.is_active %}checked{% endif %}
-                                           onchange="this.form.submit()"
-                                           title="{% if checkbook.is_active %}Désactiver{% else %}Activer{% endif %}">
-                                </form>
-                            </div>
-                        </div>
-
-                        {% if checkbook.bank %}
-                        <p class="text-muted mb-2">
-                            <i class="fas fa-university"></i> {{ checkbook.bank.name }}
-                        </p>
-                        {% endif %}
-
-                        <div class="row text-center mb-3">
-                            <div class="col-4">
-                                <div class="small text-muted">Total</div>
-                                <strong>{{ checkbook.total_checks() }}</strong>
-                            </div>
-                            <div class="col-4">
-                                <div class="small text-muted">Utilisés</div>
-                                <strong class="text-danger">{{ checkbook.used_checks_count() }}</strong>
-                            </div>
-                            <div class="col-4">
-                                <div class="small text-muted">Restants</div>
-                                <strong class="text-success">{{ checkbook.remaining_checks_count() }}</strong>
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <small class="text-muted">
-                                <i class="fas fa-hashtag"></i> {{ checkbook.start_number }} - {{ checkbook.end_number }}
-                            </small>
-                        </div>
-
-                        <div class="btn-group w-100">
-                            <a href="{{ url_for('checkbooks.detail', checkbook_id=checkbook.id) }}"
-                               class="btn btn-outline-primary btn-sm">
-                                <i class="fas fa-eye"></i> Voir
-                            </a>
-                            <a href="{{ url_for('checkbooks.edit', checkbook_id=checkbook.id) }}"
-                               class="btn btn-outline-secondary btn-sm">
-                                <i class="fas fa-edit"></i> Modifier
-                            </a>
-                            <form method="post" action="{{ url_for('checkbooks.delete', checkbook_id=checkbook.id) }}"
-                                  class="d-inline" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce chéquier ?');">
-                                <button type="submit" class="btn btn-outline-danger btn-sm">
-                                    <i class="fas fa-trash"></i> Supprimer
-                                </button>
-                            </form>
-                        </div>
-                    </div>
+        <div class="card">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Nom</th>
+                                <th>Banque</th>
+                                <th class="text-center">Total</th>
+                                <th class="text-center">Disponibles</th>
+                                <th class="text-center">Utilisés</th>
+                                <th class="text-center">Annulés</th>
+                                <th>Numéros</th>
+                                <th class="text-center">Statut</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for checkbook in checkbooks.items %}
+                            <tr>
+                                <td><strong>{{ checkbook.name }}</strong></td>
+                                <td>
+                                    {% if checkbook.bank %}
+                                        <i class="fas fa-university text-muted"></i> {{ checkbook.bank.name }}
+                                    {% else %}
+                                        <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-center">{{ checkbook.total_checks() }}</td>
+                                <td class="text-center">
+                                    <span class="badge bg-success">{{ checkbook.available_checks_count() }}</span>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge bg-primary">{{ checkbook.used_checks_count() }}</span>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge bg-danger">{{ checkbook.cancelled_checks_count() }}</span>
+                                </td>
+                                <td><small class="text-muted">#{{ checkbook.start_number }} - #{{ checkbook.end_number }}</small></td>
+                                <td class="text-center">
+                                    {% if checkbook.status == 'finished' %}
+                                        <span class="badge bg-secondary"><i class="fas fa-archive"></i> Terminé</span>
+                                    {% else %}
+                                        <span class="badge bg-info"><i class="fas fa-check-circle"></i> Actif</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-end">
+                                    <div class="btn-group btn-group-sm">
+                                        <a href="{{ url_for('checkbooks.detail', checkbook_id=checkbook.id) }}"
+                                           class="btn btn-outline-primary" title="Voir les détails">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a href="{{ url_for('checkbooks.edit', checkbook_id=checkbook.id) }}"
+                                           class="btn btn-outline-secondary" title="Modifier">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <form method="post" action="{{ url_for('checkbooks.delete', checkbook_id=checkbook.id) }}"
+                                              class="d-inline" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce chéquier ?');">
+                                            <button type="submit" class="btn btn-outline-danger" title="Supprimer">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
             </div>
-            {% endfor %}
         </div>
 
         <!-- Pagination -->

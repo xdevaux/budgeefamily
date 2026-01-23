@@ -8,7 +8,7 @@
         <div class="col-lg-8">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <div>
-                    <h2><i class="fas fa-file-invoice text-danger"></i> Nouveau chèque</h2>
+                    <h2><i class="fas fa-file-invoice text-danger"></i> Utiliser un chèque</h2>
                     <p class="text-muted mb-0">{{ checkbook.name }}</p>
                 </div>
                 <a href="{{ url_for('checkbooks.detail', checkbook_id=checkbook.id) }}" class="btn btn-outline-secondary">
@@ -19,40 +19,34 @@
             <div class="card">
                 <div class="card-body p-4">
                     <form method="POST">
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="check_number" class="form-label">Numéro du chèque *</label>
-                                <input type="number" class="form-control" id="check_number" name="check_number" required
-                                       min="{{ checkbook.start_number }}" max="{{ checkbook.end_number }}"
-                                       placeholder="Entre {{ checkbook.start_number }} et {{ checkbook.end_number }}">
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="check_date" class="form-label">Date du chèque *</label>
-                                <input type="date" class="form-control" id="check_date" name="check_date" required
-                                       value="{{ now.strftime('%Y-%m-%d') }}">
-                            </div>
+                        <div class="mb-3">
+                            <label for="check_id" class="form-label">Sélectionner un chèque *</label>
+                            <select class="form-select" id="check_id" name="check_id" required>
+                                <option value="">-- Choisir un numéro --</option>
+                                {% for check in available_checks %}
+                                    <option value="{{ check.id }}">Chèque #{{ check.check_number }}</option>
+                                {% endfor %}
+                            </select>
+                            <small class="text-muted">{{ available_checks|length }} chèque(s) disponible(s)</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="payee" class="form-label">Bénéficiaire *</label>
+                            <input type="text" class="form-control" id="payee" name="payee" required
+                                   placeholder="Ex: EDF, Orange, etc.">
                         </div>
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label for="amount" class="form-label">Montant *</label>
+                                <label for="amount" class="form-label">Montant (€) *</label>
                                 <input type="number" class="form-control" id="amount" name="amount" required
                                        step="0.01" min="0" placeholder="0.00">
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="currency" class="form-label">Devise</label>
-                                <select class="form-select" id="currency" name="currency">
-                                    <option value="EUR" selected>EUR (€)</option>
-                                    <option value="USD">USD ($)</option>
-                                    <option value="GBP">GBP (£)</option>
-                                </select>
+                                <label for="check_date" class="form-label">Date du chèque *</label>
+                                <input type="date" class="form-control" id="check_date" name="check_date" required
+                                       value="{{ now.strftime('%Y-%m-%d') if now else '' }}">
                             </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="payee" class="form-label">Bénéficiaire</label>
-                            <input type="text" class="form-control" id="payee" name="payee"
-                                   placeholder="Ex: EDF, Orange, etc.">
                         </div>
 
                         <div class="mb-3">
@@ -62,14 +56,20 @@
                         </div>
 
                         <div class="mb-4">
-                            <label for="status" class="form-label">Statut *</label>
-                            <select class="form-select" id="status" name="status" required>
-                                <option value="pending">En attente d'encaissement</option>
-                                <option value="cashed">Encaissé (ajouté à la balance)</option>
-                                <option value="cancelled">Annulé</option>
-                            </select>
-                            <small class="text-muted">
-                                Si vous sélectionnez "Encaissé", une transaction sera automatiquement créée dans la balance
+                            <label class="form-label">Action *</label>
+                            <div class="btn-group w-100" role="group">
+                                <input type="radio" class="btn-check" name="action" id="action_use" value="use" checked>
+                                <label class="btn btn-outline-success" for="action_use">
+                                    <i class="fas fa-check"></i> Utiliser
+                                </label>
+
+                                <input type="radio" class="btn-check" name="action" id="action_cancel" value="cancel">
+                                <label class="btn btn-outline-danger" for="action_cancel">
+                                    <i class="fas fa-ban"></i> Annuler
+                                </label>
+                            </div>
+                            <small class="text-muted d-block mt-1">
+                                Si vous sélectionnez "Utiliser", une transaction sera automatiquement créée dans la balance
                             </small>
                         </div>
 

@@ -304,6 +304,75 @@
                     {% endif %}
                 </div>
             </div>
+
+            <!-- Chèques : Non débités -->
+            <div class="card mt-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-money-check"></i> Chèques : Non débités</h5>
+                    <div class="d-flex align-items-center gap-2">
+                        {% if unpointed_checks %}
+                            <span class="badge bg-danger">{{ unpointed_checks|length }}</span>
+                        {% endif %}
+                        {% if current_user.is_premium() %}
+                            <div class="btn-group btn-group-sm">
+                                <a href="{{ url_for('exports.export_unpointed_checks', format='excel') }}" class="btn btn-outline-success" title="Exporter en Excel">
+                                    <i class="fas fa-file-excel"></i>
+                                </a>
+                                <a href="{{ url_for('exports.export_unpointed_checks', format='pdf') }}" class="btn btn-outline-danger" title="Exporter en PDF">
+                                    <i class="fas fa-file-pdf"></i>
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    {% if unpointed_checks %}
+                        <div class="list-group list-group-flush" style="max-height: 400px; overflow-y: auto;">
+                            {% for check in unpointed_checks %}
+                                <div class="list-group-item subscription-item py-2">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="flex-shrink-0 d-flex align-items-center" style="width: 30px;">
+                                            <form method="post" action="{{ url_for('main.toggle_point', transaction_id=check.id) }}" style="display: inline; margin: 0;">
+                                                <input type="hidden" name="redirect_to" value="dashboard">
+                                                <button type="submit" class="btn btn-sm btn-link p-0" title="Pointer ce chèque" style="line-height: 1;">
+                                                    <i class="far fa-circle text-muted" style="font-size: 1.2rem;"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                        <div class="flex-shrink-0 d-flex align-items-center" style="width: 90px;">
+                                            <small class="text-muted">
+                                                <i class="fas fa-calendar"></i> {{ check.transaction_date.strftime('%d/%m/%Y') }}
+                                            </small>
+                                        </div>
+                                        <div class="flex-grow-1 text-start d-flex align-items-center" style="min-width: 0; gap: 0.5rem;">
+                                            <strong class="text-truncate" style="max-width: 70%;" title="{{ check.name }}">{{ check.name }}</strong>
+                                            <span class="badge bg-danger text-white" style="padding: 0.15rem 0.4rem; font-size: 0.7rem;">Chèque</span>
+                                        </div>
+                                        <div class="flex-shrink-0 text-end d-flex align-items-center justify-content-end" style="width: 150px;">
+                                            <strong class="me-1">{{ check.amount | format_amount }} {{ check.currency | currency_symbol }}</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <div class="card-footer bg-white text-center">
+                            <a href="{{ url_for('checkbooks.list_checkbooks') }}" class="btn btn-sm btn-outline-danger">
+                                <i class="fas fa-check"></i> Voir les chéquiers
+                            </a>
+                            <a href="{{ url_for('checkbooks.list_checkbooks') }}" class="btn btn-sm btn-outline-danger ms-2">
+                                <i class="fas fa-plus"></i> Ajouter
+                            </a>
+                        </div>
+                    {% else %}
+                        <div class="card-body">
+                            <p class="text-muted text-center py-4 mb-0">
+                                <i class="fas fa-inbox fa-3x d-block mb-2"></i>
+                                Tous les chèques sont débités
+                            </p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
         </div>
 
         <!-- Colonne droite : Répartition par catégorie -->

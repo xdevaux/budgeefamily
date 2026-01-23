@@ -1006,3 +1006,82 @@ def export_revenue_distribution_pdf(revenue_list, user):
     doc.build(elements)
     buffer.seek(0)
     return buffer
+
+def export_unpointed_checks_excel(checks, user):
+    """Exporte les chèques non débités en Excel"""
+    wb = create_excel_workbook()
+    ws = wb.active
+    ws.title = "Chèques non débités"
+
+    # En-tête du document
+    ws['A1'] = f"Chèques : Non débités - {user.first_name} {user.last_name or ''}"
+    ws['A1'].font = Font(size=16, bold=True)
+    ws['A2'] = f"Généré le {datetime.now().strftime('%d/%m/%Y à %H:%M')}"
+    ws['A2'].font = Font(size=10, italic=True)
+
+    # En-têtes des colonnes
+    headers = ['Date', 'Numéro de chèque', 'Bénéficiaire', 'Montant', 'Devise', 'Description']
+    ws.append([])  # Ligne vide
+    ws.append(headers)
+    style_excel_header(ws, row=4)
+
+    # Données
+    for check in checks:
+        ws.append([
+            check.transaction_date.strftime('%d/%m/%Y'),
+            check.name,
+            check.description or '-',
+            check.amount,
+            check.currency,
+            check.description or ''
+        ])
+
+    # Ajuster la largeur des colonnes
+    for column in range(1, len(headers) + 1):
+        ws.column_dimensions[get_column_letter(column)].width = 20
+
+    # Sauvegarder dans un buffer
+    output = BytesIO()
+    wb.save(output)
+    output.seek(0)
+    return output
+
+
+def export_unpointed_checks_pdf(checks, user):
+    """Exporte les chèques non débités en PDF"""
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=A4)
+    elements = []
+
+    # Ajouter l'en-tête avec logo
+    add_pdf_header(elements, "Chèques : Non débités", user)
+
+    # Table
+    data = [['Date', 'Numéro de chèque', 'Bénéficiaire', 'Montant']]
+
+    for check in checks:
+        data.append([
+            check.transaction_date.strftime('%d/%m/%Y'),
+            check.name[:40],  # Limiter la longueur
+            (check.description or '-')[:30],
+            f"{check.amount:.2f} {check.currency}"
+        ])
+
+    table = Table(data, colWidths=[1.2*inch, 2.5*inch, 2*inch, 1.5*inch])
+    table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#DC3545')),  # Rouge pour les dépenses
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, 0), 9),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 8),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+        ('GRID', (0, 0), (-1, -1), 1, colors.black),
+        ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
+        ('FONTSIZE', (0, 1), (-1, -1), 8),
+    ]))
+
+    elements.append(table)
+    doc.build(elements)
+    buffer.seek(0)
+    return buffer

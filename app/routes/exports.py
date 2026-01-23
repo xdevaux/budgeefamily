@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 from functools import wraps
 from sqlalchemy import func
 from app import db
-from app.models import Subscription, Category, Service, Credit, Revenue
+from app.models import Subscription, Category, Service, Credit, Revenue, Transaction
 from app.utils.exports import (
     export_upcoming_renewals_excel, export_upcoming_renewals_pdf,
     export_category_distribution_excel, export_category_distribution_pdf,
@@ -17,7 +17,8 @@ from app.utils.exports import (
     export_services_excel, export_services_pdf,
     export_upcoming_credits_excel, export_upcoming_credits_pdf,
     export_upcoming_revenues_excel, export_upcoming_revenues_pdf,
-    export_revenue_distribution_excel, export_revenue_distribution_pdf
+    export_revenue_distribution_excel, export_revenue_distribution_pdf,
+    export_unpointed_checks_excel, export_unpointed_checks_pdf
 )
 
 bp = Blueprint('exports', __name__, url_prefix='/exports')
@@ -126,6 +127,40 @@ def export_upcoming_revenues(format):
             mimetype='application/pdf',
             as_attachment=True,
             download_name=f'revenus_prochains_versements_{datetime.now().strftime("%Y%m%d")}.pdf'
+        )
+    else:
+        flash('Format non supporté', 'danger')
+        return redirect(url_for('main.dashboard'))
+
+
+@bp.route('/dashboard/unpointed-checks/<format>')
+@login_required
+@premium_required
+def export_unpointed_checks(format):
+    """Exporte les chèques non débités (non pointés)"""
+    # Récupérer les chèques non pointés
+    unpointed_checks = Transaction.query.filter(
+        Transaction.user_id == current_user.id,
+        Transaction.transaction_type == 'check',
+        Transaction.status == 'completed',
+        Transaction.is_pointed == False
+    ).order_by(Transaction.transaction_date.desc()).all()
+
+    if format == 'excel':
+        output = export_unpointed_checks_excel(unpointed_checks, current_user)
+        return send_file(
+            output,
+            mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            as_attachment=True,
+            download_name=f'cheques_non_debites_{datetime.now().strftime("%Y%m%d")}.xlsx'
+        )
+    elif format == 'pdf':
+        output = export_unpointed_checks_pdf(unpointed_checks, current_user)
+        return send_file(
+            output,
+            mimetype='application/pdf',
+            as_attachment=True,
+            download_name=f'cheques_non_debites_{datetime.now().strftime("%Y%m%d")}.pdf'
         )
     else:
         flash('Format non supporté', 'danger')

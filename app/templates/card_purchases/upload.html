@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}Upload de reçus CB{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="fas fa-credit-card"></i> Ajouter des achats CB</h2>
+                <a href="{{ url_for('card_purchases.list_purchases') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Retour
+                </a>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        <div class="mb-4">
+                            <label for="receipts" class="form-label">
+                                <i class="fas fa-images"></i> Sélectionner des reçus (jusqu'à 10)
+                            </label>
+                            <input type="file"
+                                   class="form-control"
+                                   id="receipts"
+                                   name="receipts"
+                                   multiple
+                                   required
+                                   accept="image/*,.pdf">
+                            <small class="text-muted">
+                                Formats acceptés : JPG, PNG, PDF. Maximum 5 Mo par fichier.
+                            </small>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i>
+                            <strong>Comment ça marche ?</strong><br>
+                            1. Sélectionnez vos photos/scans de reçus CB<br>
+                            2. Le système va extraire automatiquement les données (date, montant, commerçant)<br>
+                            3. Vous pourrez vérifier et corriger les données avant validation<br>
+                            4. Les achats seront ajoutés dans votre balance
+                        </div>
+
+                        <div id="preview" class="mb-3"></div>
+
+                        <button type="submit" class="btn btn-primary" id="submitBtn" disabled>
+                            <i class="fas fa-robot"></i> Traiter avec OCR
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('receipts').addEventListener('change', function() {
+    const preview = document.getElementById('preview');
+    const submitBtn = document.getElementById('submitBtn');
+    const files = this.files;
+
+    preview.innerHTML = '';
+
+    if (files.length > 0) {
+        submitBtn.disabled = false;
+
+        const badge = document.createElement('div');
+        badge.className = 'alert alert-success';
+        badge.innerHTML = `<i class="fas fa-check-circle"></i> ${files.length} fichier(s) sélectionné(s)`;
+        preview.appendChild(badge);
+
+        if (files.length > 10) {
+            badge.className = 'alert alert-warning';
+            badge.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Maximum 10 fichiers. Seuls les 10 premiers seront traités.';
+        }
+    } else {
+        submitBtn.disabled = true;
+    }
+});
+</script>
+{% endblock %}

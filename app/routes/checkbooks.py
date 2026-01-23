@@ -20,9 +20,9 @@ def list_checkbooks():
     query = current_user.checkbooks
 
     if filter_status == 'active':
-        query = query.filter_by(is_active=True)
-    elif filter_status == 'inactive':
-        query = query.filter_by(is_active=False)
+        query = query.filter_by(status='active')
+    elif filter_status == 'finished':
+        query = query.filter_by(status='finished')
 
     checkbooks = query.order_by(Checkbook.created_at.desc()).paginate(
         page=page, per_page=10, error_out=False
@@ -43,6 +43,15 @@ def add():
         start_number = request.form.get('start_number', type=int)
         end_number = request.form.get('end_number', type=int)
 
+        # Validation du numéro de départ
+        if not start_number:
+            flash('Le numéro du premier chèque est requis.', 'danger')
+            return redirect(url_for('checkbooks.add'))
+
+        # Si end_number n'est pas fourni, calculer automatiquement (+25)
+        if not end_number:
+            end_number = start_number + 25
+
         # Validation
         if start_number >= end_number:
             flash('Le numéro de fin doit être supérieur au numéro de début.', 'danger')
@@ -57,9 +66,24 @@ def add():
         )
 
         db.session.add(checkbook)
+        db.session.flush()  # Obtenir checkbook.id
+
+        # Génération automatique de tous les chèques
+        for check_num in range(start_number, end_number + 1):
+            check = Check(
+                user_id=current_user.id,
+                checkbook_id=checkbook.id,
+                check_number=check_num,
+                amount=0.0,  # Placeholder
+                currency='EUR',
+                check_date=datetime.now().date(),
+                status='available'
+            )
+            db.session.add(check)
+
         db.session.commit()
 
-        flash(f'Chéquier "{name}" ajouté avec succès !', 'success')
+        flash(f'Chéquier "{name}" ajouté avec succès avec {checkbook.total_checks()} chèques !', 'success')
         return redirect(url_for('checkbooks.detail', checkbook_id=checkbook.id))
 
     # Récupérer les banques pour le formulaire
@@ -80,14 +104,14 @@ def detail(checkbook_id):
 
     # Récupérer les chèques avec pagination
     page = request.args.get('page', 1, type=int)
-    filter_status = request.args.get('status', 'all')
+    filter_status = request.args.get('status', 'used')  # Filtre par défaut sur "Utilisés"
 
     query = checkbook.checks
 
-    if filter_status == 'pending':
-        query = query.filter_by(status='pending')
-    elif filter_status == 'cashed':
-        query = query.filter_by(status='cashed')
+    if filter_status == 'available':
+        query = query.filter_by(status='available')
+    elif filter_status == 'used':
+        query = query.filter_by(status='used')
     elif filter_status == 'cancelled':
         query = query.filter_by(status='cancelled')
 
@@ -172,77 +196,79 @@ def delete(checkbook_id):
 @bp.route('/<int:checkbook_id>/checks/add', methods=['GET', 'POST'])
 @login_required
 def add_check(checkbook_id):
-    """Ajouter un chèque"""
+    """Utiliser un chèque disponible"""
     checkbook = Checkbook.query.get_or_404(checkbook_id)
 
     if checkbook.user_id != current_user.id:
         flash('Vous n\'avez pas accès à ce chéquier.', 'danger')
         return redirect(url_for('checkbooks.list_checkbooks'))
 
+    # Récupérer les chèques disponibles
+    available_checks = checkbook.checks.filter_by(status='available').order_by(Check.check_number).all()
+
+    if not available_checks:
+        flash('Aucun chèque disponible dans ce chéquier.', 'warning')
+        return redirect(url_for('checkbooks.detail', checkbook_id=checkbook_id))
+
     if request.method == 'POST':
-        check_number = request.form.get('check_number', type=int)
+        check_id = request.form.get('check_id', type=int)
         amount = request.form.get('amount', type=float)
-        currency = request.form.get('currency', 'EUR')
         payee = request.form.get('payee')
         description = request.form.get('description')
         check_date_str = request.form.get('check_date')
-        status = request.form.get('status', 'pending')
+        action = request.form.get('action')  # 'use' ou 'cancel'
 
-        # Validation du numéro de chèque
-        if check_number < checkbook.start_number or check_number > checkbook.end_number:
-            flash(f'Le numéro de chèque doit être entre {checkbook.start_number} et {checkbook.end_number}.', 'danger')
-            return redirect(url_for('checkbooks.add_check', checkbook_id=checkbook_id))
+        check = Check.query.get_or_404(check_id)
 
-        # Vérifier si le chèque existe déjà
-        existing_check = Check.query.filter_by(
-            checkbook_id=checkbook_id,
-            check_number=check_number
-        ).first()
-
-        if existing_check:
-            flash(f'Le chèque #{check_number} existe déjà dans ce chéquier.', 'danger')
+        # Vérifier que le chèque est disponible
+        if check.status != 'available' or check.checkbook_id != checkbook_id:
+            flash('Ce chèque n\'est pas disponible.', 'danger')
             return redirect(url_for('checkbooks.add_check', checkbook_id=checkbook_id))
 
         check_date = datetime.strptime(check_date_str, '%Y-%m-%d').date() if check_date_str else datetime.now().date()
 
-        check = Check(
-            user_id=current_user.id,
-            checkbook_id=checkbook_id,
-            check_number=check_number,
-            amount=amount,
-            currency=currency,
-            payee=payee,
-            description=description,
-            check_date=check_date,
-            status=status
-        )
+        # Mettre à jour le chèque
+        check.amount = amount
+        check.payee = payee
+        check.description = description
+        check.check_date = check_date
+        check.updated_at = datetime.utcnow()
 
-        db.session.add(check)
+        if action == 'cancel':
+            check.status = 'cancelled'
+            flash(f'Chèque #{check.check_number} annulé avec succès !', 'success')
+        else:
+            check.status = 'used'
 
-        # Créer une transaction si le chèque est encaissé
-        if status == 'cashed':
+            # Créer la transaction dans la balance
             transaction = Transaction(
                 user_id=current_user.id,
                 transaction_date=check_date,
                 transaction_type='check',
                 source_id=check.id,
                 source_type='check',
-                name=f'Chèque #{check_number} - {payee}',
+                name=f'Chèque #{check.check_number} - {payee}',
                 description=description,
                 amount=amount,
-                currency=currency,
+                currency='EUR',
                 is_positive=False,
                 category_name='Chèques',
                 status='completed'
             )
             db.session.add(transaction)
+            flash(f'Chèque #{check.check_number} utilisé avec succès !', 'success')
 
         db.session.commit()
 
-        flash(f'Chèque #{check_number} ajouté avec succès !', 'success')
+        # Auto-archivage si tous les chèques sont consommés
+        checkbook.auto_finish_if_complete()
+
         return redirect(url_for('checkbooks.detail', checkbook_id=checkbook_id))
 
-    return render_template('checkbooks/add_check.html', checkbook=checkbook)
+    return render_template('checkbooks/add_check.html',
+                         checkbook=checkbook,
+                         available_checks=available_checks,
+                         now=datetime.now())
 
 
 @bp.route('/checks/<int:check_id>/edit', methods=['GET', 'POST'])
@@ -255,6 +281,11 @@ def edit_check(check_id):
         flash('Vous n\'avez pas accès à ce chèque.', 'danger')
         return redirect(url_for('checkbooks.list_checkbooks'))
 
+    # Bloquer l'édition des chèques 'available' (non utilisés)
+    if check.status == 'available':
+        flash('Vous ne pouvez pas modifier un chèque non utilisé. Veuillez l\'utiliser d\'abord.', 'warning')
+        return redirect(url_for('checkbooks.detail', checkbook_id=check.checkbook_id))
+
     if request.method == 'POST':
         old_status = check.status
 
@@ -264,11 +295,11 @@ def edit_check(check_id):
         check.description = request.form.get('description')
         check_date_str = request.form.get('check_date')
         check.check_date = datetime.strptime(check_date_str, '%Y-%m-%d').date() if check_date_str else check.check_date
-        check.status = request.form.get('status', 'pending')
+        check.status = request.form.get('status')
         check.updated_at = datetime.utcnow()
 
         # Gérer la transaction associée
-        if old_status != 'cashed' and check.status == 'cashed':
+        if old_status != 'used' and check.status == 'used':
             # Créer une nouvelle transaction
             transaction = Transaction(
                 user_id=current_user.id,
@@ -285,7 +316,7 @@ def edit_check(check_id):
                 status='completed'
             )
             db.session.add(transaction)
-        elif old_status == 'cashed' and check.status != 'cashed':
+        elif old_status == 'used' and check.status != 'used':
             # Annuler la transaction existante
             transaction = Transaction.query.filter_by(
                 source_id=check.id,
@@ -295,6 +326,10 @@ def edit_check(check_id):
                 transaction.status = 'cancelled'
 
         db.session.commit()
+
+        # Auto-archivage si tous les chèques sont consommés
+        checkbook = Checkbook.query.get(check.checkbook_id)
+        checkbook.auto_finish_if_complete()
 
         flash(f'Chèque #{check.check_number} modifié avec succès !', 'success')
         return redirect(url_for('checkbooks.detail', checkbook_id=check.checkbook_id))

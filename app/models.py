@@ -1055,6 +1055,7 @@ class Checkbook(db.Model):
 
     # Statut
     is_active = db.Column(db.Boolean, default=True, nullable=False)
+    status = db.Column(db.String(20), default='active', nullable=False)  # 'active', 'finished'
 
     # Dates
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
@@ -1069,13 +1070,35 @@ class Checkbook(db.Model):
         """Retourne le nombre total de chèques dans le chéquier"""
         return self.end_number - self.start_number + 1
 
+    def available_checks_count(self):
+        """Nombre de chèques disponibles"""
+        return self.checks.filter_by(status='available').count()
+
     def used_checks_count(self):
-        """Retourne le nombre de chèques utilisés"""
-        return self.checks.count()
+        """Nombre de chèques utilisés"""
+        return self.checks.filter_by(status='used').count()
+
+    def cancelled_checks_count(self):
+        """Nombre de chèques annulés"""
+        return self.checks.filter_by(status='cancelled').count()
 
     def remaining_checks_count(self):
-        """Retourne le nombre de chèques restants"""
-        return self.total_checks() - self.used_checks_count()
+        """Nombre de chèques restants (disponibles)"""
+        return self.available_checks_count()
+
+    def is_finished(self):
+        """Vérifie si tous les chèques sont consommés (utilisés ou annulés)"""
+        return self.available_checks_count() == 0 and self.checks.count() > 0
+
+    def auto_finish_if_complete(self):
+        """Passe automatiquement en 'finished' si tous les chèques sont consommés"""
+        if self.is_finished() and self.status == 'active':
+            self.status = 'finished'
+            db.session.commit()
+
+    def get_next_available_check(self):
+        """Récupère le prochain chèque disponible (par ordre de numéro)"""
+        return self.checks.filter_by(status='available').order_by(Check.check_number).first()
 
     def __repr__(self):
         return f'<Checkbook {self.name} - {self.start_number} to {self.end_number}>'
@@ -1112,3 +1135,63 @@ class Check(db.Model):
 
     def __repr__(self):
         return f'<Check #{self.check_number} - {self.amount} {self.currency} - {self.payee}>'
+
+
+class CardPurchase(db.Model):
+    """Modèle pour les achats par carte bancaire"""
+    __tablename__ = 'card_purchases'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
+
+    # Informations de l'achat
+    purchase_date = db.Column(db.DateTime, nullable=False, index=True)
+    merchant_name = db.Column(db.String(255), nullable=False)
+    amount = db.Column(db.Float, nullable=False)
+    currency = db.Column(db.String(10), default='EUR', nullable=False)
+
+    # Catégorie
+    category_id = db.Column(db.Integer, db.ForeignKey('categories.id'), nullable=True)
+    category_name = db.Column(db.String(100))  # Snapshot pour historique
+
+    # Informations complémentaires
+    description = db.Column(db.Text)
+    notes = db.Column(db.Text)
+
+    # Image du reçu (stockage BLOB comme les autres documents)
+    receipt_image_data = db.Column(db.LargeBinary)
+    receipt_image_name = db.Column(db.String(255))
+    receipt_image_mime_type = db.Column(db.String(100))
+    receipt_image_size = db.Column(db.Integer)
+
+    # Métadonnées OCR
+    ocr_confidence = db.Column(db.Float)  # Score de confiance (0-100)
+    was_manually_edited = db.Column(db.Boolean, default=False)
+
+    # Statut
+    is_active = db.Column(db.Boolean, default=True, nullable=False)
+
+    # Timestamps
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+
+    # Relations
+    user = db.relationship('User', backref=db.backref('card_purchases', lazy='dynamic'))
+    category = db.relationship('Category', backref=db.backref('card_purchases', lazy='dynamic'))
+
+    def __repr__(self):
+        return f'<CardPurchase {self.merchant_name} - {self.amount}€>'
+
+    def to_dict(self):
+        """Convertit l'achat en dictionnaire (utile pour JSON/API)"""
+        return {
+            'id': self.id,
+            'purchase_date': self.purchase_date.isoformat(),
+            'merchant_name': self.merchant_name,
+            'amount': self.amount,
+            'currency': self.currency,
+            'category_name': self.category_name,
+            'description': self.description,
+            'ocr_confidence': self.ocr_confidence,
+            'was_manually_edited': self.was_manually_edited
+        }

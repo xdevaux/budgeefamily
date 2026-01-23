@@ -59,12 +59,12 @@
                         <div class="mb-4">
                             <label for="status" class="form-label">Statut *</label>
                             <select class="form-select" id="status" name="status" required>
-                                <option value="pending" {% if check.status == 'pending' %}selected{% endif %}>En attente d'encaissement</option>
-                                <option value="cashed" {% if check.status == 'cashed' %}selected{% endif %}>Encaissé (ajouté à la balance)</option>
+                                <option value="used" {% if check.status == 'used' %}selected{% endif %}>Utilisé (ajouté à la balance)</option>
                                 <option value="cancelled" {% if check.status == 'cancelled' %}selected{% endif %}>Annulé</option>
                             </select>
                             <small class="text-muted">
-                                Si vous passez le chèque en "Encaissé", une transaction sera créée/mise à jour dans la balance
+                                Si vous passez le chèque en "Utilisé", une transaction sera créée dans la balance.
+                                Si vous l'annulez, la transaction associée sera annulée.
                             </small>
                         </div>
 

@@ -43,9 +43,10 @@
                                        placeholder="Ex: 4001001" min="1">
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="end_number" class="form-label">Numéro du dernier chèque *</label>
-                                <input type="number" class="form-control" id="end_number" name="end_number" required
+                                <label for="end_number" class="form-label">Numéro du dernier chèque</label>
+                                <input type="number" class="form-control" id="end_number" name="end_number"
                                        placeholder="Ex: 4001050" min="1">
+                                <small class="text-muted">Le dernier numéro sera calculé automatiquement (+25), mais vous pouvez le modifier.</small>
                             </div>
                         </div>
 
@@ -63,4 +64,14 @@
         </div>
     </div>
 </div>
+
+<script>
+// Auto-calcul du dernier numéro de chèque
+document.getElementById('start_number').addEventListener('input', function() {
+    const startNum = parseInt(this.value);
+    if (!isNaN(startNum) && startNum > 0) {
+        document.getElementById('end_number').value = startNum + 25;
+    }
+});
+</script>
 {% endblock %}

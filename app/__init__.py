@@ -3,12 +3,19 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_mail import Mail
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 from config import Config
 
 db = SQLAlchemy()
 migrate = Migrate()
 login_manager = LoginManager()
 mail = Mail()
+limiter = Limiter(
+    key_func=get_remote_address,
+    default_limits=["1000 per day", "200 per hour"],
+    storage_uri="memory://"
+)
 
 
 def create_app(config_class=Config):
@@ -22,8 +29,9 @@ def create_app(config_class=Config):
     login_manager.login_message = 'Veuillez vous connecter pour accéder à cette page.'
     login_manager.login_message_category = 'info'
     mail.init_app(app)
+    limiter.init_app(app)
 
-    from app.routes import auth, main, subscriptions, api, categories, services, admin, exports, credits, credit_types, revenues, employers, banks, installments, checkbooks
+    from app.routes import auth, main, subscriptions, api, categories, services, admin, exports, credits, credit_types, revenues, employers, banks, installments, checkbooks, card_purchases
     app.register_blueprint(auth.bp)
     app.register_blueprint(main.bp)
     app.register_blueprint(subscriptions.bp)
@@ -39,6 +47,7 @@ def create_app(config_class=Config):
     app.register_blueprint(banks.bp)
     app.register_blueprint(installments.bp)
     app.register_blueprint(checkbooks.bp)
+    app.register_blueprint(card_purchases.bp)
 
     # Ajouter datetime dans le contexte Jinja2
     from datetime import datetime

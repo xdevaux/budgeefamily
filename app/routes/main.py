@@ -100,7 +100,7 @@ def dashboard():
 
     # Répartition des revenus par employeur
     revenue_data = {}
-    colors_palette = ['#6f42c1', '#8b5cf6', '#a78bfa', '#c4b5fd', '#ddd6fe', '#ede9fe']
+    colors_palette = ['#10b981', '#34d399', '#6ee7b7', '#a7f3d0', '#d1fae5', '#ecfdf5']
 
     for revenue in upcoming_revenues:
         if revenue.employer:
@@ -141,6 +141,14 @@ def dashboard():
     # Notifications non lues
     unread_notifications = current_user.notifications.filter_by(is_read=False).count()
 
+    # Chèques non débités (non pointés dans la balance)
+    unpointed_checks = Transaction.query.filter(
+        Transaction.user_id == current_user.id,
+        Transaction.transaction_type == 'check',
+        Transaction.status == 'completed',
+        Transaction.is_pointed == False
+    ).order_by(Transaction.transaction_date.desc()).all()
+
     return render_template('dashboard.html',
                          active_subscriptions=active_subscriptions,
                          total_subscriptions_cost=round(total_subscriptions_cost, 2),
@@ -149,6 +157,7 @@ def dashboard():
                          upcoming_credits=upcoming_credits,
                          upcoming_revenues=upcoming_revenues,
                          upcoming_installments=upcoming_installments,
+                         unpointed_checks=unpointed_checks,
                          category_stats=category_stats,
                          revenue_stats=revenue_stats,
                          total_credits=round(total_credits, 2),
@@ -257,6 +266,12 @@ def toggle_point(transaction_id):
     transaction.is_pointed = not transaction.is_pointed
     db.session.commit()
 
+    # Vérifier si on doit rediriger vers le dashboard
+    redirect_to = request.form.get('redirect_to', 'balance')
+
+    if redirect_to == 'dashboard':
+        return redirect(url_for('main.dashboard'))
+
     # Retourner à la page balance avec les mêmes filtres
     month = request.args.get('month', type=int)
     year = request.args.get('year', type=int)
@@ -280,6 +295,30 @@ def mark_as_completed(transaction_id):
     db.session.commit()
 
     flash(f'Transaction "{transaction.name}" passée en statut complété.', 'success')
+
+    # Retourner à la page balance avec les mêmes filtres
+    month = request.args.get('month', type=int)
+    year = request.args.get('year', type=int)
+    return redirect(url_for('main.balance', month=month, year=year))
+
+
+@bp.route('/balance/mark-as-pending/<int:transaction_id>', methods=['POST'])
+@login_required
+def mark_as_pending(transaction_id):
+    """Marquer une transaction comme en attente (repasser de completed à pending)"""
+    transaction = Transaction.query.get_or_404(transaction_id)
+
+    # Vérifier que l'utilisateur est propriétaire de la transaction
+    if transaction.user_id != current_user.id:
+        flash('Vous n\'avez pas accès à cette transaction.', 'danger')
+        return redirect(url_for('main.balance'))
+
+    # Passer le statut en pending
+    old_status = transaction.status
+    transaction.status = 'pending'
+    db.session.commit()
+
+    flash(f'Transaction "{transaction.name}" repassée en statut en attente.', 'info')
 
     # Retourner à la page balance avec les mêmes filtres
     month = request.args.get('month', type=int)
