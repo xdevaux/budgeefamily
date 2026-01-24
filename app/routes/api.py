@@ -344,7 +344,7 @@ def stats():
     """API endpoint pour récupérer les statistiques"""
     from datetime import datetime, timedelta
     from sqlalchemy import func
-    from app.models import Credit, Revenue, InstallmentPayment
+    from app.models import Credit, Revenue, InstallmentPayment, Check, CardPurchase
 
     # Traduction des mois en français
     MONTHS_FR = {
@@ -356,6 +356,7 @@ def stats():
     monthly_subscriptions = []
     monthly_credits_data = []
     monthly_revenues_data = []
+    monthly_expenses_data = []
 
     for i in range(12):
         month_date = datetime.utcnow() - timedelta(days=30 * i)
@@ -432,6 +433,27 @@ def stats():
             for revenue in revenues
         )
 
+        # Chèques émis pour ce mois
+        month_end = (month_start.replace(day=1) + timedelta(days=32)).replace(day=1)
+        checks = Check.query.filter(
+            Check.user_id == current_user.id,
+            Check.check_date >= month_start.date(),
+            Check.check_date < month_end.date(),
+            Check.status.in_(['pending', 'cashed'])
+        ).all()
+
+        checks_total = sum(check.amount for check in checks)
+
+        # Achats CB pour ce mois
+        card_purchases = CardPurchase.query.filter(
+            CardPurchase.user_id == current_user.id,
+            CardPurchase.purchase_date >= month_start,
+            CardPurchase.purchase_date < month_end,
+            CardPurchase.is_active == True
+        ).all()
+
+        card_purchases_total = sum(purchase.amount for purchase in card_purchases)
+
         # Insérer au début pour avoir l'ordre chronologique
         monthly_subscriptions.insert(0, {
             'month': month_label,
@@ -445,11 +467,267 @@ def stats():
             'month': month_label,
             'total': round(revenues_total, 2)
         })
+        monthly_expenses_data.insert(0, {
+            'month': month_label,
+            'total': round(checks_total + card_purchases_total, 2)
+        })
 
     return jsonify({
         'monthly_spending': monthly_subscriptions,
         'monthly_credits': monthly_credits_data,
         'monthly_revenues': monthly_revenues_data,
+        'monthly_expenses': monthly_expenses_data,
         'total_subscriptions': current_user.get_active_subscriptions_count(),
         'plan': current_user.plan.name if current_user.plan else 'Free'
+    })
+
+
+@bp.route('/subscriptions/distribution')
+@login_required
+def subscriptions_distribution():
+    """API endpoint pour récupérer la répartition des abonnements actifs"""
+
+    # Récupérer tous les abonnements actifs de l'utilisateur
+    active_subscriptions = current_user.subscriptions.filter_by(is_active=True).all()
+
+    # Répartition par service
+    services_data = {}
+    for sub in active_subscriptions:
+        # Calculer le montant mensuel
+        if sub.billing_cycle == 'monthly':
+            monthly_amount = sub.amount
+        elif sub.billing_cycle == 'quarterly':
+            monthly_amount = sub.amount / 3
+        elif sub.billing_cycle == 'yearly':
+            monthly_amount = sub.amount / 12
+        elif sub.billing_cycle == 'weekly':
+            monthly_amount = sub.amount * 4
+        else:
+            monthly_amount = sub.amount
+
+        # Grouper par service
+        if sub.service:
+            service_name = sub.service.name
+        else:
+            service_name = 'Autre'
+
+        if service_name in services_data:
+            services_data[service_name] += monthly_amount
+        else:
+            services_data[service_name] = monthly_amount
+
+    # Répartition par catégorie avec couleurs
+    categories_data = {}
+    categories_colors = {}
+    for sub in active_subscriptions:
+        # Calculer le montant mensuel
+        if sub.billing_cycle == 'monthly':
+            monthly_amount = sub.amount
+        elif sub.billing_cycle == 'quarterly':
+            monthly_amount = sub.amount / 3
+        elif sub.billing_cycle == 'yearly':
+            monthly_amount = sub.amount / 12
+        elif sub.billing_cycle == 'weekly':
+            monthly_amount = sub.amount * 4
+        else:
+            monthly_amount = sub.amount
+
+        # Grouper par catégorie
+        if sub.category:
+            category_name = sub.category.name
+            category_color = sub.category.color if sub.category.color else '#6c757d'
+        else:
+            category_name = 'Sans catégorie'
+            category_color = '#6c757d'
+
+        if category_name in categories_data:
+            categories_data[category_name] += monthly_amount
+        else:
+            categories_data[category_name] = monthly_amount
+            categories_colors[category_name] = category_color
+
+    # Formater les données pour Chart.js
+    services_labels = list(services_data.keys())
+    services_values = [round(v, 2) for v in services_data.values()]
+
+    categories_labels = list(categories_data.keys())
+    categories_values = [round(v, 2) for v in categories_data.values()]
+    categories_colors_list = [categories_colors[label] for label in categories_labels]
+
+    return jsonify({
+        'services': {
+            'labels': services_labels,
+            'values': services_values
+        },
+        'categories': {
+            'labels': categories_labels,
+            'values': categories_values,
+            'colors': categories_colors_list
+        }
+    })
+
+
+@bp.route('/credits/distribution')
+@login_required
+def credits_distribution():
+    """API endpoint pour récupérer la répartition des crédits actifs par type"""
+
+    # Récupérer tous les crédits actifs de l'utilisateur
+    active_credits = current_user.credits.filter_by(is_active=True).all()
+
+    # Répartition par type de crédit avec couleurs
+    types_data = {}
+    types_colors = {}
+    for credit in active_credits:
+        # Calculer le montant mensuel
+        if credit.billing_cycle == 'monthly':
+            monthly_amount = credit.amount
+        elif credit.billing_cycle == 'quarterly':
+            monthly_amount = credit.amount / 3
+        elif credit.billing_cycle == 'yearly':
+            monthly_amount = credit.amount / 12
+        else:
+            monthly_amount = credit.amount
+
+        # Grouper par type de crédit
+        if credit.credit_type_obj:
+            type_name = credit.credit_type_obj.name
+            type_color = credit.credit_type_obj.color if credit.credit_type_obj.color else '#6c757d'
+        else:
+            type_name = 'Sans type'
+            type_color = '#6c757d'
+
+        if type_name in types_data:
+            types_data[type_name] += monthly_amount
+        else:
+            types_data[type_name] = monthly_amount
+            types_colors[type_name] = type_color
+
+    # Formater les données pour Chart.js
+    types_labels = list(types_data.keys())
+    types_values = [round(v, 2) for v in types_data.values()]
+    types_colors_list = [types_colors[label] for label in types_labels]
+
+    return jsonify({
+        'types': {
+            'labels': types_labels,
+            'values': types_values,
+            'colors': types_colors_list
+        }
+    })
+
+
+@bp.route('/card-purchases/distribution')
+@login_required
+def card_purchases_distribution():
+    """API endpoint pour récupérer la répartition des achats CB actifs"""
+    from app.models import CardPurchase
+
+    # Récupérer tous les achats CB actifs de l'utilisateur
+    active_purchases = current_user.card_purchases.filter_by(is_active=True).all()
+
+    # Répartition par commerçant
+    merchants_data = {}
+    for purchase in active_purchases:
+        merchant_name = purchase.merchant_name if purchase.merchant_name else 'Autre'
+
+        if merchant_name in merchants_data:
+            merchants_data[merchant_name] += purchase.amount
+        else:
+            merchants_data[merchant_name] = purchase.amount
+
+    # Répartition par catégorie avec couleurs
+    categories_data = {}
+    categories_colors = {}
+    for purchase in active_purchases:
+        if purchase.category:
+            category_name = purchase.category.name
+            category_color = purchase.category.color if purchase.category.color else '#6c757d'
+        else:
+            category_name = 'Sans catégorie'
+            category_color = '#6c757d'
+
+        if category_name in categories_data:
+            categories_data[category_name] += purchase.amount
+        else:
+            categories_data[category_name] = purchase.amount
+            categories_colors[category_name] = category_color
+
+    # Formater les données pour Chart.js
+    merchants_labels = list(merchants_data.keys())
+    merchants_values = [round(v, 2) for v in merchants_data.values()]
+
+    categories_labels = list(categories_data.keys())
+    categories_values = [round(v, 2) for v in categories_data.values()]
+    categories_colors_list = [categories_colors[label] for label in categories_labels]
+
+    return jsonify({
+        'merchants': {
+            'labels': merchants_labels,
+            'values': merchants_values
+        },
+        'categories': {
+            'labels': categories_labels,
+            'values': categories_values,
+            'colors': categories_colors_list
+        }
+    })
+
+
+@bp.route('/revenues/distribution')
+@login_required
+def revenues_distribution():
+    """API endpoint pour récupérer la répartition des revenus actifs par type"""
+    from app.models import Revenue
+
+    # Définition des types de revenus avec couleurs
+    REVENUE_TYPES = {
+        'salary': {'name': 'Salaire', 'color': '#10b981'},
+        'freelance': {'name': 'Freelance', 'color': '#6366f1'},
+        'rental': {'name': 'Revenus locatifs', 'color': '#f59e0b'},
+        'investment': {'name': 'Investissements', 'color': '#8b5cf6'},
+        'pension': {'name': 'Pension/Retraite', 'color': '#3b82f6'},
+        'other': {'name': 'Autre', 'color': '#6c757d'},
+    }
+
+    # Récupérer tous les revenus actifs de l'utilisateur
+    active_revenues = current_user.revenues.filter_by(is_active=True).all()
+
+    # Répartition par type de revenu avec couleurs
+    types_data = {}
+    types_colors = {}
+    for revenue in active_revenues:
+        # Calculer le montant mensuel
+        if revenue.billing_cycle == 'monthly':
+            monthly_amount = revenue.amount
+        elif revenue.billing_cycle == 'quarterly':
+            monthly_amount = revenue.amount / 3
+        elif revenue.billing_cycle == 'yearly':
+            monthly_amount = revenue.amount / 12
+        else:
+            monthly_amount = revenue.amount
+
+        # Grouper par type de revenu
+        type_code = revenue.revenue_type if revenue.revenue_type else 'other'
+        type_info = REVENUE_TYPES.get(type_code, REVENUE_TYPES['other'])
+        type_name = type_info['name']
+        type_color = type_info['color']
+
+        if type_name in types_data:
+            types_data[type_name] += monthly_amount
+        else:
+            types_data[type_name] = monthly_amount
+            types_colors[type_name] = type_color
+
+    # Formater les données pour Chart.js
+    types_labels = list(types_data.keys())
+    types_values = [round(v, 2) for v in types_data.values()]
+    types_colors_list = [types_colors[label] for label in types_labels]
+
+    return jsonify({
+        'types': {
+            'labels': types_labels,
+            'values': types_values,
+            'colors': types_colors_list
+        }
     })

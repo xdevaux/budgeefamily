@@ -35,8 +35,9 @@ def clients_list():
     page = request.args.get('page', 1, type=int)
     per_page = 20
     status_filter = request.args.get('status', 'active')  # 'active', 'inactive', 'all'
+    plan_filter = request.args.get('plan', type=int)  # ID du plan ou None pour tous
 
-    # Construire la requête avec le filtre
+    # Construire la requête avec les filtres
     query = User.query
 
     if status_filter == 'active':
@@ -45,16 +46,25 @@ def clients_list():
         query = query.filter_by(is_active=False)
     # Si 'all', pas de filtre
 
+    # Filtre par plan
+    if plan_filter:
+        query = query.filter_by(plan_id=plan_filter)
+
     # Pagination
     pagination = query.order_by(User.created_at.desc()).paginate(
         page=page, per_page=per_page, error_out=False
     )
     users = pagination.items
 
+    # Récupérer tous les plans pour le filtre
+    plans = Plan.query.order_by(Plan.name).all()
+
     return render_template('admin/clients_list.html',
                          users=users,
                          pagination=pagination,
-                         status_filter=status_filter)
+                         status_filter=status_filter,
+                         plan_filter=plan_filter,
+                         plans=plans)
 
 
 @bp.route('/clients/add', methods=['GET', 'POST'])
@@ -120,7 +130,13 @@ def clients_edit(user_id):
         user.first_name = request.form.get('first_name')
         user.last_name = request.form.get('last_name')
         user.is_admin = request.form.get('is_admin') == 'on'
-        user.is_active = request.form.get('is_active') == 'on'
+
+        # Empêcher un admin de se désactiver lui-même
+        new_is_active = request.form.get('is_active') == 'on'
+        if user.id == current_user.id and not new_is_active:
+            flash('Vous ne pouvez pas désactiver votre propre compte.', 'warning')
+        else:
+            user.is_active = new_is_active
 
         # Mettre à jour le pays et le fuseau horaire
         country = request.form.get('country')

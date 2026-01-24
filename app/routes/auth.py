@@ -31,6 +31,10 @@ def login():
 
         login_user(user, remember=remember)
 
+        # Mettre à jour la date de dernière connexion
+        user.last_login = datetime.utcnow()
+        db.session.commit()
+
         # Vérifier s'il y a un plan premium en attente (après inscription)
         if 'pending_premium_plan' in session:
             pending_plan = session.pop('pending_premium_plan')

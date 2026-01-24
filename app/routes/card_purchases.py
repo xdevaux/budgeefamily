@@ -17,8 +17,19 @@ def list_purchases():
     """Liste tous les achats CB de l'utilisateur"""
     page = request.args.get('page', 1, type=int)
     filter_category = request.args.get('category', None, type=int)
-    filter_month = request.args.get('month', None, type=int)
-    filter_year = request.args.get('year', None, type=int)
+
+    # Définir les filtres par défaut au mois et année en cours si pas de paramètre dans l'URL
+    current_month = datetime.now().month
+    current_year = datetime.now().year
+
+    # Si aucun paramètre de mois/année n'est présent, utiliser le mois/année en cours
+    # Sinon, utiliser ce qui est fourni (peut être None si l'utilisateur choisit "Tous")
+    if 'month' not in request.args and 'year' not in request.args:
+        filter_month = current_month
+        filter_year = current_year
+    else:
+        filter_month = request.args.get('month', type=int) if request.args.get('month') else None
+        filter_year = request.args.get('year', type=int) if request.args.get('year') else None
 
     query = current_user.card_purchases.filter_by(is_active=True)
 
@@ -47,23 +58,12 @@ def list_purchases():
         )
     ).filter_by(is_active=True).order_by(Category.name).all()
 
-    # Calculer le total du mois en cours
-    current_month = datetime.now().month
-    current_year = datetime.now().year
-    monthly_total = db.session.query(db.func.sum(CardPurchase.amount)).filter(
-        CardPurchase.user_id == current_user.id,
-        CardPurchase.is_active == True,
-        db.extract('month', CardPurchase.purchase_date) == current_month,
-        db.extract('year', CardPurchase.purchase_date) == current_year
-    ).scalar() or 0.0
-
     return render_template('card_purchases/list.html',
                          purchases=purchases,
                          categories=categories,
                          filter_category=filter_category,
                          filter_month=filter_month,
                          filter_year=filter_year,
-                         monthly_total=monthly_total,
                          now=datetime.now())
 
 
@@ -113,6 +113,20 @@ def add_manual():
                 if category:
                     purchase.category_id = category_id
                     purchase.category_name = category.name
+
+            # Gérer le reçu uploadé (optionnel)
+            receipt_file = request.files.get('receipt_file')
+            if receipt_file and receipt_file.filename:
+                # Valider le fichier
+                is_valid, error_message, file_data, safe_filename = validate_upload(receipt_file)
+                if not is_valid:
+                    flash(f'Erreur avec le reçu : {error_message}', 'warning')
+                else:
+                    # Stocker le fichier
+                    purchase.receipt_image_data = file_data
+                    purchase.receipt_image_name = safe_filename
+                    purchase.receipt_image_mime_type = receipt_file.content_type
+                    purchase.receipt_image_size = len(file_data)
 
             db.session.add(purchase)
             db.session.flush()
@@ -369,6 +383,20 @@ def edit(purchase_id):
             category = Category.query.get(category_id)
             purchase.category_id = category_id
             purchase.category_name = category.name
+
+        # Gérer le reçu uploadé (optionnel)
+        receipt_file = request.files.get('receipt_file')
+        if receipt_file and receipt_file.filename:
+            # Valider le fichier
+            is_valid, error_message, file_data, safe_filename = validate_upload(receipt_file)
+            if not is_valid:
+                flash(f'Erreur avec le reçu : {error_message}', 'warning')
+            else:
+                # Stocker le fichier (remplace l'ancien s'il existe)
+                purchase.receipt_image_data = file_data
+                purchase.receipt_image_name = safe_filename
+                purchase.receipt_image_mime_type = receipt_file.content_type
+                purchase.receipt_image_size = len(file_data)
 
         db.session.commit()
 

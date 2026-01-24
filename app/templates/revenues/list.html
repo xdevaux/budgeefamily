@@ -202,6 +202,25 @@
             </ul>
         </nav>
         {% endif %}
+
+        <!-- Graphique de répartition (Premium uniquement) -->
+        {% if current_user.is_premium() %}
+        <div class="card mt-4" id="revenuesChartSection">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-chart-pie"></i> Répartition des revenus actifs par type</h5>
+                <button class="btn btn-sm btn-outline-danger" onclick="exportRevenuesChartToPDF()" title="Exporter en PDF">
+                    <i class="fas fa-file-pdf"></i>
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="row justify-content-center">
+                    <div class="col-md-6">
+                        <canvas id="revenuesTypesChart" style="max-height: 350px;"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
     {% else %}
         <div class="card">
             <div class="card-body text-center py-5">
@@ -215,4 +234,123 @@
         </div>
     {% endif %}
 </div>
+{% endblock %}
+
+{% block extra_js %}
+{% if current_user.is_premium() and revenues.items %}
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<!-- jsPDF pour l'export PDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<script>
+// Fonction pour formater les montants
+function formatAmount(value) {
+    return new Intl.NumberFormat('fr-FR', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    }).format(value);
+}
+
+// Charger les données de répartition des revenus
+fetch('/api/revenues/distribution')
+    .then(response => response.json())
+    .then(data => {
+        // Graphique par Type de revenu
+        const typesCtx = document.getElementById('revenuesTypesChart').getContext('2d');
+        new Chart(typesCtx, {
+            type: 'doughnut',
+            data: {
+                labels: data.types.labels,
+                datasets: [{
+                    data: data.types.values,
+                    backgroundColor: data.types.colors,
+                    borderWidth: 2,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 15,
+                            font: {
+                                size: 12
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label || '';
+                                const value = context.parsed || 0;
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = ((value / total) * 100).toFixed(1);
+                                return label + ': ' + formatAmount(value) + ' € (' + percentage + '%)';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    })
+    .catch(error => {
+        console.error('Erreur lors du chargement du graphique:', error);
+    });
+
+// Fonction pour exporter le graphique en PDF
+function exportRevenuesChartToPDF() {
+    const { jsPDF } = window.jspdf;
+    const chartSection = document.getElementById('revenuesChartSection');
+
+    // Afficher un indicateur de chargement
+    const btn = event.target.closest('button');
+    const originalHTML = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+    btn.disabled = true;
+
+    html2canvas(chartSection, {
+        scale: 2,
+        backgroundColor: '#ffffff',
+        logging: false
+    }).then(canvas => {
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jsPDF('p', 'mm', 'a4');
+
+        // Calculer les dimensions pour ajuster au PDF
+        const imgWidth = 210; // A4 width in mm
+        const pageHeight = 297; // A4 height in mm
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+        // Ajouter le titre
+        pdf.setFontSize(16);
+        pdf.text('Répartition des revenus actifs par type', 105, 15, { align: 'center' });
+
+        // Ajouter la date
+        pdf.setFontSize(10);
+        const today = new Date().toLocaleDateString('fr-FR');
+        pdf.text('Généré le ' + today, 105, 22, { align: 'center' });
+
+        // Ajouter l'image
+        pdf.addImage(imgData, 'PNG', 0, 30, imgWidth, imgHeight);
+
+        // Télécharger le PDF
+        pdf.save('repartition-revenus-' + new Date().toISOString().split('T')[0] + '.pdf');
+
+        // Restaurer le bouton
+        btn.innerHTML = originalHTML;
+        btn.disabled = false;
+    }).catch(error => {
+        console.error('Erreur lors de la génération du PDF:', error);
+        alert('Erreur lors de la génération du PDF');
+        btn.innerHTML = originalHTML;
+        btn.disabled = false;
+    });
+}
+</script>
+{% endif %}
 {% endblock %}

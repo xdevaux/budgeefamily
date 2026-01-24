@@ -30,7 +30,7 @@
 
             <div class="card">
                 <div class="card-body">
-                    <form method="post">
+                    <form method="post" enctype="multipart/form-data">
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="merchant_name" class="form-label">
@@ -108,6 +108,20 @@
                                       name="description"
                                       rows="3"
                                       placeholder="Notes complémentaires (optionnel)"></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="receipt_file" class="form-label">
+                                <i class="fas fa-receipt"></i> Reçu / Ticket
+                            </label>
+                            <input type="file"
+                                   class="form-control"
+                                   id="receipt_file"
+                                   name="receipt_file"
+                                   accept="image/jpeg,image/png,image/jpg,application/pdf">
+                            <small class="text-muted">
+                                Optionnel - Formats acceptés : JPG, PNG, PDF (max 5 Mo)
+                            </small>
                         </div>
 
                         <div class="d-grid gap-2">

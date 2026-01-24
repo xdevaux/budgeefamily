@@ -501,6 +501,19 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto align-items-center">
                     {% if current_user.is_authenticated %}
+                        {% if current_user.is_admin %}
+                        <li class="nav-item">
+                            <span class="badge bg-danger me-2">
+                                <i class="fas fa-crown"></i> Admin
+                            </span>
+                        </li>
+                        {% else %}
+                        <li class="nav-item">
+                            <span class="badge bg-secondary me-2">
+                                <i class="fas fa-crown"></i> {% if current_user.is_premium() %}Premium{% else %}Gratuit{% endif %}
+                            </span>
+                        </li>
+                        {% endif %}
                         <li class="nav-item">
                             <a class="nav-menu-btn dashboard" href="{{ url_for('main.dashboard') }}">
                                 <i class="fas fa-chart-line"></i> Tableau de bord
@@ -555,7 +568,14 @@
                                 <i class="fas fa-user-circle"></i>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end">
-                                <li><h6 class="dropdown-header text-center" style="color: #9333ea; font-weight: bold;">{{ current_user.first_name or current_user.email }}</h6></li>
+                                <li><h6 class="dropdown-header text-center" style="color: #9333ea; font-weight: bold;">
+                                    {{ current_user.first_name or current_user.email }}
+                                    {% if current_user.is_admin %}
+                                        <span class="badge bg-danger ms-2"><i class="fas fa-crown"></i> Admin</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary ms-2"><i class="fas fa-crown"></i> {% if current_user.is_premium() %}Premium{% else %}Gratuit{% endif %}</span>
+                                    {% endif %}
+                                </h6></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="{{ url_for('auth.profile') }}"><i class="fas fa-user"></i> Mon profil</a></li>
                                 <li><a class="dropdown-item" href="{{ url_for('main.pricing') }}"><i class="fas fa-crown"></i> Plans & Tarifs</a></li>

@@ -97,18 +97,35 @@
                             </small>
                         </div>
 
-                        <div class="mb-3 form-check">
-                            <input type="checkbox" class="form-check-input" id="is_admin" name="is_admin" {% if user.is_admin %}checked{% endif %}>
-                            <label class="form-check-label" for="is_admin">
-                                <i class="fas fa-crown text-warning"></i> Administrateur
-                            </label>
-                        </div>
-
-                        <div class="mb-3 form-check">
-                            <input type="checkbox" class="form-check-input" id="is_active" name="is_active" {% if user.is_active %}checked{% endif %}>
-                            <label class="form-check-label" for="is_active">
-                                Compte actif
-                            </label>
+                        <div class="mb-3">
+                            <label class="form-label">Options du compte</label>
+                            <div class="form-check mb-2">
+                                <input type="checkbox" class="form-check-input" id="is_admin" name="is_admin" {% if user.is_admin %}checked{% endif %}>
+                                <label class="form-check-label" for="is_admin">
+                                    <i class="fas fa-crown text-warning"></i> <strong>Administrateur</strong>
+                                    <small class="text-muted d-block">Accès complet à l'administration</small>
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                {% if user.id == current_user.id %}
+                                    {# Si c'est son propre compte, forcer la valeur à "on" avec un champ caché #}
+                                    <input type="hidden" name="is_active" value="on">
+                                    <input type="checkbox" class="form-check-input" id="is_active" checked disabled>
+                                {% else %}
+                                    <input type="checkbox" class="form-check-input" id="is_active" name="is_active"
+                                           {% if user.is_active %}checked{% endif %}>
+                                {% endif %}
+                                <label class="form-check-label" for="is_active">
+                                    <i class="fas fa-toggle-on text-success"></i> <strong>Compte actif</strong>
+                                    <small class="text-muted d-block">
+                                        {% if user.id == current_user.id %}
+                                            Vous ne pouvez pas désactiver votre propre compte
+                                        {% else %}
+                                            L'utilisateur peut se connecter et utiliser l'application
+                                        {% endif %}
+                                    </small>
+                                </label>
+                            </div>
                         </div>
 
                         <div class="alert alert-info">
