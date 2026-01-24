@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block title %}Ajouter un achat CB{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="fas fa-credit-card"></i> Ajouter un achat CB</h2>
+                <a href="{{ url_for('card_purchases.list_purchases') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Retour
+                </a>
+            </div>
+
+            <!-- Navigation entre modes -->
+            <div class="alert alert-light border">
+                <div class="d-flex gap-2">
+                    <a href="{{ url_for('card_purchases.add_manual') }}" class="btn btn-primary">
+                        <i class="fas fa-keyboard"></i> Saisie manuelle
+                    </a>
+                    <a href="{{ url_for('card_purchases.upload_receipts') }}" class="btn btn-outline-primary">
+                        <i class="fas fa-robot"></i> Scanner avec OCR
+                    </a>
+                </div>
+                <small class="text-muted d-block mt-2">
+                    <i class="fas fa-info-circle"></i> Vous pouvez saisir manuellement ou utiliser l'OCR pour scanner vos tickets
+                </small>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <form method="post">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="merchant_name" class="form-label">
+                                    <i class="fas fa-store"></i> Commerçant <span class="text-danger">*</span>
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       id="merchant_name"
+                                       name="merchant_name"
+                                       required
+                                       placeholder="Ex: Carrefour, McDonald's...">
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="amount" class="form-label">
+                                    <i class="fas fa-euro-sign"></i> Montant <span class="text-danger">*</span>
+                                </label>
+                                <input type="number"
+                                       class="form-control"
+                                       id="amount"
+                                       name="amount"
+                                       step="0.01"
+                                       min="0"
+                                       required
+                                       placeholder="0.00">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="purchase_date" class="form-label">
+                                    <i class="fas fa-calendar"></i> Date <span class="text-danger">*</span>
+                                </label>
+                                <input type="date"
+                                       class="form-control"
+                                       id="purchase_date"
+                                       name="purchase_date"
+                                       value="{{ today }}"
+                                       required>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="purchase_time" class="form-label">
+                                    <i class="fas fa-clock"></i> Heure
+                                </label>
+                                <input type="time"
+                                       class="form-control"
+                                       id="purchase_time"
+                                       name="purchase_time"
+                                       value="12:00">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="category_id" class="form-label">
+                                <i class="fas fa-tag"></i> Catégorie
+                            </label>
+                            <select class="form-select" id="category_id" name="category_id">
+                                <option value="">-- Choisir une catégorie --</option>
+                                {% for category in categories %}
+                                <option value="{{ category.id }}">
+                                    {{ category.name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                            <small class="text-muted">Optionnel - Permet de classer vos dépenses</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="description" class="form-label">
+                                <i class="fas fa-comment"></i> Description / Notes
+                            </label>
+                            <textarea class="form-control"
+                                      id="description"
+                                      name="description"
+                                      rows="3"
+                                      placeholder="Notes complémentaires (optionnel)"></textarea>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-save"></i> Enregistrer l'achat
+                            </button>
+                            <a href="{{ url_for('card_purchases.list_purchases') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-times"></i> Annuler
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

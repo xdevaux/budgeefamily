@@ -302,6 +302,7 @@ class Category(db.Model):
     website_url = db.Column(db.String(500), nullable=True)
     color = db.Column(db.String(7), default='#6c757d')  # Couleur en hex
     icon = db.Column(db.String(50), nullable=True)  # Font Awesome icon class
+    category_type = db.Column(db.String(20), nullable=False, default='all')  # 'all', 'subscription', 'card_purchase'
     is_active = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -1167,6 +1168,7 @@ class CardPurchase(db.Model):
     # Métadonnées OCR
     ocr_confidence = db.Column(db.Float)  # Score de confiance (0-100)
     was_manually_edited = db.Column(db.Boolean, default=False)
+    entry_method = db.Column(db.String(20), nullable=False, default='manual')  # 'manual' ou 'ocr'
 
     # Statut
     is_active = db.Column(db.Boolean, default=True, nullable=False)

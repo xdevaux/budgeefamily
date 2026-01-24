@@ -207,7 +207,7 @@ def balance():
     # Convertir les transactions en dictionnaire pour le template
     movements = []
     for transaction in transactions:
-        movements.append({
+        movement = {
             'id': transaction.id,
             'type': transaction.transaction_type,
             'source_id': transaction.source_id,
@@ -221,7 +221,22 @@ def balance():
             'is_pointed': transaction.is_pointed,
             'category': transaction.category_name or 'Non catégorisé',
             'status': transaction.status
-        })
+        }
+
+        # Pour les achats CB, récupérer les infos du reçu si disponible
+        if transaction.source_type == 'card_purchase' and transaction.source_id:
+            from app.models import CardPurchase
+            card_purchase = CardPurchase.query.get(transaction.source_id)
+            if card_purchase and card_purchase.receipt_image_data:
+                movement['has_receipt'] = True
+                movement['receipt_mime_type'] = card_purchase.receipt_image_mime_type
+                movement['receipt_name'] = card_purchase.receipt_image_name
+            else:
+                movement['has_receipt'] = False
+        else:
+            movement['has_receipt'] = False
+
+        movements.append(movement)
 
     # Calculer le solde progressif (du plus ancien au plus récent)
     balance = 0

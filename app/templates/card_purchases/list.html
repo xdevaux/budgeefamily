@@ -2,6 +2,61 @@
 
 {% block title %}Mes achats CB{% endblock %}
 
+{% block extra_css %}
+<style>
+    /* Styles pour la modal de preview */
+    .document-preview-modal .modal-dialog {
+        max-width: 80%;
+        max-height: 90vh;
+        margin: 2rem auto;
+    }
+    .document-preview-modal .modal-content {
+        height: 85vh;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+    .document-preview-modal .modal-header {
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        color: white;
+        border: none;
+        padding: 0.75rem 1rem;
+    }
+    .document-preview-modal .modal-header .btn-close {
+        filter: brightness(0) invert(1);
+        opacity: 0.8;
+    }
+    .document-preview-modal .modal-header .btn-close:hover {
+        opacity: 1;
+    }
+    .document-preview-modal .modal-body {
+        padding: 0;
+        height: calc(100% - 56px);
+        overflow: hidden;
+        background: #f8f9fa;
+    }
+    .document-preview-modal .modal-body iframe,
+    .document-preview-modal .modal-body embed {
+        width: 100%;
+        height: 100%;
+        border: none;
+    }
+    .document-preview-modal .modal-body img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+        display: block;
+        margin: auto;
+    }
+    .preview-image-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        padding: 1rem;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="container-fluid mt-4">
     <div class="row mb-4">
@@ -9,9 +64,26 @@
             <h2><i class="fas fa-credit-card"></i> Mes achats CB</h2>
         </div>
         <div class="col-md-6 text-end">
-            <a href="{{ url_for('card_purchases.upload_receipts') }}" class="btn btn-primary">
-                <i class="fas fa-plus"></i> Ajouter des achats
-            </a>
+            <div class="btn-group" role="group">
+                <a href="{{ url_for('card_purchases.add_manual') }}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Ajouter un achat
+                </a>
+                <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+                    <span class="visually-hidden">Toggle Dropdown</span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li>
+                        <a class="dropdown-item" href="{{ url_for('card_purchases.add_manual') }}">
+                            <i class="fas fa-keyboard"></i> Saisie manuelle
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="{{ url_for('card_purchases.upload_receipts') }}">
+                            <i class="fas fa-robot"></i> Scanner avec OCR
+                        </a>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
 
@@ -111,11 +183,12 @@
                             </td>
                             <td class="text-center">
                                 {% if purchase.receipt_image_data %}
-                                    <a href="{{ url_for('card_purchases.view_receipt', purchase_id=purchase.id) }}"
-                                       target="_blank"
-                                       class="btn btn-sm btn-outline-primary">
-                                        <i class="fas fa-image"></i>
-                                    </a>
+                                    <button type="button"
+                                       class="btn btn-sm btn-outline-primary"
+                                       onclick="openPreviewModal('{{ url_for('card_purchases.view_receipt', purchase_id=purchase.id) }}', '{{ purchase.receipt_image_name | e }}', '{{ purchase.receipt_image_mime_type }}')"
+                                       title="Visualiser le reçu">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
                                 {% else %}
                                     <span class="text-muted">-</span>
                                 {% endif %}
@@ -182,4 +255,64 @@
     </nav>
     {% endif %}
 </div>
+
+<!-- Modal de prévisualisation du reçu -->
+<div class="modal fade document-preview-modal" id="documentPreviewModal" tabindex="-1" aria-labelledby="documentPreviewModalLabel" aria-hidden="true" data-bs-backdrop="true" data-bs-keyboard="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="documentPreviewModalLabel">
+                    <i class="fas fa-receipt me-2"></i>
+                    <span id="previewDocName">Reçu</span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body" id="documentPreviewContent">
+                <!-- Le contenu sera inséré dynamiquement -->
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function openPreviewModal(docUrl, docName, docType) {
+        const modalElement = document.getElementById('documentPreviewModal');
+        const previewContent = document.getElementById('documentPreviewContent');
+        const previewDocName = document.getElementById('previewDocName');
+
+        // Mettre à jour le titre
+        previewDocName.textContent = docName || 'Reçu';
+
+        // Déterminer le type de contenu
+        if (docType && docType.startsWith('application/pdf')) {
+            previewContent.innerHTML = '<embed src="' + docUrl + '" type="application/pdf" />';
+        } else if (docType && docType.startsWith('image/')) {
+            previewContent.innerHTML = '<div class="preview-image-container"><img src="' + docUrl + '" alt="' + (docName || 'Reçu') + '" /></div>';
+        } else {
+            previewContent.innerHTML = '<div class="text-center p-5"><i class="fas fa-file fa-4x text-muted mb-3"></i><p>Aperçu non disponible pour ce type de fichier</p><a href="' + docUrl + '" target="_blank" class="btn btn-primary">Ouvrir dans un nouvel onglet</a></div>';
+        }
+
+        // Utiliser l'API Bootstrap standard
+        var modal = bootstrap.Modal.getOrCreateInstance(modalElement);
+        modal.show();
+    }
+
+    // Nettoyage quand la modal est fermée
+    document.getElementById('documentPreviewModal').addEventListener('hidden.bs.modal', function() {
+        // Vider le contenu
+        document.getElementById('documentPreviewContent').innerHTML = '';
+
+        // Nettoyage forcé après un court délai
+        setTimeout(function() {
+            document.body.classList.remove('modal-open');
+            document.body.style.overflow = '';
+            document.body.style.paddingRight = '';
+            document.querySelectorAll('.modal-backdrop').forEach(function(el) {
+                el.remove();
+            });
+        }, 150);
+    });
+</script>
 {% endblock %}

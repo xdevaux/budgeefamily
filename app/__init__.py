@@ -31,7 +31,7 @@ def create_app(config_class=Config):
     mail.init_app(app)
     limiter.init_app(app)
 
-    from app.routes import auth, main, subscriptions, api, categories, services, admin, exports, credits, credit_types, revenues, employers, banks, installments, checkbooks, card_purchases
+    from app.routes import auth, main, subscriptions, api, categories, services, admin, exports, credits, credit_types, revenues, employers, banks, installments, checkbooks, card_purchases, card_purchase_categories
     app.register_blueprint(auth.bp)
     app.register_blueprint(main.bp)
     app.register_blueprint(subscriptions.bp)
@@ -48,6 +48,7 @@ def create_app(config_class=Config):
     app.register_blueprint(installments.bp)
     app.register_blueprint(checkbooks.bp)
     app.register_blueprint(card_purchases.bp)
+    app.register_blueprint(card_purchase_categories.bp)
 
     # Ajouter datetime dans le contexte Jinja2
     from datetime import datetime

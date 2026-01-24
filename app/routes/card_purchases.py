@@ -35,11 +35,15 @@ def list_purchases():
         page=page, per_page=20, error_out=False
     )
 
-    # Récupérer les catégories pour le filtre
+    # Récupérer les catégories pour le filtre (seulement celles pour achats CB ou 'all')
     categories = Category.query.filter(
         db.or_(
             Category.user_id == current_user.id,
             Category.user_id == None
+        ),
+        db.or_(
+            Category.category_type == 'card_purchase',
+            Category.category_type == 'all'
         )
     ).filter_by(is_active=True).order_by(Category.name).all()
 
@@ -61,6 +65,87 @@ def list_purchases():
                          filter_year=filter_year,
                          monthly_total=monthly_total,
                          now=datetime.now())
+
+
+@bp.route('/add', methods=['GET', 'POST'])
+@login_required
+def add_manual():
+    """Ajouter un achat CB manuellement (mode par défaut)"""
+
+    # Récupérer les catégories (seulement celles pour achats CB ou 'all')
+    categories = Category.query.filter(
+        db.or_(
+            Category.user_id == current_user.id,
+            Category.user_id == None
+        ),
+        db.or_(
+            Category.category_type == 'card_purchase',
+            Category.category_type == 'all'
+        )
+    ).filter_by(is_active=True).order_by(Category.name).all()
+
+    if request.method == 'POST':
+        try:
+            # Récupérer les données du formulaire
+            merchant_name = request.form.get('merchant_name')
+            amount = float(request.form.get('amount'))
+            purchase_date = request.form.get('purchase_date')
+            purchase_time = request.form.get('purchase_time', '12:00')
+            category_id = request.form.get('category_id', type=int)
+            description = request.form.get('description', '')
+
+            # Créer l'achat CB
+            purchase = CardPurchase(
+                user_id=current_user.id,
+                purchase_date=datetime.strptime(f'{purchase_date} {purchase_time}', '%Y-%m-%d %H:%M'),
+                merchant_name=merchant_name,
+                amount=amount,
+                currency='EUR',
+                description=description,
+                ocr_confidence=0,  # Pas d'OCR
+                was_manually_edited=True,
+                entry_method='manual',  # Saisie manuelle
+            )
+
+            # Associer une catégorie si sélectionnée
+            if category_id:
+                category = Category.query.get(category_id)
+                if category:
+                    purchase.category_id = category_id
+                    purchase.category_name = category.name
+
+            db.session.add(purchase)
+            db.session.flush()
+
+            # Créer la transaction dans la balance
+            transaction = Transaction(
+                user_id=current_user.id,
+                transaction_date=purchase.purchase_date.date(),
+                transaction_type='card_purchase',
+                source_id=purchase.id,
+                source_type='card_purchase',
+                name=f'Achat CB - {purchase.merchant_name}',
+                description=purchase.description,
+                amount=purchase.amount,
+                currency='EUR',
+                is_positive=False,
+                category_name=purchase.category_name,
+                status='completed'
+            )
+            db.session.add(transaction)
+            db.session.commit()
+
+            flash('Achat CB ajouté avec succès !', 'success')
+            return redirect(url_for('card_purchases.list_purchases'))
+
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Erreur lors de l\'ajout : {str(e)}', 'danger')
+
+    # GET : Afficher le formulaire
+    return render_template('card_purchases/add_manual.html',
+                         categories=categories,
+                         today=datetime.now().strftime('%Y-%m-%d'))
 
 
 @bp.route('/upload', methods=['GET', 'POST'])
@@ -120,11 +205,15 @@ def upload_receipts():
             flash('Aucun reçu valide n\'a pu être traité.', 'danger')
             return redirect(url_for('card_purchases.upload_receipts'))
 
-        # Récupérer les catégories pour le formulaire
+        # Récupérer les catégories pour le formulaire (seulement celles pour achats CB ou 'all')
         categories = Category.query.filter(
             db.or_(
                 Category.user_id == current_user.id,
                 Category.user_id == None
+            ),
+            db.or_(
+                Category.category_type == 'card_purchase',
+                Category.category_type == 'all'
             )
         ).filter_by(is_active=True).order_by(Category.name).all()
 
@@ -181,6 +270,7 @@ def validate_purchases():
             description=purchase_data.get('description', ''),
             ocr_confidence=float(purchase_data.get('ocr_confidence', 0)),
             was_manually_edited=purchase_data.get('was_edited', False),
+            entry_method='ocr',  # Saisie par OCR
             receipt_image_data=receipt_data,
             receipt_image_name=purchase_data.get('file_name'),
             receipt_image_mime_type=purchase_data.get('file_mime_type'),
@@ -283,11 +373,15 @@ def edit(purchase_id):
         flash('L\'achat a été modifié avec succès.', 'success')
         return redirect(url_for('card_purchases.detail', purchase_id=purchase.id))
 
-    # Récupérer les catégories
+    # Récupérer les catégories (seulement celles pour achats CB ou 'all')
     categories = Category.query.filter(
         db.or_(
             Category.user_id == current_user.id,
             Category.user_id == None
+        ),
+        db.or_(
+            Category.category_type == 'card_purchase',
+            Category.category_type == 'all'
         )
     ).filter_by(is_active=True).order_by(Category.name).all()
 
@@ -325,7 +419,7 @@ def delete(purchase_id):
 @bp.route('/<int:purchase_id>/receipt')
 @login_required
 def view_receipt(purchase_id):
-    """Afficher l'image du reçu"""
+    """Afficher le reçu (image ou PDF)"""
     purchase = CardPurchase.query.get_or_404(purchase_id)
 
     if purchase.user_id != current_user.id:
@@ -333,11 +427,45 @@ def view_receipt(purchase_id):
         return redirect(url_for('card_purchases.list_purchases'))
 
     if not purchase.receipt_image_data:
-        flash('Aucune image de reçu disponible.', 'warning')
+        flash('Aucun reçu disponible.', 'warning')
         return redirect(url_for('card_purchases.detail', purchase_id=purchase.id))
+
+    # Déterminer le mimetype correct
+    mimetype = purchase.receipt_image_mime_type or 'application/octet-stream'
+
+    # Si le nom de fichier indique un PDF, s'assurer que le mimetype est correct
+    if purchase.receipt_image_name and purchase.receipt_image_name.lower().endswith('.pdf'):
+        mimetype = 'application/pdf'
 
     return Response(
         purchase.receipt_image_data,
-        mimetype=purchase.receipt_image_mime_type or 'image/jpeg',
+        mimetype=mimetype,
         headers={'Content-Disposition': get_safe_content_disposition(purchase.receipt_image_name, inline=True)}
+    )
+
+
+@bp.route('/<int:purchase_id>/receipt/download')
+@login_required
+def download_receipt(purchase_id):
+    """Télécharger le reçu"""
+    purchase = CardPurchase.query.get_or_404(purchase_id)
+
+    if purchase.user_id != current_user.id:
+        flash('Vous n\'avez pas accès à cet achat.', 'danger')
+        return redirect(url_for('card_purchases.list_purchases'))
+
+    if not purchase.receipt_image_data:
+        flash('Aucun reçu disponible.', 'warning')
+        return redirect(url_for('card_purchases.detail', purchase_id=purchase.id))
+
+    # Déterminer le mimetype correct
+    mimetype = purchase.receipt_image_mime_type or 'application/octet-stream'
+
+    if purchase.receipt_image_name and purchase.receipt_image_name.lower().endswith('.pdf'):
+        mimetype = 'application/pdf'
+
+    return Response(
+        purchase.receipt_image_data,
+        mimetype=mimetype,
+        headers={'Content-Disposition': get_safe_content_disposition(purchase.receipt_image_name, inline=False)}
     )
