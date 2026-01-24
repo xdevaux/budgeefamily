@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 
-{% block title %}Paiements en plusieurs fois - Budgee Family{% endblock %}
+{% block title %}Mes paiements en plusieurs fois - Budgee Family{% endblock %}
 
 {% block content %}
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2><i class="fas fa-calendar-alt"></i> Paiements en plusieurs fois</h2>
+        <h2><i class="fas fa-calendar-alt"></i> Mes paiements en plusieurs fois</h2>
         <div class="d-flex gap-2">
             {% if current_user.can_add_installment_payment() %}
                 <a href="{{ url_for('installments.add') }}" class="btn btn-primary">

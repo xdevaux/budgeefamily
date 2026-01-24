@@ -11,11 +11,26 @@ bp = Blueprint('subscriptions', __name__, url_prefix='/subscriptions')
 
 def get_user_categories():
     """Récupère les catégories globales et personnalisées de l'utilisateur actuel"""
-    # Catégories globales (par défaut)
-    global_categories = Category.query.filter_by(user_id=None, is_active=True).order_by(Category.name).all()
+    # Catégories globales (par défaut) - uniquement pour abonnements
+    global_categories = Category.query.filter_by(
+        user_id=None,
+        is_active=True
+    ).filter(
+        db.or_(
+            Category.category_type == 'subscription',
+            Category.category_type == 'all'
+        )
+    ).order_by(Category.name).all()
 
-    # Catégories personnalisées de l'utilisateur
-    custom_categories = current_user.custom_categories.filter_by(is_active=True).order_by(Category.name).all()
+    # Catégories personnalisées de l'utilisateur - uniquement pour abonnements
+    custom_categories = current_user.custom_categories.filter_by(
+        is_active=True
+    ).filter(
+        db.or_(
+            Category.category_type == 'subscription',
+            Category.category_type == 'all'
+        )
+    ).order_by(Category.name).all()
 
     # Combiner les deux listes
     return global_categories + custom_categories

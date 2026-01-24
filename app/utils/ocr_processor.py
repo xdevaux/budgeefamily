@@ -60,13 +60,26 @@ def preprocess_image_multi(image_data: bytes) -> list:
     try:
         # Détecter si c'est un PDF et le convertir en image
         if image_data[:4] == b'%PDF':
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.info("PDF détecté, conversion en cours...")
             print("PDF détecté, conversion en cours...")
-            images = convert_from_bytes(image_data, first_page=1, last_page=1, dpi=400)
-            if images:
-                pil_image = images[0]
-                print(f"PDF converti: {pil_image.size}")
-            else:
-                raise ValueError("Impossible de convertir le PDF en image")
+
+            try:
+                images = convert_from_bytes(image_data, first_page=1, last_page=1, dpi=400)
+                if images:
+                    pil_image = images[0]
+                    logger.info(f"PDF converti avec succès: {pil_image.size}")
+                    print(f"PDF converti: {pil_image.size}")
+                else:
+                    error_msg = "La conversion PDF n'a retourné aucune image"
+                    logger.error(error_msg)
+                    raise ValueError(error_msg)
+            except Exception as pdf_error:
+                logger.error(f"Erreur lors de la conversion PDF: {type(pdf_error).__name__}: {pdf_error}")
+                import traceback
+                logger.error(traceback.format_exc())
+                raise
         else:
             pil_image = Image.open(io.BytesIO(image_data))
 
@@ -148,19 +161,39 @@ def preprocess_image_multi(image_data: bytes) -> list:
         return processed_versions
 
     except Exception as e:
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.error(f"Erreur prétraitement image: {type(e).__name__}: {e}")
         print(f"Erreur prétraitement image: {e}")
         import traceback
+        logger.error(traceback.format_exc())
         traceback.print_exc()
-        # Fallback
-        pil_image = Image.open(io.BytesIO(image_data))
-        if pil_image.mode not in ('RGB', 'L'):
-            pil_image = pil_image.convert('RGB')
-        img_array = np.array(pil_image)
-        if len(img_array.shape) == 3:
-            gray = cv2.cvtColor(img_array, cv2.COLOR_RGB2GRAY)
-        else:
-            gray = img_array
-        return [('Fallback', gray)]
+
+        # Fallback - essayer de charger l'image sans prétraitement
+        try:
+            # Si c'est un PDF, essayer de le convertir même en mode fallback
+            if image_data[:4] == b'%PDF':
+                logger.info("Fallback: tentative de conversion PDF simplifiée")
+                images = convert_from_bytes(image_data, first_page=1, last_page=1, dpi=200)
+                if images:
+                    pil_image = images[0]
+                else:
+                    raise ValueError("Échec conversion PDF en mode fallback")
+            else:
+                pil_image = Image.open(io.BytesIO(image_data))
+
+            if pil_image.mode not in ('RGB', 'L'):
+                pil_image = pil_image.convert('RGB')
+            img_array = np.array(pil_image)
+            if len(img_array.shape) == 3:
+                gray = cv2.cvtColor(img_array, cv2.COLOR_RGB2GRAY)
+            else:
+                gray = img_array
+            logger.info("Fallback réussi")
+            return [('Fallback', gray)]
+        except Exception as fallback_error:
+            logger.error(f"Échec du fallback: {fallback_error}")
+            raise RuntimeError(f"Impossible de traiter l'image/PDF: {fallback_error}") from e
 
 
 def preprocess_image(image_data: bytes) -> np.ndarray:
@@ -718,18 +751,33 @@ def guess_category(merchant_name: str) -> Optional[str]:
 
     merchant_upper = merchant_name.upper()
 
-    # Mapping commerçants → catégories
+    # Mapping commerçants → catégories (noms exacts des catégories en base)
     category_keywords = {
         'Alimentation': ['CARREFOUR', 'AUCHAN', 'LECLERC', 'LIDL', 'ALDI', 'INTERMARCHE',
-                        'SUPER', 'MARKET', 'EPICERIE', 'BOULANGERIE', 'BOUCHERIE'],
-        'Carburant': ['TOTAL', 'BP', 'SHELL', 'ESSO', 'STATION', 'ESSENCE', 'CARBURANT'],
+                        'SUPER', 'MARKET', 'EPICERIE', 'BOULANGERIE', 'BOUCHERIE', 'MONOPRIX',
+                        'FRANPRIX', 'CASINO', 'PICARD', 'FROMAGERIE'],
+        'Carburant': ['TOTAL', 'BP', 'SHELL', 'ESSO', 'STATION', 'ESSENCE', 'CARBURANT',
+                     'AGIP', 'PETROLE', 'GASOIL', 'DIESEL'],
         'Restaurant': ['RESTAURANT', 'CAFE', 'BRASSERIE', 'PIZZERIA', 'BURGER',
-                      'MCDONALD', 'KFC', 'QUICK', 'BAR', 'BISTRO'],
-        'Transport': ['SNCF', 'RATP', 'UBER', 'TAXI', 'METRO', 'BUS', 'TRAIN'],
-        'Santé': ['PHARMACIE', 'HOPITAL', 'CLINIQUE', 'MEDECIN', 'DENTISTE'],
-        'Loisirs': ['CINEMA', 'THEATRE', 'SPORT', 'GYM', 'PISCINE', 'CONCERT'],
-        'Vêtements': ['ZARA', 'H&M', 'KIABI', 'DECATHLON', 'MODE', 'VETEMENT'],
-        'Bricolage': ['LEROY', 'CASTORAMA', 'BRICORAMA', 'BRICO'],
+                      'MCDONALD', 'KFC', 'QUICK', 'BAR', 'BISTRO', 'SUSHI', 'KEBAB',
+                      'SUBWAY', 'STARBUCKS', 'PAUL'],
+        'Transport': ['SNCF', 'RATP', 'UBER', 'TAXI', 'METRO', 'BUS', 'TRAIN', 'PARKING',
+                     'AUTOROUTE', 'PEAGE', 'VELIB', 'TRAMWAY'],
+        'Santé & Pharmacie': ['PHARMACIE', 'HOPITAL', 'CLINIQUE', 'MEDECIN', 'DENTISTE',
+                             'OPTICIEN', 'LABORATOIRE', 'SANTE'],
+        'Loisirs & Culture': ['CINEMA', 'THEATRE', 'SPORT', 'GYM', 'PISCINE', 'CONCERT',
+                             'MUSEE', 'SPECTACLE', 'FNAC', 'CULTURA'],
+        'Habillement': ['ZARA', 'H&M', 'KIABI', 'MODE', 'VETEMENT', 'CHAUSSURES',
+                       'JENNYFER', 'CELIO', 'JULES', 'CAMAIEU', 'PIMKIE'],
+        'Maison & Jardin': ['LEROY', 'CASTORAMA', 'BRICORAMA', 'BRICO', 'IKEA', 'BUT',
+                           'CONFORAMA', 'JARDIN', 'MAISON', 'BRICOLAGE'],
+        'Électronique & High-tech': ['FNAC', 'DARTY', 'BOULANGER', 'APPLE', 'SAMSUNG',
+                                     'MICRO', 'INFORMATIQUE', 'ORANGE', 'SFR', 'BOUYGUES'],
+        'Sport & Fitness': ['DECATHLON', 'SPORT', 'FITNESS', 'GYM', 'YOGA', 'INTERSPORT',
+                           'GO SPORT'],
+        'Beauté & Cosmétiques': ['SEPHORA', 'NOCIBE', 'MARIONNAUD', 'COIFFEUR', 'BEAUTE',
+                                'PARFUM', 'COSMETIQUE'],
+        'Animaux': ['ANIMALERIE', 'VETERINAIRE', 'ANIMAL', 'MAXI ZOO', 'JARDILAND'],
     }
 
     for category, keywords in category_keywords.items():
@@ -737,7 +785,7 @@ def guess_category(merchant_name: str) -> Optional[str]:
             if keyword in merchant_upper:
                 return category
 
-    return 'Autres dépenses'
+    return 'Autre'
 
 
 def process_receipt_ocr(image_data: bytes, debug: bool = False) -> Dict:

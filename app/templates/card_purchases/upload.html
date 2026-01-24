@@ -61,6 +61,15 @@
                         <button type="submit" class="btn btn-primary" id="submitBtn" disabled>
                             <i class="fas fa-robot"></i> Traiter avec OCR
                         </button>
+                        <div id="loadingIndicator" class="mt-3" style="display: none;">
+                            <div class="alert alert-info">
+                                <div class="d-flex align-items-center">
+                                    <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+                                    <strong>Traitement OCR en cours...</strong>
+                                </div>
+                                <small>Cela peut prendre quelques secondes par fichier. Veuillez patienter.</small>
+                            </div>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -91,6 +100,12 @@ document.getElementById('receipts').addEventListener('change', function() {
     } else {
         submitBtn.disabled = true;
     }
+});
+
+// Afficher l'indicateur de chargement lors de la soumission
+document.querySelector('form').addEventListener('submit', function() {
+    document.getElementById('submitBtn').disabled = true;
+    document.getElementById('loadingIndicator').style.display = 'block';
 });
 </script>
 {% endblock %}

@@ -183,7 +183,13 @@ def upload_receipts():
 
             # Traiter l'OCR
             try:
+                import logging
+                logger = logging.getLogger(__name__)
+                logger.info(f"Traitement OCR de {safe_filename} ({file.content_type}, {len(file_data)} bytes)")
+
                 ocr_data = process_receipt_ocr(file_data)
+
+                logger.info(f"OCR réussi: {ocr_data['merchant_name']}, {ocr_data['amount']}€, confiance={ocr_data['ocr_confidence']:.1f}%")
 
                 processed_receipts.append({
                     'file_data_base64': base64.b64encode(file_data).decode('utf-8'),
@@ -198,7 +204,17 @@ def upload_receipts():
                     'ocr_confidence': ocr_data['ocr_confidence'],
                 })
             except Exception as e:
-                flash(f'Erreur OCR avec {file.filename}: {str(e)}', 'danger')
+                import logging
+                logger = logging.getLogger(__name__)
+                logger.error(f'Erreur OCR avec {safe_filename}: {type(e).__name__}: {str(e)}')
+                import traceback
+                logger.error(traceback.format_exc())
+
+                # Message d'erreur plus informatif pour l'utilisateur
+                if 'PDF' in str(e) or safe_filename.lower().endswith('.pdf'):
+                    flash(f'Erreur lors de la conversion du PDF "{file.filename}". Assurez-vous que le PDF est lisible et contient du texte.', 'danger')
+                else:
+                    flash(f'Erreur OCR avec "{file.filename}": {str(e)}', 'danger')
                 continue
 
         if not processed_receipts:

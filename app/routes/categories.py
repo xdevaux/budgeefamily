@@ -22,14 +22,29 @@ def allowed_file(filename):
 def list():
     """Liste toutes les catégories (globales + personnalisées de l'utilisateur)"""
     # Catégories globales (par défaut) - toujours actives et non masquées
-    all_global_categories = Category.query.filter_by(user_id=None, is_active=True).order_by(Category.name).all()
+    # Filtrer uniquement les catégories d'abonnements
+    all_global_categories = Category.query.filter_by(
+        user_id=None,
+        is_active=True
+    ).filter(
+        db.or_(
+            Category.category_type == 'subscription',
+            Category.category_type == 'all'
+        )
+    ).order_by(Category.name).all()
 
     # Filtrer les catégories masquées par l'utilisateur
     hidden_ids = [cat.id for cat in current_user.hidden_categories_list]
     global_categories = [cat for cat in all_global_categories if cat.id not in hidden_ids]
 
     # Catégories personnalisées de l'utilisateur (actives ET inactives)
-    custom_categories = current_user.custom_categories.order_by(Category.name).all()
+    # Filtrer uniquement les catégories d'abonnements
+    custom_categories = current_user.custom_categories.filter(
+        db.or_(
+            Category.category_type == 'subscription',
+            Category.category_type == 'all'
+        )
+    ).order_by(Category.name).all()
 
     return render_template('categories/list.html',
                          global_categories=global_categories,
@@ -89,7 +104,8 @@ def add():
             icon=icon,
             website_url=website_url,
             logo_data=logo_data,
-            logo_mime_type=logo_mime_type
+            logo_mime_type=logo_mime_type,
+            category_type='subscription'  # Catégorie pour abonnements
         )
 
         db.session.add(category)

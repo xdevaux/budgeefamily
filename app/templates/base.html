@@ -512,6 +512,7 @@
                             </a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="{{ url_for('revenues.list') }}"><i class="fas fa-hand-holding-usd"></i> Mes revenus</a></li>
+                                <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="{{ url_for('employers.list') }}"><i class="fas fa-building"></i> Employeurs</a></li>
                             </ul>
                         </li>
@@ -522,6 +523,8 @@
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="{{ url_for('checkbooks.list_checkbooks') }}"><i class="fas fa-money-check"></i> Mes chéquiers</a></li>
                                 <li><a class="dropdown-item" href="{{ url_for('card_purchases.list_purchases') }}"><i class="fas fa-credit-card"></i> Mes achats CB</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{{ url_for('card_purchase_categories.list_categories') }}"><i class="fas fa-tags"></i> Catégories</a></li>
                             </ul>
                         </li>
                         <li class="nav-item dropdown">
@@ -530,6 +533,7 @@
                             </a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="{{ url_for('subscriptions.list') }}"><i class="fas fa-list"></i> Mes abonnements</a></li>
+                                <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="{{ url_for('categories.list') }}"><i class="fas fa-tags"></i> Catégories</a></li>
                                 <li><a class="dropdown-item" href="{{ url_for('services.list') }}"><i class="fas fa-store"></i> Services</a></li>
                             </ul>
@@ -540,7 +544,7 @@
                             </a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="{{ url_for('credits.list_credits') }}"><i class="fas fa-money-bill-wave"></i> Mes crédits</a></li>
-                                <li><a class="dropdown-item" href="{{ url_for('installments.list') }}"><i class="fas fa-calendar-alt"></i> Paiements en plusieurs fois</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('installments.list') }}"><i class="fas fa-calendar-alt"></i> Mes paiements en plusieurs fois</a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="{{ url_for('credit_types.list') }}"><i class="fas fa-tag"></i> Types de crédits</a></li>
                                 <li><a class="dropdown-item" href="{{ url_for('banks.list_banks') }}"><i class="fas fa-university"></i> Banques</a></li>
@@ -551,6 +555,8 @@
                                 <i class="fas fa-user-circle"></i>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end">
+                                <li><h6 class="dropdown-header text-center" style="color: #9333ea; font-weight: bold;">{{ current_user.first_name or current_user.email }}</h6></li>
+                                <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="{{ url_for('auth.profile') }}"><i class="fas fa-user"></i> Mon profil</a></li>
                                 <li><a class="dropdown-item" href="{{ url_for('main.pricing') }}"><i class="fas fa-crown"></i> Plans & Tarifs</a></li>
                                 {% if current_user.is_admin %}
