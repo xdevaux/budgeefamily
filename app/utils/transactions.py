@@ -321,11 +321,41 @@ def generate_future_transactions(source_object, source_type, months_ahead=12, in
         ).first()
 
         if existing_transaction:
-            # Si la transaction existe déjà, mettre à jour son statut si nécessaire
-            if existing_transaction.status != transaction_status:
+            # Si la transaction existe déjà, mettre à jour ses champs
+            # IMPORTANT: Ne mettre à jour que les transactions futures (>= aujourd'hui)
+            # Les transactions passées ne doivent pas être modifiées
+            if current_date >= today:
+                # Mise à jour complète pour les transactions futures
                 existing_transaction.status = transaction_status
+                existing_transaction.name = source_object.name
+                existing_transaction.description = source_object.description
+                existing_transaction.currency = source_object.currency
+
+                # Mettre à jour le montant selon le type de source
+                if source_type == 'installment':
+                    existing_transaction.amount = source_object.installment_amount
+                else:
+                    existing_transaction.amount = source_object.amount
+
+                # Mettre à jour la catégorie selon le type de source
+                if source_type == 'revenue':
+                    existing_transaction.category_name = source_object.employer.name if source_object.employer else 'Autres revenus'
+                elif source_type == 'subscription':
+                    existing_transaction.category_name = source_object.category.name if source_object.category else 'Non catégorisé'
+                elif source_type == 'credit':
+                    existing_transaction.category_name = source_object.category.name if source_object.category else 'Crédit'
+                elif source_type == 'installment':
+                    existing_transaction.category_name = source_object.product_category or 'Paiement en plusieurs fois'
+
                 db.session.add(existing_transaction)
                 db.session.flush()
+            else:
+                # Pour les transactions passées, mettre à jour uniquement le statut si nécessaire
+                if existing_transaction.status != transaction_status:
+                    existing_transaction.status = transaction_status
+                    db.session.add(existing_transaction)
+                    db.session.flush()
+
             transactions.append(existing_transaction)
         else:
             # Créer une nouvelle transaction
