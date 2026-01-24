@@ -88,8 +88,8 @@
         <div class="col-lg-6">
             <!-- Revenus : Prochains versements -->
             <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0"><i class="fas fa-hand-holding-usd"></i> Revenus : Prochains versements</h5>
+                <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #e5e7eb;">
+                    <h5 class="mb-0"><i class="fas fa-hand-holding-usd text-secondary"></i> Revenus : Prochains versements</h5>
                     <div class="d-flex align-items-center gap-2">
                         {% if upcoming_revenues %}
                             <span class="badge text-white" style="background-color: #10b981;">{{ upcoming_revenues|length }}</span>
@@ -152,8 +152,8 @@
 
             <!-- Abonnements : Prochains renouvellements -->
             <div class="card mt-4">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0"><i class="fas fa-list"></i> Abonnements : Prochains renouvellements</h5>
+                <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #e5e7eb;">
+                    <h5 class="mb-0"><i class="fas fa-list text-secondary"></i> Abonnements : Prochains renouvellements</h5>
                     <div class="d-flex align-items-center gap-2">
                         {% if upcoming_renewals %}
                             <span class="badge bg-primary">{{ upcoming_renewals|length }}</span>
@@ -213,8 +213,8 @@
 
             <!-- Crédits : Prochains prélèvements -->
             <div class="card mt-4">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0"><i class="fas fa-money-bill-wave"></i> Crédits : Prochains prélèvements</h5>
+                <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #e5e7eb;">
+                    <h5 class="mb-0"><i class="fas fa-money-bill-wave text-secondary"></i> Crédits : Prochains prélèvements</h5>
                     <div class="d-flex align-items-center gap-2">
                         {% if upcoming_credits or upcoming_installments %}
                             <span class="badge bg-warning">{{ (upcoming_credits|length) + (upcoming_installments|length) }}</span>
@@ -302,8 +302,8 @@
 
             <!-- Chèques : Non débités -->
             <div class="card mt-4">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0"><i class="fas fa-money-check"></i> Chèques : Non débités</h5>
+                <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #e5e7eb;">
+                    <h5 class="mb-0"><i class="fas fa-money-check text-secondary"></i> Chèques : Non débités</h5>
                     <div class="d-flex align-items-center gap-2">
                         {% if unpointed_checks %}
                             <span class="badge bg-danger">{{ unpointed_checks|length }}</span>
@@ -372,9 +372,82 @@
 
         <!-- Colonne droite : Répartition par catégorie -->
         <div class="col-lg-6">
+
+            <!-- SECTION : Mes rappels -->
             <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0"><i class="fas fa-chart-pie"></i> Répartition des Abonnements & Crédits</h5>
+                <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #e5e7eb;">
+                    <h5 class="mb-0">
+                        <i class="fas fa-bell text-secondary"></i> Mes rappels
+                    </h5>
+                    <div class="d-flex align-items-center gap-2">
+                        {% if upcoming_reminders %}
+                            <span class="badge bg-secondary">{{ upcoming_reminders|length }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    {% if upcoming_reminders %}
+                        <div class="list-group list-group-flush" style="max-height: 300px; overflow-y: auto;">
+                            {% for reminder in upcoming_reminders %}
+                                <div class="list-group-item py-2">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <!-- Date -->
+                                        <div class="flex-shrink-0" style="width: 80px;">
+                                            <small class="text-muted">
+                                                <i class="fas fa-calendar"></i>
+                                                {{ '%02d'|format(reminder.reminder_month) }}/{{ reminder.reminder_year }}
+                                            </small>
+                                        </div>
+
+                                        <!-- Nom + badges -->
+                                        <div class="flex-grow-1 text-start">
+                                            <strong class="text-truncate d-block" style="max-width: 70%;">
+                                                {{ reminder.name }}
+                                            </strong>
+                                            {% if reminder.provider %}
+                                                <small class="text-muted">{{ reminder.provider.name }}</small>
+                                            {% endif %}
+                                        </div>
+
+                                        <!-- Statut RDV -->
+                                        <div class="flex-shrink-0">
+                                            {% if reminder.appointment_booked %}
+                                                <span class="badge bg-success">
+                                                    <i class="fas fa-check"></i> RDV pris
+                                                </span>
+                                            {% else %}
+                                                <span class="badge bg-warning text-dark">
+                                                    <i class="fas fa-clock"></i> À planifier
+                                                </span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <div class="card-footer bg-white text-center">
+                            <a href="{{ url_for('reminders.list') }}" class="btn btn-sm btn-outline-secondary">
+                                <i class="fas fa-bell"></i> Voir tous
+                            </a>
+                            <a href="{{ url_for('reminders.add') }}" class="btn btn-sm btn-outline-secondary ms-2">
+                                <i class="fas fa-plus"></i> Ajouter
+                            </a>
+                        </div>
+                    {% else %}
+                        <div class="card-body">
+                            <p class="text-muted text-center py-4 mb-0">
+                                <i class="fas fa-inbox fa-3x d-block mb-2 text-secondary"></i>
+                                Aucun rappel
+                            </p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Graphique existant : Répartition des abonnements & crédits -->
+            <div class="card mt-4">
+                <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #e5e7eb;">
+                    <h5 class="mb-0"><i class="fas fa-chart-pie text-secondary"></i> Répartition des Abonnements & Crédits</h5>
                     {% if current_user.is_premium() %}
                         <div class="btn-group btn-group-sm">
                             <a href="{{ url_for('exports.export_category_distribution', format='excel') }}" class="btn btn-outline-success" title="Exporter en Excel">
@@ -397,8 +470,8 @@
 
             <!-- Répartition des versements (Revenus) -->
             <div class="card mt-4">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0"><i class="fas fa-chart-pie"></i> Répartition des versements</h5>
+                <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #e5e7eb;">
+                    <h5 class="mb-0"><i class="fas fa-chart-pie text-secondary"></i> Répartition des versements</h5>
                     {% if current_user.is_premium() %}
                         <div class="btn-group btn-group-sm">
                             <a href="{{ url_for('exports.export_revenue_distribution', format='excel') }}" class="btn btn-outline-success" title="Exporter en Excel">
@@ -425,8 +498,8 @@
     <div class="row mt-4">
         <div class="col-12">
             <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0"><i class="fas fa-chart-line"></i> Évolution des revenus et des dépenses mensuelles</h5>
+                <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #e5e7eb;">
+                    <h5 class="mb-0"><i class="fas fa-chart-line text-secondary"></i> Évolution des revenus et des dépenses mensuelles</h5>
                     {% if current_user.is_premium() %}
                         <div class="btn-group btn-group-sm">
                             <a href="{{ url_for('exports.export_monthly_evolution', format='excel') }}" class="btn btn-outline-success" title="Exporter en Excel">

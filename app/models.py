@@ -172,6 +172,15 @@ class User(UserMixin, db.Model):
         from app.models import ServicePlan
         return ServicePlan.query.filter_by(user_id=self.id).count() < 10
 
+    def can_add_reminder(self):
+        """Vérifie si l'utilisateur peut ajouter un rappel
+        - Gratuit : max 3 rappels
+        - Premium : illimité
+        """
+        if self.is_premium():
+            return True
+        return self.reminders.filter_by(is_active=True).count() < 3
+
     def get_custom_categories_count(self):
         """Retourne le nombre de catégories personnalisées créées"""
         return self.custom_categories.count()
@@ -1198,3 +1207,117 @@ class CardPurchase(db.Model):
             'ocr_confidence': self.ocr_confidence,
             'was_manually_edited': self.was_manually_edited
         }
+
+
+class Provider(db.Model):
+    """Modèle pour les prestataires de services"""
+    __tablename__ = 'providers'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    name = db.Column(db.String(200), nullable=False)
+    provider_type = db.Column(db.String(200), nullable=True)  # Type de prestataire (champ libre)
+    phone = db.Column(db.String(50), nullable=True)  # Téléphone
+    email = db.Column(db.String(200), nullable=True)  # Email
+    address = db.Column(db.Text, nullable=True)
+    notes = db.Column(db.Text, nullable=True)
+    is_active = db.Column(db.Boolean, default=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # Relations
+    user = db.relationship('User', backref=db.backref('providers', lazy='dynamic'))
+    reminders = db.relationship('Reminder', backref='provider', lazy='dynamic')
+
+    def __repr__(self):
+        return f'<Provider {self.name}>'
+
+
+class Reminder(db.Model):
+    """Modèle pour les rappels de prestations périodiques"""
+    __tablename__ = 'reminders'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    provider_id = db.Column(db.Integer, db.ForeignKey('providers.id'), nullable=True)
+
+    # Informations de la prestation
+    name = db.Column(db.String(200), nullable=False)  # Ex: "Entretien chaudière"
+    description = db.Column(db.Text, nullable=True)
+
+    # Date du prochain RDV (mois/année)
+    reminder_month = db.Column(db.Integer, nullable=False)  # 1-12
+    reminder_year = db.Column(db.Integer, nullable=False)
+
+    # Coût estimé
+    estimated_cost = db.Column(db.Float, nullable=True)
+    currency = db.Column(db.String(3), default='EUR')
+
+    # Statut du RDV
+    appointment_booked = db.Column(db.Boolean, default=False)
+    appointment_date = db.Column(db.Date, nullable=True)  # Date exacte si RDV pris
+
+    # Périodicité
+    recurrence = db.Column(db.String(20), default='annual')
+    # Options: 'annual', 'semiannual', 'biennial', 'once'
+
+    # État
+    is_active = db.Column(db.Boolean, default=True)
+    archived_at = db.Column(db.DateTime, nullable=True)
+
+    # Timestamps
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # Relations
+    user = db.relationship('User', backref=db.backref('reminders', lazy='dynamic'))
+    documents = db.relationship('ReminderDocument', backref='reminder', lazy='dynamic',
+                               cascade='all, delete-orphan')
+
+    def __repr__(self):
+        return f'<Reminder {self.name} - {self.reminder_month}/{self.reminder_year}>'
+
+
+class ReminderDocument(db.Model):
+    """Modèle pour les documents associés aux rappels"""
+    __tablename__ = 'reminder_documents'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    reminder_id = db.Column(db.Integer, db.ForeignKey('reminders.id'), nullable=False)
+
+    # Métadonnées document
+    name = db.Column(db.String(200), nullable=False)
+    description = db.Column(db.Text, nullable=True)
+    document_type = db.Column(db.String(50), nullable=False)
+    # Types: 'invoice', 'contract', 'report', 'certificate', 'other'
+
+    # Fichier (stockage en base)
+    file_data = db.Column(db.LargeBinary, nullable=True)
+    file_name = db.Column(db.String(255), nullable=True)
+    file_mime_type = db.Column(db.String(100), nullable=True)
+    file_size = db.Column(db.Integer, nullable=True)
+
+    # Classification
+    document_date = db.Column(db.Date, nullable=True)
+    year = db.Column(db.Integer, nullable=True)
+    month = db.Column(db.Integer, nullable=True)
+
+    # Timestamps
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # Relations
+    user = db.relationship('User', backref=db.backref('reminder_documents', lazy='dynamic'))
+
+    def get_file_size_display(self):
+        """Retourne la taille formatée du fichier"""
+        if not self.file_size:
+            return "0 KB"
+        size_kb = self.file_size / 1024
+        if size_kb < 1024:
+            return f"{size_kb:.1f} KB"
+        return f"{size_kb / 1024:.1f} MB"
+
+    def __repr__(self):
+        return f'<ReminderDocument {self.name}>'

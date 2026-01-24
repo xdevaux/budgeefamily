@@ -1,0 +1,350 @@
+{% extends "base.html" %}
+
+{% block title %}{{ reminder.name }} - Budgee Family{% endblock %}
+
+{% block extra_css %}
+<style>
+    .document-card {
+        transition: all 0.2s ease;
+        border-left: 4px solid transparent;
+    }
+    .document-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .document-card.invoice { border-left-color: #10b981; }
+    .document-card.contract { border-left-color: #6366f1; }
+    .document-card.report { border-left-color: #f59e0b; }
+    .document-card.certificate { border-left-color: #8b5cf6; }
+    .document-card.other { border-left-color: #6c757d; }
+
+    .doc-stats-card {
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .doc-stats-card:hover {
+        transform: scale(1.02);
+    }
+    .doc-stats-card.active {
+        border: 2px solid #6366f1;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-bell"></i> {{ reminder.name }}</h2>
+        <div class="btn-group">
+            <a href="{{ url_for('reminders.edit', reminder_id=reminder.id) }}" class="btn btn-warning">
+                <i class="fas fa-edit"></i> Modifier
+            </a>
+            <a href="{{ url_for('reminders.list') }}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left"></i> Retour
+            </a>
+        </div>
+    </div>
+
+    <!-- Informations principales -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h6 class="text-muted">Date du rappel</h6>
+                    <h2 class="mb-0">{{ '%02d'|format(reminder.reminder_month) }}/{{ reminder.reminder_year }}</h2>
+                    <small class="text-muted">
+                        {% if reminder.recurrence == 'annual' %}Annuel{% elif reminder.recurrence == 'semiannual' %}Semestriel{% elif reminder.recurrence == 'biennial' %}Bisannuel{% else %}Ponctuel{% endif %}
+                    </small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h6 class="text-muted">Coût estimé</h6>
+                    <h2 class="mb-0">
+                        {% if reminder.estimated_cost %}
+                            {{ reminder.estimated_cost | format_amount }} {{ reminder.currency | currency_symbol }}
+                        {% else %}
+                            <span class="text-muted">-</span>
+                        {% endif %}
+                    </h2>
+                    <small class="text-muted">Budget prévisionnel</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card text-center {% if reminder.appointment_booked %}border-success{% else %}border-warning{% endif %}">
+                <div class="card-body">
+                    <h6 class="text-muted">Rendez-vous</h6>
+                    {% if reminder.appointment_booked %}
+                        <h2 class="mb-0 text-success"><i class="fas fa-check-circle"></i></h2>
+                        <small class="text-success">
+                            RDV pris
+                            {% if reminder.appointment_date %}
+                                <br>{{ reminder.appointment_date.strftime('%d/%m/%Y') }}
+                            {% endif %}
+                        </small>
+                    {% else %}
+                        <h2 class="mb-0 text-warning"><i class="fas fa-clock"></i></h2>
+                        <small class="text-warning">À planifier</small>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Colonne informations -->
+        <div class="col-lg-4">
+            <!-- Détails du rappel -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-info-circle"></i> Détails</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <strong>Prestataire :</strong><br>
+                        {% if reminder.provider %}
+                            <i class="fas fa-user-tie text-primary"></i> {{ reminder.provider.name }}
+                            {% if reminder.provider.contact_info %}
+                                <br><small class="text-muted">{{ reminder.provider.contact_info }}</small>
+                            {% endif %}
+                        {% else %}
+                            <span class="text-muted">Non défini</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <strong>Statut :</strong><br>
+                        {% if reminder.is_active %}
+                            <span class="badge bg-success">Actif</span>
+                        {% else %}
+                            <span class="badge bg-secondary">Archivé</span>
+                        {% endif %}
+                    </div>
+
+                    {% if reminder.description %}
+                    <div class="mb-0">
+                        <strong>Description :</strong><br>
+                        <p class="mb-0">{{ reminder.description }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Gestion du rendez-vous -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-calendar-check"></i> Rendez-vous</h5>
+                </div>
+                <div class="card-body">
+                    {% if reminder.appointment_booked %}
+                        <div class="alert alert-success mb-3">
+                            <i class="fas fa-check-circle"></i> Rendez-vous pris
+                            {% if reminder.appointment_date %}
+                                <br>Le <strong>{{ reminder.appointment_date.strftime('%d/%m/%Y') }}</strong>
+                            {% endif %}
+                        </div>
+                        <form method="POST" action="{{ url_for('reminders.toggle_appointment', reminder_id=reminder.id) }}">
+                            <button type="submit" class="btn btn-warning w-100">
+                                <i class="fas fa-times"></i> Annuler le RDV
+                            </button>
+                        </form>
+                    {% else %}
+                        <form method="POST" action="{{ url_for('reminders.toggle_appointment', reminder_id=reminder.id) }}">
+                            <div class="mb-3">
+                                <label for="appointment_date" class="form-label">Date du RDV :</label>
+                                <input type="date" class="form-control" id="appointment_date" name="appointment_date" required>
+                            </div>
+                            <button type="submit" class="btn btn-success w-100">
+                                <i class="fas fa-check"></i> Marquer RDV comme pris
+                            </button>
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Statistiques documents -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-chart-pie"></i> Documents
+                </div>
+                <div class="card-body p-2">
+                    <div class="row g-2">
+                        {% for code, name, icon, color in document_types %}
+                            <div class="col-6">
+                                <a href="{{ url_for('reminders.detail', reminder_id=reminder.id, doc_type=code) }}"
+                                   class="card doc-stats-card text-decoration-none {% if filter_type == code %}active{% endif %}"
+                                   style="border-left: 4px solid {{ color }};">
+                                    <div class="card-body p-2 text-center">
+                                        <i class="fas {{ icon }}" style="color: {{ color }};"></i>
+                                        <div class="fw-bold">{{ doc_counts.get(code, 0) }}</div>
+                                        <small class="text-muted">{{ name }}</small>
+                                    </div>
+                                </a>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-cog"></i> Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        {% if reminder.is_active %}
+                            <form method="POST" action="{{ url_for('reminders.archive', reminder_id=reminder.id) }}"
+                                  onsubmit="return confirm('Archiver ce rappel ? Un nouveau rappel sera créé automatiquement si récurrent.')">
+                                <button type="submit" class="btn btn-info w-100">
+                                    <i class="fas fa-archive"></i> Archiver
+                                </button>
+                            </form>
+                        {% endif %}
+                        <form method="POST" action="{{ url_for('reminders.delete', reminder_id=reminder.id) }}"
+                              onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce rappel ?')">
+                            <button type="submit" class="btn btn-danger w-100">
+                                <i class="fas fa-trash"></i> Supprimer
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Colonne documents -->
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span>
+                        <i class="fas fa-folder-open"></i> Documents
+                        {% if total_size > 0 %}
+                            <span class="badge bg-info ms-2">
+                                <i class="fas fa-hdd"></i>
+                                {% if total_size >= 1073741824 %}
+                                    {{ "%.2f"|format(total_size / 1073741824) }} Go
+                                {% elif total_size >= 1048576 %}
+                                    {{ "%.2f"|format(total_size / 1048576) }} Mo
+                                {% elif total_size >= 1024 %}
+                                    {{ "%.2f"|format(total_size / 1024) }} Ko
+                                {% else %}
+                                    {{ total_size }} octets
+                                {% endif %}
+                            </span>
+                        {% endif %}
+                    </span>
+                    <a href="{{ url_for('reminders.add_document', reminder_id=reminder.id) }}" class="btn btn-sm btn-primary">
+                        <i class="fas fa-plus"></i> Ajouter un document
+                    </a>
+                </div>
+                <div class="card-body">
+                    <!-- Filtres et recherche -->
+                    <form method="GET" class="mb-4">
+                        <div class="row g-2">
+                            <div class="col-md-4">
+                                <select name="doc_type" class="form-select form-select-sm" onchange="this.form.submit()">
+                                    <option value="">Tous les types</option>
+                                    {% for code, name, icon, color in document_types %}
+                                        <option value="{{ code }}" {% if filter_type == code %}selected{% endif %}>{{ name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <select name="year" class="form-select form-select-sm" onchange="this.form.submit()">
+                                    <option value="">Toutes les années</option>
+                                    {% for y in years %}
+                                        <option value="{{ y }}" {% if filter_year == y %}selected{% endif %}>{{ y }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="input-group input-group-sm">
+                                    <input type="text" class="form-control" name="search" placeholder="Rechercher..."
+                                           value="{{ search or '' }}">
+                                    <button class="btn btn-outline-secondary" type="submit">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-md-1">
+                                <a href="{{ url_for('reminders.detail', reminder_id=reminder.id) }}" class="btn btn-sm btn-outline-secondary w-100">
+                                    <i class="fas fa-redo"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+
+                    <!-- Liste des documents -->
+                    {% if documents %}
+                        <div class="list-group">
+                            {% for document in documents %}
+                                {% set doc_info = get_document_type_info(document.document_type) %}
+                                <div class="list-group-item document-card {{ document.document_type }}">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div class="flex-grow-1">
+                                            <div class="d-flex align-items-center mb-2">
+                                                <i class="fas {{ doc_info.icon }} fa-2x me-3" style="color: {{ doc_info.color }};"></i>
+                                                <div>
+                                                    <h6 class="mb-0">{{ document.name }}</h6>
+                                                    <small class="text-muted">
+                                                        <span class="badge" style="background-color: {{ doc_info.color }};">{{ doc_info.name }}</span>
+                                                        {% if document.document_date %}
+                                                            • {{ document.document_date.strftime('%d/%m/%Y') }}
+                                                        {% endif %}
+                                                        {% if document.file_size %}
+                                                            • {{ document.get_file_size_display() }}
+                                                        {% endif %}
+                                                    </small>
+                                                </div>
+                                            </div>
+                                            {% if document.description %}
+                                                <p class="text-muted mb-0 small">{{ document.description }}</p>
+                                            {% endif %}
+                                        </div>
+                                        <div class="btn-group">
+                                            {% if document.file_data %}
+                                                <a href="{{ url_for('reminders.view_document', document_id=document.id) }}"
+                                                   class="btn btn-sm btn-outline-primary" title="Voir" target="_blank">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                                <a href="{{ url_for('reminders.download_document', document_id=document.id) }}"
+                                                   class="btn btn-sm btn-outline-success" title="Télécharger">
+                                                    <i class="fas fa-download"></i>
+                                                </a>
+                                            {% endif %}
+                                            <a href="{{ url_for('reminders.edit_document', document_id=document.id) }}"
+                                               class="btn btn-sm btn-outline-warning" title="Modifier">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <form method="POST" action="{{ url_for('reminders.delete_document', document_id=document.id) }}"
+                                                  onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce document ?')" class="d-inline">
+                                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Supprimer">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info mb-0">
+                            <i class="fas fa-info-circle"></i>
+                            {% if filter_type or filter_year or search %}
+                                Aucun document ne correspond aux critères de recherche.
+                            {% else %}
+                                Aucun document ajouté pour ce rappel.
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

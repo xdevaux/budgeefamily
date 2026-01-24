@@ -6,7 +6,7 @@ from dateutil.relativedelta import relativedelta
 import click
 from flask.cli import with_appcontext
 from app import db
-from app.models import Subscription, Credit, Revenue, Notification, User, InstallmentPayment, Transaction
+from app.models import Subscription, Credit, Revenue, Notification, User, InstallmentPayment, Transaction, Reminder
 from app.utils.transactions import generate_future_transactions, create_transaction_from_revenue, create_transaction_from_subscription, create_transaction_from_credit, create_transaction_from_installment, check_and_regenerate_transactions, update_or_create_transaction
 from collections import defaultdict
 
@@ -370,8 +370,89 @@ def generate_initial_transactions(months):
     click.echo(f"✓ {total_transactions} transactions générées avec succès")
 
 
+@click.command('archive-reminders')
+@with_appcontext
+def archive_reminders():
+    """Archive les rappels dont la date est passée et génère les suivants"""
+    from sqlalchemy import or_, and_
+    from datetime import date
+
+    today = date.today()
+
+    # Trouver rappels à archiver
+    past_reminders = Reminder.query.filter(
+        Reminder.is_active == True,
+        or_(
+            # RDV pris et date passée
+            and_(
+                Reminder.appointment_booked == True,
+                Reminder.appointment_date < today
+            ),
+            # Ou mois/année passés sans RDV
+            and_(
+                Reminder.appointment_booked == False,
+                or_(
+                    Reminder.reminder_year < today.year,
+                    and_(
+                        Reminder.reminder_year == today.year,
+                        Reminder.reminder_month < today.month
+                    )
+                )
+            )
+        )
+    ).all()
+
+    archived_count = 0
+    created_count = 0
+
+    for reminder in past_reminders:
+        # 1. Archiver le rappel actuel
+        reminder.is_active = False
+        reminder.archived_at = datetime.utcnow()
+        archived_count += 1
+
+        # 2. Créer nouveau rappel si récurrent
+        if reminder.recurrence != 'once':
+            # Calculer date du prochain rappel
+            if reminder.recurrence == 'annual':
+                next_year = reminder.reminder_year + 1
+                next_month = reminder.reminder_month
+            elif reminder.recurrence == 'semiannual':
+                next_date = date(reminder.reminder_year, reminder.reminder_month, 1) + relativedelta(months=6)
+                next_year = next_date.year
+                next_month = next_date.month
+            elif reminder.recurrence == 'biennial':
+                next_year = reminder.reminder_year + 2
+                next_month = reminder.reminder_month
+            else:
+                # Par défaut, on ne crée pas de nouveau rappel
+                continue
+
+            # Créer nouveau rappel
+            new_reminder = Reminder(
+                user_id=reminder.user_id,
+                provider_id=reminder.provider_id,
+                name=reminder.name,
+                description=reminder.description,
+                reminder_month=next_month,
+                reminder_year=next_year,
+                estimated_cost=reminder.estimated_cost,
+                recurrence=reminder.recurrence,
+                appointment_booked=False,
+                appointment_date=None
+            )
+            db.session.add(new_reminder)
+            created_count += 1
+
+    db.session.commit()
+
+    click.echo(f'✓ {archived_count} rappels archivés')
+    click.echo(f'✓ {created_count} nouveaux rappels créés')
+
+
 def init_app(app):
     """Enregistre les commandes dans l'application Flask"""
     app.cli.add_command(update_payment_dates)
     app.cli.add_command(archive_old_notifications)
     app.cli.add_command(generate_initial_transactions)
+    app.cli.add_command(archive_reminders)

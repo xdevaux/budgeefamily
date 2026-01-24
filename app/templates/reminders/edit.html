@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}Modifier un rappel - Budgee Family{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="mb-4">
+        <a href="{{ url_for('reminders.detail', reminder_id=reminder.id) }}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i> Retour au détail
+        </a>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h4 class="mb-0"><i class="fas fa-bell"></i> Modifier un rappel</h4>
+        </div>
+        <div class="card-body">
+            <form method="POST">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="name" class="form-label">Nom de la prestation <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="name" name="name" value="{{ reminder.name }}" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="provider_id" class="form-label">Prestataire</label>
+                        <div class="input-group">
+                            <select class="form-select" id="provider_id" name="provider_id">
+                                <option value="">Sélectionner un prestataire</option>
+                                {% for provider in providers %}
+                                    <option value="{{ provider.id }}" {% if reminder.provider_id == provider.id %}selected{% endif %}>
+                                        {{ provider.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                            <a href="{{ url_for('providers.add') }}" class="btn btn-outline-secondary" title="Ajouter un prestataire" target="_blank">
+                                <i class="fas fa-plus"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="reminder_month" class="form-label">Mois <span class="text-danger">*</span></label>
+                        <select class="form-select" id="reminder_month" name="reminder_month" required>
+                            {% for value, label in months %}
+                                <option value="{{ value }}" {% if reminder.reminder_month == value %}selected{% endif %}>{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="reminder_year" class="form-label">Année <span class="text-danger">*</span></label>
+                        <select class="form-select" id="reminder_year" name="reminder_year" required>
+                            {% for year in years %}
+                                <option value="{{ year }}" {% if reminder.reminder_year == year %}selected{% endif %}>{{ year }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="estimated_cost" class="form-label">Coût estimé</label>
+                        <input type="number" class="form-control" id="estimated_cost" name="estimated_cost"
+                               value="{{ reminder.estimated_cost or '' }}" step="0.01" min="0">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="recurrence" class="form-label">Périodicité <span class="text-danger">*</span></label>
+                        <select class="form-select" id="recurrence" name="recurrence" required>
+                            {% for value, label in recurrence_types %}
+                                <option value="{{ value }}" {% if reminder.recurrence == value %}selected{% endif %}>{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description</label>
+                    <textarea class="form-control" id="description" name="description" rows="4">{{ reminder.description or '' }}</textarea>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Enregistrer
+                    </button>
+                    <a href="{{ url_for('reminders.detail', reminder_id=reminder.id) }}" class="btn btn-secondary">
+                        <i class="fas fa-times"></i> Annuler
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

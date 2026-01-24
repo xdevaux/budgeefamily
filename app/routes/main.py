@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash, current_app
 from flask_login import login_required, current_user
 from app import db
-from app.models import Subscription, Category, Plan, Notification, Credit, Revenue, InstallmentPayment, Transaction
+from app.models import Subscription, Category, Plan, Notification, Credit, Revenue, InstallmentPayment, Transaction, Reminder
 from datetime import datetime, timedelta
 from sqlalchemy import func, case
 import stripe
@@ -149,6 +149,21 @@ def dashboard():
         Transaction.is_pointed == False
     ).order_by(Transaction.transaction_date.desc()).all()
 
+    # Rappels à venir
+    from sqlalchemy import or_, and_
+    from datetime import date
+    today = date.today()
+    upcoming_reminders = current_user.reminders.filter(
+        Reminder.is_active == True,
+        or_(
+            Reminder.reminder_year > today.year,
+            and_(
+                Reminder.reminder_year == today.year,
+                Reminder.reminder_month >= today.month
+            )
+        )
+    ).order_by(Reminder.reminder_year, Reminder.reminder_month).limit(10).all()
+
     return render_template('dashboard.html',
                          active_subscriptions=active_subscriptions,
                          total_subscriptions_cost=round(total_subscriptions_cost, 2),
@@ -158,6 +173,7 @@ def dashboard():
                          upcoming_revenues=upcoming_revenues,
                          upcoming_installments=upcoming_installments,
                          unpointed_checks=unpointed_checks,
+                         upcoming_reminders=upcoming_reminders,
                          category_stats=category_stats,
                          revenue_stats=revenue_stats,
                          total_credits=round(total_credits, 2),

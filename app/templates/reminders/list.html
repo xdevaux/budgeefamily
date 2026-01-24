@@ -1,0 +1,205 @@
+{% extends "base.html" %}
+
+{% block title %}Mes rappels - Budgee Family{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-bell"></i> Mes rappels</h2>
+        <div class="d-flex gap-2">
+            {% if current_user.can_add_reminder() %}
+                <a href="{{ url_for('reminders.add') }}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Ajouter un rappel
+                </a>
+            {% else %}
+                <button class="btn btn-secondary" disabled title="Limite atteinte pour le plan gratuit">
+                    <i class="fas fa-lock"></i> Limite atteinte (3/3)
+                </button>
+                <a href="{{ url_for('main.pricing') }}" class="btn btn-warning">
+                    <i class="fas fa-crown"></i> Passer Premium
+                </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Filtres -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="GET" class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">Statut</label>
+                    <select name="status" class="form-select" onchange="this.form.submit()">
+                        <option value="active" {% if filter_status == 'active' %}selected{% endif %}>Actifs</option>
+                        <option value="archived" {% if filter_status == 'archived' %}selected{% endif %}>Archivés</option>
+                        <option value="all" {% if filter_status == 'all' %}selected{% endif %}>Tous</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Prestataire</label>
+                    <select name="provider_id" class="form-select" onchange="this.form.submit()">
+                        <option value="">Tous</option>
+                        {% for provider in providers %}
+                            <option value="{{ provider.id }}" {% if selected_provider == provider.id %}selected{% endif %}>
+                                {{ provider.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">&nbsp;</label>
+                    <a href="{{ url_for('reminders.list') }}" class="btn btn-secondary w-100">
+                        <i class="fas fa-redo"></i> Réinitialiser
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Liste des rappels -->
+    {% if reminders.items %}
+        <div class="card">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Prestation</th>
+                                <th>Prestataire</th>
+                                <th>Date</th>
+                                <th>Périodicité</th>
+                                <th class="text-end">Coût estimé</th>
+                                <th>RDV</th>
+                                <th>Documents</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for reminder in reminders.items %}
+                                <tr class="{% if not reminder.is_active %}opacity-50{% endif %}">
+                                    <td>
+                                        <strong>{{ reminder.name }}</strong>
+                                        {% if reminder.description %}
+                                            <br><small class="text-muted">{{ reminder.description[:50] }}{% if reminder.description|length > 50 %}...{% endif %}</small>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if reminder.provider %}
+                                            <i class="fas fa-user-tie text-primary"></i> {{ reminder.provider.name }}
+                                        {% else %}
+                                            <span class="text-muted">-</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <strong>{{ '%02d'|format(reminder.reminder_month) }}/{{ reminder.reminder_year }}</strong>
+                                    </td>
+                                    <td>
+                                        {% if reminder.recurrence == 'annual' %}
+                                            <span class="badge bg-info">Annuel</span>
+                                        {% elif reminder.recurrence == 'semiannual' %}
+                                            <span class="badge bg-info">Semestriel</span>
+                                        {% elif reminder.recurrence == 'biennial' %}
+                                            <span class="badge bg-info">Bisannuel</span>
+                                        {% elif reminder.recurrence == 'once' %}
+                                            <span class="badge bg-secondary">Ponctuel</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-end">
+                                        {% if reminder.estimated_cost %}
+                                            {{ reminder.estimated_cost | format_amount }} {{ reminder.currency | currency_symbol }}
+                                        {% else %}
+                                            <span class="text-muted">-</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if reminder.appointment_booked %}
+                                            <span class="badge bg-success">
+                                                <i class="fas fa-check"></i> RDV pris
+                                                {% if reminder.appointment_date %}
+                                                    <br>{{ reminder.appointment_date.strftime('%d/%m/%Y') }}
+                                                {% endif %}
+                                            </span>
+                                        {% else %}
+                                            <span class="badge bg-warning text-dark">
+                                                <i class="fas fa-clock"></i> À planifier
+                                            </span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-info">{{ reminder.documents.count() }}</span>
+                                    </td>
+                                    <td class="text-end">
+                                        <div class="btn-group">
+                                            <a href="{{ url_for('reminders.detail', reminder_id=reminder.id) }}"
+                                               class="btn btn-sm btn-outline-primary" title="Voir">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="{{ url_for('reminders.edit', reminder_id=reminder.id) }}"
+                                               class="btn btn-sm btn-outline-warning" title="Modifier">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            {% if reminder.is_active %}
+                                                <form method="POST" action="{{ url_for('reminders.archive', reminder_id=reminder.id) }}"
+                                                      onsubmit="return confirm('Archiver ce rappel ?')" class="d-inline">
+                                                    <button type="submit" class="btn btn-sm btn-outline-secondary" title="Archiver">
+                                                        <i class="fas fa-archive"></i>
+                                                    </button>
+                                                </form>
+                                            {% endif %}
+                                            <form method="POST" action="{{ url_for('reminders.delete', reminder_id=reminder.id) }}"
+                                                  onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce rappel ?')" class="d-inline">
+                                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Supprimer">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        {% if reminders.pages > 1 %}
+        <nav class="mt-4">
+            <ul class="pagination justify-content-center">
+                {% if reminders.has_prev %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('reminders.list', page=reminders.prev_num, status=filter_status, provider_id=selected_provider) }}">Précédent</a>
+                    </li>
+                {% endif %}
+
+                {% for page_num in reminders.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+                    {% if page_num %}
+                        <li class="page-item {% if page_num == reminders.page %}active{% endif %}">
+                            <a class="page-link" href="{{ url_for('reminders.list', page=page_num, status=filter_status, provider_id=selected_provider) }}">{{ page_num }}</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if reminders.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('reminders.list', page=reminders.next_num, status=filter_status, provider_id=selected_provider) }}">Suivant</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+    {% else %}
+        <div class="card">
+            <div class="card-body text-center py-5">
+                <i class="fas fa-bell fa-4x text-muted mb-3"></i>
+                <h4>Aucun rappel</h4>
+                <p class="text-muted">Commencez par ajouter votre premier rappel</p>
+                <a href="{{ url_for('reminders.add') }}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Ajouter un rappel
+                </a>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
