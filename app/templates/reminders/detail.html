@@ -28,6 +28,72 @@
     .doc-stats-card.active {
         border: 2px solid #6366f1;
     }
+
+    .year-separator {
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        margin: 1.5rem 0 1rem 0;
+        font-weight: 600;
+    }
+
+    .doc-type-badge {
+        font-size: 0.75rem;
+        padding: 0.35em 0.65em;
+    }
+
+    /* Styles pour la modal de preview */
+    .document-preview-modal .modal-dialog {
+        max-width: 80%;
+        max-height: 90vh;
+        margin: 2rem auto;
+    }
+    .document-preview-modal .modal-content {
+        height: 85vh;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+    .document-preview-modal .modal-header {
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        color: white;
+        border: none;
+        padding: 0.75rem 1rem;
+    }
+    .document-preview-modal .modal-header .btn-close {
+        filter: brightness(0) invert(1);
+        opacity: 0.8;
+    }
+    .document-preview-modal .modal-header .btn-close:hover {
+        opacity: 1;
+    }
+    .document-preview-modal .modal-body {
+        padding: 0;
+        height: calc(100% - 56px);
+        overflow: hidden;
+        background: #f8f9fa;
+    }
+    .document-preview-modal .modal-body iframe,
+    .document-preview-modal .modal-body embed {
+        width: 100%;
+        height: 100%;
+        border: none;
+    }
+    .document-preview-modal .modal-body img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+        display: block;
+        margin: auto;
+    }
+    .preview-image-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        padding: 1rem;
+        background: #2d2d2d;
+    }
 </style>
 {% endblock %}
 
@@ -205,6 +271,13 @@
                                     <i class="fas fa-archive"></i> Archiver
                                 </button>
                             </form>
+                        {% else %}
+                            <form method="POST" action="{{ url_for('reminders.unarchive', reminder_id=reminder.id) }}"
+                                  onsubmit="return confirm('Désarchiver ce rappel ?')">
+                                <button type="submit" class="btn btn-success w-100">
+                                    <i class="fas fa-box-open"></i> Désarchiver
+                                </button>
+                            </form>
                         {% endif %}
                         <form method="POST" action="{{ url_for('reminders.delete', reminder_id=reminder.id) }}"
                               onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce rappel ?')">
@@ -281,37 +354,58 @@
 
                     <!-- Liste des documents -->
                     {% if documents %}
-                        <div class="list-group">
-                            {% for document in documents %}
-                                {% set doc_info = get_document_type_info(document.document_type) %}
-                                <div class="list-group-item document-card {{ document.document_type }}">
-                                    <div class="d-flex justify-content-between align-items-start">
+                        {% set current_year = namespace(value=None) %}
+                        {% for document in documents %}
+                            {% if document.year and document.year != current_year.value %}
+                                {% set current_year.value = document.year %}
+                                <div class="year-separator">
+                                    <i class="fas fa-calendar-alt"></i> {{ document.year }}
+                                </div>
+                            {% endif %}
+
+                            {% set doc_info = get_document_type_info(document.document_type) %}
+                            <div class="card document-card {{ document.document_type }} mb-2">
+                                <div class="card-body py-2 px-3">
+                                    <div class="d-flex align-items-center">
+                                        <div class="me-3" style="width: 40px; text-align: center;">
+                                            <i class="fas {{ doc_info.icon }} fa-lg" style="color: {{ doc_info.color }};"></i>
+                                        </div>
                                         <div class="flex-grow-1">
-                                            <div class="d-flex align-items-center mb-2">
-                                                <i class="fas {{ doc_info.icon }} fa-2x me-3" style="color: {{ doc_info.color }};"></i>
-                                                <div>
-                                                    <h6 class="mb-0">{{ document.name }}</h6>
-                                                    <small class="text-muted">
-                                                        <span class="badge" style="background-color: {{ doc_info.color }};">{{ doc_info.name }}</span>
-                                                        {% if document.document_date %}
-                                                            • {{ document.document_date.strftime('%d/%m/%Y') }}
-                                                        {% endif %}
-                                                        {% if document.file_size %}
-                                                            • {{ document.get_file_size_display() }}
-                                                        {% endif %}
-                                                    </small>
-                                                </div>
+                                            <div class="d-flex align-items-center">
+                                                <strong>{{ document.name }}</strong>
+                                                <span class="badge doc-type-badge ms-2" style="background-color: {{ doc_info.color }};">
+                                                    {{ doc_info.name }}
+                                                </span>
+                                                {% if document.month %}
+                                                    <span class="badge bg-light text-dark ms-2">
+                                                        {{ ['', 'Janv.', 'Fév.', 'Mars', 'Avr.', 'Mai', 'Juin', 'Juil.', 'Août', 'Sept.', 'Oct.', 'Nov.', 'Déc.'][document.month] }} {{ document.year }}
+                                                    </span>
+                                                {% endif %}
                                             </div>
                                             {% if document.description %}
-                                                <p class="text-muted mb-0 small">{{ document.description }}</p>
+                                                <small class="text-muted">{{ document.description[:80] }}{% if document.description|length > 80 %}...{% endif %}</small>
                                             {% endif %}
+                                            <div class="mt-1">
+                                                <small class="text-muted">
+                                                    {% if document.file_name %}
+                                                        <i class="fas fa-paperclip"></i> {{ document.file_name }} ({{ document.get_file_size_display() }})
+                                                    {% endif %}
+                                                    {% if document.document_date %}
+                                                        <span class="ms-2"><i class="fas fa-calendar"></i> {{ document.document_date.strftime('%d/%m/%Y') }}</span>
+                                                    {% endif %}
+                                                </small>
+                                            </div>
                                         </div>
                                         <div class="btn-group">
                                             {% if document.file_data %}
-                                                <a href="{{ url_for('reminders.view_document', document_id=document.id) }}"
-                                                   class="btn btn-sm btn-outline-primary" title="Voir" target="_blank">
-                                                    <i class="fas fa-eye"></i>
-                                                </a>
+                                                {% if document.file_mime_type and (document.file_mime_type.startswith('application/pdf') or document.file_mime_type.startswith('image/')) %}
+                                                    <button type="button"
+                                                       class="btn btn-sm btn-outline-primary"
+                                                       onclick="openPreviewModal('{{ url_for('reminders.view_document', document_id=document.id) }}', '{{ document.name | e }}', '{{ document.file_mime_type }}')"
+                                                       title="Visualiser">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                {% endif %}
                                                 <a href="{{ url_for('reminders.download_document', document_id=document.id) }}"
                                                    class="btn btn-sm btn-outline-success" title="Télécharger">
                                                     <i class="fas fa-download"></i>
@@ -322,7 +416,7 @@
                                                 <i class="fas fa-edit"></i>
                                             </a>
                                             <form method="POST" action="{{ url_for('reminders.delete_document', document_id=document.id) }}"
-                                                  onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce document ?')" class="d-inline">
+                                                  onsubmit="return confirm('Supprimer ce document ?')" class="d-inline">
                                                 <button type="submit" class="btn btn-sm btn-outline-danger" title="Supprimer">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
@@ -330,16 +424,22 @@
                                         </div>
                                     </div>
                                 </div>
-                            {% endfor %}
-                        </div>
+                            </div>
+                        {% endfor %}
                     {% else %}
-                        <div class="alert alert-info mb-0">
-                            <i class="fas fa-info-circle"></i>
-                            {% if filter_type or filter_year or search %}
-                                Aucun document ne correspond aux critères de recherche.
-                            {% else %}
-                                Aucun document ajouté pour ce rappel.
-                            {% endif %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-folder-open fa-4x text-muted mb-3"></i>
+                            <h5>Aucun document</h5>
+                            <p class="text-muted">
+                                {% if filter_type or filter_year or search %}
+                                    Aucun document ne correspond aux critères de recherche.
+                                {% else %}
+                                    Ajoutez vos factures, contrats et autres documents liés à cette prestation.
+                                {% endif %}
+                            </p>
+                            <a href="{{ url_for('reminders.add_document', reminder_id=reminder.id) }}" class="btn btn-primary">
+                                <i class="fas fa-plus"></i> Ajouter un document
+                            </a>
                         </div>
                     {% endif %}
                 </div>
@@ -347,4 +447,62 @@
         </div>
     </div>
 </div>
+
+<!-- Modal de visualisation de document -->
+<div class="modal fade document-preview-modal" id="documentPreviewModal" tabindex="-1" aria-labelledby="documentPreviewModalLabel" aria-hidden="true" data-bs-backdrop="true" data-bs-keyboard="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="documentPreviewModalLabel">
+                    <i class="fas fa-file-alt me-2"></i>
+                    <span id="previewDocName">Document</span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body" id="documentPreviewContent">
+                <!-- Le contenu sera inséré dynamiquement -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function openPreviewModal(docUrl, docName, docType) {
+    const modalElement = document.getElementById('documentPreviewModal');
+    const previewContent = document.getElementById('documentPreviewContent');
+    const previewDocName = document.getElementById('previewDocName');
+
+    // Mettre à jour le titre
+    previewDocName.textContent = docName;
+
+    // Déterminer le type de contenu
+    if (docType.startsWith('application/pdf')) {
+        previewContent.innerHTML = '<embed src="' + docUrl + '" type="application/pdf" />';
+    } else if (docType.startsWith('image/')) {
+        previewContent.innerHTML = '<div class="preview-image-container"><img src="' + docUrl + '" alt="' + docName + '" /></div>';
+    } else {
+        previewContent.innerHTML = '<div class="text-center p-5"><i class="fas fa-file fa-4x text-muted mb-3"></i><p>Aperçu non disponible pour ce type de fichier</p><a href="' + docUrl + '" target="_blank" class="btn btn-primary">Ouvrir dans un nouvel onglet</a></div>';
+    }
+
+    // Utiliser l'API Bootstrap standard
+    var modal = bootstrap.Modal.getOrCreateInstance(modalElement);
+    modal.show();
+}
+
+// Nettoyage quand la modal est fermée
+document.getElementById('documentPreviewModal').addEventListener('hidden.bs.modal', function() {
+    // Vider le contenu
+    document.getElementById('documentPreviewContent').innerHTML = '';
+
+    // Nettoyage force après un court délai
+    setTimeout(function() {
+        document.body.classList.remove('modal-open');
+        document.body.style.overflow = '';
+        document.body.style.paddingRight = '';
+        document.querySelectorAll('.modal-backdrop').forEach(function(el) {
+            el.remove();
+        });
+    }, 150);
+});
+</script>
 {% endblock %}

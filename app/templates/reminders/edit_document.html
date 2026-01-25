@@ -34,30 +34,10 @@
                     </div>
                 </div>
 
-                <div class="row mb-3">
-                    <div class="col-md-4">
-                        <label for="document_date" class="form-label">Date du document</label>
-                        <input type="date" class="form-control" id="document_date" name="document_date"
-                               value="{{ document.document_date.strftime('%Y-%m-%d') if document.document_date else '' }}">
-                    </div>
-                    <div class="col-md-4">
-                        <label for="month" class="form-label">Mois</label>
-                        <select class="form-select" id="month" name="month">
-                            <option value="">-</option>
-                            {% for value, label in months %}
-                                <option value="{{ value }}" {% if document.month == value %}selected{% endif %}>{{ label }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="col-md-4">
-                        <label for="year" class="form-label">Année</label>
-                        <select class="form-select" id="year" name="year">
-                            <option value="">-</option>
-                            {% for y in years %}
-                                <option value="{{ y }}" {% if document.year == y %}selected{% endif %}>{{ y }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
+                <div class="mb-3">
+                    <label for="document_date" class="form-label">Date du document</label>
+                    <input type="date" class="form-control" id="document_date" name="document_date"
+                           value="{{ document.document_date.strftime('%Y-%m-%d') if document.document_date else '' }}">
                 </div>
 
                 <div class="mb-3">

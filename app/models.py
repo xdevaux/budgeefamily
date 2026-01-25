@@ -485,6 +485,7 @@ class Notification(db.Model):
     credit_id = db.Column(db.Integer, db.ForeignKey('credits.id', ondelete='SET NULL'), nullable=True)
     revenue_id = db.Column(db.Integer, db.ForeignKey('revenues.id', ondelete='SET NULL'), nullable=True)
     installment_payment_id = db.Column(db.Integer, db.ForeignKey('installment_payments.id', ondelete='SET NULL'), nullable=True)
+    reminder_id = db.Column(db.Integer, db.ForeignKey('reminders.id', ondelete='SET NULL'), nullable=True)
 
     # Utilisateur qui a créé l'action à l'origine de la notification
     created_by_user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
@@ -510,6 +511,7 @@ class Notification(db.Model):
     created_by_user = db.relationship('User', foreign_keys=[created_by_user_id])
     credit = db.relationship('Credit', foreign_keys=[credit_id])
     revenue = db.relationship('Revenue', foreign_keys=[revenue_id])
+    reminder = db.relationship('Reminder', foreign_keys=[reminder_id])
 
     def mark_as_read(self):
         self.is_read = True

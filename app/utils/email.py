@@ -1578,6 +1578,8 @@ def send_notification_email(user, notification):
             'renewal': {'icon': '🔄', 'color': '#3b82f6'},
             'expiry': {'icon': '⚠️', 'color': '#f59e0b'},
             'daily_update': {'icon': '⚙️', 'color': '#3b82f6'},
+            'reminder_appointment_10days': {'icon': '🔔', 'color': '#f59e0b'},
+            'reminder_appointment_2days': {'icon': '⏰', 'color': '#ef4444'},
         }
 
         notif_info = notification_types.get(notification.type, {'icon': '🔔', 'color': '#6366f1'})

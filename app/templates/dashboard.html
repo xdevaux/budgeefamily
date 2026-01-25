@@ -133,7 +133,7 @@
                         </div>
                         <div class="card-footer bg-white text-center">
                             <a href="{{ url_for('revenues.list') }}" class="btn btn-sm text-white" style="border: 1px solid #10b981; background-color: transparent; color: #10b981 !important;" onmouseover="this.style.backgroundColor='#10b981'; this.style.color='#fff !important';" onmouseout="this.style.backgroundColor='transparent'; this.style.color='#10b981 !important';">
-                                <i class="fas fa-hand-holding-usd"></i> Voir tous les revenus
+                                <i class="fas fa-hand-holding-usd"></i> Voir tous
                             </a>
                             <a href="{{ url_for('revenues.add') }}" class="btn btn-sm text-white ms-2" style="border: 1px solid #10b981; background-color: transparent; color: #10b981 !important;" onmouseover="this.style.backgroundColor='#10b981'; this.style.color='#fff !important';" onmouseout="this.style.backgroundColor='transparent'; this.style.color='#10b981 !important';">
                                 <i class="fas fa-plus"></i> Ajouter
@@ -194,7 +194,7 @@
                         </div>
                         <div class="card-footer bg-white text-center">
                             <a href="{{ url_for('subscriptions.list') }}" class="btn btn-sm btn-outline-primary">
-                                <i class="fas fa-list"></i> Voir tous les abonnements
+                                <i class="fas fa-list"></i> Voir tous
                             </a>
                             <a href="{{ url_for('subscriptions.add') }}" class="btn btn-sm btn-outline-primary ms-2">
                                 <i class="fas fa-plus"></i> Ajouter
@@ -280,7 +280,7 @@
                         </div>
                         <div class="card-footer bg-white text-center">
                             <a href="{{ url_for('credits.list_credits') }}" class="btn btn-sm btn-outline-warning">
-                                <i class="fas fa-money-bill-wave"></i> Voir tous les crédits
+                                <i class="fas fa-money-bill-wave"></i> Voir tous
                             </a>
                             <a href="{{ url_for('credits.add') }}" class="btn btn-sm btn-outline-warning ms-2">
                                 <i class="fas fa-plus"></i> Ajouter
@@ -399,21 +399,16 @@
                                             </small>
                                         </div>
 
-                                        <!-- Nom + badges -->
+                                        <!-- Libellé + Prestataire -->
                                         <div class="flex-grow-1 text-start">
-                                            <strong class="text-truncate d-block" style="max-width: 70%;">
-                                                {{ reminder.name }}
-                                            </strong>
-                                            {% if reminder.provider %}
-                                                <small class="text-muted">{{ reminder.provider.name }}</small>
-                                            {% endif %}
+                                            <strong>{{ reminder.name }}</strong>{% if reminder.provider %} - <small class="text-muted">{{ reminder.provider.name }}</small>{% endif %}
                                         </div>
 
                                         <!-- Statut RDV -->
                                         <div class="flex-shrink-0">
                                             {% if reminder.appointment_booked %}
                                                 <span class="badge bg-success">
-                                                    <i class="fas fa-check"></i> RDV pris
+                                                    <i class="fas fa-check"></i> RDV pris le {% if reminder.appointment_date %}{{ reminder.appointment_date.strftime('%d/%m/%Y') }}{% endif %}
                                                 </span>
                                             {% else %}
                                                 <span class="badge bg-warning text-dark">

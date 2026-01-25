@@ -19,8 +19,11 @@ DOCUMENT_TYPES = [
 
 # Types de récurrence
 RECURRENCE_TYPES = [
-    ('annual', 'Annuel'),
+    ('weekly', 'Hebdomadaire'),
+    ('monthly', 'Mensuel'),
+    ('quarterly', 'Trimestriel (tous les 3 mois)'),
     ('semiannual', 'Semestriel (tous les 6 mois)'),
+    ('annual', 'Annuel'),
     ('biennial', 'Bisannuel (tous les 2 ans)'),
     ('once', 'Ponctuel (une seule fois)'),
 ]
@@ -124,12 +127,24 @@ def detail(reminder_id):
         flash('Vous n\'avez pas accès à ce rappel.', 'danger')
         return redirect(url_for('reminders.list'))
 
+    # Récupérer TOUS les rappels de la même prestation (même provider_id et même name)
+    # pour afficher tous les documents associés
+    related_reminder_ids = db.session.query(Reminder.id).filter(
+        Reminder.user_id == current_user.id,
+        Reminder.provider_id == reminder.provider_id,
+        Reminder.name == reminder.name
+    ).all()
+    related_reminder_ids = [r[0] for r in related_reminder_ids]
+
     # Récupérer les documents avec filtres
     filter_type = request.args.get('doc_type', None)
     filter_year = request.args.get('year', None, type=int)
     search = request.args.get('search', None)
 
-    query = reminder.documents
+    # Requête sur tous les documents des rappels liés (actifs ET archivés)
+    query = ReminderDocument.query.filter(
+        ReminderDocument.reminder_id.in_(related_reminder_ids)
+    )
 
     if filter_type:
         query = query.filter_by(document_type=filter_type)
@@ -142,19 +157,22 @@ def detail(reminder_id):
 
     # Obtenir les années disponibles pour le filtre
     years = db.session.query(ReminderDocument.year).filter(
-        ReminderDocument.reminder_id == reminder_id,
+        ReminderDocument.reminder_id.in_(related_reminder_ids),
         ReminderDocument.year.isnot(None)
     ).distinct().order_by(ReminderDocument.year.desc()).all()
     years = [y[0] for y in years]
 
-    # Compter les documents par type
+    # Compter les documents par type (sur tous les rappels liés)
     doc_counts = {}
     for doc_type, _, _, _ in DOCUMENT_TYPES:
-        doc_counts[doc_type] = reminder.documents.filter_by(document_type=doc_type).count()
+        doc_counts[doc_type] = ReminderDocument.query.filter(
+            ReminderDocument.reminder_id.in_(related_reminder_ids),
+            ReminderDocument.document_type == doc_type
+        ).count()
 
-    # Calculer la taille totale des documents
+    # Calculer la taille totale des documents (sur tous les rappels liés)
     total_size = db.session.query(db.func.sum(ReminderDocument.file_size)).filter(
-        ReminderDocument.reminder_id == reminder_id
+        ReminderDocument.reminder_id.in_(related_reminder_ids)
     ).scalar() or 0
 
     return render_template('reminders/detail.html',
@@ -266,16 +284,23 @@ def archive(reminder_id):
         from dateutil.relativedelta import relativedelta
 
         # Calculer date du prochain rappel
-        if reminder.recurrence == 'annual':
-            next_year = reminder.reminder_year + 1
-            next_month = reminder.reminder_month
+        current_date = date(reminder.reminder_year, reminder.reminder_month, 1)
+
+        if reminder.recurrence == 'weekly':
+            next_date = current_date + relativedelta(weeks=1)
+        elif reminder.recurrence == 'monthly':
+            next_date = current_date + relativedelta(months=1)
+        elif reminder.recurrence == 'quarterly':
+            next_date = current_date + relativedelta(months=3)
         elif reminder.recurrence == 'semiannual':
-            next_date = date(reminder.reminder_year, reminder.reminder_month, 1) + relativedelta(months=6)
-            next_year = next_date.year
-            next_month = next_date.month
+            next_date = current_date + relativedelta(months=6)
+        elif reminder.recurrence == 'annual':
+            next_date = current_date + relativedelta(years=1)
         elif reminder.recurrence == 'biennial':
-            next_year = reminder.reminder_year + 2
-            next_month = reminder.reminder_month
+            next_date = current_date + relativedelta(years=2)
+
+        next_year = next_date.year
+        next_month = next_date.month
 
         # Créer nouveau rappel
         new_reminder = Reminder(
@@ -295,6 +320,25 @@ def archive(reminder_id):
     db.session.commit()
 
     flash(f'Le rappel "{reminder.name}" a été archivé.', 'success')
+    return redirect(url_for('reminders.list'))
+
+
+@bp.route('/<int:reminder_id>/unarchive', methods=['POST'])
+@login_required
+def unarchive(reminder_id):
+    reminder = Reminder.query.get_or_404(reminder_id)
+
+    if reminder.user_id != current_user.id:
+        flash('Vous n\'avez pas accès à ce rappel.', 'danger')
+        return redirect(url_for('reminders.list'))
+
+    # Désarchiver le rappel
+    reminder.is_active = True
+    reminder.archived_at = None
+
+    db.session.commit()
+
+    flash(f'Le rappel "{reminder.name}" a été désarchivé.', 'success')
     return redirect(url_for('reminders.list'))
 
 

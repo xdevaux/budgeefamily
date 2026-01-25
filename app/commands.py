@@ -413,20 +413,28 @@ def archive_reminders():
 
         # 2. Créer nouveau rappel si récurrent
         if reminder.recurrence != 'once':
+            from datetime import date
             # Calculer date du prochain rappel
-            if reminder.recurrence == 'annual':
-                next_year = reminder.reminder_year + 1
-                next_month = reminder.reminder_month
+            current_date = date(reminder.reminder_year, reminder.reminder_month, 1)
+
+            if reminder.recurrence == 'weekly':
+                next_date = current_date + relativedelta(weeks=1)
+            elif reminder.recurrence == 'monthly':
+                next_date = current_date + relativedelta(months=1)
+            elif reminder.recurrence == 'quarterly':
+                next_date = current_date + relativedelta(months=3)
             elif reminder.recurrence == 'semiannual':
-                next_date = date(reminder.reminder_year, reminder.reminder_month, 1) + relativedelta(months=6)
-                next_year = next_date.year
-                next_month = next_date.month
+                next_date = current_date + relativedelta(months=6)
+            elif reminder.recurrence == 'annual':
+                next_date = current_date + relativedelta(years=1)
             elif reminder.recurrence == 'biennial':
-                next_year = reminder.reminder_year + 2
-                next_month = reminder.reminder_month
+                next_date = current_date + relativedelta(years=2)
             else:
                 # Par défaut, on ne crée pas de nouveau rappel
                 continue
+
+            next_year = next_date.year
+            next_month = next_date.month
 
             # Créer nouveau rappel
             new_reminder = Reminder(
@@ -450,9 +458,112 @@ def archive_reminders():
     click.echo(f'✓ {created_count} nouveaux rappels créés')
 
 
+@click.command('check-reminder-appointments')
+@with_appcontext
+def check_reminder_appointments():
+    """Génère des notifications pour les rendez-vous à venir (10 jours et 2 jours avant)"""
+    from datetime import date
+
+    today = date.today()
+    date_in_10_days = today + timedelta(days=10)
+    date_in_2_days = today + timedelta(days=2)
+
+    # Trouver les rappels avec rendez-vous dans 10 ou 2 jours
+    reminders_10_days = Reminder.query.filter(
+        Reminder.is_active == True,
+        Reminder.appointment_booked == True,
+        Reminder.appointment_date == date_in_10_days
+    ).all()
+
+    reminders_2_days = Reminder.query.filter(
+        Reminder.is_active == True,
+        Reminder.appointment_booked == True,
+        Reminder.appointment_date == date_in_2_days
+    ).all()
+
+    notifications_created = 0
+    emails_sent = 0
+
+    # Traiter les rappels à 10 jours
+    for reminder in reminders_10_days:
+        # Vérifier si une notification n'existe pas déjà pour ce rappel et ce délai
+        existing_notif = Notification.query.filter_by(
+            user_id=reminder.user_id,
+            reminder_id=reminder.id,
+            type='reminder_appointment_10days'
+        ).first()
+
+        if not existing_notif:
+            # Créer la notification
+            notification = Notification(
+                user_id=reminder.user_id,
+                reminder_id=reminder.id,
+                type='reminder_appointment_10days',
+                title=f'Rappel de rendez-vous dans 10 jours',
+                message=f'Votre rendez-vous "{reminder.name}" est prévu le {reminder.appointment_date.strftime("%d/%m/%Y")}'
+                        + (f' chez {reminder.provider.name}' if reminder.provider else '') + '.'
+            )
+            db.session.add(notification)
+            notifications_created += 1
+            click.echo(f'  → Notification créée pour "{reminder.name}" (10 jours)')
+
+    # Traiter les rappels à 2 jours
+    for reminder in reminders_2_days:
+        # Vérifier si une notification n'existe pas déjà pour ce rappel et ce délai
+        existing_notif = Notification.query.filter_by(
+            user_id=reminder.user_id,
+            reminder_id=reminder.id,
+            type='reminder_appointment_2days'
+        ).first()
+
+        if not existing_notif:
+            # Créer la notification
+            notification = Notification(
+                user_id=reminder.user_id,
+                reminder_id=reminder.id,
+                type='reminder_appointment_2days',
+                title=f'Rappel de rendez-vous dans 2 jours',
+                message=f'Votre rendez-vous "{reminder.name}" est prévu le {reminder.appointment_date.strftime("%d/%m/%Y")}'
+                        + (f' chez {reminder.provider.name}' if reminder.provider else '') + '.'
+            )
+            db.session.add(notification)
+            notifications_created += 1
+            click.echo(f'  → Notification créée pour "{reminder.name}" (2 jours)')
+
+    db.session.commit()
+
+    # Envoyer les emails de notification si l'utilisateur a activé les emails
+    if notifications_created > 0:
+        from app.utils.email import send_notification_email
+        from flask import current_app
+
+        # Créer un contexte de requête pour permettre l'utilisation de url_for()
+        with current_app.test_request_context():
+            # Récupérer toutes les notifications créées (type reminder_appointment_10days ou reminder_appointment_2days)
+            recent_notifs = Notification.query.filter(
+                Notification.type.in_(['reminder_appointment_10days', 'reminder_appointment_2days']),
+                Notification.is_sent == False
+            ).all()
+
+            for notification in recent_notifs:
+                user = User.query.get(notification.user_id)
+                if user and user.email_notifications:
+                    if send_notification_email(user, notification):
+                        notification.is_sent = True
+                        notification.sent_at = datetime.utcnow()
+                        emails_sent += 1
+                        click.echo(f'  → Email envoyé à {user.email}')
+
+            db.session.commit()
+
+    click.echo(f'✓ {notifications_created} notification(s) créée(s)')
+    click.echo(f'✓ {emails_sent} email(s) envoyé(s)')
+
+
 def init_app(app):
     """Enregistre les commandes dans l'application Flask"""
     app.cli.add_command(update_payment_dates)
     app.cli.add_command(archive_old_notifications)
     app.cli.add_command(generate_initial_transactions)
     app.cli.add_command(archive_reminders)
+    app.cli.add_command(check_reminder_appointments)

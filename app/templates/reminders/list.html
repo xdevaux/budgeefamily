@@ -68,8 +68,8 @@
                                 <th>Date</th>
                                 <th>Périodicité</th>
                                 <th class="text-end">Coût estimé</th>
+                                <th>Statut</th>
                                 <th>RDV</th>
-                                <th>Documents</th>
                                 <th class="text-end">Actions</th>
                             </tr>
                         </thead>
@@ -111,21 +111,22 @@
                                         {% endif %}
                                     </td>
                                     <td>
+                                        {% if reminder.is_active %}
+                                            <span class="badge bg-success">Actif</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">Archivé</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
                                         {% if reminder.appointment_booked %}
                                             <span class="badge bg-success">
-                                                <i class="fas fa-check"></i> RDV pris
-                                                {% if reminder.appointment_date %}
-                                                    <br>{{ reminder.appointment_date.strftime('%d/%m/%Y') }}
-                                                {% endif %}
+                                                <i class="fas fa-check"></i> RDV pris{% if reminder.appointment_date %} le {{ reminder.appointment_date.strftime('%d/%m/%Y') }}{% endif %}
                                             </span>
                                         {% else %}
                                             <span class="badge bg-warning text-dark">
                                                 <i class="fas fa-clock"></i> À planifier
                                             </span>
                                         {% endif %}
-                                    </td>
-                                    <td>
-                                        <span class="badge bg-info">{{ reminder.documents.count() }}</span>
                                     </td>
                                     <td class="text-end">
                                         <div class="btn-group">
@@ -142,6 +143,13 @@
                                                       onsubmit="return confirm('Archiver ce rappel ?')" class="d-inline">
                                                     <button type="submit" class="btn btn-sm btn-outline-secondary" title="Archiver">
                                                         <i class="fas fa-archive"></i>
+                                                    </button>
+                                                </form>
+                                            {% else %}
+                                                <form method="POST" action="{{ url_for('reminders.unarchive', reminder_id=reminder.id) }}"
+                                                      onsubmit="return confirm('Désarchiver ce rappel ?')" class="d-inline">
+                                                    <button type="submit" class="btn btn-sm btn-outline-info" title="Désarchiver">
+                                                        <i class="fas fa-box-open"></i>
                                                     </button>
                                                 </form>
                                             {% endif %}
