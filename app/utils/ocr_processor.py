@@ -10,6 +10,8 @@ import numpy as np
 from datetime import datetime
 from typing import Dict, Optional, Tuple
 from pdf2image import convert_from_bytes
+from concurrent.futures import ThreadPoolExecutor, as_completed
+import multiprocessing
 
 # Configuration Tesseract
 pytesseract.pytesseract.tesseract_cmd = '/usr/bin/tesseract'  # Chemin par défaut Linux
@@ -66,7 +68,8 @@ def preprocess_image_multi(image_data: bytes) -> list:
             print("PDF détecté, conversion en cours...")
 
             try:
-                images = convert_from_bytes(image_data, first_page=1, last_page=1, dpi=400)
+                # Résolution optimisée pour vitesse/qualité (DPI=200 au lieu de 400)
+                images = convert_from_bytes(image_data, first_page=1, last_page=1, dpi=200, poppler_path='/usr/bin')
                 if images:
                     pil_image = images[0]
                     logger.info(f"PDF converti avec succès: {pil_image.size}")
@@ -87,15 +90,15 @@ def preprocess_image_multi(image_data: bytes) -> list:
         if pil_image.mode not in ('RGB', 'L'):
             pil_image = pil_image.convert('RGB')
 
-        # Redimensionner intelligemment
-        min_size = 1500
+        # Redimensionner intelligemment pour qualité optimale
+        min_size = 1200  # Taille minimale pour bonne qualité OCR (réduit pour vitesse)
         if min(pil_image.size) < min_size:
             ratio = min_size / min(pil_image.size)
             new_size = (int(pil_image.size[0] * ratio), int(pil_image.size[1] * ratio))
             pil_image = pil_image.resize(new_size, Image.LANCZOS)
             print(f"Image agrandie: {new_size}")
 
-        max_size = 4000
+        max_size = 2500  # Taille max pour équilibre vitesse/qualité (réduit de 4000)
         if max(pil_image.size) > max_size:
             ratio = max_size / max(pil_image.size)
             new_size = (int(pil_image.size[0] * ratio), int(pil_image.size[1] * ratio))
@@ -109,13 +112,13 @@ def preprocess_image_multi(image_data: bytes) -> list:
         else:
             gray = img_array
 
-        # Corriger l'inclinaison
-        gray = detect_and_correct_skew(gray)
+        # Corriger l'inclinaison (DÉSACTIVÉ - causait trop de rotation)
+        # gray = detect_and_correct_skew(gray)
 
         # Normalisation de base
         gray = cv2.normalize(gray, None, 0, 255, cv2.NORM_MINMAX)
 
-        # Débruitage
+        # Débruitage de qualité (plus lent mais meilleur résultat)
         gray = cv2.fastNlMeansDenoising(gray, None, h=10, templateWindowSize=7, searchWindowSize=21)
 
         processed_versions = []
@@ -174,7 +177,7 @@ def preprocess_image_multi(image_data: bytes) -> list:
             # Si c'est un PDF, essayer de le convertir même en mode fallback
             if image_data[:4] == b'%PDF':
                 logger.info("Fallback: tentative de conversion PDF simplifiée")
-                images = convert_from_bytes(image_data, first_page=1, last_page=1, dpi=200)
+                images = convert_from_bytes(image_data, first_page=1, last_page=1, dpi=200, poppler_path='/usr/bin')
                 if images:
                     pil_image = images[0]
                 else:
@@ -210,8 +213,8 @@ def preprocess_image(image_data: bytes) -> np.ndarray:
         # Détecter si c'est un PDF et le convertir en image
         if image_data[:4] == b'%PDF':
             print("PDF détecté, conversion en cours...")
-            # Convertir avec une résolution plus élevée pour les tickets de mauvaise qualité
-            images = convert_from_bytes(image_data, first_page=1, last_page=1, dpi=400)
+            # Convertir avec une résolution élevée pour meilleure qualité
+            images = convert_from_bytes(image_data, first_page=1, last_page=1, dpi=400, poppler_path='/usr/bin')
             if images:
                 pil_image = images[0]
                 print(f"PDF converti: {pil_image.size}")
@@ -226,7 +229,7 @@ def preprocess_image(image_data: bytes) -> np.ndarray:
             pil_image = pil_image.convert('RGB')
 
         # Augmenter la résolution si trop petite (crucial pour OCR)
-        min_size = 1200  # Augmenté de 800 à 1200
+        min_size = 1200
         if min(pil_image.size) < min_size:
             ratio = min_size / min(pil_image.size)
             new_size = (int(pil_image.size[0] * ratio), int(pil_image.size[1] * ratio))
@@ -305,32 +308,73 @@ def preprocess_image(image_data: bytes) -> np.ndarray:
         return img_array
 
 
+def _process_single_combination(args):
+    """
+    Fonction helper pour traiter une seule combinaison (prétraitement + config)
+    Conçue pour être appelée en parallèle via ProcessPoolExecutor
+    """
+    processed_img, preprocess_name, custom_config = args
+
+    try:
+        # Extraire le texte avec données de confiance
+        data = pytesseract.image_to_data(
+            processed_img,
+            config=custom_config,
+            output_type=pytesseract.Output.DICT
+        )
+
+        # Calculer le score de confiance moyen
+        confidences = [int(conf) for conf in data['conf'] if conf != '-1' and int(conf) > 0]
+        avg_confidence = sum(confidences) / len(confidences) if confidences else 0
+
+        # Extraire le texte complet
+        text = pytesseract.image_to_string(processed_img, config=custom_config, lang='fra')
+
+        return {
+            'text': text,
+            'confidence': avg_confidence,
+            'combo_name': f"{preprocess_name} + {custom_config}",
+            'success': True
+        }
+    except Exception as e:
+        return {
+            'text': '',
+            'confidence': 0,
+            'combo_name': f"{preprocess_name} + {custom_config}",
+            'success': False,
+            'error': str(e)
+        }
+
+
 def extract_text_from_image(image_data: bytes) -> Tuple[str, float]:
     """
-    Extrait le texte d'une image de reçu avec OCR
+    Extrait le texte d'une image de reçu avec OCR (VERSION PRÉCISE)
     Teste plusieurs prétraitements et configurations pour trouver le meilleur résultat
     Retourne (texte_extrait, score_de_confiance)
     """
     try:
-        # Obtenir plusieurs versions prétraitées
+        # Obtenir plusieurs versions prétraitées (RÉDUITES pour performance)
         preprocessed_versions = preprocess_image_multi(image_data)
 
-        # Configurations PSM à tester
+        # Limiter aux 2 meilleures versions seulement (pour vitesse)
+        preprocessed_versions = preprocessed_versions[:2]
+
+        # Configuration optimale pour tickets (1 seule config pour vitesse)
         configs = [
-            r'--oem 3 --psm 4 -l fra',   # Colonne unique (MEILLEUR pour tickets)
-            r'--oem 3 --psm 6 -l fra',   # Block de texte uniforme
-            r'--oem 1 --psm 6 -l fra',   # LSTM uniquement
+            r'--oem 3 --psm 6 -l fra',   # Block de texte (meilleur résultat observé)
         ]
 
+        print(f"Test de {len(preprocessed_versions) * len(configs)} combinaisons...")
+
+        # Traiter les combinaisons SÉQUENTIELLEMENT (plus simple et plus fiable)
         best_text = ""
         best_confidence = 0.0
         best_combo = ""
 
-        # Tester chaque combinaison de prétraitement + config
         for preprocess_name, processed_img in preprocessed_versions:
             for custom_config in configs:
                 try:
-                    # Extraire le texte avec données de confiance
+                    # Extraire le texte ET la confiance en UN SEUL appel (optimisation)
                     data = pytesseract.image_to_data(
                         processed_img,
                         config=custom_config,
@@ -341,30 +385,28 @@ def extract_text_from_image(image_data: bytes) -> Tuple[str, float]:
                     confidences = [int(conf) for conf in data['conf'] if conf != '-1' and int(conf) > 0]
                     avg_confidence = sum(confidences) / len(confidences) if confidences else 0
 
-                    # Extraire le texte complet
-                    text = pytesseract.image_to_string(processed_img, config=custom_config, lang='fra')
+                    # Reconstruire le texte depuis data (évite un 2e appel pytesseract)
+                    text = ' '.join([data['text'][i] for i in range(len(data['text'])) if data['text'][i].strip()])
+
+                    combo_name = f"{preprocess_name} + {custom_config}"
 
                     # Critère de sélection: priorité au texte le plus long si confiance > 30%
-                    # Sinon prendre la meilleure confiance
                     is_better = False
                     if avg_confidence > 30:
-                        # Si confiance acceptable, préférer le texte le plus long
                         if len(text) > len(best_text) and avg_confidence > best_confidence * 0.8:
                             is_better = True
                     else:
-                        # Sinon prendre la meilleure confiance
                         if avg_confidence > best_confidence:
                             is_better = True
 
                     if is_better:
                         best_text = text
                         best_confidence = avg_confidence
-                        best_combo = f"{preprocess_name} + {custom_config}"
-                        print(f"Meilleur: {best_combo} - confiance={avg_confidence:.1f}%, longueur={len(text)}")
+                        best_combo = combo_name
+                        print(f"✓ Meilleur: {best_combo} - confiance={avg_confidence:.1f}%, longueur={len(text)}")
 
                 except Exception as e:
                     print(f"Erreur avec {preprocess_name} + {custom_config}: {e}")
-                    continue
 
         print(f"Résultat final: {best_combo}")
         return best_text, best_confidence
@@ -427,9 +469,13 @@ def parse_amount(text: str) -> Optional[float]:
             line_normalized = line_normalized.replace('d', '0').replace('D', '0')
 
 
-            amounts_in_line = re.findall(r'([0-9]{1,4}[,\.\-/:][0-9]{2})', line_normalized)
+            # Chercher les montants (en excluant les dates au format DD-MM-YY)
+            amounts_in_line = re.findall(r'([0-9]{1,4}[,\.\-/:][0-9]{2})(?!\-)', line_normalized)
             if amounts_in_line:
                 for amt_str in amounts_in_line:
+                    # Ignorer si ça ressemble à une date (14-01, 01-26, etc.)
+                    if re.match(r'[0-3][0-9][\-/:\.][0-1][0-9]', amt_str):
+                        continue
                     try:
                         # Nettoyer tous les séparateurs possibles
                         amount = float(amt_str.replace(',', '.').replace('-', '.').replace('/', '.').replace(':', '.'))
@@ -450,9 +496,12 @@ def parse_amount(text: str) -> Optional[float]:
                 line_next_normalized = line_next_normalized.replace('d', '0').replace('D', '0')
 
 
-                amounts_next = re.findall(r'([0-9]{1,4}[,\.\-/:][0-9]{2})', line_next_normalized)
+                amounts_next = re.findall(r'([0-9]{1,4}[,\.\-/:][0-9]{2})(?!\-)', line_next_normalized)
                 if amounts_next:
                     for amt_str in amounts_next:
+                        # Ignorer si ça ressemble à une date
+                        if re.match(r'[0-3][0-9][\-/:\.][0-1][0-9]', amt_str):
+                            continue
                         try:
                             amount = float(amt_str.replace(',', '.').replace('-', '.').replace('/', '.').replace(':', '.'))
                             if 0.01 < amount < 10000:

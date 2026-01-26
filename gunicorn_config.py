@@ -11,8 +11,8 @@ workers = multiprocessing.cpu_count() * 2 + 1
 # Type de worker
 worker_class = "sync"
 
-# Timeout
-timeout = 120
+# Timeout (5 minutes pour traitement OCR)
+timeout = 300
 
 # Logs
 accesslog = "/opt/budgeefamily/logs/gunicorn_access.log"
