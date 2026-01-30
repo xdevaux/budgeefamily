@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request
+from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify
 from flask_login import login_required, current_user
 from functools import wraps
 from app import db
@@ -6,6 +6,8 @@ from app.models import User, Plan, Category, Service, ServicePlan
 from datetime import datetime
 import base64
 import mimetypes
+import psutil
+import subprocess
 
 bp = Blueprint('admin', __name__, url_prefix='/admin')
 
@@ -201,7 +203,6 @@ def dashboard():
 
     # Compter les utilisateurs non-admin par plan
     plans_stats_with_revenue = []
-    total_revenue = 0
 
     for plan in all_plans:
         # Compter les utilisateurs actifs non-admin pour ce plan
@@ -211,21 +212,15 @@ def dashboard():
             (User.is_admin == False) | (User.is_admin == None)
         ).count()
 
-        # Convertir tous les revenus en mensuel
-        if plan.billing_period == 'yearly':
-            monthly_price = plan.price / 12
-        else:
-            monthly_price = plan.price
-
-        revenue = monthly_price * user_count
-        total_revenue += revenue
+        # Calculer le revenu total pour ce plan
+        revenue = plan.price * user_count
 
         plans_stats_with_revenue.append({
             'name': plan.name,
             'price': plan.price,
             'billing_period': plan.billing_period,
             'user_count': user_count,
-            'monthly_revenue': revenue
+            'revenue': revenue
         })
 
     # Compter les utilisateurs actifs sans plan (non-admin)
@@ -238,8 +233,28 @@ def dashboard():
     # Ajouter les administrateurs actifs comme ligne séparée
     admin_count = User.query.filter_by(is_admin=True, is_active=True).count()
 
-    # Utilisateurs récents
+    # Utilisateurs récents (par date d'inscription)
     recent_users = User.query.order_by(User.created_at.desc()).limit(10).all()
+
+    # Utilisateurs : Dernières connexions
+    last_logged_users = User.query.filter(User.last_login.isnot(None)).order_by(User.last_login.desc()).limit(10).all()
+
+    # Statistiques du serveur
+    # Stockage
+    disk = psutil.disk_usage('/')
+    disk_used_gb = disk.used / (1024**3)
+    disk_total_gb = disk.total / (1024**3)
+    disk_percent = disk.percent
+
+    # Mémoire
+    memory = psutil.virtual_memory()
+    memory_used_gb = memory.used / (1024**3)
+    memory_total_gb = memory.total / (1024**3)
+    memory_percent = memory.percent
+
+    # CPU
+    cpu_percent = psutil.cpu_percent(interval=1)
+    cpu_count = psutil.cpu_count()
 
     return render_template('admin/dashboard.html',
                          total_users=total_users,
@@ -248,8 +263,16 @@ def dashboard():
                          plans_stats=plans_stats_with_revenue,
                          no_plan_count=no_plan_count,
                          admin_count=admin_count,
-                         total_revenue=total_revenue,
-                         recent_users=recent_users)
+                         recent_users=recent_users,
+                         last_logged_users=last_logged_users,
+                         disk_used_gb=disk_used_gb,
+                         disk_total_gb=disk_total_gb,
+                         disk_percent=disk_percent,
+                         memory_used_gb=memory_used_gb,
+                         memory_total_gb=memory_total_gb,
+                         memory_percent=memory_percent,
+                         cpu_percent=cpu_percent,
+                         cpu_count=cpu_count)
 
 
 # ========== GESTION DES CATÉGORIES PAR DÉFAUT ==========
@@ -658,3 +681,21 @@ def service_plans_delete(plan_id):
 
     flash(f'Formule "{name}" du service "{service_name}" supprimée avec succès.', 'success')
     return redirect(url_for('admin.service_plans_list'))
+
+
+# ========== GESTION DU SERVEUR ==========
+
+@bp.route('/server/restart', methods=['POST'])
+@login_required
+@admin_required
+def server_restart():
+    """Redémarrer le serveur"""
+    try:
+        # Redémarrer le serveur avec sudo
+        # Le mot de passe sudo doit être configuré pour fonctionner sans prompt
+        subprocess.Popen(['sudo', 'reboot'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        flash('Le serveur va redémarrer dans quelques instants...', 'warning')
+    except Exception as e:
+        flash(f'Erreur lors du redémarrage du serveur: {str(e)}', 'danger')
+
+    return redirect(url_for('admin.dashboard'))

@@ -41,8 +41,8 @@
     <div class="row mb-4">
         <div class="col-md-6">
             <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0"><i class="fas fa-chart-pie"></i> Répartition par plan</h5>
+                <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #e5e7eb;">
+                    <h5 class="mb-0"><i class="fas fa-chart-pie text-secondary"></i> Répartition par plan</h5>
                 </div>
                 <div class="card-body">
                     <table class="table table-sm">
@@ -51,7 +51,7 @@
                                 <th>Plan</th>
                                 <th class="text-end">Prix</th>
                                 <th class="text-end">Utilisateurs</th>
-                                <th class="text-end">Revenu/mois</th>
+                                <th class="text-end">Revenus</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -74,7 +74,11 @@
                                     <span class="badge bg-primary">{{ plan.user_count }}</span>
                                 </td>
                                 <td class="text-end">
-                                    <strong>{{ plan.monthly_revenue|format_amount }} €</strong>
+                                    {% if plan.revenue > 0 %}
+                                    <strong>{{ plan.revenue|format_amount }} €</strong>
+                                    {% else %}
+                                    <strong>0,00 €</strong>
+                                    {% endif %}
                                 </td>
                             </tr>
                             {% endfor %}
@@ -111,12 +115,6 @@
                                 </td>
                             </tr>
                         </tbody>
-                        <tfoot class="table-secondary">
-                            <tr>
-                                <td colspan="3" class="text-end"><strong>Total (revenu mensuel estimé) :</strong></td>
-                                <td class="text-end"><strong class="text-success">{{ total_revenue|format_amount }} €</strong></td>
-                            </tr>
-                        </tfoot>
                     </table>
                 </div>
             </div>
@@ -124,22 +122,82 @@
 
         <div class="col-md-6">
             <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0"><i class="fas fa-user-clock"></i> Utilisateurs récents</h5>
+                <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #e5e7eb;">
+                    <h5 class="mb-0"><i class="fas fa-chart-pie text-secondary"></i> Graphique de répartition</h5>
+                </div>
+                <div class="card-body d-flex justify-content-center align-items-center" style="min-height: 400px;">
+                    <canvas id="plansDistributionChart" style="max-height: 350px; max-width: 100%;"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Utilisateurs -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #e5e7eb;">
+                    <h5 class="mb-0"><i class="fas fa-user-plus text-secondary"></i> Utilisateurs récents</h5>
                 </div>
                 <div class="card-body">
-                    <div class="list-group list-group-flush">
-                        {% for user in recent_users %}
-                        <div class="list-group-item px-0">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <strong>{{ user.email }}</strong><br>
-                                    <small class="text-muted">{{ user.first_name }} {{ user.last_name }}</small>
-                                </div>
-                                <small class="text-muted">{{ user.created_at.strftime('%d/%m/%Y') }}</small>
-                            </div>
-                        </div>
-                        {% endfor %}
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Nom et Prénom</th>
+                                    <th>Email</th>
+                                    <th>Date d'inscription</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for user in recent_users %}
+                                <tr>
+                                    <td>{{ user.first_name }} {{ user.last_name }}</td>
+                                    <td><small>{{ user.email }}</small></td>
+                                    <td>
+                                        <small class="text-muted">{{ user.created_at.strftime('%d/%m/%Y %H:%M') }}</small>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="text-center mt-3">
+                        <a href="{{ url_for('admin.clients_list') }}" class="btn btn-sm btn-outline-primary">
+                            Voir tous
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #e5e7eb;">
+                    <h5 class="mb-0"><i class="fas fa-user-clock text-secondary"></i> Utilisateurs : Dernières connexions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Nom et Prénom</th>
+                                    <th>Email</th>
+                                    <th>Dernière connexion</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for user in last_logged_users %}
+                                <tr>
+                                    <td>{{ user.first_name }} {{ user.last_name }}</td>
+                                    <td><small>{{ user.email }}</small></td>
+                                    <td>
+                                        <small class="text-muted">{{ user.last_login.strftime('%d/%m/%Y %H:%M') }}</small>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
                     <div class="text-center mt-3">
                         <a href="{{ url_for('admin.clients_list') }}" class="btn btn-sm btn-outline-primary">
@@ -151,56 +209,216 @@
         </div>
     </div>
 
-    <!-- Actions rapides -->
+    <!-- Section Serveur -->
     <div class="row">
         <div class="col-12">
             <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0"><i class="fas fa-bolt"></i> Actions rapides</h5>
+                <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #e5e7eb;">
+                    <h5 class="mb-0"><i class="fas fa-server text-secondary"></i> Serveur</h5>
                 </div>
                 <div class="card-body">
-                    <h6 class="text-muted mb-2">Gestion des clients</h6>
-                    <div class="d-grid gap-2 d-md-flex mb-4">
-                        <a href="{{ url_for('admin.clients_add') }}" class="btn btn-primary">
-                            <i class="fas fa-user-plus"></i> Ajouter un client
-                        </a>
-                        <a href="{{ url_for('admin.clients_list') }}" class="btn btn-outline-primary">
-                            <i class="fas fa-list"></i> Liste des clients
-                        </a>
+                    <div class="row mb-4">
+                        <!-- Stockage -->
+                        <div class="col-md-4 mb-3">
+                            <h6 class="text-muted mb-3"><i class="fas fa-hdd"></i> Stockage</h6>
+                            <canvas id="storageChart" style="max-height: 200px;"></canvas>
+                            <div class="text-center mt-2">
+                                <small class="text-muted">
+                                    {{ "%.2f"|format(disk_used_gb) }} Go / {{ "%.2f"|format(disk_total_gb) }} Go
+                                    ({{ "%.1f"|format(disk_percent) }}%)
+                                </small>
+                            </div>
+                        </div>
+
+                        <!-- Mémoire -->
+                        <div class="col-md-4 mb-3">
+                            <h6 class="text-muted mb-3"><i class="fas fa-memory"></i> Mémoire RAM</h6>
+                            <canvas id="memoryChart" style="max-height: 200px;"></canvas>
+                            <div class="text-center mt-2">
+                                <small class="text-muted">
+                                    {{ "%.2f"|format(memory_used_gb) }} Go / {{ "%.2f"|format(memory_total_gb) }} Go
+                                    ({{ "%.1f"|format(memory_percent) }}%)
+                                </small>
+                            </div>
+                        </div>
+
+                        <!-- CPU -->
+                        <div class="col-md-4 mb-3">
+                            <h6 class="text-muted mb-3"><i class="fas fa-microchip"></i> CPU ({{ cpu_count }} cœurs)</h6>
+                            <canvas id="cpuChart" style="max-height: 200px;"></canvas>
+                            <div class="text-center mt-2">
+                                <small class="text-muted">
+                                    Utilisation: {{ "%.1f"|format(cpu_percent) }}%
+                                </small>
+                            </div>
+                        </div>
                     </div>
 
-                    <h6 class="text-muted mb-2">Gestion des catégories par défaut</h6>
-                    <div class="d-grid gap-2 d-md-flex mb-4">
-                        <a href="{{ url_for('admin.categories_add') }}" class="btn btn-success">
-                            <i class="fas fa-folder-plus"></i> Ajouter une catégorie
-                        </a>
-                        <a href="{{ url_for('admin.categories_list') }}" class="btn btn-outline-success">
-                            <i class="fas fa-folder"></i> Liste des catégories
-                        </a>
-                    </div>
-
-                    <h6 class="text-muted mb-2">Gestion des services par défaut</h6>
-                    <div class="d-grid gap-2 d-md-flex mb-4">
-                        <a href="{{ url_for('admin.services_add') }}" class="btn btn-info">
-                            <i class="fas fa-plus-circle"></i> Ajouter un service
-                        </a>
-                        <a href="{{ url_for('admin.services_list') }}" class="btn btn-outline-info">
-                            <i class="fas fa-cogs"></i> Liste des services
-                        </a>
-                    </div>
-
-                    <h6 class="text-muted mb-2">Gestion des formules de services par défaut</h6>
-                    <div class="d-grid gap-2 d-md-flex">
-                        <a href="{{ url_for('admin.service_plans_add') }}" class="btn btn-warning">
-                            <i class="fas fa-plus-square"></i> Ajouter une formule
-                        </a>
-                        <a href="{{ url_for('admin.service_plans_list') }}" class="btn btn-outline-warning">
-                            <i class="fas fa-list-alt"></i> Liste des formules
-                        </a>
+                    <!-- Bouton redémarrage serveur -->
+                    <div class="row">
+                        <div class="col-12 text-center">
+                            <form method="POST" action="{{ url_for('admin.server_restart') }}" onsubmit="return confirm('Êtes-vous sûr de vouloir redémarrer le serveur ? Tous les utilisateurs seront déconnectés.');">
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="fas fa-power-off"></i> Redémarrer le serveur
+                                </button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+// Configuration des graphiques
+const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: true,
+    plugins: {
+        legend: {
+            display: true,
+            position: 'bottom'
+        }
+    }
+};
+
+// Graphique de répartition des plans
+const plansCtx = document.getElementById('plansDistributionChart').getContext('2d');
+new Chart(plansCtx, {
+    type: 'pie',
+    data: {
+        labels: [
+            {% for plan in plans_stats %}
+                '{{ plan.name }}{% if plan.billing_period == "yearly" %} (annuel){% endif %}'{% if not loop.last %},{% endif %}
+            {% endfor %}
+            {% if no_plan_count > 0 %},
+                'Sans plan'
+            {% endif %}
+            {% if admin_count > 0 %},
+                'Administrateurs'
+            {% endif %}
+        ],
+        datasets: [{
+            data: [
+                {% for plan in plans_stats %}
+                    {{ plan.user_count }}{% if not loop.last %},{% endif %}
+                {% endfor %}
+                {% if no_plan_count > 0 %},
+                    {{ no_plan_count }}
+                {% endif %}
+                {% if admin_count > 0 %},
+                    {{ admin_count }}
+                {% endif %}
+            ],
+            backgroundColor: [
+                'rgba(99, 102, 241, 0.8)',   // Free - Indigo
+                'rgba(16, 185, 129, 0.8)',   // Premium - Vert
+                'rgba(245, 158, 11, 0.8)',   // Premium Annual - Orange
+                'rgba(107, 114, 128, 0.8)',  // Sans plan - Gris
+                'rgba(239, 68, 68, 0.8)'     // Administrateurs - Rouge
+            ],
+            borderColor: [
+                'rgba(99, 102, 241, 1)',
+                'rgba(16, 185, 129, 1)',
+                'rgba(245, 158, 11, 1)',
+                'rgba(107, 114, 128, 1)',
+                'rgba(239, 68, 68, 1)'
+            ],
+            borderWidth: 2
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+            legend: {
+                display: true,
+                position: 'bottom'
+            },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        let label = context.label || '';
+                        if (label) {
+                            label += ': ';
+                        }
+                        label += context.parsed + ' utilisateur';
+                        if (context.parsed > 1) {
+                            label += 's';
+                        }
+                        return label;
+                    }
+                }
+            }
+        }
+    }
+});
+
+// Graphique de stockage
+const storageCtx = document.getElementById('storageChart').getContext('2d');
+new Chart(storageCtx, {
+    type: 'doughnut',
+    data: {
+        labels: ['Utilisé', 'Disponible'],
+        datasets: [{
+            data: [{{ disk_used_gb }}, {{ disk_total_gb - disk_used_gb }}],
+            backgroundColor: [
+                'rgba(239, 68, 68, 0.8)',  // Rouge pour utilisé
+                'rgba(34, 197, 94, 0.8)'   // Vert pour disponible
+            ],
+            borderColor: [
+                'rgba(239, 68, 68, 1)',
+                'rgba(34, 197, 94, 1)'
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: chartOptions
+});
+
+// Graphique de mémoire
+const memoryCtx = document.getElementById('memoryChart').getContext('2d');
+new Chart(memoryCtx, {
+    type: 'doughnut',
+    data: {
+        labels: ['Utilisée', 'Disponible'],
+        datasets: [{
+            data: [{{ memory_used_gb }}, {{ memory_total_gb - memory_used_gb }}],
+            backgroundColor: [
+                'rgba(59, 130, 246, 0.8)',  // Bleu pour utilisé
+                'rgba(34, 197, 94, 0.8)'    // Vert pour disponible
+            ],
+            borderColor: [
+                'rgba(59, 130, 246, 1)',
+                'rgba(34, 197, 94, 1)'
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: chartOptions
+});
+
+// Graphique de CPU
+const cpuCtx = document.getElementById('cpuChart').getContext('2d');
+new Chart(cpuCtx, {
+    type: 'doughnut',
+    data: {
+        labels: ['Utilisé', 'Disponible'],
+        datasets: [{
+            data: [{{ cpu_percent }}, {{ 100 - cpu_percent }}],
+            backgroundColor: [
+                'rgba(245, 158, 11, 0.8)',  // Orange pour utilisé
+                'rgba(34, 197, 94, 0.8)'    // Vert pour disponible
+            ],
+            borderColor: [
+                'rgba(245, 158, 11, 1)',
+                'rgba(34, 197, 94, 1)'
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: chartOptions
+});
+</script>
 {% endblock %}
