@@ -1,29 +1,29 @@
 {% extends "base.html" %}
 
-{% block title %}Notifications - Budgee Family{% endblock %}
+{% block title %}{{ _('Notifications') }} - Budgee Family{% endblock %}
 
 {% block content %}
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="mb-0">
-            <i class="fas fa-bell"></i> Notifications
+            <i class="fas fa-bell"></i> {{ _('Notifications') }}
         </h2>
         <div class="btn-group" role="group">
             <a href="{{ url_for('main.notifications', filter='unread') }}"
                class="btn btn-sm {% if filter_type == 'unread' %}btn-success{% else %}btn-outline-success{% endif %}">
-                <i class="fas fa-envelope"></i> Non lues
+                <i class="fas fa-envelope"></i> {{ _('Non lues') }}
             </a>
             <a href="{{ url_for('main.notifications', filter='read') }}"
                class="btn btn-sm {% if filter_type == 'read' %}btn-info{% else %}btn-outline-info{% endif %}">
-                <i class="fas fa-check-circle"></i> Lues
+                <i class="fas fa-check-circle"></i> {{ _('Lues') }}
             </a>
             <a href="{{ url_for('main.notifications', filter='archived') }}"
                class="btn btn-sm {% if filter_type == 'archived' %}btn-secondary{% else %}btn-outline-secondary{% endif %}">
-                <i class="fas fa-archive"></i> Archivées
+                <i class="fas fa-archive"></i> {{ _('Archivées') }}
             </a>
             <a href="{{ url_for('main.notifications', filter='all') }}"
                class="btn btn-sm {% if filter_type == 'all' %}btn-primary{% else %}btn-outline-primary{% endif %}">
-                <i class="fas fa-inbox"></i> Toutes
+                <i class="fas fa-inbox"></i> {{ _('Toutes') }}
             </a>
         </div>
     </div>
@@ -36,21 +36,21 @@
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" id="selectAll">
                         <label class="form-check-label" for="selectAll">
-                            Tout sélectionner
+                            {{ _('Tout sélectionner') }}
                         </label>
                     </div>
                     <div class="d-flex gap-2">
                         <button type="button" class="btn btn-sm btn-info" id="markReadBtn" disabled onclick="confirmMarkRead()">
-                            <i class="fas fa-check"></i> Marquer comme lu
+                            <i class="fas fa-check"></i> {{ _('Marquer comme lu') }}
                         </button>
                         {% if filter_type != 'archived' %}
                         <button type="submit" class="btn btn-sm btn-warning" id="archiveBtn" disabled>
-                            <i class="fas fa-archive"></i> Archiver la sélection
+                            <i class="fas fa-archive"></i> {{ _('Archiver la sélection') }}
                         </button>
                         {% endif %}
                         {% if current_user.is_admin %}
                         <button type="button" class="btn btn-sm btn-danger" id="deleteBtn" disabled onclick="confirmDelete()">
-                            <i class="fas fa-trash"></i> Supprimer la sélection
+                            <i class="fas fa-trash"></i> {{ _('Supprimer la sélection') }}
                         </button>
                         {% endif %}
                     </div>
@@ -94,13 +94,13 @@
                                     <h6 class="mb-0">
                                         {{ notification.title }}
                                         {% if notification.created_by_user and notification.created_by_user.first_name %}
-                                            par <span style="color: #10b981; font-weight: bold;">{{ notification.created_by_user.first_name }}</span>
+                                            {{ _('par') }} <span style="color: #10b981; font-weight: bold;">{{ notification.created_by_user.first_name }}</span>
                                         {% endif %}
                                         {% if not notification.is_read %}
-                                            <span class="badge bg-primary ms-2">Nouveau</span>
+                                            <span class="badge bg-primary ms-2">{{ _('Nouveau') }}</span>
                                         {% endif %}
                                         {% if notification.archived %}
-                                            <span class="badge bg-secondary ms-2"><i class="fas fa-archive"></i> Archivée</span>
+                                            <span class="badge bg-secondary ms-2"><i class="fas fa-archive"></i> {{ _('Archivée') }}</span>
                                         {% endif %}
                                     </h6>
                                     <small class="text-muted">
@@ -117,17 +117,17 @@
                             {% if not notification.is_read %}
                             <button type="button" class="btn btn-sm btn-outline-info"
                                     onclick="markAsRead({{ notification.id }}, '{{ filter_type }}')"
-                                    title="Marquer comme lu">
+                                    title="{{ _('Marquer comme lu') }}">
                                 <i class="fas fa-check"></i>
                             </button>
                             {% else %}
-                                <i class="fas fa-check-circle text-success" title="Notification lue"></i>
+                                <i class="fas fa-check-circle text-success" title="{{ _('Notification lue') }}"></i>
                             {% endif %}
 
                             {% if current_user.is_admin %}
                             <button type="button" class="btn btn-sm btn-outline-danger"
                                     onclick="deleteSingle({{ notification.id }})"
-                                    title="Supprimer">
+                                    title="{{ _('Supprimer') }}">
                                 <i class="fas fa-trash"></i>
                             </button>
                             {% endif %}
@@ -142,8 +142,8 @@
         <div class="card">
             <div class="card-body text-center py-5">
                 <i class="fas fa-bell-slash fa-4x text-muted mb-3"></i>
-                <h4>Aucune notification</h4>
-                <p class="text-muted">Vous n'avez aucune notification pour le moment</p>
+                <h4>{{ _('Aucune notification') }}</h4>
+                <p class="text-muted">{{ _("Vous n'avez aucune notification pour le moment") }}</p>
             </div>
         </div>
     {% endif %}
@@ -212,7 +212,7 @@
 
     // Fonction pour supprimer une notification individuelle
     function deleteSingle(notificationId) {
-        if (confirm('Êtes-vous sûr de vouloir supprimer cette notification ?')) {
+        if (confirm("{{ _('Êtes-vous sûr de vouloir supprimer cette notification ?') }}")) {
             const form = document.createElement('form');
             form.method = 'POST';
             form.action = `/notifications/${notificationId}/delete`;
@@ -247,8 +247,8 @@
         }
 
         const message = count === 1
-            ? 'Êtes-vous sûr de vouloir supprimer cette notification ?'
-            : `Êtes-vous sûr de vouloir supprimer ces ${count} notifications ?`;
+            ? "{{ _('Êtes-vous sûr de vouloir supprimer cette notification ?') }}"
+            : `{{ _('Êtes-vous sûr de vouloir supprimer ces ${count} notifications ?') }}`;
 
         if (confirm(message)) {
             // Changer l'action du formulaire pour la suppression

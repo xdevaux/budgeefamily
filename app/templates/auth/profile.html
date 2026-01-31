@@ -1,45 +1,38 @@
 {% extends "base.html" %}
 
-{% block title %}Mon profil - Budgee Family{% endblock %}
+{% block title %}{{ _('Mon profil') }} - Budgee Family{% endblock %}
 
 {% block content %}
 <div class="container py-4">
     <div class="row">
         <div class="col-lg-8 mx-auto">
-            <h2 class="mb-4">Mon profil</h2>
+            <h2 class="mb-4">{{ _('Mon profil') }}</h2>
 
             <!-- Plan actuel -->
             <div class="card mb-4">
                 <div class="card-header" style="background-color: #e5e7eb;">
-                    <h5 class="mb-0"><i class="fas fa-crown text-secondary"></i> Plan actuel</h5>
+                    <h5 class="mb-0"><i class="fas fa-crown text-secondary"></i> {{ _('Plan actuel') }}</h5>
                 </div>
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <h4>
-                                Plan {{ current_user.plan.name }}
+                                {{ _('Plan') }} {{ current_user.plan.name }}
                                 {% if current_user.plan.name == 'Premium' or current_user.plan.name == 'Premium Annual' %}
-                                    <span class="badge bg-warning text-dark">Premium</span>
+                                    <span class="badge bg-warning text-dark">{{ _('Premium') }}</span>
                                 {% else %}
-                                    <span class="badge bg-secondary">Gratuit</span>
+                                    <span class="badge bg-secondary">{{ _('Gratuit') }}</span>
                                 {% endif %}
                             </h4>
-                            <p class="text-muted mb-0">
-                                {{ current_user.get_active_subscriptions_count() }}
-                                {% if current_user.plan.max_subscriptions %}
-                                    / {{ current_user.plan.max_subscriptions }}
-                                {% endif %}
-                                abonnements actifs
-                            </p>
                         </div>
                         <div>
                             {% if current_user.plan.name == 'Free' %}
                                 <a href="{{ url_for('main.pricing') }}" class="btn btn-primary">
-                                    <i class="fas fa-arrow-up"></i> Passer à Premium
+                                    <i class="fas fa-arrow-up"></i> {{ _('Passer à Premium') }}
                                 </a>
                             {% else %}
                                 <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#downgradePlanModal">
-                                    <i class="fas fa-arrow-down"></i> Rétrograder vers Gratuit
+                                    <i class="fas fa-arrow-down"></i> {{ _('Rétrograder vers Gratuit') }}
                                 </button>
                             {% endif %}
                         </div>
@@ -49,8 +42,7 @@
                     <hr>
                     <div class="alert alert-info mb-0">
                         <i class="fas fa-info-circle"></i>
-                        <strong>Bon à savoir :</strong> Vous pouvez rétrograder vers le plan gratuit à tout moment.
-                        La rétrogradation est immédiate et vous perdrez les avantages Premium.
+                        <strong>{{ _('Bon à savoir :') }}</strong> {{ _('Vous pouvez rétrograder vers le plan gratuit à tout moment. La rétrogradation est immédiate et vous perdrez les avantages Premium.') }}
                     </div>
                     {% endif %}
                 </div>
@@ -59,12 +51,12 @@
             <!-- Stockage -->
             <div class="card mb-4">
                 <div class="card-header" style="background-color: #e5e7eb;">
-                    <h5 class="mb-0"><i class="fas fa-hdd text-secondary"></i> Espace de stockage</h5>
+                    <h5 class="mb-0"><i class="fas fa-hdd text-secondary"></i> {{ _('Espace de stockage') }}</h5>
                 </div>
                 <div class="card-body">
                     <div class="mb-3">
                         <div class="d-flex justify-content-between align-items-center mb-2">
-                            <span><strong>Utilisation :</strong> {{ current_user.get_storage_used_gb() }} Go / {{ current_user.get_storage_limit_gb() }} Go</span>
+                            <span><strong>{{ _('Utilisation :') }}</strong> {{ current_user.get_storage_used_gb() }} Go / {{ current_user.get_storage_limit_gb() }} Go</span>
                             <span class="badge {% if current_user.get_storage_percentage() < 80 %}bg-success{% elif current_user.get_storage_percentage() < 95 %}bg-warning{% else %}bg-danger{% endif %}">
                                 {{ current_user.get_storage_percentage() }}%
                             </span>
@@ -83,10 +75,9 @@
                     <div class="alert alert-info mb-0">
                         <i class="fas fa-info-circle"></i>
                         {% if current_user.plan.name == 'Free' %}
-                            <strong>Plan Gratuit :</strong> Vous disposez de 5 Go de stockage pour vos documents.
-                            Passez à Premium pour bénéficier de 20 Go de stockage.
+                            <strong>{{ _('Plan Gratuit :') }}</strong> {{ _('Vous disposez de 5 Go de stockage pour vos documents. Passez à Premium pour bénéficier de 20 Go de stockage.') }}
                         {% else %}
-                            <strong>Plan Premium :</strong> Vous disposez de 20 Go de stockage pour vos documents (fiches de paie, contrats, relevés bancaires, etc.).
+                            <strong>{{ _('Plan Premium :') }}</strong> {{ _('Vous disposez de 20 Go de stockage pour vos documents (fiches de paie, contrats, relevés bancaires, etc.).') }}
                         {% endif %}
                     </div>
                 </div>
@@ -95,83 +86,96 @@
             <!-- Informations personnelles -->
             <div class="card mb-4">
                 <div class="card-header" style="background-color: #e5e7eb;">
-                    <h5 class="mb-0"><i class="fas fa-user text-secondary"></i> Informations personnelles</h5>
+                    <h5 class="mb-0"><i class="fas fa-user text-secondary"></i> {{ _('Informations personnelles') }}</h5>
                 </div>
                 <div class="card-body">
                     <form method="POST">
                         <div class="row mb-3">
                             <div class="col-md-6">
-                                <label for="first_name" class="form-label">Prénom</label>
+                                <label for="first_name" class="form-label">{{ _('Prénom') }}</label>
                                 <input type="text" class="form-control" id="first_name" name="first_name"
                                        value="{{ current_user.first_name or '' }}">
                             </div>
                             <div class="col-md-6">
-                                <label for="last_name" class="form-label">Nom</label>
+                                <label for="last_name" class="form-label">{{ _('Nom') }}</label>
                                 <input type="text" class="form-control" id="last_name" name="last_name"
                                        value="{{ current_user.last_name or '' }}">
                             </div>
                         </div>
 
                         <div class="mb-3">
-                            <label for="date_of_birth" class="form-label">Date de naissance</label>
+                            <label for="date_of_birth" class="form-label">{{ _('Date de naissance') }}</label>
                             <input type="date" class="form-control" id="date_of_birth" name="date_of_birth"
                                    value="{{ current_user.date_of_birth.strftime('%Y-%m-%d') if current_user.date_of_birth else '' }}">
                         </div>
 
                         <div class="mb-3">
-                            <label for="email" class="form-label">Email</label>
+                            <label for="email" class="form-label">{{ _('Email') }}</label>
                             <input type="email" class="form-control" id="email" value="{{ current_user.email }}" disabled>
-                            <small class="text-muted">L'email ne peut pas être modifié</small>
+                            <small class="text-muted">{{ _("L'email ne peut pas être modifié") }}</small>
                         </div>
 
                         <div class="mb-3">
-                            <label for="default_currency" class="form-label">Devise par défaut</label>
+                            <label for="default_currency" class="form-label">{{ _('Devise par défaut') }}</label>
                             <select class="form-select" id="default_currency" name="default_currency">
-                                <option value="EUR" {% if (current_user.default_currency or 'EUR') == 'EUR' %}selected{% endif %}>€ EUR - Euro</option>
-                                <option value="USD" {% if current_user.default_currency == 'USD' %}selected{% endif %}>$ USD - Dollar américain</option>
-                                <option value="GBP" {% if current_user.default_currency == 'GBP' %}selected{% endif %}>£ GBP - Livre sterling</option>
+                                <option value="EUR" {% if (current_user.default_currency or 'EUR') == 'EUR' %}selected{% endif %}>€ EUR - {{ _('Euro') }}</option>
+                                <option value="USD" {% if current_user.default_currency == 'USD' %}selected{% endif %}>$ USD - {{ _('Dollar américain') }}</option>
+                                <option value="GBP" {% if current_user.default_currency == 'GBP' %}selected{% endif %}>£ GBP - {{ _('Livre sterling') }}</option>
                             </select>
-                            <small class="text-muted">Cette devise sera sélectionnée par défaut lors de la création d'un nouvel abonnement</small>
+                            <small class="text-muted">{{ _('Cette devise sera sélectionnée par défaut lors de la création d\'un nouvel abonnement') }}</small>
                         </div>
 
                         <div class="mb-3">
-                            <label for="country" class="form-label">Pays <span class="text-danger">*</span></label>
+                            <label for="country" class="form-label">{{ _('Pays') }} <span class="text-danger">*</span></label>
                             <select class="form-select" id="country" name="country" required>
-                                <option value="">Sélectionnez votre pays</option>
-                                <option value="FR" {% if current_user.country == 'FR' %}selected{% endif %}>France</option>
-                                <option value="ES" {% if current_user.country == 'ES' %}selected{% endif %}>Espagne</option>
-                                <option value="IT" {% if current_user.country == 'IT' %}selected{% endif %}>Italie</option>
-                                <option value="DE" {% if current_user.country == 'DE' %}selected{% endif %}>Allemagne</option>
-                                <option value="GB" {% if current_user.country == 'GB' %}selected{% endif %}>Royaume-Uni</option>
-                                <option value="PT" {% if current_user.country == 'PT' %}selected{% endif %}>Portugal</option>
-                                <option value="BE" {% if current_user.country == 'BE' %}selected{% endif %}>Belgique</option>
-                                <option value="NL" {% if current_user.country == 'NL' %}selected{% endif %}>Pays-Bas</option>
-                                <option value="CH" {% if current_user.country == 'CH' %}selected{% endif %}>Suisse</option>
-                                <option value="AT" {% if current_user.country == 'AT' %}selected{% endif %}>Autriche</option>
-                                <option value="SE" {% if current_user.country == 'SE' %}selected{% endif %}>Suède</option>
-                                <option value="NO" {% if current_user.country == 'NO' %}selected{% endif %}>Norvège</option>
-                                <option value="DK" {% if current_user.country == 'DK' %}selected{% endif %}>Danemark</option>
-                                <option value="FI" {% if current_user.country == 'FI' %}selected{% endif %}>Finlande</option>
-                                <option value="US" {% if current_user.country == 'US' %}selected{% endif %}>États-Unis</option>
-                                <option value="CA" {% if current_user.country == 'CA' %}selected{% endif %}>Canada</option>
-                                <option value="BR" {% if current_user.country == 'BR' %}selected{% endif %}>Brésil</option>
-                                <option value="AR" {% if current_user.country == 'AR' %}selected{% endif %}>Argentine</option>
-                                <option value="MX" {% if current_user.country == 'MX' %}selected{% endif %}>Mexique</option>
-                                <option value="CN" {% if current_user.country == 'CN' %}selected{% endif %}>Chine</option>
-                                <option value="JP" {% if current_user.country == 'JP' %}selected{% endif %}>Japon</option>
-                                <option value="AU" {% if current_user.country == 'AU' %}selected{% endif %}>Australie</option>
-                                <option value="MA" {% if current_user.country == 'MA' %}selected{% endif %}>Maroc</option>
-                                <option value="TN" {% if current_user.country == 'TN' %}selected{% endif %}>Tunisie</option>
-                                <option value="DZ" {% if current_user.country == 'DZ' %}selected{% endif %}>Algérie</option>
-                                <option value="SN" {% if current_user.country == 'SN' %}selected{% endif %}>Sénégal</option>
-                                <option value="CI" {% if current_user.country == 'CI' %}selected{% endif %}>Côte d'Ivoire</option>
-                                <option value="GP" {% if current_user.country == 'GP' %}selected{% endif %}>Guadeloupe</option>
-                                <option value="MQ" {% if current_user.country == 'MQ' %}selected{% endif %}>Martinique</option>
-                                <option value="GF" {% if current_user.country == 'GF' %}selected{% endif %}>Guyane</option>
-                                <option value="RE" {% if current_user.country == 'RE' %}selected{% endif %}>Réunion</option>
-                                <option value="NC" {% if current_user.country == 'NC' %}selected{% endif %}>Nouvelle-Calédonie</option>
+                                <option value="">{{ _('Sélectionnez votre pays') }}</option>
+                                <option value="FR" {% if current_user.country == 'FR' %}selected{% endif %}>{{ _('France') }}</option>
+                                <option value="ES" {% if current_user.country == 'ES' %}selected{% endif %}>{{ _('Espagne') }}</option>
+                                <option value="IT" {% if current_user.country == 'IT' %}selected{% endif %}>{{ _('Italie') }}</option>
+                                <option value="DE" {% if current_user.country == 'DE' %}selected{% endif %}>{{ _('Allemagne') }}</option>
+                                <option value="GB" {% if current_user.country == 'GB' %}selected{% endif %}>{{ _('Royaume-Uni') }}</option>
+                                <option value="PT" {% if current_user.country == 'PT' %}selected{% endif %}>{{ _('Portugal') }}</option>
+                                <option value="BE" {% if current_user.country == 'BE' %}selected{% endif %}>{{ _('Belgique') }}</option>
+                                <option value="NL" {% if current_user.country == 'NL' %}selected{% endif %}>{{ _('Pays-Bas') }}</option>
+                                <option value="CH" {% if current_user.country == 'CH' %}selected{% endif %}>{{ _('Suisse') }}</option>
+                                <option value="AT" {% if current_user.country == 'AT' %}selected{% endif %}>{{ _('Autriche') }}</option>
+                                <option value="SE" {% if current_user.country == 'SE' %}selected{% endif %}>{{ _('Suède') }}</option>
+                                <option value="NO" {% if current_user.country == 'NO' %}selected{% endif %}>{{ _('Norvège') }}</option>
+                                <option value="DK" {% if current_user.country == 'DK' %}selected{% endif %}>{{ _('Danemark') }}</option>
+                                <option value="FI" {% if current_user.country == 'FI' %}selected{% endif %}>{{ _('Finlande') }}</option>
+                                <option value="US" {% if current_user.country == 'US' %}selected{% endif %}>{{ _('États-Unis') }}</option>
+                                <option value="CA" {% if current_user.country == 'CA' %}selected{% endif %}>{{ _('Canada') }}</option>
+                                <option value="BR" {% if current_user.country == 'BR' %}selected{% endif %}>{{ _('Brésil') }}</option>
+                                <option value="AR" {% if current_user.country == 'AR' %}selected{% endif %}>{{ _('Argentine') }}</option>
+                                <option value="MX" {% if current_user.country == 'MX' %}selected{% endif %}>{{ _('Mexique') }}</option>
+                                <option value="CN" {% if current_user.country == 'CN' %}selected{% endif %}>{{ _('Chine') }}</option>
+                                <option value="JP" {% if current_user.country == 'JP' %}selected{% endif %}>{{ _('Japon') }}</option>
+                                <option value="AU" {% if current_user.country == 'AU' %}selected{% endif %}>{{ _('Australie') }}</option>
+                                <option value="MA" {% if current_user.country == 'MA' %}selected{% endif %}>{{ _('Maroc') }}</option>
+                                <option value="TN" {% if current_user.country == 'TN' %}selected{% endif %}>{{ _('Tunisie') }}</option>
+                                <option value="DZ" {% if current_user.country == 'DZ' %}selected{% endif %}>{{ _('Algérie') }}</option>
+                                <option value="SN" {% if current_user.country == 'SN' %}selected{% endif %}>{{ _('Sénégal') }}</option>
+                                <option value="CI" {% if current_user.country == 'CI' %}selected{% endif %}>{{ _('Côte d\'Ivoire') }}</option>
+                                <option value="GP" {% if current_user.country == 'GP' %}selected{% endif %}>{{ _('Guadeloupe') }}</option>
+                                <option value="MQ" {% if current_user.country == 'MQ' %}selected{% endif %}>{{ _('Martinique') }}</option>
+                                <option value="GF" {% if current_user.country == 'GF' %}selected{% endif %}>{{ _('Guyane') }}</option>
+                                <option value="RE" {% if current_user.country == 'RE' %}selected{% endif %}>{{ _('Réunion') }}</option>
+                                <option value="NC" {% if current_user.country == 'NC' %}selected{% endif %}>{{ _('Nouvelle-Calédonie') }}</option>
                             </select>
-                            <small class="text-muted">Fuseau horaire actuel: <strong>{{ current_user.timezone or 'Non défini' }}</strong></small>
+                            <small class="text-muted">{{ _('Fuseau horaire actuel:') }} <strong>{{ current_user.timezone or _('Non défini') }}</strong></small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="language" class="form-label"><i class="fas fa-language text-primary"></i> {{ _("Langue de l'interface") }}</label>
+                            <select class="form-select" id="language" name="language">
+                                <option value="fr" {% if (current_user.language or 'fr') == 'fr' %}selected{% endif %}>🇫🇷 Français</option>
+                                <option value="en" {% if current_user.language == 'en' %}selected{% endif %}>🇬🇧 English</option>
+                                <option value="es" {% if current_user.language == 'es' %}selected{% endif %}>🇪🇸 Español</option>
+                                <option value="it" {% if current_user.language == 'it' %}selected{% endif %}>🇮🇹 Italiano</option>
+                                <option value="de" {% if current_user.language == 'de' %}selected{% endif %}>🇩🇪 Deutsch</option>
+                                <option value="pt" {% if current_user.language == 'pt' %}selected{% endif %}>🇵🇹 Português</option>
+                            </select>
+                            <small class="text-muted">{{ _("Choisissez la langue d'affichage de l'application") }}</small>
                         </div>
 
                         {% if current_user.plan.name != 'Free' %}
@@ -179,20 +183,20 @@
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="email_notifications" name="email_notifications" {% if current_user.email_notifications %}checked{% endif %}>
                                 <label class="form-check-label" for="email_notifications">
-                                    <i class="fas fa-envelope"></i> Recevoir un email à chaque notification créée
+                                    <i class="fas fa-envelope"></i> {{ _('Recevoir un email à chaque notification créée') }}
                                 </label>
                                 <small class="form-text text-muted d-block mt-1">
-                                    Vous recevrez un email automatique pour toutes les notifications (nouveaux abonnements, crédits, revenus, etc.)
+                                    {{ _('Vous recevrez un email automatique pour toutes les notifications (nouveaux abonnements, crédits, revenus, etc.)') }}
                                 </small>
                             </div>
                         </div>
                         {% else %}
                         <div class="mb-3">
                             <div class="alert alert-info">
-                                <i class="fas fa-crown"></i> <strong>Fonctionnalité Premium</strong>
-                                <p class="mb-0 mt-2">Les notifications par email sont réservées aux abonnés Premium.</p>
+                                <i class="fas fa-crown"></i> <strong>{{ _('Fonctionnalité Premium') }}</strong>
+                                <p class="mb-0 mt-2">{{ _('Les notifications par email sont réservées aux abonnés Premium.') }}</p>
                                 <a href="{{ url_for('main.pricing') }}" class="btn btn-primary btn-sm mt-2">
-                                    <i class="fas fa-arrow-up"></i> Passer à Premium
+                                    <i class="fas fa-arrow-up"></i> {{ _('Passer à Premium') }}
                                 </a>
                             </div>
                         </div>
@@ -200,27 +204,27 @@
 
                         {% if not current_user.oauth_provider %}
                         <hr>
-                        <h6 class="mb-3">Changer le mot de passe</h6>
+                        <h6 class="mb-3">{{ _('Changer le mot de passe') }}</h6>
 
                         <div class="mb-3">
-                            <label for="current_password" class="form-label">Mot de passe actuel</label>
+                            <label for="current_password" class="form-label">{{ _('Mot de passe actuel') }}</label>
                             <input type="password" class="form-control" id="current_password" name="current_password">
                         </div>
 
                         <div class="row mb-3">
                             <div class="col-md-6">
-                                <label for="new_password" class="form-label">Nouveau mot de passe</label>
+                                <label for="new_password" class="form-label">{{ _('Nouveau mot de passe') }}</label>
                                 <input type="password" class="form-control" id="new_password" name="new_password">
                             </div>
                             <div class="col-md-6">
-                                <label for="new_password_confirm" class="form-label">Confirmer</label>
+                                <label for="new_password_confirm" class="form-label">{{ _('Confirmer') }}</label>
                                 <input type="password" class="form-control" id="new_password_confirm" name="new_password_confirm">
                             </div>
                         </div>
                         {% endif %}
 
                         <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-save"></i> Enregistrer les modifications
+                            <i class="fas fa-save"></i> {{ _('Enregistrer les modifications') }}
                         </button>
                     </form>
                 </div>
@@ -229,19 +233,19 @@
             <!-- Compte -->
             <div class="card">
                 <div class="card-header" style="background-color: #e5e7eb;">
-                    <h5 class="mb-0"><i class="fas fa-info-circle text-secondary"></i> Informations du compte</h5>
+                    <h5 class="mb-0"><i class="fas fa-info-circle text-secondary"></i> {{ _('Informations du compte') }}</h5>
                 </div>
                 <div class="card-body">
                     <p class="mb-2">
-                        <strong>Membre depuis :</strong>
+                        <strong>{{ _('Membre depuis :') }}</strong>
                         {{ current_user.created_at.strftime('%d/%m/%Y') }}
                     </p>
                     <p class="mb-2">
-                        <strong>Méthode de connexion :</strong>
+                        <strong>{{ _('Méthode de connexion :') }}</strong>
                         {% if current_user.oauth_provider %}
                             <span class="badge bg-info">{{ current_user.oauth_provider|capitalize }}</span>
                         {% else %}
-                            <span class="badge bg-secondary">Email/Mot de passe</span>
+                            <span class="badge bg-secondary">{{ _('Email/Mot de passe') }}</span>
                         {% endif %}
                     </p>
                 </div>
@@ -256,38 +260,38 @@
         <div class="modal-content">
             <div class="modal-header bg-warning">
                 <h5 class="modal-title" id="downgradePlanModalLabel">
-                    <i class="fas fa-exclamation-triangle"></i> Confirmer la rétrogradation
+                    <i class="fas fa-exclamation-triangle"></i> {{ _('Confirmer la rétrogradation') }}
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p><strong>Êtes-vous sûr de vouloir rétrograder vers le plan gratuit ?</strong></p>
+                <p><strong>{{ _('Êtes-vous sûr de vouloir rétrograder vers le plan gratuit ?') }}</strong></p>
 
                 <div class="alert alert-warning">
                     <i class="fas fa-info-circle"></i>
-                    <strong>Ce qui va se passer :</strong>
+                    <strong>{{ _('Ce qui va se passer :') }}</strong>
                     <ul class="mb-0 mt-2">
-                        <li><strong>Rétrogradation immédiate</strong> - L'effet est instantané</li>
-                        <li>Limite d'abonnements : <strong>5 maximum</strong> (contre illimité)</li>
-                        <li>Catégories personnalisées : <strong>5 maximum</strong> (contre illimité)</li>
-                        <li>Services personnalisés : <strong>5 maximum</strong> (contre illimité)</li>
-                        <li>Plans personnalisés : <strong>10 maximum</strong> (contre illimité)</li>
-                        <li><strong>Notifications par email désactivées</strong> - Fonctionnalité réservée aux abonnés Premium</li>
+                        <li><strong>{{ _('Rétrogradation immédiate') }}</strong> - {{ _('L\'effet est instantané') }}</li>
+                        <li>{{ _('Limite d\'abonnements :') }} <strong>{{ _('5 maximum') }}</strong> {{ _('(contre illimité)') }}</li>
+                        <li>{{ _('Catégories personnalisées :') }} <strong>{{ _('5 maximum') }}</strong> {{ _('(contre illimité)') }}</li>
+                        <li>{{ _('Services personnalisés :') }} <strong>{{ _('5 maximum') }}</strong> {{ _('(contre illimité)') }}</li>
+                        <li>{{ _('Plans personnalisés :') }} <strong>{{ _('10 maximum') }}</strong> {{ _('(contre illimité)') }}</li>
+                        <li><strong>{{ _('Notifications par email désactivées') }}</strong> - {{ _('Fonctionnalité réservée aux abonnés Premium') }}</li>
                     </ul>
                 </div>
 
                 <div class="alert alert-success">
                     <i class="fas fa-check-circle"></i>
-                    Vous pourrez repasser à Premium à tout moment depuis la page <a href="{{ url_for('main.pricing') }}" class="alert-link">Tarifs</a>.
+                    {{ _('Vous pourrez repasser à Premium à tout moment depuis la page') }} <a href="{{ url_for('main.pricing') }}" class="alert-link">{{ _('Tarifs') }}</a>.
                 </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                    <i class="fas fa-times"></i> Annuler
+                    <i class="fas fa-times"></i> {{ _('Annuler') }}
                 </button>
                 <form action="{{ url_for('auth.downgrade_to_free') }}" method="POST" class="d-inline">
                     <button type="submit" class="btn btn-warning">
-                        <i class="fas fa-arrow-down"></i> Rétrograder maintenant
+                        <i class="fas fa-arrow-down"></i> {{ _('Rétrograder maintenant') }}
                     </button>
                 </form>
             </div>

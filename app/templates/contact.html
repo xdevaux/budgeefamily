@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Nous contacter - Budgee Family{% endblock %}
+{% block title %}{{ _('Nous contacter') }} - Budgee Family{% endblock %}
 
 {% block content %}
 <div class="container my-5">
@@ -11,12 +11,12 @@
                 <div class="mb-4">
                     <i class="fas fa-envelope-open-text fa-4x text-primary"></i>
                 </div>
-                <h1 class="display-5 fw-bold text-primary mb-3">Nous contacter</h1>
+                <h1 class="display-5 fw-bold text-primary mb-3">{{ _('Nous contacter') }}</h1>
                 <p class="lead text-muted">
-                    Une question ? Une suggestion ? Nous sommes à votre écoute !
+                    {{ _('Une question ? Une suggestion ? Nous sommes à votre écoute !') }}
                 </p>
                 <p class="text-muted">
-                    Remplissez le formulaire ci-dessous et nous vous répondrons dans les plus brefs délais.
+                    {{ _('Remplissez le formulaire ci-dessous et nous vous répondrons dans les plus brefs délais.') }}
                 </p>
             </div>
 
@@ -26,7 +26,7 @@
                     <form method="POST" action="{{ url_for('main.contact') }}" id="contactForm">
                         <!-- Champ honeypot (piège à robots) - invisible pour les humains -->
                         <div class="hp-field">
-                            <label for="website">Site web</label>
+                            <label for="website">{{ _('Site web') }}</label>
                             <input
                                 type="text"
                                 id="website"
@@ -42,14 +42,14 @@
                         <!-- Nom -->
                         <div class="mb-4">
                             <label for="name" class="form-label fw-semibold">
-                                <i class="fas fa-user text-primary me-2"></i>Votre nom <span class="text-danger">*</span>
+                                <i class="fas fa-user text-primary me-2"></i>{{ _('Votre nom') }} <span class="text-danger">*</span>
                             </label>
                             <input
                                 type="text"
                                 class="form-control form-control-lg"
                                 id="name"
                                 name="name"
-                                placeholder="Jean Dupont"
+                                placeholder="{{ _('Jean Dupont') }}"
                                 value="{{ name or '' }}"
                                 required
                             >
@@ -58,33 +58,33 @@
                         <!-- Email -->
                         <div class="mb-4">
                             <label for="email" class="form-label fw-semibold">
-                                <i class="fas fa-envelope text-primary me-2"></i>Votre adresse email <span class="text-danger">*</span>
+                                <i class="fas fa-envelope text-primary me-2"></i>{{ _('Votre adresse email') }} <span class="text-danger">*</span>
                             </label>
                             <input
                                 type="email"
                                 class="form-control form-control-lg"
                                 id="email"
                                 name="email"
-                                placeholder="exemple@email.com"
+                                placeholder="{{ _('exemple@email.com') }}"
                                 value="{{ email or '' }}"
                                 required
                             >
                             <small class="form-text text-muted">
-                                <i class="fas fa-lock me-1"></i>Votre adresse email ne sera pas partagée
+                                <i class="fas fa-lock me-1"></i>{{ _('Votre adresse email ne sera pas partagée') }}
                             </small>
                         </div>
 
                         <!-- Objet -->
                         <div class="mb-4">
                             <label for="subject" class="form-label fw-semibold">
-                                <i class="fas fa-tag text-primary me-2"></i>Objet
+                                <i class="fas fa-tag text-primary me-2"></i>{{ _('Objet') }}
                             </label>
                             <input
                                 type="text"
                                 class="form-control form-control-lg"
                                 id="subject"
                                 name="subject"
-                                placeholder="De quoi souhaitez-vous parler ?"
+                                placeholder="{{ _('De quoi souhaitez-vous parler ?') }}"
                                 value="{{ subject or '' }}"
                             >
                         </div>
@@ -92,31 +92,31 @@
                         <!-- Message -->
                         <div class="mb-4">
                             <label for="message" class="form-label fw-semibold">
-                                <i class="fas fa-comment-dots text-primary me-2"></i>Votre message <span class="text-danger">*</span>
+                                <i class="fas fa-comment-dots text-primary me-2"></i>{{ _('Votre message') }} <span class="text-danger">*</span>
                             </label>
                             <textarea
                                 class="form-control form-control-lg"
                                 id="message"
                                 name="message"
                                 rows="6"
-                                placeholder="Écrivez votre message ici..."
+                                placeholder="{{ _('Écrivez votre message ici...') }}"
                                 required
                             >{{ message or '' }}</textarea>
                             <small class="form-text text-muted">
-                                Minimum 10 caractères
+                                {{ _('Minimum 10 caractères') }}
                             </small>
                         </div>
 
                         <!-- Bouton d'envoi -->
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-primary btn-lg">
-                                <i class="fas fa-paper-plane me-2"></i>Envoyer le message
+                                <i class="fas fa-paper-plane me-2"></i>{{ _('Envoyer le message') }}
                             </button>
                         </div>
 
                         <div class="text-center mt-4">
                             <small class="text-muted">
-                                <i class="fas fa-clock me-1"></i>Temps de réponse moyen : 24-48 heures
+                                <i class="fas fa-clock me-1"></i>{{ _('Temps de réponse moyen : 24-48 heures') }}
                             </small>
                         </div>
                     </form>
@@ -130,7 +130,7 @@
                         <div class="mb-3">
                             <i class="fas fa-envelope fa-2x text-primary"></i>
                         </div>
-                        <h5 class="fw-semibold">Email</h5>
+                        <h5 class="fw-semibold">{{ _('Email') }}</h5>
                         <p class="text-muted mb-0">
                             <a href="mailto:contact@budgeefamily.com" class="text-decoration-none">contact@budgeefamily.com</a>
                         </p>
@@ -142,9 +142,9 @@
                         <div class="mb-3">
                             <i class="fas fa-clock fa-2x text-success"></i>
                         </div>
-                        <h5 class="fw-semibold">Horaires</h5>
+                        <h5 class="fw-semibold">{{ _('Horaires') }}</h5>
                         <p class="text-muted mb-0">
-                            Lun - Ven<br>9h00 - 18h00
+                            {{ _('Lun - Ven') }}<br>{{ _('9h00 - 18h00') }}
                         </p>
                     </div>
                 </div>
@@ -154,9 +154,9 @@
                         <div class="mb-3">
                             <i class="fas fa-headset fa-2x text-info"></i>
                         </div>
-                        <h5 class="fw-semibold">Support</h5>
+                        <h5 class="fw-semibold">{{ _('Support') }}</h5>
                         <p class="text-muted mb-0">
-                            Assistance rapide<br>et personnalisée
+                            {{ _('Assistance rapide') }}<br>{{ _('et personnalisée') }}
                         </p>
                     </div>
                 </div>
@@ -165,7 +165,7 @@
             <!-- Retour à l'accueil -->
             <div class="text-center mt-5">
                 <a href="{{ url_for('main.index') }}" class="btn btn-outline-primary">
-                    <i class="fas fa-home me-2"></i>Retour à l'accueil
+                    <i class="fas fa-home me-2"></i>{{ _('Retour à l\'accueil') }}
                 </a>
             </div>
         </div>
@@ -219,7 +219,7 @@
 
         if (message.length < 10) {
             e.preventDefault();
-            alert('Votre message doit contenir au moins 10 caractères.');
+            alert("{{ _('Votre message doit contenir au moins 10 caractères.') }}");
             return false;
         }
 
@@ -230,7 +230,7 @@
         // Le formulaire doit être rempli en au moins 3 secondes (humainement impossible de faire moins)
         if (timeElapsed < 3000) {
             e.preventDefault();
-            alert('Veuillez prendre le temps de remplir le formulaire correctement.');
+            alert("{{ _('Veuillez prendre le temps de remplir le formulaire correctement.') }}");
             return false;
         }
     });

@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Connexion - Budgee Family{% endblock %}
+{% block title %}{{ _('Connexion') }} - Budgee Family{% endblock %}
 
 {% block content %}
 <div class="container">
@@ -16,32 +16,32 @@
 
                     <form method="POST" action="{{ url_for('auth.login') }}">
                         <div class="mb-3">
-                            <label for="email" class="form-label">Email</label>
+                            <label for="email" class="form-label">{{ _('Email') }}</label>
                             <input type="email" class="form-control" id="email" name="email" required>
                         </div>
 
                         <div class="mb-3">
-                            <label for="password" class="form-label">Mot de passe</label>
+                            <label for="password" class="form-label">{{ _('Mot de passe') }}</label>
                             <input type="password" class="form-control" id="password" name="password" required>
                         </div>
 
                         <div class="mb-3 form-check">
                             <input type="checkbox" class="form-check-input" id="remember" name="remember">
                             <label class="form-check-label" for="remember">
-                                Se souvenir de moi
+                                {{ _('Se souvenir de moi') }}
                             </label>
                         </div>
 
                         <button type="submit" class="btn btn-primary w-100 mb-3">
-                            <i class="fas fa-sign-in-alt"></i> Se connecter
+                            <i class="fas fa-sign-in-alt"></i> {{ _('Se connecter') }}
                         </button>
                     </form>
 
                     <hr class="my-4">
 
                     <p class="text-center mb-0">
-                        Pas encore de compte ?
-                        <a href="{{ url_for('main.pricing') }}">S'inscrire</a>
+                        {{ _('Pas encore de compte ?') }}
+                        <a href="{{ url_for('main.pricing') }}">{{ _("S'inscrire") }}</a>
                     </p>
                 </div>
             </div>

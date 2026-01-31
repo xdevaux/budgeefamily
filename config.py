@@ -48,3 +48,15 @@ class Config:
 
     # Timezone
     TIMEZONE = 'Europe/Paris'
+
+    # Babel / i18n
+    BABEL_DEFAULT_LOCALE = 'fr'
+    BABEL_DEFAULT_TIMEZONE = 'Europe/Paris'
+    LANGUAGES = {
+        'fr': 'Français',
+        'en': 'English',
+        'es': 'Español',
+        'it': 'Italiano',
+        'de': 'Deutsch',
+        'pt': 'Português'
+    }

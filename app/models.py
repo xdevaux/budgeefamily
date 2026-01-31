@@ -43,6 +43,7 @@ class User(UserMixin, db.Model):
     default_currency = db.Column(db.String(3), default='EUR')  # Devise par défaut
     country = db.Column(db.String(2), nullable=True)  # Code pays ISO 3166-1 alpha-2 (FR, US, etc.)
     timezone = db.Column(db.String(50), default='Europe/Paris')  # Fuseau horaire de l'utilisateur
+    language = db.Column(db.String(2), default='fr')  # Langue de l'utilisateur (fr, en, es, it, de, pt)
 
     # Subscription plan
     plan_id = db.Column(db.Integer, db.ForeignKey('plans.id'), nullable=True)

@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, request, flash, current_app
+from flask import Blueprint, render_template, redirect, url_for, request, flash, current_app, session, jsonify
 from flask_login import login_required, current_user
 from app import db
 from app.models import Subscription, Category, Plan, Notification, Credit, Revenue, InstallmentPayment, Transaction, Reminder
@@ -840,3 +840,22 @@ Envoyé depuis le formulaire de contact de Budgee Family
             return render_template('contact.html', name=name, email=email, subject=subject, message=message)
 
     return render_template('contact.html')
+
+
+@bp.route('/set-language/<lang>', methods=['POST'])
+def set_language(lang):
+    """Change la langue de l'interface utilisateur"""
+    # Vérifier que la langue est supportée
+    supported_languages = ['fr', 'en', 'es', 'it', 'de', 'pt']
+    if lang not in supported_languages:
+        return jsonify({'error': 'Unsupported language'}), 400
+
+    # Si l'utilisateur est connecté, sauvegarder la préférence en base de données
+    if current_user.is_authenticated:
+        current_user.language = lang
+        db.session.commit()
+
+    # Sauvegarder également en session pour les utilisateurs non connectés
+    session['language'] = lang
+
+    return jsonify({'success': True, 'language': lang})

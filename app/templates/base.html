@@ -880,65 +880,65 @@
                         {% if current_user.is_admin %}
                         <li class="nav-item">
                             <span class="badge bg-danger me-2">
-                                <i class="fas fa-crown"></i> Admin
+                                <i class="fas fa-crown"></i> {{ _('Admin') }}
                             </span>
                         </li>
                         {% else %}
                         <li class="nav-item">
                             <span class="badge bg-secondary me-2">
-                                <i class="fas fa-crown"></i> {% if current_user.is_premium() %}Premium{% else %}Gratuit{% endif %}
+                                <i class="fas fa-crown"></i> {% if current_user.is_premium() %}{{ _('Premium') }}{% else %}{{ _('Gratuit') }}{% endif %}
                             </span>
                         </li>
                         {% endif %}
                         <li class="nav-item">
                             <a class="nav-menu-btn dashboard" href="{{ url_for('main.dashboard') }}">
-                                <i class="fas fa-chart-line"></i> Tableau de bord
+                                <i class="fas fa-chart-line"></i> {{ _('Tableau de bord') }}
                             </a>
                         </li>
                         <li class="nav-item dropdown">
                             <a class="nav-menu-btn revenues dropdown-toggle" href="#" id="revenuesDropdown" role="button" data-bs-toggle="dropdown">
-                                <i class="fas fa-hand-holding-usd"></i> Revenus
+                                <i class="fas fa-hand-holding-usd"></i> {{ _('Revenus') }}
                             </a>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="{{ url_for('revenues.list') }}"><i class="fas fa-hand-holding-usd"></i> Mes revenus</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('revenues.list') }}"><i class="fas fa-hand-holding-usd"></i> {{ _('Mes revenus') }}</a></li>
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="{{ url_for('employers.list') }}"><i class="fas fa-building"></i> Employeurs</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('employers.list') }}"><i class="fas fa-building"></i> {{ _('Employeurs') }}</a></li>
                             </ul>
                         </li>
                         <li class="nav-item dropdown">
                             <a class="nav-menu-btn expenses dropdown-toggle" href="#" id="expensesDropdown" role="button" data-bs-toggle="dropdown">
-                                <i class="fas fa-receipt"></i> Dépenses
+                                <i class="fas fa-receipt"></i> {{ _('Dépenses') }}
                             </a>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="{{ url_for('checkbooks.list_checkbooks') }}"><i class="fas fa-money-check"></i> Mes chéquiers</a></li>
-                                <li><a class="dropdown-item" href="{{ url_for('card_purchases.list_purchases') }}"><i class="fas fa-credit-card"></i> Mes achats CB</a></li>
-                                <li><a class="dropdown-item" href="{{ url_for('reminders.list') }}"><i class="fas fa-bell"></i> Mes rappels</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('checkbooks.list_checkbooks') }}"><i class="fas fa-money-check"></i> {{ _('Mes chéquiers') }}</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('card_purchases.list_purchases') }}"><i class="fas fa-credit-card"></i> {{ _('Mes achats CB') }}</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('reminders.list') }}"><i class="fas fa-bell"></i> {{ _('Mes rappels') }}</a></li>
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="{{ url_for('card_purchase_categories.list_categories') }}"><i class="fas fa-tags"></i> Catégories</a></li>
-                                <li><a class="dropdown-item" href="{{ url_for('providers.list') }}"><i class="fas fa-user-tie"></i> Gérer les prestataires pour mes rappels</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('card_purchase_categories.list_categories') }}"><i class="fas fa-tags"></i> {{ _('Catégories') }}</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('providers.list') }}"><i class="fas fa-user-tie"></i> {{ _('Gérer les prestataires pour mes rappels') }}</a></li>
                             </ul>
                         </li>
                         <li class="nav-item dropdown">
                             <a class="nav-menu-btn subscriptions dropdown-toggle" href="#" id="subscriptionsDropdown" role="button" data-bs-toggle="dropdown">
-                                <i class="fas fa-list"></i> Abonnements
+                                <i class="fas fa-list"></i> {{ _('Abonnements') }}
                             </a>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="{{ url_for('subscriptions.list') }}"><i class="fas fa-list"></i> Mes abonnements</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('subscriptions.list') }}"><i class="fas fa-list"></i> {{ _('Mes abonnements') }}</a></li>
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="{{ url_for('categories.list') }}"><i class="fas fa-tags"></i> Catégories</a></li>
-                                <li><a class="dropdown-item" href="{{ url_for('services.list') }}"><i class="fas fa-store"></i> Services</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('categories.list') }}"><i class="fas fa-tags"></i> {{ _('Catégories') }}</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('services.list') }}"><i class="fas fa-store"></i> {{ _('Services') }}</a></li>
                             </ul>
                         </li>
                         <li class="nav-item dropdown">
                             <a class="nav-menu-btn credits dropdown-toggle" href="#" id="creditsDropdown" role="button" data-bs-toggle="dropdown">
-                                <i class="fas fa-money-bill-wave"></i> Crédits
+                                <i class="fas fa-money-bill-wave"></i> {{ _('Crédits') }}
                             </a>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="{{ url_for('credits.list_credits') }}"><i class="fas fa-money-bill-wave"></i> Mes crédits</a></li>
-                                <li><a class="dropdown-item" href="{{ url_for('installments.list') }}"><i class="fas fa-calendar-alt"></i> Mes paiements en plusieurs fois</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('credits.list_credits') }}"><i class="fas fa-money-bill-wave"></i> {{ _('Mes crédits') }}</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('installments.list') }}"><i class="fas fa-calendar-alt"></i> {{ _('Mes paiements en plusieurs fois') }}</a></li>
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="{{ url_for('credit_types.list') }}"><i class="fas fa-tag"></i> Types de crédits</a></li>
-                                <li><a class="dropdown-item" href="{{ url_for('banks.list_banks') }}"><i class="fas fa-university"></i> Banques</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('credit_types.list') }}"><i class="fas fa-tag"></i> {{ _('Types de crédits') }}</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('banks.list_banks') }}"><i class="fas fa-university"></i> {{ _('Banques') }}</a></li>
                             </ul>
                         </li>
                         <li class="nav-item dropdown">
@@ -949,25 +949,25 @@
                                 <li><h6 class="dropdown-header text-center" style="color: #9333ea; font-weight: bold;">
                                     {{ current_user.first_name or current_user.email }}
                                     {% if current_user.is_admin %}
-                                        <span class="badge bg-danger ms-2"><i class="fas fa-crown"></i> Admin</span>
+                                        <span class="badge bg-danger ms-2"><i class="fas fa-crown"></i> {{ _('Admin') }}</span>
                                     {% else %}
-                                        <span class="badge bg-secondary ms-2"><i class="fas fa-crown"></i> {% if current_user.is_premium() %}Premium{% else %}Gratuit{% endif %}</span>
+                                        <span class="badge bg-secondary ms-2"><i class="fas fa-crown"></i> {% if current_user.is_premium() %}{{ _('Premium') }}{% else %}{{ _('Gratuit') }}{% endif %}</span>
                                     {% endif %}
                                 </h6></li>
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="{{ url_for('auth.profile') }}"><i class="fas fa-user"></i> Mon profil</a></li>
-                                <li><a class="dropdown-item" href="{{ url_for('main.pricing') }}"><i class="fas fa-crown"></i> Plans & Tarifs</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('auth.profile') }}"><i class="fas fa-user"></i> {{ _('Mon profil') }}</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('main.pricing') }}"><i class="fas fa-crown"></i> {{ _('Plans & Tarifs') }}</a></li>
                                 {% if current_user.is_admin %}
                                 <li><hr class="dropdown-divider"></li>
-                                <li><h6 class="dropdown-header"><i class="fas fa-cogs"></i> Administration</h6></li>
-                                <li><a class="dropdown-item" href="{{ url_for('admin.dashboard') }}"><i class="fas fa-tachometer-alt"></i> Tableau de bord</a></li>
-                                <li><a class="dropdown-item" href="{{ url_for('admin.clients_list') }}"><i class="fas fa-users"></i> Clients</a></li>
-                                <li><a class="dropdown-item" href="{{ url_for('admin.categories_list') }}"><i class="fas fa-folder"></i> Catégories</a></li>
-                                <li><a class="dropdown-item" href="{{ url_for('admin.services_list') }}"><i class="fas fa-cogs"></i> Services</a></li>
-                                <li><a class="dropdown-item" href="{{ url_for('admin.service_plans_list') }}"><i class="fas fa-list-alt"></i> Formules</a></li>
+                                <li><h6 class="dropdown-header"><i class="fas fa-cogs"></i> {{ _('Administration') }}</h6></li>
+                                <li><a class="dropdown-item" href="{{ url_for('admin.dashboard') }}"><i class="fas fa-tachometer-alt"></i> {{ _('Tableau de bord') }}</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('admin.clients_list') }}"><i class="fas fa-users"></i> {{ _('Clients') }}</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('admin.categories_list') }}"><i class="fas fa-folder"></i> {{ _('Catégories') }}</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('admin.services_list') }}"><i class="fas fa-cogs"></i> {{ _('Services') }}</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('admin.service_plans_list') }}"><i class="fas fa-list-alt"></i> {{ _('Formules') }}</a></li>
                                 {% endif %}
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item text-danger" href="{{ url_for('auth.logout') }}"><i class="fas fa-sign-out-alt"></i> Déconnexion</a></li>
+                                <li><a class="dropdown-item text-danger" href="{{ url_for('auth.logout') }}"><i class="fas fa-sign-out-alt"></i> {{ _('Déconnexion') }}</a></li>
                             </ul>
                         </li>
                         <li class="nav-item">
@@ -983,16 +983,37 @@
                         </li>
                     {% else %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('main.pricing') }}">Tarifs</a>
+                            <a class="nav-link" href="{{ url_for('main.pricing') }}">{{ _('Tarifs') }}</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('main.contact') }}">Nous contacter</a>
+                            <a class="nav-link" href="{{ url_for('main.contact') }}">{{ _('Nous contacter') }}</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                {% if get_locale() == 'en' %}
+                                    🇬🇧 EN
+                                {% else %}
+                                    🇫🇷 FR
+                                {% endif %}
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="languageDropdown">
+                                <li>
+                                    <a class="dropdown-item{% if get_locale() == 'fr' %} active{% endif %}" href="#" onclick="setLanguage('fr'); return false;">
+                                        🇫🇷 Français
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item{% if get_locale() == 'en' %} active{% endif %}" href="#" onclick="setLanguage('en'); return false;">
+                                        🇬🇧 English
+                                    </a>
+                                </li>
+                            </ul>
                         </li>
                         <li class="nav-item">
-                            <a class="btn btn-success-light ms-2" href="{{ url_for('auth.login') }}">Connexion</a>
+                            <a class="btn btn-success-light ms-2" href="{{ url_for('auth.login') }}">{{ _('Connexion') }}</a>
                         </li>
                         <li class="nav-item">
-                            <a class="btn btn-primary ms-2" href="{{ url_for('main.pricing') }}">S'inscrire</a>
+                            <a class="btn btn-primary ms-2" href="{{ url_for('main.pricing') }}">{{ _("S'inscrire") }}</a>
                         </li>
                     {% endif %}
                 </ul>
@@ -1005,14 +1026,14 @@
     <div class="mobile-auth-buttons-body">
         <div class="mobile-auth-buttons-row">
             <a class="btn btn-success-light" href="{{ url_for('auth.login') }}">
-                <i class="fas fa-sign-in-alt me-2"></i>Connexion
+                <i class="fas fa-sign-in-alt me-2"></i>{{ _('Connexion') }}
             </a>
             <a class="btn btn-primary" href="{{ url_for('main.pricing') }}">
-                <i class="fas fa-user-plus me-2"></i>S'inscrire
+                <i class="fas fa-user-plus me-2"></i>{{ _("S'inscrire") }}
             </a>
         </div>
         <a class="mobile-contact-link" href="{{ url_for('main.contact') }}">
-            <i class="fas fa-envelope me-2"></i>Nous contacter
+            <i class="fas fa-envelope me-2"></i>{{ _('Nous contacter') }}
         </a>
     </div>
     {% endif %}
@@ -1067,16 +1088,16 @@
             <div class="cookie-consent-text">
                 <i class="fas fa-cookie-bite me-2"></i>
                 <span>
-                    Nous utilisons des cookies pour améliorer votre expérience et le fonctionnement du site.
-                    <a href="{{ url_for('main.mentions_legales') }}" class="text-white text-decoration-underline">En savoir plus</a>
+                    {{ _('Nous utilisons des cookies pour améliorer votre expérience et le fonctionnement du site.') }}
+                    <a href="{{ url_for('main.mentions_legales') }}" class="text-white text-decoration-underline">{{ _('En savoir plus') }}</a>
                 </span>
             </div>
             <div class="cookie-consent-buttons">
                 <button id="acceptCookies" class="btn btn-light btn-sm me-2">
-                    <i class="fas fa-check"></i> Accepter
+                    <i class="fas fa-check"></i> {{ _('Accepter') }}
                 </button>
                 <button id="refuseCookies" class="btn btn-outline-light btn-sm">
-                    <i class="fas fa-times"></i> Refuser
+                    <i class="fas fa-times"></i> {{ _('Refuser') }}
                 </button>
             </div>
         </div>
@@ -1085,8 +1106,8 @@
     <!-- Footer -->
     <footer class="bg-white mt-5 py-4 border-top">
         <div class="container text-center text-muted">
-            <p class="mb-0">&copy; {{ current_year }} Budgee Family. Tous droits réservés. - <a href="{{ url_for('main.mentions_legales') }}" class="text-decoration-none">Mentions Légales</a> - <a href="{{ url_for('main.contact') }}" class="text-decoration-none">Nous contacter</a></p>
-            <p class="mb-0 small">Gérez votre budget familial en toute simplicité</p>
+            <p class="mb-0">&copy; {{ current_year }} Budgee Family. {{ _('Tous droits réservés.') }} - <a href="{{ url_for('main.mentions_legales') }}" class="text-decoration-none">{{ _('Mentions Légales') }}</a> - <a href="{{ url_for('main.contact') }}" class="text-decoration-none">{{ _('Nous contacter') }}</a></p>
+            <p class="mb-0 small">{{ _('Gérez votre budget familial en toute simplicité') }}</p>
         </div>
     </footer>
 
@@ -1224,6 +1245,27 @@
                 });
             }
         });
+    </script>
+
+    <!-- Language Selector Script -->
+    <script>
+        function setLanguage(lang) {
+            fetch('/set-language/' + lang, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Recharger la page pour appliquer la nouvelle langue
+                    window.location.reload();
+                }
+            })
+            .catch(error => {
+                console.error('Error setting language:', error);
+            });
+        }
     </script>
 
     {% block extra_js %}{% endblock %}

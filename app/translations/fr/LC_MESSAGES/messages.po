@@ -1,0 +1,1784 @@
+# French translations for PROJECT.
+# Copyright (C) 2026 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2026-01-31 17:36+0100\n"
+"PO-Revision-Date: 2026-01-31 15:29+0100\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: fr\n"
+"Language-Team: fr <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: app/templates/base.html:883 app/templates/base.html:952
+msgid "Admin"
+msgstr ""
+
+#: app/templates/auth/profile.html:22 app/templates/auth/register.html:115
+#: app/templates/base.html:889 app/templates/base.html:954
+#: app/templates/index.html:173 app/templates/index.html:192
+#: app/templates/pricing.html:104
+msgid "Premium"
+msgstr ""
+
+#: app/templates/auth/profile.html:24 app/templates/base.html:889
+#: app/templates/base.html:954 app/templates/pricing.html:18
+msgid "Gratuit"
+msgstr ""
+
+#: app/templates/base.html:895 app/templates/base.html:963
+#: app/templates/index.html:14
+msgid "Tableau de bord"
+msgstr ""
+
+#: app/templates/base.html:900 app/templates/index.html:27
+msgid "Revenus"
+msgstr ""
+
+#: app/templates/base.html:903
+msgid "Mes revenus"
+msgstr ""
+
+#: app/templates/base.html:905
+msgid "Employeurs"
+msgstr ""
+
+#: app/templates/base.html:910 app/templates/index.html:31
+msgid "Dépenses"
+msgstr ""
+
+#: app/templates/base.html:913
+msgid "Mes chéquiers"
+msgstr ""
+
+#: app/templates/base.html:914
+msgid "Mes achats CB"
+msgstr ""
+
+#: app/templates/base.html:915
+msgid "Mes rappels"
+msgstr ""
+
+#: app/templates/base.html:917 app/templates/base.html:928
+#: app/templates/base.html:965
+msgid "Catégories"
+msgstr ""
+
+#: app/templates/base.html:918
+msgid "Gérer les prestataires pour mes rappels"
+msgstr ""
+
+#: app/templates/base.html:923
+msgid "Abonnements"
+msgstr ""
+
+#: app/templates/base.html:926
+msgid "Mes abonnements"
+msgstr ""
+
+#: app/templates/base.html:929 app/templates/base.html:966
+msgid "Services"
+msgstr ""
+
+#: app/templates/base.html:934
+msgid "Crédits"
+msgstr ""
+
+#: app/templates/base.html:937
+msgid "Mes crédits"
+msgstr ""
+
+#: app/templates/base.html:938 app/templates/index.html:373
+msgid "Mes paiements en plusieurs fois"
+msgstr ""
+
+#: app/templates/base.html:940
+msgid "Types de crédits"
+msgstr ""
+
+#: app/templates/base.html:941
+msgid "Banques"
+msgstr ""
+
+#: app/templates/auth/profile.html:3 app/templates/auth/profile.html:9
+#: app/templates/base.html:958
+msgid "Mon profil"
+msgstr ""
+
+#: app/templates/base.html:959
+msgid "Plans & Tarifs"
+msgstr ""
+
+#: app/templates/base.html:962
+msgid "Administration"
+msgstr ""
+
+#: app/templates/base.html:964
+msgid "Clients"
+msgstr ""
+
+#: app/templates/base.html:967
+msgid "Formules"
+msgstr ""
+
+#: app/templates/base.html:970
+msgid "Déconnexion"
+msgstr ""
+
+#: app/templates/auth/profile.html:285 app/templates/base.html:986
+msgid "Tarifs"
+msgstr ""
+
+#: app/templates/base.html:989 app/templates/base.html:1036
+#: app/templates/base.html:1109 app/templates/contact.html:3
+#: app/templates/contact.html:14
+msgid "Nous contacter"
+msgstr ""
+
+#: app/templates/auth/login.html:3 app/templates/base.html:1013
+#: app/templates/base.html:1029
+msgid "Connexion"
+msgstr ""
+
+#: app/templates/auth/login.html:44 app/templates/base.html:1016
+#: app/templates/base.html:1032
+msgid "S'inscrire"
+msgstr ""
+
+#: app/templates/base.html:1091
+msgid ""
+"Nous utilisons des cookies pour améliorer votre expérience et le "
+"fonctionnement du site."
+msgstr ""
+
+#: app/templates/base.html:1092
+msgid "En savoir plus"
+msgstr ""
+
+#: app/templates/base.html:1097
+msgid "Accepter"
+msgstr ""
+
+#: app/templates/base.html:1100
+msgid "Refuser"
+msgstr ""
+
+#: app/templates/base.html:1109
+msgid "Tous droits réservés."
+msgstr ""
+
+#: app/templates/base.html:1109 app/templates/mentions_legales.html:3
+#: app/templates/mentions_legales.html:11
+msgid "Mentions Légales"
+msgstr "Mentions Légales"
+
+#: app/templates/base.html:1110 app/templates/index.html:76
+msgid "Gérez votre budget familial en toute simplicité"
+msgstr ""
+
+#: app/templates/contact.html:16
+msgid "Une question ? Une suggestion ? Nous sommes à votre écoute !"
+msgstr ""
+
+#: app/templates/contact.html:19
+msgid ""
+"Remplissez le formulaire ci-dessous et nous vous répondrons dans les plus"
+" brefs délais."
+msgstr ""
+
+#: app/templates/contact.html:29
+msgid "Site web"
+msgstr ""
+
+#: app/templates/contact.html:45
+msgid "Votre nom"
+msgstr ""
+
+#: app/templates/contact.html:52
+msgid "Jean Dupont"
+msgstr ""
+
+#: app/templates/contact.html:61
+msgid "Votre adresse email"
+msgstr ""
+
+#: app/templates/contact.html:68
+msgid "exemple@email.com"
+msgstr ""
+
+#: app/templates/contact.html:73
+msgid "Votre adresse email ne sera pas partagée"
+msgstr ""
+
+#: app/templates/contact.html:80
+msgid "Objet"
+msgstr ""
+
+#: app/templates/contact.html:87
+msgid "De quoi souhaitez-vous parler ?"
+msgstr ""
+
+#: app/templates/contact.html:95
+msgid "Votre message"
+msgstr ""
+
+#: app/templates/contact.html:102
+msgid "Écrivez votre message ici..."
+msgstr ""
+
+#: app/templates/contact.html:106
+msgid "Minimum 10 caractères"
+msgstr ""
+
+#: app/templates/contact.html:113
+msgid "Envoyer le message"
+msgstr ""
+
+#: app/templates/contact.html:119
+msgid "Temps de réponse moyen : 24-48 heures"
+msgstr ""
+
+#: app/templates/auth/login.html:19 app/templates/auth/profile.html:113
+#: app/templates/auth/register.html:26 app/templates/contact.html:133
+#: app/templates/pricing.html:411
+msgid "Email"
+msgstr ""
+
+#: app/templates/contact.html:145
+msgid "Horaires"
+msgstr ""
+
+#: app/templates/contact.html:147
+msgid "Lun - Ven"
+msgstr ""
+
+#: app/templates/contact.html:147
+msgid "9h00 - 18h00"
+msgstr ""
+
+#: app/templates/contact.html:157
+msgid "Support"
+msgstr ""
+
+#: app/templates/contact.html:159
+msgid "Assistance rapide"
+msgstr ""
+
+#: app/templates/contact.html:159
+msgid "et personnalisée"
+msgstr ""
+
+#: app/templates/contact.html:168 app/templates/mentions_legales.html:147
+msgid "Retour à l'accueil"
+msgstr "Retour à l'accueil"
+
+#: app/templates/contact.html:222
+msgid "Votre message doit contenir au moins 10 caractères."
+msgstr ""
+
+#: app/templates/contact.html:233
+msgid "Veuillez prendre le temps de remplir le formulaire correctement."
+msgstr ""
+
+#: app/templates/index.html:45
+msgid "Rappel"
+msgstr ""
+
+#: app/templates/index.html:46
+msgid "Netflix dans 3 jours"
+msgstr ""
+
+#: app/templates/index.html:57
+msgid "Notification"
+msgstr ""
+
+#: app/templates/index.html:58
+msgid "Salaire reçu"
+msgstr ""
+
+#: app/templates/index.html:69
+msgid "Budget équilibré"
+msgstr ""
+
+#: app/templates/index.html:79
+msgid ""
+"Budgee Family vous offre un tableau de bord complet pour suivre vos "
+"finances familiales en temps réel. Visualisez vos revenus, vos dépenses "
+"et votre épargne d'un seul coup d'œil."
+msgstr ""
+
+#: app/templates/index.html:84
+msgid "Tableau de bord intuitif"
+msgstr ""
+
+#: app/templates/index.html:84
+msgid "Vue d'ensemble de votre situation financière"
+msgstr ""
+
+#: app/templates/index.html:88
+msgid "Rappels personnalisés"
+msgstr ""
+
+#: app/templates/index.html:88
+msgid "Ne manquez plus jamais un paiement important"
+msgstr ""
+
+#: app/templates/index.html:92 app/templates/index.html:533
+msgid "Notifications intelligentes"
+msgstr ""
+
+#: app/templates/index.html:92
+msgid "Alertes par email et sur l'application"
+msgstr ""
+
+#: app/templates/index.html:97 app/templates/index.html:131
+#: app/templates/index.html:348 app/templates/index.html:382
+#: app/templates/pricing.html:89
+msgid "Commencer gratuitement"
+msgstr ""
+
+#: app/templates/index.html:100 app/templates/index.html:134
+#: app/templates/index.html:351 app/templates/index.html:385
+msgid "Voir les tarifs"
+msgstr ""
+
+#: app/templates/index.html:110
+msgid "Gérez tous vos abonnements en un seul endroit"
+msgstr ""
+
+#: app/templates/index.html:113
+msgid ""
+"Ne perdez plus le contrôle de vos abonnements. Budgee Family centralise "
+"tous vos services récurrents et vous aide à optimiser vos dépenses "
+"mensuelles."
+msgstr ""
+
+#: app/templates/index.html:118
+msgid "Suivi centralisé"
+msgstr ""
+
+#: app/templates/index.html:118
+msgid "Tous vos abonnements au même endroit"
+msgstr ""
+
+#: app/templates/index.html:122
+msgid "Alertes de renouvellement"
+msgstr ""
+
+#: app/templates/index.html:122
+msgid "Soyez prévenu avant chaque prélèvement"
+msgstr ""
+
+#: app/templates/index.html:126 app/templates/pricing.html:69
+msgid "Statistiques détaillées"
+msgstr ""
+
+#: app/templates/index.html:126
+msgid "Analysez vos dépenses par catégorie"
+msgstr ""
+
+#: app/templates/index.html:177 app/templates/index.html:196
+#: app/templates/index.html:215
+msgid "Mensuel"
+msgstr ""
+
+#: app/templates/index.html:181 app/templates/index.html:200
+#: app/templates/index.html:219 app/templates/index.html:238
+msgid "Prochain"
+msgstr ""
+
+#: app/templates/index.html:211
+msgid "Standard"
+msgstr ""
+
+#: app/templates/index.html:230 app/templates/index.html:234
+msgid "Annuel"
+msgstr ""
+
+#: app/templates/index.html:247
+msgid "4 abonnements actifs"
+msgstr ""
+
+#: app/templates/index.html:267
+msgid "Fiche de paie"
+msgstr ""
+
+#: app/templates/index.html:269
+msgid "Salaire - Janvier 2026"
+msgstr ""
+
+#: app/templates/index.html:270
+msgid "Entreprise ABC"
+msgstr ""
+
+#: app/templates/index.html:273
+msgid "Net à payer"
+msgstr ""
+
+#: app/templates/index.html:290
+msgid "Marie Dupont"
+msgstr ""
+
+#: app/templates/index.html:291
+msgid "Comptable"
+msgstr ""
+
+#: app/templates/index.html:306
+msgid "Revenu mensuel"
+msgstr ""
+
+#: app/templates/index.html:311
+msgid "Le 28 de chaque mois"
+msgstr ""
+
+#: app/templates/index.html:320
+msgid "Documents sécurisés"
+msgstr ""
+
+#: app/templates/index.html:327
+msgid "Suivez vos revenus et gardez vos documents"
+msgstr ""
+
+#: app/templates/index.html:330
+msgid ""
+"Centralisez tous vos revenus et stockez en toute sécurité vos fiches de "
+"paie et documents importants. Gardez un historique complet et accessible "
+"à tout moment."
+msgstr ""
+
+#: app/templates/index.html:335 app/templates/index.html:497
+msgid "Gestion des revenus"
+msgstr ""
+
+#: app/templates/index.html:335
+msgid "Salaires, primes, allocations et autres revenus"
+msgstr ""
+
+#: app/templates/index.html:339
+msgid "Stockage de documents"
+msgstr ""
+
+#: app/templates/index.html:339
+msgid "Fiches de paie, contrats et justificatifs"
+msgstr ""
+
+#: app/templates/index.html:343
+msgid "Carnet de contacts"
+msgstr ""
+
+#: app/templates/index.html:343
+msgid "Gardez les coordonnées de vos interlocuteurs"
+msgstr ""
+
+#: app/templates/index.html:361
+msgid "Maîtrisez vos crédits et paiements échelonnés"
+msgstr ""
+
+#: app/templates/index.html:364
+msgid ""
+"Suivez l'évolution de vos crédits en cours et gérez vos achats en "
+"plusieurs fois. Visualisez clairement vos échéances et votre capital "
+"restant."
+msgstr ""
+
+#: app/templates/index.html:369
+msgid "Suivi des crédits"
+msgstr ""
+
+#: app/templates/index.html:369
+msgid "Immobilier, auto, consommation"
+msgstr ""
+
+#: app/templates/index.html:373
+msgid "Suivez vos achats échelonnés"
+msgstr ""
+
+#: app/templates/index.html:377
+msgid "Calendrier des échéances"
+msgstr ""
+
+#: app/templates/index.html:377
+msgid "Ne manquez plus aucun paiement"
+msgstr ""
+
+#: app/templates/index.html:399
+msgid "Crédit immobilier"
+msgstr ""
+
+#: app/templates/index.html:401
+msgid "Prêt immobilier"
+msgstr ""
+
+#: app/templates/index.html:402
+msgid "Banque Populaire"
+msgstr ""
+
+#: app/templates/index.html:405
+msgid "Mensualité"
+msgstr ""
+
+#: app/templates/index.html:409
+msgid "Restant"
+msgstr ""
+
+#: app/templates/index.html:417
+#, python-format
+msgid "35% remboursé"
+msgstr ""
+
+#: app/templates/index.html:430
+msgid "3x sans frais"
+msgstr ""
+
+#: app/templates/index.html:434 app/templates/index.html:453
+#: app/templates/pricing.html:21 app/templates/pricing.html:107
+msgid "/mois"
+msgstr ""
+
+#: app/templates/index.html:440
+msgid "2/3 versements"
+msgstr ""
+
+#: app/templates/index.html:449
+msgid "10x sans frais"
+msgstr ""
+
+#: app/templates/index.html:459
+msgid "4/10 versements"
+msgstr ""
+
+#: app/templates/index.html:466
+msgid "Échéances à jour"
+msgstr ""
+
+#: app/templates/index.html:476
+msgid "Fonctionnalités principales"
+msgstr ""
+
+#: app/templates/index.html:477
+msgid "Tout ce dont vous avez besoin pour gérer votre budget familial"
+msgstr ""
+
+#: app/templates/index.html:485
+msgid "Tableau de bord complet"
+msgstr ""
+
+#: app/templates/index.html:487
+msgid ""
+"Vue d'ensemble de votre situation financière : revenus, dépenses, épargne"
+" et statistiques en temps réel."
+msgstr ""
+
+#: app/templates/index.html:499
+msgid ""
+"Suivez tous vos revenus (salaires, primes, allocations) et stockez vos "
+"fiches de paie et documents."
+msgstr ""
+
+#: app/templates/index.html:509
+msgid "Suivi des abonnements"
+msgstr ""
+
+#: app/templates/index.html:511
+msgid ""
+"Centralisez tous vos abonnements et services récurrents. Recevez des "
+"alertes avant chaque renouvellement."
+msgstr ""
+
+#: app/templates/index.html:521
+msgid "Crédits et paiements"
+msgstr ""
+
+#: app/templates/index.html:523
+msgid ""
+"Gérez vos crédits en cours et vos achats en plusieurs fois. Visualisez "
+"vos échéances et capital restant dû."
+msgstr ""
+
+#: app/templates/index.html:535
+msgid ""
+"Recevez des rappels personnalisés par email et sur l'application pour "
+"tous vos paiements importants."
+msgstr ""
+
+#: app/templates/index.html:545
+msgid "Sécurisé et privé"
+msgstr ""
+
+#: app/templates/index.html:547
+msgid ""
+"Vos données financières et documents sont chiffrés et protégés. "
+"Authentification sécurisée."
+msgstr ""
+
+#: app/templates/index.html:557
+msgid "Prêt à reprendre le contrôle de votre budget familial ?"
+msgstr ""
+
+#: app/templates/index.html:559
+msgid "Commencez gratuitement dès maintenant. Aucune carte bancaire requise."
+msgstr ""
+
+#: app/templates/index.html:563
+msgid "Créer mon compte gratuit"
+msgstr ""
+
+#: app/templates/mentions_legales.html:14
+msgid "Dernière mise à jour :"
+msgstr "Dernière mise à jour :"
+
+#: app/templates/mentions_legales.html:18
+msgid "1. Éditeur du site"
+msgstr "1. Éditeur du site"
+
+#: app/templates/mentions_legales.html:19
+msgid "Le site web"
+msgstr "Le site web"
+
+#: app/templates/mentions_legales.html:19
+msgid "(ci-après \"le Site\") est édité par :"
+msgstr "(ci-après \"le Site\") est édité par :"
+
+#: app/templates/mentions_legales.html:23
+msgid "Éditeur et propriétaire du site"
+msgstr "Éditeur et propriétaire du site"
+
+#: app/templates/mentions_legales.html:24
+#: app/templates/mentions_legales.html:38
+msgid "Site web :"
+msgstr "Site web :"
+
+#: app/templates/mentions_legales.html:30
+msgid "2. Hébergement"
+msgstr "2. Hébergement"
+
+#: app/templates/mentions_legales.html:31
+msgid "Le Site est hébergé par :"
+msgstr "Le Site est hébergé par :"
+
+#: app/templates/mentions_legales.html:36
+msgid "Siège social :"
+msgstr "Siège social :"
+
+#: app/templates/mentions_legales.html:37
+msgid "Téléphone :"
+msgstr "Téléphone :"
+
+#: app/templates/mentions_legales.html:37
+msgid "(numéro non surtaxé)"
+msgstr "(numéro non surtaxé)"
+
+#: app/templates/mentions_legales.html:44
+msgid "3. Propriété intellectuelle"
+msgstr "3. Propriété intellectuelle"
+
+#: app/templates/mentions_legales.html:45
+msgid ""
+"L'ensemble des contenus présents sur le Site (textes, images, graphismes,"
+" logos, icônes, sons, logiciels) est la propriété exclusive de LINKINFO "
+"ou de ses partenaires, sauf mention contraire."
+msgstr ""
+
+#: app/templates/mentions_legales.html:46
+msgid ""
+"Toute reproduction, représentation, modification, publication, adaptation"
+" de tout ou partie des éléments du Site, quel que soit le moyen ou le "
+"procédé utilisé, est interdite, sauf autorisation écrite préalable de "
+"LINKINFO."
+msgstr ""
+
+#: app/templates/mentions_legales.html:47
+msgid ""
+"Toute exploitation non autorisée du Site ou de l'un quelconque des "
+"éléments qu'il contient sera considérée comme constitutive d'une "
+"contrefaçon et poursuivie conformément aux dispositions des articles "
+"L.335-2 et suivants du Code de Propriété Intellectuelle."
+msgstr ""
+
+#: app/templates/mentions_legales.html:52
+msgid "4. Limitations de responsabilité"
+msgstr "4. Limitations de responsabilité"
+
+#: app/templates/mentions_legales.html:53
+msgid ""
+"LINKINFO ne pourra être tenu responsable des dommages directs et "
+"indirects causés au matériel de l'utilisateur, lors de l'accès au Site, "
+"et résultant soit de l'utilisation d'un matériel ne répondant pas aux "
+"spécifications indiquées, soit de l'apparition d'un bug ou d'une "
+"incompatibilité."
+msgstr ""
+
+#: app/templates/mentions_legales.html:54
+msgid ""
+"LINKINFO ne pourra également être tenu responsable des dommages indirects"
+" (tels par exemple qu'une perte de marché ou perte d'une chance) "
+"consécutifs à l'utilisation du Site."
+msgstr ""
+
+#: app/templates/mentions_legales.html:55
+msgid ""
+"Des espaces interactifs (possibilité de poser des questions dans l'espace"
+" contact) sont à la disposition des utilisateurs. LINKINFO se réserve le "
+"droit de supprimer, sans mise en demeure préalable, tout contenu déposé "
+"dans cet espace qui contreviendrait à la législation applicable en "
+"France, en particulier aux dispositions relatives à la protection des "
+"données."
+msgstr ""
+
+#: app/templates/mentions_legales.html:56
+msgid ""
+"Le cas échéant, LINKINFO se réserve également la possibilité de mettre en"
+" cause la responsabilité civile et/ou pénale de l'utilisateur, notamment "
+"en cas de message à caractère raciste, injurieux, diffamant, ou "
+"pornographique, quel que soit le support utilisé (texte, photographie, "
+"etc.)."
+msgstr ""
+
+#: app/templates/mentions_legales.html:61
+msgid "5. Gestion des données personnelles"
+msgstr "5. Gestion des données personnelles"
+
+#: app/templates/mentions_legales.html:62
+msgid ""
+"En France, les données personnelles sont notamment protégées par la loi "
+"n° 78-87 du 6 janvier 1978, la loi n° 2004-801 du 6 août 2004, l'article "
+"L. 226-13 du Code pénal et la Directive Européenne du 24 octobre 1995."
+msgstr ""
+
+#: app/templates/mentions_legales.html:64
+msgid "5.1 Données collectées"
+msgstr "5.1 Données collectées"
+
+#: app/templates/mentions_legales.html:65
+msgid ""
+"Lors de l'utilisation du Site, peuvent être collectées : l'adresse e-mail"
+" de l'utilisateur, son nom, prénom, et toute autre information relative "
+"aux abonnements gérés par l'utilisateur."
+msgstr ""
+
+#: app/templates/mentions_legales.html:67
+msgid "5.2 Finalités"
+msgstr "5.2 Finalités"
+
+#: app/templates/mentions_legales.html:68
+msgid "Les données collectées sont utilisées pour :"
+msgstr "Les données collectées sont utilisées pour :"
+
+#: app/templates/mentions_legales.html:70
+msgid "La gestion des comptes utilisateurs"
+msgstr "La gestion des comptes utilisateurs"
+
+#: app/templates/mentions_legales.html:71
+msgid "La fourniture des services proposés par le Site"
+msgstr "La fourniture des services proposés par le Site"
+
+#: app/templates/mentions_legales.html:72
+msgid "L'amélioration de la navigation sur le Site"
+msgstr "L'amélioration de la navigation sur le Site"
+
+#: app/templates/mentions_legales.html:73
+msgid "La prévention et la détection de la fraude"
+msgstr "La prévention et la détection de la fraude"
+
+#: app/templates/mentions_legales.html:74
+msgid "L'envoi d'informations et de notifications relatives au service"
+msgstr "L'envoi d'informations et de notifications relatives au service"
+
+#: app/templates/mentions_legales.html:77
+msgid "5.3 Droit d'accès, de rectification et de suppression"
+msgstr "5.3 Droit d'accès, de rectification et de suppression"
+
+#: app/templates/mentions_legales.html:78
+msgid ""
+"Conformément aux articles 39 et suivants de la loi n° 78-17 du 6 janvier "
+"1978 modifiée en 2004 relative à l'informatique, aux fichiers et aux "
+"libertés, et au Règlement Général sur la Protection des Données (RGPD), "
+"toute personne peut obtenir communication et, le cas échéant, "
+"rectification ou suppression des informations la concernant."
+msgstr ""
+
+#: app/templates/mentions_legales.html:79
+msgid ""
+"Pour exercer ce droit, vous pouvez contacter LINKINFO via l'interface de "
+"contact du Site ou en vous rendant dans les paramètres de votre compte "
+"utilisateur."
+msgstr ""
+
+#: app/templates/mentions_legales.html:81
+msgid "5.4 Non-communication des données personnelles"
+msgstr "5.4 Non-communication des données personnelles"
+
+#: app/templates/mentions_legales.html:82
+msgid ""
+"LINKINFO s'engage à ne pas vendre, louer ou céder les données "
+"personnelles collectées à des tiers, sauf autorisation expresse de "
+"l'utilisateur ou obligation légale."
+msgstr ""
+
+#: app/templates/mentions_legales.html:87
+msgid "6. Cookies"
+msgstr "6. Cookies"
+
+#: app/templates/mentions_legales.html:88
+msgid ""
+"Le Site peut utiliser des cookies pour améliorer l'expérience utilisateur"
+" et permettre le fonctionnement de certaines fonctionnalités."
+msgstr ""
+
+#: app/templates/mentions_legales.html:89
+msgid ""
+"Un cookie est un petit fichier texte stocké sur le disque dur de "
+"l'utilisateur lors de la consultation d'un site web. Un cookie ne permet "
+"pas d'identifier l'utilisateur, mais il enregistre des informations "
+"relatives à la navigation de son ordinateur sur le Site."
+msgstr ""
+
+#: app/templates/mentions_legales.html:90
+msgid ""
+"L'utilisateur peut désactiver l'utilisation de cookies en sélectionnant "
+"les paramètres appropriés de son navigateur. Cependant, une telle "
+"désactivation pourrait empêcher l'utilisation de certaines "
+"fonctionnalités du Site."
+msgstr ""
+
+#: app/templates/mentions_legales.html:95
+msgid "7. Liens hypertextes"
+msgstr "7. Liens hypertextes"
+
+#: app/templates/mentions_legales.html:96
+msgid ""
+"Le Site peut contenir des liens hypertextes vers d'autres sites présents "
+"sur le réseau Internet. Les liens vers ces autres sites ne sauraient "
+"engager la responsabilité de LINKINFO quant à leur contenu."
+msgstr ""
+
+#: app/templates/mentions_legales.html:97
+msgid ""
+"La mise en place d'un lien hypertexte vers le Site nécessite une "
+"autorisation préalable et écrite de LINKINFO."
+msgstr ""
+
+#: app/templates/mentions_legales.html:102
+msgid "8. Droit applicable et attribution de juridiction"
+msgstr "8. Droit applicable et attribution de juridiction"
+
+#: app/templates/mentions_legales.html:103
+msgid ""
+"Tout litige en relation avec l'utilisation du Site est soumis au droit "
+"français. En cas de litige, les tribunaux français seront seuls "
+"compétents."
+msgstr ""
+
+#: app/templates/mentions_legales.html:108
+msgid "9. Principales lois concernées"
+msgstr "9. Principales lois concernées"
+
+#: app/templates/mentions_legales.html:110
+msgid ""
+"Loi n° 78-17 du 6 janvier 1978, modifiée par la loi n° 2004-801 du 6 août"
+" 2004 relative à l'informatique, aux fichiers et aux libertés"
+msgstr ""
+
+#: app/templates/mentions_legales.html:111
+msgid ""
+"Loi n° 2004-575 du 21 juin 2004 pour la confiance dans l'économie "
+"numérique"
+msgstr ""
+
+#: app/templates/mentions_legales.html:112
+msgid ""
+"Règlement Général sur la Protection des Données (RGPD) - Règlement UE "
+"2016/679"
+msgstr ""
+
+#: app/templates/mentions_legales.html:118
+msgid "10. Lexique"
+msgstr "10. Lexique"
+
+#: app/templates/mentions_legales.html:120
+msgid "Utilisateur"
+msgstr "Utilisateur"
+
+#: app/templates/mentions_legales.html:121
+msgid "Internaute se connectant, utilisant le Site susnommé."
+msgstr "Internaute se connectant, utilisant le Site susnommé."
+
+#: app/templates/auth/profile.html:89 app/templates/mentions_legales.html:123
+msgid "Informations personnelles"
+msgstr "Informations personnelles"
+
+#: app/templates/mentions_legales.html:124
+msgid ""
+"Les informations qui permettent, sous quelque forme que ce soit, "
+"directement ou non, l'identification des personnes physiques auxquelles "
+"elles s'appliquent (article 4 de la loi n° 78-17 du 6 janvier 1978)."
+msgstr ""
+
+#: app/templates/mentions_legales.html:130
+msgid "Contact"
+msgstr "Contact"
+
+#: app/templates/mentions_legales.html:131
+msgid ""
+"Pour toute question concernant ces mentions légales ou le traitement de "
+"vos données personnelles, vous pouvez nous contacter :"
+msgstr ""
+
+#: app/templates/mentions_legales.html:133
+msgid "Email :"
+msgstr "Email :"
+
+#: app/templates/mentions_legales.html:134
+msgid "Ou via l'interface de contact du Site"
+msgstr "Ou via l'interface de contact du Site"
+
+#: app/templates/mentions_legales.html:140
+msgid "Ces mentions légales ont été mises à jour le"
+msgstr "Ces mentions légales ont été mises à jour le"
+
+#: app/templates/mentions_legales.html:140
+msgid "et sont conformes à la législation française en vigueur."
+msgstr "et sont conformes à la législation française en vigueur."
+
+#: app/templates/notifications.html:3 app/templates/notifications.html:9
+msgid "Notifications"
+msgstr ""
+
+#: app/templates/notifications.html:14
+msgid "Non lues"
+msgstr ""
+
+#: app/templates/notifications.html:18
+msgid "Lues"
+msgstr ""
+
+#: app/templates/notifications.html:22
+msgid "Archivées"
+msgstr ""
+
+#: app/templates/notifications.html:26
+msgid "Toutes"
+msgstr ""
+
+#: app/templates/notifications.html:39
+msgid "Tout sélectionner"
+msgstr ""
+
+#: app/templates/notifications.html:44 app/templates/notifications.html:120
+msgid "Marquer comme lu"
+msgstr ""
+
+#: app/templates/notifications.html:48
+msgid "Archiver la sélection"
+msgstr ""
+
+#: app/templates/notifications.html:53
+msgid "Supprimer la sélection"
+msgstr ""
+
+#: app/templates/notifications.html:97
+msgid "par"
+msgstr ""
+
+#: app/templates/notifications.html:100
+msgid "Nouveau"
+msgstr ""
+
+#: app/templates/notifications.html:103
+msgid "Archivée"
+msgstr ""
+
+#: app/templates/notifications.html:124
+msgid "Notification lue"
+msgstr ""
+
+#: app/templates/notifications.html:130
+msgid "Supprimer"
+msgstr ""
+
+#: app/templates/notifications.html:145
+msgid "Aucune notification"
+msgstr ""
+
+#: app/templates/notifications.html:146
+msgid "Vous n'avez aucune notification pour le moment"
+msgstr ""
+
+#: app/templates/notifications.html:215 app/templates/notifications.html:250
+msgid "Êtes-vous sûr de vouloir supprimer cette notification ?"
+msgstr ""
+
+#: app/templates/notifications.html:251
+#, python-brace-format
+msgid "Êtes-vous sûr de vouloir supprimer ces ${count} notifications ?"
+msgstr ""
+
+#: app/templates/pricing.html:3
+msgid "Plans et tarifs"
+msgstr ""
+
+#: app/templates/pricing.html:8
+msgid "Choisissez votre plan"
+msgstr ""
+
+#: app/templates/pricing.html:9
+msgid "Simple, transparent et adapté à vos besoins"
+msgstr ""
+
+#: app/templates/pricing.html:23
+msgid "Parfait pour commencer"
+msgstr ""
+
+#: app/templates/pricing.html:29 app/templates/pricing.html:33
+#: app/templates/pricing.html:37 app/templates/pricing.html:53
+#: app/templates/pricing.html:57 app/templates/pricing.html:61
+msgid "Jusqu'à"
+msgstr ""
+
+#: app/templates/pricing.html:29
+msgid "5 gestion d'Abonnements"
+msgstr ""
+
+#: app/templates/pricing.html:33
+msgid "1 gestion des Crédits"
+msgstr ""
+
+#: app/templates/pricing.html:37
+msgid "1 gestion des Revenus"
+msgstr ""
+
+#: app/templates/pricing.html:41 app/templates/pricing.html:127
+#: app/templates/pricing.html:223
+msgid "Accès aux catégories par défaut"
+msgstr ""
+
+#: app/templates/pricing.html:45 app/templates/pricing.html:131
+#: app/templates/pricing.html:227
+msgid "Accès aux services par défaut"
+msgstr ""
+
+#: app/templates/pricing.html:49
+msgid "Accès aux formules par défaut"
+msgstr ""
+
+#: app/templates/pricing.html:53
+msgid "5 catégories personnalisées"
+msgstr ""
+
+#: app/templates/pricing.html:57
+msgid "5 services personnalisés"
+msgstr ""
+
+#: app/templates/pricing.html:61
+msgid "10 formules personnalisées"
+msgstr ""
+
+#: app/templates/pricing.html:65 app/templates/pricing.html:150
+#: app/templates/pricing.html:246
+msgid "Stockage des documents"
+msgstr ""
+
+#: app/templates/pricing.html:65 app/templates/pricing.html:150
+#: app/templates/pricing.html:246
+msgid "upgradable"
+msgstr ""
+
+#: app/templates/pricing.html:73
+msgid "Notifications dans l'application"
+msgstr ""
+
+#: app/templates/pricing.html:77
+msgid "Support communautaire"
+msgstr ""
+
+#: app/templates/auth/profile.html:14 app/templates/pricing.html:84
+#: app/templates/pricing.html:173 app/templates/pricing.html:273
+msgid "Plan actuel"
+msgstr ""
+
+#: app/templates/pricing.html:100
+msgid "Populaire"
+msgstr ""
+
+#: app/templates/pricing.html:109
+msgid "Facturation mensuelle"
+msgstr ""
+
+#: app/templates/pricing.html:115 app/templates/pricing.html:211
+msgid "Gestion des Abonnements illimités"
+msgstr ""
+
+#: app/templates/pricing.html:119 app/templates/pricing.html:215
+msgid "Gestion des Crédits illimités"
+msgstr ""
+
+#: app/templates/pricing.html:123 app/templates/pricing.html:219
+msgid "Gestion des Revenus illimités"
+msgstr ""
+
+#: app/templates/pricing.html:135 app/templates/pricing.html:231
+msgid "Catégories personnalisées illimitées"
+msgstr ""
+
+#: app/templates/pricing.html:138 app/templates/pricing.html:234
+msgid "Logos, couleurs, icônes"
+msgstr ""
+
+#: app/templates/pricing.html:142 app/templates/pricing.html:238
+msgid "Services personnalisés illimités"
+msgstr ""
+
+#: app/templates/pricing.html:146 app/templates/pricing.html:242
+msgid "Formules personnalisés illimités"
+msgstr ""
+
+#: app/templates/pricing.html:154 app/templates/pricing.html:250
+msgid "Statistiques avancées"
+msgstr ""
+
+#: app/templates/pricing.html:158 app/templates/pricing.html:254
+msgid "Notifications dans l'application et par mail"
+msgstr ""
+
+#: app/templates/pricing.html:162 app/templates/pricing.html:258
+msgid "Support prioritaire"
+msgstr ""
+
+#: app/templates/pricing.html:166 app/templates/pricing.html:262
+msgid "Export des données (PDF, CSV)"
+msgstr ""
+
+#: app/templates/auth/profile.html:31 app/templates/auth/profile.html:199
+#: app/templates/pricing.html:177
+msgid "Passer à Premium"
+msgstr ""
+
+#: app/templates/pricing.html:182
+msgid "Commencer avec Premium"
+msgstr ""
+
+#: app/templates/pricing.html:193
+msgid "Meilleure offre"
+msgstr ""
+
+#: app/templates/auth/register.html:115 app/templates/pricing.html:197
+#: app/templates/pricing.html:305
+msgid "Premium Annuel"
+msgstr ""
+
+#: app/templates/pricing.html:200
+msgid "/an"
+msgstr ""
+
+#: app/templates/pricing.html:203
+msgid "Soit 2 mois gratuits"
+msgstr ""
+
+#: app/templates/pricing.html:205
+msgid "(Économie de 15€)"
+msgstr ""
+
+#: app/templates/pricing.html:266
+msgid "2 mois gratuits"
+msgstr ""
+
+#: app/templates/pricing.html:277
+msgid "Passer à Premium Annuel"
+msgstr ""
+
+#: app/templates/pricing.html:282
+msgid "Commencer avec Premium Annuel"
+msgstr ""
+
+#: app/templates/pricing.html:295
+msgid "Comparatif des prix"
+msgstr ""
+
+#: app/templates/pricing.html:299
+msgid "Premium Mensuel"
+msgstr ""
+
+#: app/templates/pricing.html:301
+msgid "7,99€ x 12 mois ="
+msgstr ""
+
+#: app/templates/pricing.html:311
+msgid "Votre économie"
+msgstr ""
+
+#: app/templates/pricing.html:326
+msgid "Questions fréquentes"
+msgstr ""
+
+#: app/templates/pricing.html:331
+msgid "Puis-je changer de plan à tout moment ?"
+msgstr ""
+
+#: app/templates/pricing.html:336
+msgid ""
+"Oui, vous pouvez passer du plan gratuit au plan Premium (mensuel ou "
+"annuel) à tout moment. Le changement est immédiat."
+msgstr ""
+
+#: app/templates/pricing.html:344
+msgid "Quelle est la différence entre Premium Mensuel et Annuel ?"
+msgstr ""
+
+#: app/templates/pricing.html:349
+msgid ""
+"Les deux plans offrent exactement les mêmes fonctionnalités. Le plan "
+"annuel vous permet d'économiser 10€ par an (équivalent à 2 mois gratuits)"
+" en payant pour toute l'année d'avance."
+msgstr ""
+
+#: app/templates/pricing.html:357
+msgid "Comment se passe l'annulation ?"
+msgstr ""
+
+#: app/templates/pricing.html:362
+msgid ""
+"Vous pouvez annuler votre abonnement Premium à tout moment depuis votre "
+"profil. Aucun engagement, aucuns frais cachés. Pour le plan annuel, aucun"
+" remboursement au prorata n'est effectué."
+msgstr ""
+
+#: app/templates/pricing.html:370
+msgid "Mes données sont-elles sécurisées ?"
+msgstr ""
+
+#: app/templates/pricing.html:375
+msgid ""
+"Absolument. Vos données sont chiffrées et sauvegardées régulièrement. "
+"Nous n'avons accès à aucune de vos informations bancaires, tout est géré "
+"par Stripe."
+msgstr ""
+
+#: app/templates/pricing.html:391
+msgid "Créer mon compte Premium"
+msgstr ""
+
+#: app/templates/pricing.html:398
+msgid "Vous vous apprêtez à souscrire au plan"
+msgstr ""
+
+#: app/templates/auth/profile.html:95 app/templates/auth/register.html:16
+#: app/templates/pricing.html:403
+msgid "Prénom"
+msgstr ""
+
+#: app/templates/auth/profile.html:100 app/templates/auth/register.html:20
+#: app/templates/pricing.html:407
+msgid "Nom"
+msgstr ""
+
+#: app/templates/auth/profile.html:107 app/templates/auth/register.html:31
+#: app/templates/pricing.html:415
+msgid "Date de naissance"
+msgstr ""
+
+#: app/templates/auth/login.html:24 app/templates/auth/register.html:36
+#: app/templates/pricing.html:419
+msgid "Mot de passe"
+msgstr ""
+
+#: app/templates/pricing.html:421
+msgid "Minimum 6 caractères"
+msgstr ""
+
+#: app/templates/auth/profile.html:129 app/templates/auth/register.html:46
+#: app/templates/pricing.html:424
+msgid "Pays"
+msgstr ""
+
+#: app/templates/auth/profile.html:131 app/templates/auth/register.html:48
+#: app/templates/pricing.html:426
+msgid "Sélectionnez votre pays"
+msgstr ""
+
+#: app/templates/auth/profile.html:132 app/templates/auth/register.html:49
+#: app/templates/pricing.html:427
+msgid "France"
+msgstr ""
+
+#: app/templates/auth/profile.html:138 app/templates/auth/register.html:55
+#: app/templates/pricing.html:428
+msgid "Belgique"
+msgstr ""
+
+#: app/templates/auth/profile.html:140 app/templates/auth/register.html:57
+#: app/templates/pricing.html:429
+msgid "Suisse"
+msgstr ""
+
+#: app/templates/auth/profile.html:147 app/templates/auth/register.html:64
+#: app/templates/pricing.html:430
+msgid "Canada"
+msgstr ""
+
+#: app/templates/pricing.html:431
+msgid "Luxembourg"
+msgstr ""
+
+#: app/templates/pricing.html:432
+msgid "Monaco"
+msgstr ""
+
+#: app/templates/auth/profile.html:146 app/templates/auth/register.html:63
+#: app/templates/pricing.html:433
+msgid "États-Unis"
+msgstr ""
+
+#: app/templates/auth/profile.html:136 app/templates/auth/register.html:53
+#: app/templates/pricing.html:434
+msgid "Royaume-Uni"
+msgstr ""
+
+#: app/templates/auth/profile.html:135 app/templates/auth/register.html:52
+#: app/templates/pricing.html:435
+msgid "Allemagne"
+msgstr ""
+
+#: app/templates/auth/profile.html:133 app/templates/auth/register.html:50
+#: app/templates/pricing.html:436
+msgid "Espagne"
+msgstr ""
+
+#: app/templates/auth/profile.html:134 app/templates/auth/register.html:51
+#: app/templates/pricing.html:437
+msgid "Italie"
+msgstr ""
+
+#: app/templates/pricing.html:445
+msgid "Créer mon compte et payer"
+msgstr ""
+
+#: app/templates/pricing.html:451
+msgid "Déjà inscrit ?"
+msgstr ""
+
+#: app/templates/pricing.html:451
+msgid "Connectez-vous"
+msgstr ""
+
+#: app/templates/pricing.html:458
+msgid "Vos données sont sécurisées et protégées"
+msgstr ""
+
+#: app/templates/pricing.html:472
+msgid "Paiement sécurisé"
+msgstr ""
+
+#: app/templates/pricing.html:482
+msgid "Chargement..."
+msgstr ""
+
+#: app/templates/pricing.html:484
+msgid "Chargement du formulaire de paiement..."
+msgstr ""
+
+#: app/templates/pricing.html:494
+msgid "Paiement sécurisé par"
+msgstr ""
+
+#: app/templates/auth/login.html:31
+msgid "Se souvenir de moi"
+msgstr ""
+
+#: app/templates/auth/login.html:36 app/templates/auth/register.html:129
+msgid "Se connecter"
+msgstr ""
+
+#: app/templates/auth/login.html:43
+msgid "Pas encore de compte ?"
+msgstr ""
+
+#: app/templates/auth/profile.html:20
+msgid "Plan"
+msgstr ""
+
+#: app/templates/auth/profile.html:35
+msgid "Rétrograder vers Gratuit"
+msgstr ""
+
+#: app/templates/auth/profile.html:45
+msgid "Bon à savoir :"
+msgstr ""
+
+#: app/templates/auth/profile.html:45
+msgid ""
+"Vous pouvez rétrograder vers le plan gratuit à tout moment. La "
+"rétrogradation est immédiate et vous perdrez les avantages Premium."
+msgstr ""
+
+#: app/templates/auth/profile.html:54
+msgid "Espace de stockage"
+msgstr ""
+
+#: app/templates/auth/profile.html:59
+msgid "Utilisation :"
+msgstr ""
+
+#: app/templates/auth/profile.html:78
+msgid "Plan Gratuit :"
+msgstr ""
+
+#: app/templates/auth/profile.html:78
+msgid ""
+"Vous disposez de 5 Go de stockage pour vos documents. Passez à Premium "
+"pour bénéficier de 20 Go de stockage."
+msgstr ""
+
+#: app/templates/auth/profile.html:80
+msgid "Plan Premium :"
+msgstr ""
+
+#: app/templates/auth/profile.html:80
+msgid ""
+"Vous disposez de 20 Go de stockage pour vos documents (fiches de paie, "
+"contrats, relevés bancaires, etc.)."
+msgstr ""
+
+#: app/templates/auth/profile.html:115
+msgid "L'email ne peut pas être modifié"
+msgstr ""
+
+#: app/templates/auth/profile.html:119 app/templates/auth/register.html:86
+msgid "Devise par défaut"
+msgstr ""
+
+#: app/templates/auth/profile.html:121 app/templates/auth/register.html:88
+msgid "Euro"
+msgstr ""
+
+#: app/templates/auth/profile.html:122 app/templates/auth/register.html:89
+msgid "Dollar américain"
+msgstr ""
+
+#: app/templates/auth/profile.html:123 app/templates/auth/register.html:90
+msgid "Livre sterling"
+msgstr ""
+
+#: app/templates/auth/profile.html:125
+msgid ""
+"Cette devise sera sélectionnée par défaut lors de la création d'un nouvel"
+" abonnement"
+msgstr ""
+
+#: app/templates/auth/profile.html:137 app/templates/auth/register.html:54
+msgid "Portugal"
+msgstr ""
+
+#: app/templates/auth/profile.html:139 app/templates/auth/register.html:56
+msgid "Pays-Bas"
+msgstr ""
+
+#: app/templates/auth/profile.html:141 app/templates/auth/register.html:58
+msgid "Autriche"
+msgstr ""
+
+#: app/templates/auth/profile.html:142 app/templates/auth/register.html:59
+msgid "Suède"
+msgstr ""
+
+#: app/templates/auth/profile.html:143 app/templates/auth/register.html:60
+msgid "Norvège"
+msgstr ""
+
+#: app/templates/auth/profile.html:144 app/templates/auth/register.html:61
+msgid "Danemark"
+msgstr ""
+
+#: app/templates/auth/profile.html:145 app/templates/auth/register.html:62
+msgid "Finlande"
+msgstr ""
+
+#: app/templates/auth/profile.html:148 app/templates/auth/register.html:65
+msgid "Brésil"
+msgstr ""
+
+#: app/templates/auth/profile.html:149 app/templates/auth/register.html:66
+msgid "Argentine"
+msgstr ""
+
+#: app/templates/auth/profile.html:150 app/templates/auth/register.html:67
+msgid "Mexique"
+msgstr ""
+
+#: app/templates/auth/profile.html:151 app/templates/auth/register.html:68
+msgid "Chine"
+msgstr ""
+
+#: app/templates/auth/profile.html:152 app/templates/auth/register.html:69
+msgid "Japon"
+msgstr ""
+
+#: app/templates/auth/profile.html:153 app/templates/auth/register.html:70
+msgid "Australie"
+msgstr ""
+
+#: app/templates/auth/profile.html:154 app/templates/auth/register.html:71
+msgid "Maroc"
+msgstr ""
+
+#: app/templates/auth/profile.html:155 app/templates/auth/register.html:72
+msgid "Tunisie"
+msgstr ""
+
+#: app/templates/auth/profile.html:156 app/templates/auth/register.html:73
+msgid "Algérie"
+msgstr ""
+
+#: app/templates/auth/profile.html:157 app/templates/auth/register.html:74
+msgid "Sénégal"
+msgstr ""
+
+#: app/templates/auth/profile.html:158 app/templates/auth/register.html:75
+msgid "Côte d'Ivoire"
+msgstr ""
+
+#: app/templates/auth/profile.html:159 app/templates/auth/register.html:76
+msgid "Guadeloupe"
+msgstr ""
+
+#: app/templates/auth/profile.html:160 app/templates/auth/register.html:77
+msgid "Martinique"
+msgstr ""
+
+#: app/templates/auth/profile.html:161 app/templates/auth/register.html:78
+msgid "Guyane"
+msgstr ""
+
+#: app/templates/auth/profile.html:162 app/templates/auth/register.html:79
+msgid "Réunion"
+msgstr ""
+
+#: app/templates/auth/profile.html:163 app/templates/auth/register.html:80
+msgid "Nouvelle-Calédonie"
+msgstr ""
+
+#: app/templates/auth/profile.html:165
+msgid "Fuseau horaire actuel:"
+msgstr ""
+
+#: app/templates/auth/profile.html:165
+msgid "Non défini"
+msgstr ""
+
+#: app/templates/auth/profile.html:169
+msgid "Langue de l'interface"
+msgstr ""
+
+#: app/templates/auth/profile.html:178
+msgid "Choisissez la langue d'affichage de l'application"
+msgstr ""
+
+#: app/templates/auth/profile.html:186
+msgid "Recevoir un email à chaque notification créée"
+msgstr ""
+
+#: app/templates/auth/profile.html:189
+msgid ""
+"Vous recevrez un email automatique pour toutes les notifications "
+"(nouveaux abonnements, crédits, revenus, etc.)"
+msgstr ""
+
+#: app/templates/auth/profile.html:196
+msgid "Fonctionnalité Premium"
+msgstr ""
+
+#: app/templates/auth/profile.html:197
+msgid "Les notifications par email sont réservées aux abonnés Premium."
+msgstr ""
+
+#: app/templates/auth/profile.html:207
+msgid "Changer le mot de passe"
+msgstr ""
+
+#: app/templates/auth/profile.html:210
+msgid "Mot de passe actuel"
+msgstr ""
+
+#: app/templates/auth/profile.html:216
+msgid "Nouveau mot de passe"
+msgstr ""
+
+#: app/templates/auth/profile.html:220
+msgid "Confirmer"
+msgstr ""
+
+#: app/templates/auth/profile.html:227
+msgid "Enregistrer les modifications"
+msgstr ""
+
+#: app/templates/auth/profile.html:236
+msgid "Informations du compte"
+msgstr ""
+
+#: app/templates/auth/profile.html:240
+msgid "Membre depuis :"
+msgstr ""
+
+#: app/templates/auth/profile.html:244
+msgid "Méthode de connexion :"
+msgstr ""
+
+#: app/templates/auth/profile.html:248
+msgid "Email/Mot de passe"
+msgstr ""
+
+#: app/templates/auth/profile.html:263
+msgid "Confirmer la rétrogradation"
+msgstr ""
+
+#: app/templates/auth/profile.html:268
+msgid "Êtes-vous sûr de vouloir rétrograder vers le plan gratuit ?"
+msgstr ""
+
+#: app/templates/auth/profile.html:272
+msgid "Ce qui va se passer :"
+msgstr ""
+
+#: app/templates/auth/profile.html:274
+msgid "Rétrogradation immédiate"
+msgstr ""
+
+#: app/templates/auth/profile.html:274
+msgid "L'effet est instantané"
+msgstr ""
+
+#: app/templates/auth/profile.html:275
+msgid "Limite d'abonnements :"
+msgstr ""
+
+#: app/templates/auth/profile.html:275 app/templates/auth/profile.html:276
+#: app/templates/auth/profile.html:277
+msgid "5 maximum"
+msgstr ""
+
+#: app/templates/auth/profile.html:275 app/templates/auth/profile.html:276
+#: app/templates/auth/profile.html:277 app/templates/auth/profile.html:278
+msgid "(contre illimité)"
+msgstr ""
+
+#: app/templates/auth/profile.html:276
+msgid "Catégories personnalisées :"
+msgstr ""
+
+#: app/templates/auth/profile.html:277
+msgid "Services personnalisés :"
+msgstr ""
+
+#: app/templates/auth/profile.html:278
+msgid "Plans personnalisés :"
+msgstr ""
+
+#: app/templates/auth/profile.html:278
+msgid "10 maximum"
+msgstr ""
+
+#: app/templates/auth/profile.html:279
+msgid "Notifications par email désactivées"
+msgstr ""
+
+#: app/templates/auth/profile.html:279
+msgid "Fonctionnalité réservée aux abonnés Premium"
+msgstr ""
+
+#: app/templates/auth/profile.html:285
+msgid "Vous pourrez repasser à Premium à tout moment depuis la page"
+msgstr ""
+
+#: app/templates/auth/profile.html:290
+msgid "Annuler"
+msgstr ""
+
+#: app/templates/auth/profile.html:294
+msgid "Rétrograder maintenant"
+msgstr ""
+
+#: app/templates/auth/register.html:3
+msgid "Inscription"
+msgstr ""
+
+#: app/templates/auth/register.html:11
+msgid "Créer un compte"
+msgstr ""
+
+#: app/templates/auth/register.html:41
+msgid "Confirmer le mot de passe"
+msgstr ""
+
+#: app/templates/auth/register.html:82
+msgid "Permet d'afficher les dates et heures dans votre fuseau horaire"
+msgstr ""
+
+#: app/templates/auth/register.html:91
+msgid "Franc suisse"
+msgstr ""
+
+#: app/templates/auth/register.html:92
+msgid "Dollar canadien"
+msgstr ""
+
+#: app/templates/auth/register.html:93
+msgid "Dollar australien"
+msgstr ""
+
+#: app/templates/auth/register.html:94
+msgid "Yen japonais"
+msgstr ""
+
+#: app/templates/auth/register.html:95
+msgid "Yuan chinois"
+msgstr ""
+
+#: app/templates/auth/register.html:96
+msgid "Roupie indienne"
+msgstr ""
+
+#: app/templates/auth/register.html:97
+msgid "Real brésilien"
+msgstr ""
+
+#: app/templates/auth/register.html:98
+msgid "Peso mexicain"
+msgstr ""
+
+#: app/templates/auth/register.html:99
+msgid "Rand sud-africain"
+msgstr ""
+
+#: app/templates/auth/register.html:101
+msgid "Cette devise sera utilisée pour vos abonnements et factures"
+msgstr ""
+
+#: app/templates/auth/register.html:108
+msgid ""
+"En vous inscrivant, vous bénéficiez du plan gratuit avec jusqu'à 5 "
+"abonnements."
+msgstr ""
+
+#: app/templates/auth/register.html:115
+msgid "Vous vous inscrivez pour le plan"
+msgstr ""
+
+#: app/templates/auth/register.html:115
+msgid "Après validation de votre compte, vous pourrez finaliser votre paiement."
+msgstr ""
+
+#: app/templates/auth/register.html:121
+msgid "Créer mon compte"
+msgstr ""
+
+#: app/templates/auth/register.html:128
+msgid "Déjà un compte ?"
+msgstr ""
+

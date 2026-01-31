@@ -254,6 +254,11 @@ def profile():
         if country:
             current_user.set_country(country)
 
+        # Mettre à jour la langue
+        language = request.form.get('language')
+        if language and language in ['fr', 'en', 'es', 'it', 'de', 'pt']:
+            current_user.language = language
+
         # Mettre à jour les préférences de notification par email (réservé aux utilisateurs Premium)
         if current_user.plan.name != 'Free':
             current_user.email_notifications = request.form.get('email_notifications') == 'on'

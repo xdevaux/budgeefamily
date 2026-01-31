@@ -1,8 +1,9 @@
-from flask import Flask
+from flask import Flask, request, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_mail import Mail
+from flask_babel import Babel, gettext, lazy_gettext
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from config import Config
@@ -11,11 +12,41 @@ db = SQLAlchemy()
 migrate = Migrate()
 login_manager = LoginManager()
 mail = Mail()
+babel = Babel()
 limiter = Limiter(
     key_func=get_remote_address,
     default_limits=["1000 per day", "200 per hour"],
     storage_uri="memory://"
 )
+
+
+def get_locale():
+    """Détermine la langue à utiliser pour la requête actuelle"""
+    from flask_login import current_user
+
+    # 1. Si l'utilisateur est connecté et a une préférence de langue
+    if current_user.is_authenticated and hasattr(current_user, 'language') and current_user.language:
+        return current_user.language
+
+    # 2. Si une langue est définie en session (pour les non-connectés)
+    if 'language' in session:
+        return session['language']
+
+    # 3. Détecter la langue du navigateur
+    return request.accept_languages.best_match(['fr', 'en']) or 'fr'
+
+
+def get_timezone():
+    """Détermine le fuseau horaire à utiliser pour la requête actuelle"""
+    from flask_login import current_user
+    import pytz
+
+    # Si l'utilisateur est connecté et a un timezone défini
+    if current_user.is_authenticated and hasattr(current_user, 'timezone') and current_user.timezone:
+        return current_user.timezone
+
+    # Sinon, utiliser le timezone par défaut
+    return 'Europe/Paris'
 
 
 def create_app(config_class=Config):
@@ -29,6 +60,7 @@ def create_app(config_class=Config):
     login_manager.login_message = 'Veuillez vous connecter pour accéder à cette page.'
     login_manager.login_message_category = 'info'
     mail.init_app(app)
+    babel.init_app(app, locale_selector=get_locale, timezone_selector=get_timezone)
     limiter.init_app(app)
 
     from app.routes import auth, main, subscriptions, api, categories, services, admin, exports, credits, credit_types, revenues, employers, banks, installments, checkbooks, card_purchases, card_purchase_categories, reminders, providers
@@ -91,7 +123,9 @@ def create_app(config_class=Config):
         return {
             'now': datetime.now(tz),
             'current_year': datetime.now(tz).year,
-            'welcome_message': welcome_message
+            'welcome_message': welcome_message,
+            'get_locale': get_locale,
+            '_': gettext
         }
 
     # Filtres Jinja2 personnalisés
