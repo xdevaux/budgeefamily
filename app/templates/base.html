@@ -477,13 +477,364 @@
                 max-width: 100%;
             }
         }
+
+        /* === BOUTONS MOBILES DANS LE BODY - Cachés par défaut === */
+        .mobile-auth-buttons-body {
+            display: none !important;
+        }
+
+        /* === MENU MOBILE AMÉLIORÉ === */
+        @media (max-width: 991px) {
+            /* Logo centré en mobile */
+            .navbar .container {
+                justify-content: center;
+                position: relative;
+            }
+
+            .navbar-brand {
+                margin: 0 auto;
+            }
+
+            .navbar-toggler {
+                position: absolute;
+                right: 0;
+            }
+
+            /* Cacher le menu hamburger sur certaines pages en mobile */
+            .no-menu-mobile .navbar-toggler,
+            .no-menu-mobile .navbar-collapse {
+                display: none !important;
+            }
+
+            /* Boutons connexion/inscription dans le body - mobile uniquement */
+            .mobile-auth-buttons-body {
+                display: flex !important;
+                flex-direction: column;
+                gap: 1rem;
+                padding: 2rem 1.5rem;
+                max-width: 400px;
+                margin: 0 auto;
+                align-items: stretch;
+            }
+
+            .mobile-auth-buttons-body .btn {
+                padding: 1rem;
+                font-size: 1.1rem;
+                font-weight: 600;
+                border-radius: 12px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 0.5rem;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                transition: all 0.3s ease;
+            }
+
+            .mobile-auth-buttons-body .btn:active {
+                transform: scale(0.98);
+            }
+
+            .mobile-auth-buttons-body .btn i {
+                font-size: 1.2rem;
+            }
+
+            /* Lien "Nous contacter" */
+            .mobile-contact-link {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 0.5rem;
+                padding: 1rem;
+                margin-top: 0.5rem;
+                font-size: 1rem;
+                font-weight: 500;
+                color: #6366f1;
+                text-decoration: none;
+                border-radius: 12px;
+                transition: all 0.3s ease;
+                background-color: rgba(99, 102, 241, 0.1);
+            }
+
+            .mobile-contact-link:hover {
+                background-color: rgba(99, 102, 241, 0.2);
+                color: #4f46e5;
+                transform: translateY(-2px);
+            }
+
+            .mobile-contact-link i {
+                font-size: 1.1rem;
+            }
+
+            /* Off-canvas menu pour mobile */
+            #navbarNav {
+                position: fixed;
+                top: 0;
+                left: -100%;
+                width: 85%;
+                max-width: 320px;
+                height: 100vh;
+                background: linear-gradient(180deg, #ffffff 0%, #f8f9fa 100%);
+                box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15);
+                transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                overflow-y: auto;
+                z-index: 1050;
+                padding: 0;
+            }
+
+            #navbarNav.show {
+                left: 0;
+            }
+
+            /* Overlay sombre - élément séparé */
+            .mobile-menu-overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 1040;
+                animation: fadeIn 0.3s ease;
+            }
+
+            .mobile-menu-overlay.show {
+                display: block;
+            }
+
+            @keyframes fadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+
+            /* En-tête du menu mobile */
+            .navbar-nav {
+                padding: 0;
+                width: 100%;
+            }
+
+            .navbar-nav::before {
+                content: '';
+                display: block;
+                height: 80px;
+                background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+                margin-bottom: 1rem;
+            }
+
+            /* Bouton fermer dans le menu */
+            .navbar-nav::after {
+                content: '×';
+                position: absolute;
+                top: 20px;
+                right: 20px;
+                font-size: 2.5rem;
+                color: white;
+                cursor: pointer;
+                width: 40px;
+                height: 40px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.2);
+                transition: all 0.2s;
+            }
+
+            /* Items du menu mobile */
+            .navbar-nav .nav-item {
+                width: 100%;
+                margin: 0;
+                padding: 0;
+            }
+
+            /* Badge Admin/Premium en haut */
+            .navbar-nav .nav-item .badge {
+                display: block;
+                width: calc(100% - 2rem);
+                margin: 0 1rem 0.75rem 1rem;
+                padding: 0.75rem;
+                text-align: center;
+                font-size: 1rem;
+                border-radius: 12px;
+            }
+
+            /* Boutons du menu mobile */
+            .nav-menu-btn {
+                width: calc(100% - 2rem);
+                margin: 0.25rem 1rem;
+                padding: 1rem;
+                border-radius: 12px;
+                font-size: 1rem;
+                justify-content: flex-start;
+                gap: 1rem;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            }
+
+            .nav-menu-btn i {
+                font-size: 1.25rem;
+                width: 24px;
+                text-align: center;
+            }
+
+            /* Menu déroulants adaptés mobile */
+            .navbar-nav .dropdown-menu {
+                position: static !important;
+                transform: none !important;
+                border: none;
+                box-shadow: none;
+                background: transparent;
+                padding: 0 0 0 2rem;
+                margin: 0.5rem 1rem;
+                border-left: 3px solid #e5e7eb;
+            }
+
+            .navbar-nav .dropdown-menu .dropdown-item {
+                padding: 0.875rem 1rem;
+                margin: 0.25rem 0;
+                border-radius: 10px;
+                background: white;
+                box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+                font-size: 0.95rem;
+            }
+
+            .navbar-nav .dropdown-menu .dropdown-item i {
+                font-size: 1.1rem;
+            }
+
+            .navbar-nav .dropdown-divider {
+                margin: 0.5rem 1rem;
+                opacity: 0.3;
+            }
+
+            .navbar-nav .dropdown-header {
+                padding: 0.75rem 1rem;
+                font-size: 0.7rem;
+                color: #9ca3af;
+            }
+
+            /* Bouton utilisateur et notifications en mobile */
+            .nav-menu-btn.user,
+            .nav-menu-btn.notifications {
+                width: calc(100% - 2rem);
+                height: auto;
+                justify-content: flex-start;
+                padding: 1rem;
+            }
+
+            .nav-menu-btn.notifications {
+                position: relative;
+            }
+
+            .nav-menu-btn.notifications .badge {
+                position: absolute;
+                top: 8px;
+                left: 32px;
+                transform: none;
+            }
+
+            /* Menu utilisateur */
+            #userDropdown + .dropdown-menu {
+                background: #f8f9fa;
+                padding: 0.5rem;
+                border-left-color: #8b5cf6;
+            }
+
+            /* Toggle hamburger animé */
+            .navbar-toggler {
+                border: none;
+                padding: 0.5rem;
+                border-radius: 8px;
+                transition: all 0.3s;
+            }
+
+            .navbar-toggler:focus {
+                box-shadow: none;
+            }
+
+            .navbar-toggler-icon {
+                width: 28px;
+                height: 28px;
+                background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(99, 102, 241, 1)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2.5' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+            }
+
+            /* Ajustement du logo en mobile */
+            .navbar-brand img {
+                height: 38px !important;
+            }
+
+            .navbar-brand span {
+                font-size: 1.25rem !important;
+            }
+        }
+
+        /* === AMÉLIORATION DROPDOWN TOGGLE === */
+        @media (max-width: 991px) {
+            /* Amélioration du dropdown toggle */
+            .nav-menu-btn.dropdown-toggle::after {
+                margin-left: auto;
+                transition: transform 0.3s;
+            }
+
+            .nav-menu-btn.dropdown-toggle[aria-expanded="true"]::after {
+                transform: rotate(180deg);
+            }
+        }
+
+            /* Animation d'entrée pour les items */
+            @keyframes slideInLeft {
+                from {
+                    opacity: 0;
+                    transform: translateX(-20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+            }
+
+            #navbarNav.show .nav-item {
+                animation: slideInLeft 0.3s ease forwards;
+            }
+
+            #navbarNav.show .nav-item:nth-child(1) { animation-delay: 0.05s; }
+            #navbarNav.show .nav-item:nth-child(2) { animation-delay: 0.1s; }
+            #navbarNav.show .nav-item:nth-child(3) { animation-delay: 0.15s; }
+            #navbarNav.show .nav-item:nth-child(4) { animation-delay: 0.2s; }
+            #navbarNav.show .nav-item:nth-child(5) { animation-delay: 0.25s; }
+            #navbarNav.show .nav-item:nth-child(6) { animation-delay: 0.3s; }
+            #navbarNav.show .nav-item:nth-child(7) { animation-delay: 0.35s; }
+            #navbarNav.show .nav-item:nth-child(8) { animation-delay: 0.4s; }
+
+            /* Scroll smooth pour le menu */
+            #navbarNav {
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: thin;
+                scrollbar-color: #cbd5e1 transparent;
+            }
+
+            #navbarNav::-webkit-scrollbar {
+                width: 6px;
+            }
+
+            #navbarNav::-webkit-scrollbar-track {
+                background: transparent;
+            }
+
+            #navbarNav::-webkit-scrollbar-thumb {
+                background-color: #cbd5e1;
+                border-radius: 3px;
+            }
+        }
     </style>
 
     {% block extra_css %}{% endblock %}
 </head>
-<body>
+<body{% if current_user.is_authenticated %} class="user-authenticated"{% endif %}>
+    <!-- Overlay pour menu mobile -->
+    <div class="mobile-menu-overlay" id="mobileMenuOverlay"></div>
+
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm mb-4">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm mb-4{% if request.endpoint in ['main.index', 'auth.login', 'auth.register', 'main.pricing', 'main.contact'] %} no-menu-mobile{% endif %}">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="{{ url_for('main.index') }}" style="gap: 10px;">
                 <!-- Logo personnalisé -->
@@ -495,6 +846,7 @@
                     Budgee <span style="font-weight: 400; color: #8b5cf6;">Family</span>
                 </span>
             </a>
+
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -623,6 +975,21 @@
             </div>
         </div>
     </nav>
+
+    {% if not current_user.is_authenticated %}
+    <!-- Boutons connexion/inscription pour mobile - Dans le body -->
+    <div class="mobile-auth-buttons-body">
+        <a class="btn btn-success-light" href="{{ url_for('auth.login') }}">
+            <i class="fas fa-sign-in-alt me-2"></i>Connexion
+        </a>
+        <a class="btn btn-primary" href="{{ url_for('main.pricing') }}">
+            <i class="fas fa-user-plus me-2"></i>S'inscrire
+        </a>
+        <a class="mobile-contact-link" href="{{ url_for('main.contact') }}">
+            <i class="fas fa-envelope me-2"></i>Nous contacter
+        </a>
+    </div>
+    {% endif %}
 
     <!-- Email Verification Banner -->
     {% if current_user.is_authenticated and not current_user.email_verified %}
@@ -790,6 +1157,45 @@
                 setTimeout(() => {
                     cookieConsent.style.display = 'none';
                 }, 500);
+            }
+        });
+    </script>
+
+    <!-- Mobile Menu Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const navbarCollapse = document.getElementById('navbarNav');
+            const navbarToggler = document.querySelector('.navbar-toggler');
+            const overlay = document.getElementById('mobileMenuOverlay');
+
+            if (navbarCollapse && overlay) {
+                // Gérer l'affichage de l'overlay
+                navbarCollapse.addEventListener('show.bs.collapse', function() {
+                    overlay.classList.add('show');
+                });
+
+                navbarCollapse.addEventListener('hide.bs.collapse', function() {
+                    overlay.classList.remove('show');
+                });
+
+                // Fermer le menu au clic sur l'overlay
+                overlay.addEventListener('click', function() {
+                    const bsCollapse = bootstrap.Collapse.getInstance(navbarCollapse);
+                    if (bsCollapse) {
+                        bsCollapse.hide();
+                    }
+                });
+
+                // Fermer le menu au clic sur un lien (sauf les dropdowns)
+                const menuLinks = navbarCollapse.querySelectorAll('.nav-link:not(.dropdown-toggle), .dropdown-item');
+                menuLinks.forEach(link => {
+                    link.addEventListener('click', function() {
+                        const bsCollapse = bootstrap.Collapse.getInstance(navbarCollapse);
+                        if (bsCollapse && !link.classList.contains('dropdown-toggle')) {
+                            setTimeout(() => bsCollapse.hide(), 200);
+                        }
+                    });
+                });
             }
         });
     </script>
