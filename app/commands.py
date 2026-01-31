@@ -560,6 +560,53 @@ def check_reminder_appointments():
     click.echo(f'✓ {emails_sent} email(s) envoyé(s)')
 
 
+@click.command('auto-backup')
+@with_appcontext
+def auto_backup():
+    """Crée une sauvegarde automatique quotidienne et applique la rotation"""
+    import logging
+    logger = logging.getLogger(__name__)
+
+    click.echo("=== Démarrage de la sauvegarde automatique ===")
+    logger.info("=== Démarrage de la sauvegarde automatique ===")
+
+    from app.utils.backup import BackupManager
+
+    backup_manager = None
+    try:
+        click.echo("Création du BackupManager...")
+        backup_manager = BackupManager()
+
+        click.echo("Lancement de la sauvegarde automatique...")
+        backup_filename = backup_manager.create_full_backup(backup_type="auto")
+
+        if backup_filename:
+            click.echo(f"✓ Sauvegarde automatique créée avec succès: {backup_filename}")
+            logger.info(f"Sauvegarde automatique créée avec succès: {backup_filename}")
+
+            # Appliquer la rotation des sauvegardes automatiques
+            click.echo("Application de la politique de rotation des sauvegardes...")
+            rotation_result = backup_manager.rotate_auto_backups()
+            click.echo(f"✓ Rotation effectuée: {rotation_result['kept']} conservées, {rotation_result['deleted']} supprimées")
+            logger.info(f"Rotation effectuée: {rotation_result['kept']} conservées, {rotation_result['deleted']} supprimées")
+
+            return True
+        else:
+            click.echo("✗ Échec de la sauvegarde automatique")
+            logger.error("Échec de la sauvegarde automatique")
+            return False
+
+    except Exception as e:
+        click.echo(f"✗ Erreur lors de la sauvegarde automatique: {str(e)}")
+        logger.error(f"Erreur lors de la sauvegarde automatique: {str(e)}", exc_info=True)
+        return False
+    finally:
+        if backup_manager:
+            click.echo("Déconnexion SFTP...")
+            backup_manager.disconnect_sftp()
+        click.echo("=== Fin de la sauvegarde automatique ===")
+
+
 def init_app(app):
     """Enregistre les commandes dans l'application Flask"""
     app.cli.add_command(update_payment_dates)
@@ -567,3 +614,4 @@ def init_app(app):
     app.cli.add_command(generate_initial_transactions)
     app.cli.add_command(archive_reminders)
     app.cli.add_command(check_reminder_appointments)
+    app.cli.add_command(auto_backup)

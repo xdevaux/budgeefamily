@@ -136,8 +136,8 @@
         <div class="col-lg-4">
             <!-- Informations de contact -->
             <div class="card mb-4">
-                <div class="card-header">
-                    <i class="fas fa-info-circle"></i> Informations
+                <div class="card-header" style="background-color: #e5e7eb;">
+                    <i class="fas fa-info-circle text-secondary"></i> Informations
                 </div>
                 <div class="card-body">
                     {% if bank.address or bank.postal_code or bank.city %}
@@ -190,8 +190,8 @@
             <!-- Notes -->
             {% if bank.notes %}
             <div class="card mb-4">
-                <div class="card-header">
-                    <i class="fas fa-sticky-note"></i> Notes
+                <div class="card-header" style="background-color: #e5e7eb;">
+                    <i class="fas fa-sticky-note text-secondary"></i> Notes
                 </div>
                 <div class="card-body">
                     <p class="mb-0" style="white-space: pre-wrap;">{{ bank.notes }}</p>
@@ -201,8 +201,8 @@
 
             <!-- Statistiques documents -->
             <div class="card mb-4">
-                <div class="card-header">
-                    <i class="fas fa-chart-pie"></i> Documents
+                <div class="card-header" style="background-color: #e5e7eb;">
+                    <i class="fas fa-chart-pie text-secondary"></i> Documents
                 </div>
                 <div class="card-body p-2">
                     <div class="row g-2">
@@ -227,9 +227,9 @@
         <!-- Colonne documents -->
         <div class="col-lg-8">
             <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
+                <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #e5e7eb;">
                     <span>
-                        <i class="fas fa-folder-open"></i> Documents
+                        <i class="fas fa-folder-open text-secondary"></i> Documents
                         {% if total_size > 0 %}
                             <span class="badge bg-info ms-2">
                                 <i class="fas fa-hdd"></i>

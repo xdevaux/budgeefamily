@@ -40,7 +40,8 @@
     <!-- Statistiques par plan -->
     <div class="row mb-4">
         <div class="col-md-6">
-            <div class="card">
+            <!-- Répartition par plan -->
+            <div class="card mb-4">
                 <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #e5e7eb;">
                     <h5 class="mb-0"><i class="fas fa-chart-pie text-secondary"></i> Répartition par plan</h5>
                 </div>
@@ -58,9 +59,15 @@
                             {% for plan in plans_stats %}
                             <tr>
                                 <td>
-                                    {{ plan.name or 'Sans plan' }}
-                                    {% if plan.billing_period == 'yearly' %}
-                                    <small class="text-muted">(annuel)</small>
+                                    {% if plan.name == 'Premium Annual' or (plan.name == 'Premium' and plan.billing_period == 'yearly') %}
+                                        Premium <small class="text-muted">(annuel)</small>
+                                    {% elif plan.name == 'Premium' and plan.billing_period == 'monthly' %}
+                                        Premium <small class="text-muted">(mensuel)</small>
+                                    {% else %}
+                                        {{ plan.name or 'Sans plan' }}
+                                        {% if plan.billing_period == 'yearly' %}
+                                        <small class="text-muted">(annuel)</small>
+                                        {% endif %}
                                     {% endif %}
                                 </td>
                                 <td class="text-end">
@@ -118,6 +125,36 @@
                     </table>
                 </div>
             </div>
+
+            <!-- Actions sur le serveur -->
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #e5e7eb;">
+                    <h5 class="mb-0"><i class="fas fa-tools text-secondary"></i> Actions sur le serveur</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-2">
+                        <div class="col-4">
+                            <form method="POST" action="{{ url_for('admin.server_restart') }}" onsubmit="return confirm('Êtes-vous sûr de vouloir redémarrer le serveur ? Tous les utilisateurs seront déconnectés.');">
+                                <button type="submit" class="btn btn-danger btn-sm w-100">
+                                    <i class="fas fa-power-off"></i> Redémarrer
+                                </button>
+                            </form>
+                        </div>
+                        <div class="col-4">
+                            <form method="POST" action="{{ url_for('admin.backup_create') }}" onsubmit="return confirm('Créer une sauvegarde complète de la base de données et de l\'application ?');">
+                                <button type="submit" class="btn btn-primary btn-sm w-100">
+                                    <i class="fas fa-save"></i> Sauvegarder
+                                </button>
+                            </form>
+                        </div>
+                        <div class="col-4">
+                            <a href="{{ url_for('admin.backups_manage') }}" class="btn btn-primary btn-sm w-100">
+                                <i class="fas fa-list"></i> Liste
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="col-md-6">
@@ -155,7 +192,7 @@
                                     <td>{{ user.first_name }} {{ user.last_name }}</td>
                                     <td><small>{{ user.email }}</small></td>
                                     <td>
-                                        <small class="text-muted">{{ user.created_at.strftime('%d/%m/%Y %H:%M') }}</small>
+                                        <small class="text-muted">{{ user.created_at|format_user_datetime(user) }}</small>
                                     </td>
                                 </tr>
                                 {% endfor %}
@@ -192,7 +229,7 @@
                                     <td>{{ user.first_name }} {{ user.last_name }}</td>
                                     <td><small>{{ user.email }}</small></td>
                                     <td>
-                                        <small class="text-muted">{{ user.last_login.strftime('%d/%m/%Y %H:%M') }}</small>
+                                        <small class="text-muted">{{ user.last_login|format_user_datetime(user) }}</small>
                                     </td>
                                 </tr>
                                 {% endfor %}
@@ -209,15 +246,15 @@
         </div>
     </div>
 
-    <!-- Section Serveur -->
+    <!-- Section Serveur - Informations -->
     <div class="row">
         <div class="col-12">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #e5e7eb;">
-                    <h5 class="mb-0"><i class="fas fa-server text-secondary"></i> Serveur</h5>
+                    <h5 class="mb-0"><i class="fas fa-server text-secondary"></i> Informations serveur</h5>
                 </div>
                 <div class="card-body">
-                    <div class="row mb-4">
+                    <div class="row">
                         <!-- Stockage -->
                         <div class="col-md-4 mb-3">
                             <h6 class="text-muted mb-3"><i class="fas fa-hdd"></i> Stockage</h6>
@@ -253,17 +290,6 @@
                             </div>
                         </div>
                     </div>
-
-                    <!-- Bouton redémarrage serveur -->
-                    <div class="row">
-                        <div class="col-12 text-center">
-                            <form method="POST" action="{{ url_for('admin.server_restart') }}" onsubmit="return confirm('Êtes-vous sûr de vouloir redémarrer le serveur ? Tous les utilisateurs seront déconnectés.');">
-                                <button type="submit" class="btn btn-danger">
-                                    <i class="fas fa-power-off"></i> Redémarrer le serveur
-                                </button>
-                            </form>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -290,7 +316,13 @@ new Chart(plansCtx, {
     data: {
         labels: [
             {% for plan in plans_stats %}
-                '{{ plan.name }}{% if plan.billing_period == "yearly" %} (annuel){% endif %}'{% if not loop.last %},{% endif %}
+                {% if plan.name == 'Premium Annual' or (plan.name == 'Premium' and plan.billing_period == 'yearly') %}
+                    'Premium (annuel)'
+                {% elif plan.name == 'Premium' and plan.billing_period == 'monthly' %}
+                    'Premium (mensuel)'
+                {% else %}
+                    '{{ plan.name }}{% if plan.billing_period == "yearly" %} (annuel){% endif %}'
+                {% endif %}{% if not loop.last %},{% endif %}
             {% endfor %}
             {% if no_plan_count > 0 %},
                 'Sans plan'

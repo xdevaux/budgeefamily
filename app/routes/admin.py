@@ -1,13 +1,16 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify
+from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify, send_file
 from flask_login import login_required, current_user
 from functools import wraps
 from app import db
 from app.models import User, Plan, Category, Service, ServicePlan
+from app.utils.backup import BackupManager
 from datetime import datetime
 import base64
 import mimetypes
 import psutil
 import subprocess
+import tempfile
+import os
 
 bp = Blueprint('admin', __name__, url_prefix='/admin')
 
@@ -699,3 +702,164 @@ def server_restart():
         flash(f'Erreur lors du redémarrage du serveur: {str(e)}', 'danger')
 
     return redirect(url_for('admin.dashboard'))
+
+
+@bp.route('/backup/create', methods=['POST'])
+@login_required
+@admin_required
+def backup_create():
+    """Créer une sauvegarde manuelle"""
+    import logging
+    logger = logging.getLogger(__name__)
+    logger.info("=== DÉBUT DE LA SAUVEGARDE ===")
+
+    backup_manager = None
+    try:
+        logger.info("Création du BackupManager...")
+        backup_manager = BackupManager()
+
+        logger.info("Lancement de create_full_backup() en mode manuel...")
+        backup_filename = backup_manager.create_full_backup(backup_type="manual")
+        logger.info(f"Résultat de create_full_backup(): {backup_filename}")
+
+        if backup_filename:
+            logger.info(f"SUCCÈS: Sauvegarde créée: {backup_filename}")
+            flash(f'Sauvegarde créée avec succès: {backup_filename}', 'success')
+        else:
+            logger.error("ÉCHEC: create_full_backup() a retourné None")
+            flash('Erreur lors de la création de la sauvegarde', 'danger')
+
+    except Exception as e:
+        logger.error(f"EXCEPTION lors de la sauvegarde: {str(e)}", exc_info=True)
+        flash(f'Erreur lors de la sauvegarde: {str(e)}', 'danger')
+    finally:
+        if backup_manager:
+            logger.info("Déconnexion SFTP...")
+            backup_manager.disconnect_sftp()
+        logger.info("=== FIN DE LA SAUVEGARDE ===")
+
+    # Rediriger vers la page d'origine (backups ou dashboard)
+    from flask import request
+    if request.referrer and 'backups' in request.referrer:
+        return redirect(url_for('admin.backups_manage'))
+    return redirect(url_for('admin.dashboard'))
+
+
+@bp.route('/backups')
+@login_required
+@admin_required
+def backups_manage():
+    """Page de gestion des sauvegardes"""
+    return render_template('admin/backups.html')
+
+
+@bp.route('/backup/list')
+@login_required
+@admin_required
+def backup_list():
+    """Lister les sauvegardes disponibles (API JSON)"""
+    try:
+        backup_manager = BackupManager()
+        backups = backup_manager.list_backups()
+        backup_manager.disconnect_sftp()
+
+        # Grouper les sauvegardes par mois
+        from collections import defaultdict
+        grouped_backups = defaultdict(list)
+
+        for backup in backups:
+            # Créer une clé année-mois
+            month_key = backup['modified'].strftime('%Y-%m')
+            month_label = backup['modified'].strftime('%B %Y')  # Ex: "Janvier 2026"
+
+            # Traduire le mois en français
+            months_fr = {
+                'January': 'Janvier', 'February': 'Février', 'March': 'Mars',
+                'April': 'Avril', 'May': 'Mai', 'June': 'Juin',
+                'July': 'Juillet', 'August': 'Août', 'September': 'Septembre',
+                'October': 'Octobre', 'November': 'Novembre', 'December': 'Décembre'
+            }
+            for en, fr in months_fr.items():
+                month_label = month_label.replace(en, fr)
+
+            # Formater la date pour JSON
+            backup['modified_formatted'] = backup['modified'].strftime('%d/%m/%Y %H:%M:%S')
+            backup['month_key'] = month_key
+            backup['month_label'] = month_label
+
+            grouped_backups[month_key].append(backup)
+
+        # Convertir en liste triée par mois (plus récent en premier)
+        grouped_list = []
+        for month_key in sorted(grouped_backups.keys(), reverse=True):
+            month_backups = grouped_backups[month_key]
+            grouped_list.append({
+                'month_key': month_key,
+                'month_label': month_backups[0]['month_label'],
+                'backups': month_backups
+            })
+
+        return jsonify({'success': True, 'grouped_backups': grouped_list})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@bp.route('/backup/download/<filename>')
+@login_required
+@admin_required
+def backup_download(filename):
+    """Télécharger une sauvegarde"""
+    try:
+        # Vérifier que le nom de fichier est valide
+        if not filename.startswith('budgeefamily_backup_') or not filename.endswith('.tar.gz'):
+            flash('Nom de fichier invalide', 'danger')
+            return redirect(url_for('admin.dashboard'))
+
+        backup_manager = BackupManager()
+
+        # Télécharger dans un fichier temporaire
+        with tempfile.NamedTemporaryFile(delete=False, suffix='.tar.gz') as tmp_file:
+            if backup_manager.download_backup(filename, tmp_file.name):
+                backup_manager.disconnect_sftp()
+
+                # Envoyer le fichier au client
+                return send_file(
+                    tmp_file.name,
+                    as_attachment=True,
+                    download_name=filename,
+                    mimetype='application/gzip'
+                )
+            else:
+                backup_manager.disconnect_sftp()
+                flash('Erreur lors du téléchargement de la sauvegarde', 'danger')
+                return redirect(url_for('admin.dashboard'))
+
+    except Exception as e:
+        flash(f'Erreur: {str(e)}', 'danger')
+        return redirect(url_for('admin.dashboard'))
+
+
+@bp.route('/backup/delete/<filename>', methods=['POST'])
+@login_required
+@admin_required
+def backup_delete(filename):
+    """Supprimer une sauvegarde"""
+    try:
+        # Vérifier que le nom de fichier est valide
+        if not filename.startswith('budgeefamily_backup_') or not filename.endswith('.tar.gz'):
+            flash('Nom de fichier invalide', 'danger')
+            return redirect(url_for('admin.backups_manage'))
+
+        backup_manager = BackupManager()
+
+        if backup_manager.delete_backup(filename):
+            flash(f'Sauvegarde {filename} supprimée avec succès', 'success')
+        else:
+            flash('Erreur lors de la suppression de la sauvegarde', 'danger')
+
+        backup_manager.disconnect_sftp()
+
+    except Exception as e:
+        flash(f'Erreur: {str(e)}', 'danger')
+
+    return redirect(url_for('admin.backups_manage'))

@@ -155,6 +155,23 @@ def create_app(config_class=Config):
         dt_user = to_user_time(dt)
         return dt_user.strftime(format)
 
+    @app.template_filter('format_user_datetime')
+    def format_user_datetime(dt, user, format='%d/%m/%Y %H:%M'):
+        """Formate une datetime dans le fuseau horaire d'un utilisateur spécifique"""
+        if dt is None:
+            return ''
+        # Utiliser le timezone de l'utilisateur passé en paramètre
+        if user and user.timezone:
+            tz = pytz.timezone(user.timezone)
+        else:
+            tz = pytz.timezone(app.config.get('TIMEZONE', 'Europe/Paris'))
+
+        if dt.tzinfo is None:
+            # Si la date n'a pas de timezone, on considère qu'elle est en UTC
+            dt = pytz.utc.localize(dt)
+        dt_user = dt.astimezone(tz)
+        return dt_user.strftime(format)
+
     # Garder l'ancien filtre pour compatibilité
     app.template_filter('to_paris_time')(to_user_time)
 

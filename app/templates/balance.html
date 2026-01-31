@@ -107,9 +107,9 @@
 
     <!-- Tableau des mouvements -->
     <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center">
+        <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #e5e7eb;">
             <h5 class="mb-0">
-                <i class="fas fa-list"></i> Mouvements de <span class="text-success">{{ ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'][selected_month-1] }} {{ selected_year }}</span>
+                <i class="fas fa-list text-secondary"></i> Mouvements de <span class="text-success">{{ ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'][selected_month-1] }} {{ selected_year }}</span>
             </h5>
             {% if movements %}
             <div class="d-flex align-items-center gap-2">
