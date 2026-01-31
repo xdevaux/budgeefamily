@@ -118,14 +118,14 @@
                                             </small>
                                         </div>
                                         <div class="flex-grow-1 text-start d-flex align-items-center" style="min-width: 0; gap: 0.5rem;">
-                                            <strong class="text-truncate" style="max-width: 70%;" title="{{ revenue.name }}">{{ revenue.name }}</strong>
+                                            <strong class="text-truncate item-label" style="max-width: 70%;" title="{{ revenue.name }}">{{ revenue.name }}</strong>
                                             {% if revenue.employer %}
-                                                <span class="badge text-white" style="background-color: #10b981; padding: 0.15rem 0.4rem; font-size: 0.7rem;">{{ revenue.employer.name }}</span>
+                                                <span class="badge text-white badge-hide-mobile" style="background-color: #10b981; padding: 0.15rem 0.4rem; font-size: 0.7rem;">{{ revenue.employer.name }}</span>
                                             {% endif %}
                                         </div>
                                         <div class="flex-shrink-0 text-end d-flex align-items-center justify-content-end" style="width: 200px;">
                                             <strong class="me-1">{{ revenue.amount | format_amount }} {{ revenue.currency | currency_symbol }}</strong>
-                                            <span class="badge bg-secondary">{{ revenue.billing_cycle | translate_cycle }}</span>
+                                            <span class="badge bg-secondary badge-hide-mobile">{{ revenue.billing_cycle | translate_cycle }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -182,11 +182,11 @@
                                             </small>
                                         </div>
                                         <div class="flex-grow-1 text-start d-flex align-items-center" style="min-width: 0; gap: 0.5rem;">
-                                            <strong class="text-truncate" style="max-width: 70%;" title="{{ sub.name }}">{{ sub.name }}</strong>{% if sub.plan %} <span class="badge bg-primary text-white" style="padding: 0.15rem 0.4rem; font-size: 0.7rem;">{{ sub.plan.name }}</span>{% endif %}
+                                            <strong class="text-truncate item-label" style="max-width: 70%;" title="{{ sub.name }}">{{ sub.name }}</strong>{% if sub.plan %} <span class="badge bg-primary text-white badge-hide-mobile" style="padding: 0.15rem 0.4rem; font-size: 0.7rem;">{{ sub.plan.name }}</span>{% endif %}
                                         </div>
                                         <div class="flex-shrink-0 text-end d-flex align-items-center justify-content-end" style="width: 200px;">
                                             <strong class="me-1">{{ sub.amount | format_amount }} {{ sub.currency | currency_symbol }}</strong>
-                                            <span class="badge bg-secondary">{{ sub.billing_cycle | translate_cycle }}</span>
+                                            <span class="badge bg-secondary badge-hide-mobile">{{ sub.billing_cycle | translate_cycle }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -243,14 +243,14 @@
                                             </small>
                                         </div>
                                         <div class="flex-grow-1 text-start d-flex align-items-center" style="min-width: 0; gap: 0.5rem;">
-                                            <strong class="text-truncate" style="max-width: 70%;" title="{{ credit.name }}">{{ credit.name }}</strong>
+                                            <strong class="text-truncate item-label" style="max-width: 70%;" title="{{ credit.name }}">{{ credit.name }}</strong>
                                             {% if credit.remaining_amount %}
-                                                <span class="badge bg-warning text-dark" style="padding: 0.15rem 0.4rem; font-size: 0.7rem;">Restant: {{ credit.remaining_amount | format_amount }} {{ credit.currency | currency_symbol }}</span>
+                                                <span class="badge bg-warning text-dark badge-hide-mobile" style="padding: 0.15rem 0.4rem; font-size: 0.7rem;">Restant: {{ credit.remaining_amount | format_amount }} {{ credit.currency | currency_symbol }}</span>
                                             {% endif %}
                                         </div>
                                         <div class="flex-shrink-0 text-end d-flex align-items-center justify-content-end" style="width: 200px;">
                                             <strong class="me-1">{{ credit.amount | format_amount }} {{ credit.currency | currency_symbol }}</strong>
-                                            <span class="badge bg-secondary">{{ credit.billing_cycle | translate_cycle }}</span>
+                                            <span class="badge bg-secondary badge-hide-mobile">{{ credit.billing_cycle | translate_cycle }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -264,15 +264,15 @@
                                             </small>
                                         </div>
                                         <div class="flex-grow-1 text-start d-flex align-items-center" style="min-width: 0; gap: 0.5rem;">
-                                            <strong class="text-truncate" style="max-width: 70%;" title="{{ installment.name }}">{{ installment.name }}</strong>
-                                            <span class="badge bg-info text-white" style="padding: 0.15rem 0.4rem; font-size: 0.7rem;">{{ installment.installments_paid }}/{{ installment.number_of_installments }}</span>
+                                            <strong class="text-truncate item-label" style="max-width: 70%;" title="{{ installment.name }}">{{ installment.name }}</strong>
+                                            <span class="badge bg-info text-white badge-hide-mobile" style="padding: 0.15rem 0.4rem; font-size: 0.7rem;">{{ installment.installments_paid }}/{{ installment.number_of_installments }}</span>
                                             {% if installment.provider %}
-                                                <span class="badge bg-secondary" style="padding: 0.15rem 0.4rem; font-size: 0.7rem;">{{ installment.provider }}</span>
+                                                <span class="badge bg-secondary badge-hide-mobile" style="padding: 0.15rem 0.4rem; font-size: 0.7rem;">{{ installment.provider }}</span>
                                             {% endif %}
                                         </div>
                                         <div class="flex-shrink-0 text-end d-flex align-items-center justify-content-end" style="width: 200px;">
                                             <strong class="me-1">{{ installment.installment_amount | format_amount }} {{ installment.currency | currency_symbol }}</strong>
-                                            <span class="badge bg-secondary">Mensuel</span>
+                                            <span class="badge bg-secondary badge-hide-mobile">Mensuel</span>
                                         </div>
                                     </div>
                                 </div>
@@ -340,8 +340,8 @@
                                             </small>
                                         </div>
                                         <div class="flex-grow-1 text-start d-flex align-items-center" style="min-width: 0; gap: 0.5rem;">
-                                            <strong class="text-truncate" style="max-width: 70%;" title="{{ check.name }}">{{ check.name }}</strong>
-                                            <span class="badge bg-danger text-white" style="padding: 0.15rem 0.4rem; font-size: 0.7rem;">Chèque</span>
+                                            <strong class="text-truncate item-label" style="max-width: 70%;" title="{{ check.name }}">{{ check.name }}</strong>
+                                            <span class="badge bg-danger text-white badge-hide-mobile" style="padding: 0.15rem 0.4rem; font-size: 0.7rem;">Chèque</span>
                                         </div>
                                         <div class="flex-shrink-0 text-end d-flex align-items-center justify-content-end" style="width: 150px;">
                                             <strong class="me-1">{{ check.amount | format_amount }} {{ check.currency | currency_symbol }}</strong>

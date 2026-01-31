@@ -483,6 +483,18 @@
             display: none !important;
         }
 
+        /* === CACHER LES BADGES EN MOBILE (DASHBOARD) === */
+        @media (max-width: 768px) {
+            .badge-hide-mobile {
+                display: none !important;
+            }
+
+            /* Ajuster l'affichage des libellés en mobile */
+            .item-label {
+                max-width: 100% !important;
+            }
+        }
+
         /* === MENU MOBILE AMÉLIORÉ === */
         @media (max-width: 991px) {
             /* Logo centré en mobile */
@@ -515,6 +527,18 @@
                 max-width: 400px;
                 margin: 0 auto;
                 align-items: stretch;
+            }
+
+            /* Ligne des boutons connexion/inscription */
+            .mobile-auth-buttons-row {
+                display: flex;
+                flex-direction: row;
+                gap: 0.75rem;
+                width: 100%;
+            }
+
+            .mobile-auth-buttons-row .btn {
+                flex: 1;
             }
 
             .mobile-auth-buttons-body .btn {
@@ -829,7 +853,7 @@
 
     {% block extra_css %}{% endblock %}
 </head>
-<body{% if current_user.is_authenticated %} class="user-authenticated"{% endif %}>
+<body{% if current_user.is_authenticated %} class="user-authenticated{% if request.endpoint == 'main.index' %} home-page{% endif %}"{% elif request.endpoint == 'main.index' %} class="home-page"{% endif %}>
     <!-- Overlay pour menu mobile -->
     <div class="mobile-menu-overlay" id="mobileMenuOverlay"></div>
 
@@ -979,12 +1003,14 @@
     {% if not current_user.is_authenticated %}
     <!-- Boutons connexion/inscription pour mobile - Dans le body -->
     <div class="mobile-auth-buttons-body">
-        <a class="btn btn-success-light" href="{{ url_for('auth.login') }}">
-            <i class="fas fa-sign-in-alt me-2"></i>Connexion
-        </a>
-        <a class="btn btn-primary" href="{{ url_for('main.pricing') }}">
-            <i class="fas fa-user-plus me-2"></i>S'inscrire
-        </a>
+        <div class="mobile-auth-buttons-row">
+            <a class="btn btn-success-light" href="{{ url_for('auth.login') }}">
+                <i class="fas fa-sign-in-alt me-2"></i>Connexion
+            </a>
+            <a class="btn btn-primary" href="{{ url_for('main.pricing') }}">
+                <i class="fas fa-user-plus me-2"></i>S'inscrire
+            </a>
+        </div>
         <a class="mobile-contact-link" href="{{ url_for('main.contact') }}">
             <i class="fas fa-envelope me-2"></i>Nous contacter
         </a>
