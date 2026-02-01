@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_required, current_user
+from flask_babel import gettext as _
 from app import db
 from app.models import Category
 from datetime import datetime
@@ -49,7 +50,7 @@ def add_category():
         icon = request.form.get('icon')
 
         if not name:
-            flash('Le nom de la catégorie est obligatoire.', 'danger')
+            flash(_('Le nom de la catégorie est obligatoire.'), 'danger')
             return redirect(url_for('card_purchase_categories.add_category'))
 
         # Créer la catégorie
@@ -66,7 +67,7 @@ def add_category():
         db.session.add(category)
         db.session.commit()
 
-        flash(f'La catégorie "{name}" a été créée avec succès.', 'success')
+        flash(_('La catégorie "%(name)s" a été créée avec succès.', name=name), 'success')
         return redirect(url_for('card_purchase_categories.list_categories'))
 
     return render_template('card_purchase_categories/add.html')
@@ -80,7 +81,7 @@ def edit_category(category_id):
 
     # Vérifier que l'utilisateur est propriétaire
     if category.user_id != current_user.id:
-        flash('Vous ne pouvez modifier que vos propres catégories.', 'danger')
+        flash(_('Vous ne pouvez modifier que vos propres catégories.'), 'danger')
         return redirect(url_for('card_purchase_categories.list_categories'))
 
     if request.method == 'POST':
@@ -92,7 +93,7 @@ def edit_category(category_id):
 
         db.session.commit()
 
-        flash(f'La catégorie "{category.name}" a été modifiée.', 'success')
+        flash(_('La catégorie "%(name)s" a été modifiée.', name=category.name), 'success')
         return redirect(url_for('card_purchase_categories.list_categories'))
 
     return render_template('card_purchase_categories/edit.html', category=category)
@@ -106,12 +107,12 @@ def delete_category(category_id):
 
     # Vérifier que l'utilisateur est propriétaire
     if category.user_id != current_user.id:
-        flash('Vous ne pouvez supprimer que vos propres catégories.', 'danger')
+        flash(_('Vous ne pouvez supprimer que vos propres catégories.'), 'danger')
         return redirect(url_for('card_purchase_categories.list_categories'))
 
     # Désactiver au lieu de supprimer
     category.is_active = False
     db.session.commit()
 
-    flash(f'La catégorie "{category.name}" a été supprimée.', 'success')
+    flash(_('La catégorie "%(name)s" a été supprimée.', name=category.name), 'success')
     return redirect(url_for('card_purchase_categories.list_categories'))

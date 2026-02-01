@@ -128,20 +128,20 @@
                                     <span class="badge bg-primary">{{ employer.contract_type|upper }}</span>
                                 {% endif %}
                                 {% if employer.is_active %}
-                                    <span class="badge bg-success"><i class="fas fa-check"></i> En poste</span>
+                                    <span class="badge bg-success"><i class="fas fa-check"></i> {{ _('En poste') }}</span>
                                 {% else %}
                                     <span class="badge bg-secondary"><i class="fas fa-times"></i> Termine</span>
                                 {% endif %}
                                 {% if employer.hire_date %}
                                     <span class="badge bg-info">
-                                        <i class="fas fa-calendar"></i> Depuis {{ employer.hire_date.strftime('%d/%m/%Y') }}
+                                        <i class="fas fa-calendar"></i> {{ _('Depuis') }} {{ employer.hire_date.strftime('%d/%m/%Y') }}
                                     </span>
                                 {% endif %}
                             </div>
                         </div>
                         <div class="d-flex gap-2">
                             <a href="{{ url_for('employers.edit', employer_id=employer.id) }}" class="btn btn-warning">
-                                <i class="fas fa-edit"></i> Modifier
+                                <i class="fas fa-edit"></i> {{ _('Modifier') }}
                             </a>
                             <a href="{{ url_for('employers.list') }}" class="btn btn-outline-secondary">
                                 <i class="fas fa-arrow-left"></i> Retour
@@ -156,10 +156,10 @@
     <div class="row">
         <!-- Colonne informations -->
         <div class="col-lg-4">
-            <!-- Coordonnees -->
+            <!-- {{ _('Coordonnees') }} -->
             <div class="card mb-4">
                 <div class="card-header" style="background-color: #e5e7eb;">
-                    <i class="fas fa-map-marker-alt text-secondary"></i> Coordonnees
+                    <i class="fas fa-map-marker-alt text-secondary"></i> {{ _('Coordonnees') }}
                 </div>
                 <div class="card-body">
                     {% if employer.address or employer.city %}
@@ -191,20 +191,20 @@
                     {% if employer.siret %}
                         <p class="mb-0">
                             <i class="fas fa-building text-muted"></i>
-                            SIRET : {{ employer.siret }}
+                            {{ _('SIRET') }} : {{ employer.siret }}
                         </p>
                     {% endif %}
                     {% if not employer.address and not employer.city and not employer.phone and not employer.email and not employer.website and not employer.siret %}
-                        <p class="text-muted mb-0">Aucune coordonnee renseignee</p>
+                        <p class="text-muted mb-0">{{ _('Aucune coordonnee renseignee') }}</p>
                     {% endif %}
                 </div>
             </div>
 
-            <!-- Notes -->
+            <!-- {{ _('Notes') }} -->
             {% if employer.notes %}
             <div class="card mb-4">
                 <div class="card-header" style="background-color: #e5e7eb;">
-                    <i class="fas fa-sticky-note text-secondary"></i> Notes
+                    <i class="fas fa-sticky-note text-secondary"></i> {{ _('Notes') }}
                 </div>
                 <div class="card-body">
                     <p class="mb-0" style="white-space: pre-wrap;">{{ employer.notes }}</p>
@@ -215,7 +215,7 @@
             <!-- Statistiques documents -->
             <div class="card mb-4">
                 <div class="card-header" style="background-color: #e5e7eb;">
-                    <i class="fas fa-chart-pie text-secondary"></i> Documents
+                    <i class="fas fa-chart-pie text-secondary"></i> {{ _('Documents') }}
                 </div>
                 <div class="card-body p-2">
                     <div class="row g-2">
@@ -242,7 +242,7 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #e5e7eb;">
                     <span>
-                        <i class="fas fa-folder-open text-secondary"></i> Documents
+                        <i class="fas fa-folder-open text-secondary"></i> {{ _('Documents') }}
                         {% if total_size > 0 %}
                             <span class="badge bg-info ms-2">
                                 <i class="fas fa-hdd"></i>
@@ -259,7 +259,7 @@
                         {% endif %}
                     </span>
                     <a href="{{ url_for('employers.add_document', employer_id=employer.id) }}" class="btn btn-sm btn-primary">
-                        <i class="fas fa-plus"></i> Ajouter un document
+                        <i class="fas fa-plus"></i> {{ _('Ajouter un document') }}
                     </a>
                 </div>
                 <div class="card-body">
@@ -268,7 +268,7 @@
                         <div class="row g-2">
                             <div class="col-md-4">
                                 <select name="doc_type" class="form-select form-select-sm" onchange="this.form.submit()">
-                                    <option value="">Tous les types</option>
+                                    <option value="">{{ _('Tous les types') }}</option>
                                     {% for code, name, icon, color in document_types %}
                                         <option value="{{ code }}" {% if filter_type == code %}selected{% endif %}>{{ name }}</option>
                                     {% endfor %}
@@ -276,7 +276,7 @@
                             </div>
                             <div class="col-md-3">
                                 <select name="year" class="form-select form-select-sm" onchange="this.form.submit()">
-                                    <option value="">Toutes les annees</option>
+                                    <option value="">{{ _('Toutes les annees') }}</option>
                                     {% for y in years %}
                                         <option value="{{ y }}" {% if filter_year == y %}selected{% endif %}>{{ y }}</option>
                                     {% endfor %}
@@ -284,7 +284,7 @@
                             </div>
                             <div class="col-md-4">
                                 <div class="input-group input-group-sm">
-                                    <input type="text" class="form-control" name="search" placeholder="Rechercher..."
+                                    <input type="text" class="form-control" name="search" placeholder="{{ _('Rechercher...') }}"
                                            value="{{ search or '' }}">
                                     <button class="btn btn-outline-secondary" type="submit">
                                         <i class="fas fa-search"></i>
@@ -324,7 +324,7 @@
                                                 </span>
                                                 {% if document.month %}
                                                     <span class="badge bg-light text-dark ms-2">
-                                                        {{ ['', 'Janv.', 'Fev.', 'Mars', 'Avr.', 'Mai', 'Juin', 'Juil.', 'Aout', 'Sept.', 'Oct.', 'Nov.', 'Dec.'][document.month] }} {{ document.year }}
+                                                        {{ document.month | translate_month }} {{ document.year }}
                                                     </span>
                                                 {% endif %}
                                             </div>
@@ -348,21 +348,21 @@
                                                     <button type="button"
                                                        class="btn btn-sm btn-outline-primary"
                                                        onclick="openPreviewModal('{{ url_for('employers.view_document', document_id=document.id) }}', '{{ document.name | e }}', '{{ document.file_mime_type }}')"
-                                                       title="Visualiser">
+                                                       title="{{ _('Visualiser') }}">
                                                         <i class="fas fa-eye"></i>
                                                     </button>
                                                 {% endif %}
                                                 <a href="{{ url_for('employers.download_document', document_id=document.id) }}"
-                                                   class="btn btn-sm btn-outline-success" title="Telecharger">
+                                                   class="btn btn-sm btn-outline-success" title="{{ _('Telecharger') }}">
                                                     <i class="fas fa-download"></i>
                                                 </a>
                                             {% endif %}
                                             <a href="{{ url_for('employers.edit_document', document_id=document.id) }}"
-                                               class="btn btn-sm btn-outline-warning" title="Modifier">
+                                               class="btn btn-sm btn-outline-warning" title="{{ _('Modifier') }}">
                                                 <i class="fas fa-edit"></i>
                                             </a>
                                             <form method="POST" action="{{ url_for('employers.delete_document', document_id=document.id) }}"
-                                                  onsubmit="return confirm('Supprimer ce document ?')" class="d-inline">
+                                                  onsubmit="return confirm('{{ _('Supprimer ce document ?') }}')" class="d-inline">
                                                 <button type="submit" class="btn btn-sm btn-outline-danger" title="Supprimer">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
@@ -375,10 +375,10 @@
                     {% else %}
                         <div class="text-center py-5">
                             <i class="fas fa-folder-open fa-4x text-muted mb-3"></i>
-                            <h5>Aucun document</h5>
-                            <p class="text-muted">Ajoutez vos contrats, fiches de paie et autres documents</p>
+                            <h5>{{ _('Aucun document') }}</h5>
+                            <p class="text-muted">{{ _('Ajoutez vos contrats, fiches de paie et autres documents') }}</p>
                             <a href="{{ url_for('employers.add_document', employer_id=employer.id) }}" class="btn btn-primary">
-                                <i class="fas fa-plus"></i> Ajouter un document
+                                <i class="fas fa-plus"></i> {{ _('Ajouter un document') }}
                             </a>
                         </div>
                     {% endif %}
@@ -397,7 +397,7 @@
                     <i class="fas fa-file-alt me-2"></i>
                     <span id="previewDocName">Document</span>
                 </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ _('Fermer') }}"></button>
             </div>
             <div class="modal-body" id="documentPreviewContent">
                 <!-- Le contenu sera insere dynamiquement -->
@@ -422,7 +422,7 @@
         } else if (docType.startsWith('image/')) {
             previewContent.innerHTML = '<div class="preview-image-container"><img src="' + docUrl + '" alt="' + docName + '" /></div>';
         } else {
-            previewContent.innerHTML = '<div class="text-center p-5"><i class="fas fa-file fa-4x text-muted mb-3"></i><p>Apercu non disponible pour ce type de fichier</p><a href="' + docUrl + '" target="_blank" class="btn btn-primary">Ouvrir dans un nouvel onglet</a></div>';
+            previewContent.innerHTML = '<div class="text-center p-5"><i class="fas fa-file fa-4x text-muted mb-3"></i><p>{{ _('Apercu non disponible pour ce type de fichier') }}</p><a href="' + docUrl + '" target="_blank" class="btn btn-primary">Ouvrir dans un nouvel onglet</a></div>';
         }
 
         // Utiliser l'API Bootstrap standard

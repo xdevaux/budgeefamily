@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 
-{% block title %}Mes prestataires - Budgee Family{% endblock %}
+{% block title %}{{ _('Mes prestataires') }} - Budgee Family{% endblock %}
 
 {% block content %}
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2><i class="fas fa-user-tie"></i> Mes prestataires</h2>
+        <h2><i class="fas fa-user-tie"></i> {{ _('Mes prestataires') }}</h2>
         <a href="{{ url_for('providers.add') }}" class="btn btn-primary">
-            <i class="fas fa-plus"></i> Ajouter un prestataire
+            <i class="fas fa-plus"></i> {{ _('Ajouter un prestataire') }}
         </a>
     </div>
 
@@ -16,17 +16,18 @@
         <div class="card-body">
             <form method="GET" class="row g-3">
                 <div class="col-md-6">
-                    <label class="form-label">Statut</label>
+                    <label class="form-label">{{ _('Statut') }}</label>
                     <select name="status" class="form-select" onchange="this.form.submit()">
-                        <option value="all" {% if filter_status == 'all' %}selected{% endif %}>Tous</option>
-                        <option value="active" {% if filter_status == 'active' %}selected{% endif %}>Actifs</option>
-                        <option value="inactive" {% if filter_status == 'inactive' %}selected{% endif %}>Inactifs</option>
+                        <option value="all" {% if filter_status == 'all' %}selected{% endif %}>{{ _('Tous') }}</option>
+                        <option value="active" 
+                        {% if filter_status == 'active' %}selected{% endif %}>{{ _('Actifs') }}</option>
+                        <option value="inactive" {% if filter_status == 'inactive' %}selected{% endif %}>{{ _('Inactifs') }}</option>
                     </select>
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">&nbsp;</label>
                     <a href="{{ url_for('providers.list') }}" class="btn btn-secondary w-100">
-                        <i class="fas fa-redo"></i> Réinitialiser
+                        <i class="fas fa-redo"></i> {{ _('Réinitialiser') }}
                     </a>
                 </div>
             </form>
@@ -40,12 +41,12 @@
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>Nom</th>
-                            <th>Type</th>
-                            <th>Téléphone</th>
-                            <th>Email</th>
-                            <th>Rappels</th>
-                            <th class="text-end">Actions</th>
+                            <th>{{ _('Nom') }}</th>
+                            <th>{{ _('Type') }}</th>
+                            <th>{{ _('Téléphone') }}</th>
+                            <th>{{ _('Email') }}</th>
+                            <th>{{ _('Rappels') }}</th>
+                            <th class="text-end">{{ _('Actions') }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -80,12 +81,12 @@
                             </td>
                             <td class="text-end">
                                 <div class="btn-group">
-                                    <a href="{{ url_for('providers.edit', provider_id=provider.id) }}" class="btn btn-sm btn-outline-warning" title="Modifier">
+                                    <a href="{{ url_for('providers.edit', provider_id=provider.id) }}" class="btn btn-sm btn-outline-warning" title="{{ _('Modifier') }}">
                                         <i class="fas fa-edit"></i>
                                     </a>
                                     <form method="POST" action="{{ url_for('providers.delete', provider_id=provider.id) }}"
-                                          onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce prestataire ?')" class="d-inline">
-                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Supprimer">
+                                          onsubmit="return confirm(&quot;{{ _('Êtes-vous sûr de vouloir supprimer ce prestataire ?') }}&quot;)" class="d-inline">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="{{ _('Supprimer') }}">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </form>
@@ -104,7 +105,7 @@
             <ul class="pagination justify-content-center">
                 {% if providers.has_prev %}
                     <li class="page-item">
-                        <a class="page-link" href="{{ url_for('providers.list', page=providers.prev_num, status=filter_status) }}">Précédent</a>
+                        <a class="page-link" href="{{ url_for('providers.list', page=providers.prev_num, status=filter_status) }}">{{ _('Précédent') }}</a>
                     </li>
                 {% endif %}
 
@@ -120,7 +121,7 @@
 
                 {% if providers.has_next %}
                     <li class="page-item">
-                        <a class="page-link" href="{{ url_for('providers.list', page=providers.next_num, status=filter_status) }}">Suivant</a>
+                        <a class="page-link" href="{{ url_for('providers.list', page=providers.next_num, status=filter_status) }}">{{ _('Suivant') }}</a>
                     </li>
                 {% endif %}
             </ul>
@@ -130,10 +131,10 @@
         <div class="card">
             <div class="card-body text-center py-5">
                 <i class="fas fa-user-tie fa-4x text-muted mb-3"></i>
-                <h4>Aucun prestataire</h4>
-                <p class="text-muted">Commencez par ajouter votre premier prestataire</p>
+                <h4>{{ _('Aucun prestataire') }}</h4>
+                <p class="text-muted">{{ _('Commencez par ajouter votre premier prestataire') }}</p>
                 <a href="{{ url_for('providers.add') }}" class="btn btn-primary">
-                    <i class="fas fa-plus"></i> Ajouter un prestataire
+                    <i class="fas fa-plus"></i> {{ _('Ajouter un prestataire') }}
                 </a>
             </div>
         </div>

@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_required, current_user
+from flask_babel import gettext as _
 from app import db
 from app.models import Provider
 
@@ -52,7 +53,7 @@ def add():
         db.session.add(provider)
         db.session.commit()
 
-        flash(f'Le prestataire "{name}" a été ajouté avec succès !', 'success')
+        flash(_('Le prestataire "%(name)s" a été ajouté avec succès !', name=name), 'success')
         return redirect(url_for('providers.list'))
 
     return render_template('providers/add.html')
@@ -64,7 +65,7 @@ def edit(provider_id):
     provider = Provider.query.get_or_404(provider_id)
 
     if provider.user_id != current_user.id:
-        flash('Vous n\'avez pas accès à ce prestataire.', 'danger')
+        flash(_('Vous n\'avez pas accès à ce prestataire.'), 'danger')
         return redirect(url_for('providers.list'))
 
     if request.method == 'POST':
@@ -77,7 +78,7 @@ def edit(provider_id):
 
         db.session.commit()
 
-        flash(f'Le prestataire "{provider.name}" a été modifié avec succès !', 'success')
+        flash(_('Le prestataire "%(name)s" a été modifié avec succès !', name=provider.name), 'success')
         return redirect(url_for('providers.list'))
 
     return render_template('providers/edit.html', provider=provider)
@@ -89,17 +90,17 @@ def delete(provider_id):
     provider = Provider.query.get_or_404(provider_id)
 
     if provider.user_id != current_user.id:
-        flash('Vous n\'avez pas accès à ce prestataire.', 'danger')
+        flash(_('Vous n\'avez pas accès à ce prestataire.'), 'danger')
         return redirect(url_for('providers.list'))
 
     # Vérifier s'il y a des rappels associés
     if provider.reminders.count() > 0:
-        flash('Impossible de supprimer ce prestataire car des rappels y sont associés.', 'danger')
+        flash(_('Impossible de supprimer ce prestataire car des rappels y sont associés.'), 'danger')
         return redirect(url_for('providers.list'))
 
     name = provider.name
     db.session.delete(provider)
     db.session.commit()
 
-    flash(f'Le prestataire "{name}" a été supprimé.', 'success')
+    flash(_('Le prestataire "%(name)s" a été supprimé.', name=name), 'success')
     return redirect(url_for('providers.list'))

@@ -12,7 +12,7 @@
                     <p class="text-muted mb-0">{{ checkbook.name }}</p>
                 </div>
                 <a href="{{ url_for('checkbooks.detail', checkbook_id=checkbook.id) }}" class="btn btn-outline-secondary">
-                    <i class="fas fa-arrow-left"></i> Retour
+                    <i class="fas fa-arrow-left"></i> {{ _('Retour') }}
                 </a>
             </div>
 
@@ -44,7 +44,7 @@
 
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-danger btn-lg">
-                                <i class="fas fa-save"></i> Enregistrer
+                                <i class="fas fa-save"></i> {{ _('Enregistrer') }}
                             </button>
                             <a href="{{ url_for('checkbooks.detail', checkbook_id=checkbook.id) }}" class="btn btn-outline-secondary">
                                 Annuler

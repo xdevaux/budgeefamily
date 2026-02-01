@@ -131,12 +131,13 @@ def create_app(config_class=Config):
     # Filtres Jinja2 personnalisés
     @app.template_filter('translate_cycle')
     def translate_cycle(cycle):
-        """Traduit les cycles de facturation en français"""
+        """Traduit les cycles de facturation"""
+        from flask_babel import gettext as _
         translations = {
-            'monthly': 'Mensuel',
-            'yearly': 'Annuel',
-            'weekly': 'Hebdomadaire',
-            'quarterly': 'Trimestriel'
+            'monthly': _('Mensuel'),
+            'yearly': _('Annuel'),
+            'weekly': _('Hebdomadaire'),
+            'quarterly': _('Trimestriel')
         }
         return translations.get(cycle, cycle)
 
@@ -149,6 +150,68 @@ def create_app(config_class=Config):
             'GBP': '£'
         }
         return symbols.get(currency_code, currency_code)
+
+    @app.template_filter('translate_month')
+    def translate_month(month_number):
+        """Traduit le numéro du mois en nom abrégé"""
+        from flask_babel import gettext as _
+        months = {
+            1: _('Janv.'),
+            2: _('Fév.'),
+            3: _('Mars'),
+            4: _('Avr.'),
+            5: _('Mai'),
+            6: _('Juin'),
+            7: _('Juil.'),
+            8: _('Août'),
+            9: _('Sept.'),
+            10: _('Oct.'),
+            11: _('Nov.'),
+            12: _('Déc.')
+        }
+        return months.get(month_number, '')
+
+    @app.template_filter('translate_category')
+    def translate_category(category_name):
+        """Traduit les noms et descriptions des catégories par défaut"""
+        from flask_babel import gettext as _
+        translations = {
+            # Noms de catégories
+            'Alimentation': _('Alimentation'),
+            'Carburant': _('Carburant'),
+            'Habillement': _('Habillement'),
+            'Restaurant': _('Restaurant'),
+            'Transport': _('Transport'),
+            'Santé & Pharmacie': _('Santé & Pharmacie'),
+            'Loisirs & Culture': _('Loisirs & Culture'),
+            'Maison & Jardin': _('Maison & Jardin'),
+            'Électronique & High-tech': _('Électronique & High-tech'),
+            'Sport & Fitness': _('Sport & Fitness'),
+            'Beauté & Cosmétiques': _('Beauté & Cosmétiques'),
+            'Éducation & Formation': _('Éducation & Formation'),
+            'Voyages & Hébergement': _('Voyages & Hébergement'),
+            'Cadeaux': _('Cadeaux'),
+            'Animaux': _('Animaux'),
+            'Autre': _('Autre'),
+            # Descriptions de catégories
+            'Courses alimentaires, supermarché': _('Courses alimentaires, supermarché'),
+            'Essence, diesel, station-service': _('Essence, diesel, station-service'),
+            'Vêtements, chaussures, accessoires': _('Vêtements, chaussures, accessoires'),
+            'Restaurants, fast-food, livraison': _('Restaurants, fast-food, livraison'),
+            'Transports en commun, taxi, parking': _('Transports en commun, taxi, parking'),
+            'Médicaments, pharmacie, soins': _('Médicaments, pharmacie, soins'),
+            'Cinéma, concerts, musées, spectacles': _('Cinéma, concerts, musées, spectacles'),
+            'Bricolage, jardinage, décoration': _('Bricolage, jardinage, décoration'),
+            'Informatique, électronique, gadgets': _('Informatique, électronique, gadgets'),
+            'Équipement sportif, salle de sport': _('Équipement sportif, salle de sport'),
+            'Coiffeur, esthétique, cosmétiques': _('Coiffeur, esthétique, cosmétiques'),
+            'Livres, formations, cours': _('Livres, formations, cours'),
+            'Hôtels, voyages, locations': _('Hôtels, voyages, locations'),
+            'Cadeaux pour occasions spéciales': _('Cadeaux pour occasions spéciales'),
+            'Nourriture et soins pour animaux': _('Nourriture et soins pour animaux'),
+            'Dépenses diverses non catégorisées': _('Dépenses diverses non catégorisées')
+        }
+        return translations.get(category_name, category_name)
 
     @app.template_filter('format_amount')
     def format_amount(amount):

@@ -13,17 +13,17 @@
         </div>
         <div>
             <a href="{{ url_for('checkbooks.add_check', checkbook_id=checkbook.id) }}" class="btn btn-danger">
-                <i class="fas fa-check"></i> Utiliser un chèque
+                <i class="fas fa-check"></i> {{ _('Utiliser un chèque') }}
             </a>
             <a href="{{ url_for('checkbooks.list_checkbooks') }}" class="btn btn-outline-secondary">
-                <i class="fas fa-arrow-left"></i> Retour
+                <i class="fas fa-arrow-left"></i> {{ _('Retour') }}
             </a>
         </div>
     </div>
 
     {% if checkbook.status == 'finished' %}
     <div class="alert alert-info">
-        <i class="fas fa-info-circle"></i> Ce chéquier est terminé. Tous les chèques ont été utilisés ou annulés.
+        <i class="fas fa-info-circle"></i> {{ _('Ce chéquier est terminé. Tous les chèques ont été utilisés ou annulés.') }}
     </div>
     {% endif %}
 
@@ -32,16 +32,16 @@
         <div class="col-md-3">
             <div class="card bg-primary text-white">
                 <div class="card-body">
-                    <h6 class="text-uppercase mb-1 opacity-75">Total chèques</h6>
+                    <h6 class="text-uppercase mb-1 opacity-75">{{ _('Total chèques') }}</h6>
                     <h3 class="mb-0">{{ checkbook.total_checks() }}</h3>
-                    <small>N° {{ checkbook.start_number }} à {{ checkbook.end_number }}</small>
+                    <small>{{ _('N°') }} {{ checkbook.start_number }} {{ _('à') }} {{ checkbook.end_number }}</small>
                 </div>
             </div>
         </div>
         <div class="col-md-3">
             <div class="card bg-success text-white">
                 <div class="card-body">
-                    <h6 class="text-uppercase mb-1 opacity-75">Disponibles</h6>
+                    <h6 class="text-uppercase mb-1 opacity-75">{{ _('Disponibles') }}</h6>
                     <h3 class="mb-0">{{ checkbook.available_checks_count() }}</h3>
                 </div>
             </div>
@@ -49,7 +49,7 @@
         <div class="col-md-3">
             <div class="card bg-danger text-white">
                 <div class="card-body">
-                    <h6 class="text-uppercase mb-1 opacity-75">Utilisés</h6>
+                    <h6 class="text-uppercase mb-1 opacity-75">{{ _('Utilisés') }}</h6>
                     <h3 class="mb-0">{{ checkbook.used_checks_count() }}</h3>
                 </div>
             </div>
@@ -57,7 +57,7 @@
         <div class="col-md-3">
             <div class="card" style="background-color: #6f42c1;">
                 <div class="card-body text-white">
-                    <h6 class="text-uppercase mb-1 opacity-75">Total montants</h6>
+                    <h6 class="text-uppercase mb-1 opacity-75">{{ _('Total montants') }}</h6>
                     <h3 class="mb-0">
                         {{ "%.2f"|format(checks.items|sum(attribute='amount')) if checks.items else "0.00" }} €
                     </h3>
@@ -72,19 +72,19 @@
             <div class="btn-group btn-group-sm" role="group">
                 <a href="{{ url_for('checkbooks.detail', checkbook_id=checkbook.id, status='all') }}"
                    class="btn btn-outline-secondary {% if filter_status == 'all' %}active{% endif %}">
-                    Tous
+                    {{ _('Tous') }}
                 </a>
                 <a href="{{ url_for('checkbooks.detail', checkbook_id=checkbook.id, status='available') }}"
                    class="btn btn-outline-success {% if filter_status == 'available' %}active{% endif %}">
-                    Disponibles
+                    {{ _('Disponibles') }}
                 </a>
                 <a href="{{ url_for('checkbooks.detail', checkbook_id=checkbook.id, status='used') }}"
                    class="btn btn-outline-primary {% if filter_status == 'used' %}active{% endif %}">
-                    Utilisés
+                    {{ _('Utilisés') }}
                 </a>
                 <a href="{{ url_for('checkbooks.detail', checkbook_id=checkbook.id, status='cancelled') }}"
                    class="btn btn-outline-danger {% if filter_status == 'cancelled' %}active{% endif %}">
-                    Annulés
+                    {{ _('Annulés') }}
                 </a>
             </div>
         </div>
@@ -93,7 +93,7 @@
     <!-- Liste des chèques -->
     <div class="card">
         <div class="card-header" style="background-color: #e5e7eb;">
-            <h5 class="mb-0"><i class="fas fa-list text-secondary"></i> Chèques émis</h5>
+            <h5 class="mb-0"><i class="fas fa-list text-secondary"></i> {{ _('Chèques émis') }}</h5>
         </div>
         <div class="card-body p-0">
             {% if checks.items %}
@@ -101,13 +101,13 @@
                     <table class="table table-hover mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th style="width: 100px;">N° Chèque</th>
-                                <th style="width: 120px;">Date</th>
-                                <th>Bénéficiaire</th>
-                                <th>Description</th>
-                                <th style="width: 150px;" class="text-end">Montant</th>
+                                <th style="width: 100px;">{{ _('N° Chèque') }}</th>
+                                <th style="width: 120px;">{{ _('Date') }}</th>
+                                <th>{{ _('Bénéficiaire') }}</th>
+                                <th>{{ _('Description') }}</th>
+                                <th style="width: 150px;" class="text-end">{{ _('Montant') }}</th>
                                 <th style="width: 120px;" class="text-center">Statut</th>
-                                <th style="width: 150px;" class="text-end">Actions</th>
+                                <th style="width: 150px;" class="text-end">{{ _('Actions') }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -122,22 +122,22 @@
                                 </td>
                                 <td class="text-center">
                                     {% if check.status == 'available' %}
-                                        <span class="badge bg-success">Disponible</span>
+                                        <span class="badge bg-success">{{ _('Disponible') }}</span>
                                     {% elif check.status == 'used' %}
-                                        <span class="badge bg-primary">Utilisé</span>
+                                        <span class="badge bg-primary">{{ _('Utilisé') }}</span>
                                     {% elif check.status == 'cancelled' %}
-                                        <span class="badge bg-danger">Annulé</span>
+                                        <span class="badge bg-danger">{{ _('Annulé') }}</span>
                                     {% endif %}
                                 </td>
                                 <td class="text-end">
                                     <div class="btn-group btn-group-sm">
                                         <a href="{{ url_for('checkbooks.edit_check', check_id=check.id) }}"
-                                           class="btn btn-outline-primary" title="Modifier">
+                                           class="btn btn-outline-primary" title="{{ _('Modifier') }}">
                                             <i class="fas fa-edit"></i>
                                         </a>
                                         <form method="post" action="{{ url_for('checkbooks.delete_check', check_id=check.id) }}"
-                                              class="d-inline" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce chèque ?');">
-                                            <button type="submit" class="btn btn-outline-danger" title="Supprimer">
+                                              class="d-inline" onsubmit="return confirm(&quot;{{ _('Êtes-vous sûr de vouloir supprimer ce chèque ?') }}&quot;);">
+                                            <button type="submit" class="btn btn-outline-danger" title="{{ _('Supprimer') }}">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </form>
@@ -156,7 +156,7 @@
                         <ul class="pagination justify-content-center mb-0">
                             {% if checks.has_prev %}
                             <li class="page-item">
-                                <a class="page-link" href="{{ url_for('checkbooks.detail', checkbook_id=checkbook.id, page=checks.prev_num, status=filter_status) }}">Précédent</a>
+                                <a class="page-link" href="{{ url_for('checkbooks.detail', checkbook_id=checkbook.id, page=checks.prev_num, status=filter_status) }}">{{ _('Précédent') }}</a>
                             </li>
                             {% endif %}
 
@@ -172,7 +172,7 @@
 
                             {% if checks.has_next %}
                             <li class="page-item">
-                                <a class="page-link" href="{{ url_for('checkbooks.detail', checkbook_id=checkbook.id, page=checks.next_num, status=filter_status) }}">Suivant</a>
+                                <a class="page-link" href="{{ url_for('checkbooks.detail', checkbook_id=checkbook.id, page=checks.next_num, status=filter_status) }}">{{ _('Suivant') }}</a>
                             </li>
                             {% endif %}
                         </ul>
@@ -182,7 +182,7 @@
             {% else %}
                 <div class="text-center py-5">
                     <i class="fas fa-file-invoice fa-3x text-muted mb-3"></i>
-                    <p class="text-muted mb-0">Aucun chèque émis</p>
+                    <p class="text-muted mb-0">{{ _('Aucun chèque émis') }}</p>
                 </div>
             {% endif %}
         </div>

@@ -1,0 +1,236 @@
+{% extends "base.html" %}
+
+{% block title %}{{ _('Modifier') }} {{ category.name }} - Budgee Family{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="fas fa-edit"></i> {{ _('Modifier la catégorie') }}</h2>
+                <a href="{{ url_for('card_purchase_categories.list_categories') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> {{ _('Retour') }}
+                </a>
+            </div>
+
+            <div class="card">
+                <div class="card-body p-4">
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">{{ _('Nom de la catégorie') }} *</label>
+                            <input type="text" class="form-control" id="name" name="name" required
+                                   value="{{ category.name }}">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="description" class="form-label">{{ _('Description') }}</label>
+                            <textarea class="form-control" id="description" name="description" rows="3">{{ category.description or '' }}</textarea>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="color" class="form-label">{{ _('Couleur') }}</label>
+                                <div class="input-group">
+                                    <input type="color" class="form-control form-control-color" id="color"
+                                           name="color" value="{{ category.color }}" title="{{ _('Choisir une couleur') }}">
+                                    <input type="text" class="form-control" id="color-text" value="{{ category.color }}"
+                                           placeholder="#6c757d" maxlength="7">
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="icon" class="form-label">
+                                    {{ _('Icône') }}
+                                </label>
+                                <input type="hidden" id="icon" name="icon" value="{{ category.icon or '' }}">
+                                <button type="button" class="btn btn-outline-secondary w-100" data-bs-toggle="modal" data-bs-target="#iconPickerModal">
+                                    {% if category.icon %}
+                                        <i class="{{ category.icon }}" id="selected-icon"></i>
+                                        <span id="selected-icon-text">{{ category.icon }}</span>
+                                    {% else %}
+                                        <i class="fas fa-tag" id="selected-icon"></i>
+                                        <span id="selected-icon-text">{{ _('Choisir une icône') }}</span>
+                                    {% endif %}
+                                </button>
+                                <small class="text-muted">{{ _('Cliquez pour sélectionner une icône') }}</small>
+                            </div>
+                        </div>
+
+                        <!-- Prévisualisation -->
+                        <div class="card bg-light mb-3">
+                            <div class="card-body">
+                                <h6 class="mb-3">{{ _('Prévisualisation') }}</h6>
+                                <div class="d-flex align-items-center">
+                                    <div class="rounded-circle p-3 me-3" id="preview-icon-container"
+                                         style="background-color: {{ category.color }}20; border: 2px solid {{ category.color }}">
+                                        {% if category.icon %}
+                                            <i class="{{ category.icon }} fa-2x" id="preview-icon" style="color: {{ category.color }}"></i>
+                                        {% else %}
+                                            <i class="fas fa-tag fa-2x" id="preview-icon" style="color: {{ category.color }}"></i>
+                                        {% endif %}
+                                    </div>
+                                    <div>
+                                        <h5 class="mb-0" id="preview-name">{{ category.name }}</h5>
+                                        <small class="text-muted">{{ _('Catégorie personnalisée') }}</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{{ url_for('card_purchase_categories.list_categories') }}" class="btn btn-outline-secondary">
+                                {{ _('Annuler') }}
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> {{ _('Enregistrer les modifications') }}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de sélection d'icône -->
+<div class="modal fade" id="iconPickerModal" tabindex="-1" aria-labelledby="iconPickerModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="iconPickerModalLabel">{{ _('Choisir une icône') }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ _('Fermer') }}"></button>
+            </div>
+            <div class="modal-body">
+                <input type="text" class="form-control mb-3" id="icon-search" placeholder="{{ _('Rechercher une icône...') }}">
+                <div class="row g-2" id="icon-grid">
+                    <!-- Les icônes seront générées par JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Liste des icônes Font Awesome courantes pour achats CB
+const icons = [
+    // Shopping & Finance
+    'fas fa-shopping-cart', 'fas fa-shopping-bag', 'fas fa-credit-card', 'fas fa-receipt', 'fas fa-cash-register',
+    'fas fa-wallet', 'fas fa-coins', 'fas fa-dollar-sign', 'fas fa-euro-sign', 'fas fa-money-bill-wave',
+    // Alimentation
+    'fas fa-utensils', 'fas fa-coffee', 'fas fa-pizza-slice', 'fas fa-hamburger', 'fas fa-ice-cream',
+    'fas fa-apple-alt', 'fas fa-carrot', 'fas fa-cheese', 'fas fa-drumstick-bite', 'fas fa-fish',
+    // Transport
+    'fas fa-car', 'fas fa-bus', 'fas fa-train', 'fas fa-plane', 'fas fa-ship',
+    'fas fa-motorcycle', 'fas fa-truck', 'fas fa-taxi', 'fas fa-subway', 'fas fa-bicycle',
+    'fas fa-gas-pump', 'fas fa-parking', 'fas fa-road', 'fas fa-map-marker-alt',
+    // Maison & Vie quotidienne
+    'fas fa-home', 'fas fa-couch', 'fas fa-bed', 'fas fa-lightbulb', 'fas fa-plug',
+    'fas fa-key', 'fas fa-door-open', 'fas fa-toilet', 'fas fa-shower', 'fas fa-bath',
+    // Vêtements & Mode
+    'fas fa-tshirt', 'fas fa-shoe-prints', 'fas fa-hat-cowboy', 'fas fa-glasses', 'fas fa-ring',
+    // Santé & Bien-être
+    'fas fa-heartbeat', 'fas fa-hospital', 'fas fa-pills', 'fas fa-syringe', 'fas fa-medkit',
+    'fas fa-dumbbell', 'fas fa-running', 'fas fa-spa', 'fas fa-prescription-bottle',
+    // Loisirs & Culture
+    'fas fa-music', 'fas fa-film', 'fas fa-camera', 'fas fa-video', 'fas fa-headphones',
+    'fas fa-tv', 'fas fa-gamepad', 'fas fa-book', 'fas fa-theater-masks', 'fas fa-ticket-alt',
+    // Technologie
+    'fas fa-laptop', 'fas fa-mobile-alt', 'fas fa-desktop', 'fas fa-tablet', 'fas fa-keyboard',
+    'fas fa-mouse', 'fas fa-headset', 'fas fa-usb', 'fas fa-wifi', 'fas fa-bluetooth',
+    // Education
+    'fas fa-graduation-cap', 'fas fa-book-open', 'fas fa-pencil-alt', 'fas fa-ruler', 'fas fa-calculator',
+    // Animaux
+    'fas fa-paw', 'fas fa-dog', 'fas fa-cat', 'fas fa-horse', 'fas fa-fish',
+    // Sport
+    'fas fa-football-ball', 'fas fa-basketball-ball', 'fas fa-baseball-ball', 'fas fa-golf-ball', 'fas fa-trophy',
+    // Divers
+    'fas fa-tag', 'fas fa-tags', 'fas fa-gift', 'fas fa-birthday-cake', 'fas fa-envelope',
+    'fas fa-phone', 'fas fa-wrench', 'fas fa-tools', 'fas fa-paint-brush', 'fas fa-cut',
+    'fas fa-star', 'fas fa-heart', 'fas fa-flag', 'fas fa-bell', 'fas fa-bookmark'
+];
+
+// Générer la grille d'icônes
+const iconGrid = document.getElementById('icon-grid');
+icons.forEach(iconClass => {
+    const col = document.createElement('div');
+    col.className = 'col-2 col-md-1';
+
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'btn btn-outline-secondary w-100 p-2 icon-btn';
+    btn.setAttribute('data-icon', iconClass);
+    btn.title = iconClass;
+
+    const icon = document.createElement('i');
+    icon.className = iconClass + ' fa-2x';
+
+    btn.appendChild(icon);
+    col.appendChild(btn);
+    iconGrid.appendChild(col);
+});
+
+// Recherche d'icônes
+const iconSearch = document.getElementById('icon-search');
+iconSearch.addEventListener('input', function() {
+    const searchTerm = this.value.toLowerCase();
+    const iconButtons = document.querySelectorAll('.icon-btn');
+
+    iconButtons.forEach(btn => {
+        const iconClass = btn.getAttribute('data-icon');
+        if (iconClass.toLowerCase().includes(searchTerm)) {
+            btn.parentElement.style.display = 'block';
+        } else {
+            btn.parentElement.style.display = 'none';
+        }
+    });
+});
+
+// Sélection d'icône
+document.querySelectorAll('.icon-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const iconClass = this.getAttribute('data-icon');
+        document.getElementById('icon').value = iconClass;
+        document.getElementById('selected-icon').className = iconClass;
+        document.getElementById('selected-icon-text').textContent = ' ' + iconClass;
+
+        // Fermer la modale
+        const modal = bootstrap.Modal.getInstance(document.getElementById('iconPickerModal'));
+        modal.hide();
+
+        // Mettre à jour la prévisualisation
+        previewIcon.className = iconClass + ' fa-2x';
+    });
+});
+
+// Prévisualisation en temps réel
+const nameInput = document.getElementById('name');
+const colorInput = document.getElementById('color');
+const colorTextInput = document.getElementById('color-text');
+const iconInput = document.getElementById('icon');
+const previewName = document.getElementById('preview-name');
+const previewIcon = document.getElementById('preview-icon');
+const previewIconContainer = document.getElementById('preview-icon-container');
+
+nameInput.addEventListener('input', () => {
+    previewName.textContent = nameInput.value || '{{ _('Nom de la catégorie') }}';
+});
+
+colorInput.addEventListener('input', () => {
+    const color = colorInput.value;
+    colorTextInput.value = color;
+    previewIcon.style.color = color;
+    previewIconContainer.style.borderColor = color;
+    previewIconContainer.style.backgroundColor = color + '20';
+});
+
+colorTextInput.addEventListener('input', () => {
+    const color = colorTextInput.value;
+    if (/^#[0-9A-F]{6}$/i.test(color)) {
+        colorInput.value = color;
+        previewIcon.style.color = color;
+        previewIconContainer.style.borderColor = color;
+        previewIconContainer.style.backgroundColor = color + '20';
+    }
+});
+</script>
+{% endblock %}

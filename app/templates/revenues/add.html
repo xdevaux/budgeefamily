@@ -1,15 +1,15 @@
 {% extends "base.html" %}
 
-{% block title %}Ajouter un revenu - Budgee Family{% endblock %}
+{% block title %}{{ _('Ajouter un revenu') }} - Budgee Family{% endblock %}
 
 {% block content %}
 <div class="container py-4">
     <div class="row justify-content-center">
         <div class="col-lg-8">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2><i class="fas fa-hand-holding-usd"></i> Ajouter un revenu</h2>
+                <h2><i class="fas fa-hand-holding-usd"></i> {{ _('Ajouter un revenu') }}</h2>
                 <a href="{{ url_for('revenues.list') }}" class="btn btn-outline-secondary">
-                    <i class="fas fa-arrow-left"></i> Retour
+                    <i class="fas fa-arrow-left"></i> {{ _('Retour') }}
                 </a>
             </div>
 
@@ -17,28 +17,28 @@
                 <div class="card-body p-4">
                     <form method="POST">
                         <div class="mb-3">
-                            <label for="name" class="form-label">Nom du revenu *</label>
+                            <label for="name" class="form-label">{{ _('Nom') }} du revenu *</label>
                             <input type="text" class="form-control" id="name" name="name" required
-                                   placeholder="ex: Salaire CDI, Freelance, Loyer perçu...">
+                                   placeholder="{{ _('ex: Salaire CDI, Freelance, Loyer perçu...') }}">
                         </div>
 
                         <div class="mb-3">
-                            <label for="employer_id" class="form-label">Employeur</label>
+                            <label for="employer_id" class="form-label">{{ _('Employeur') }}</label>
                             <select class="form-select" id="employer_id" name="employer_id">
-                                <option value="">-- Aucun employeur --</option>
+                                <option value="">{{ _('-- Aucun employeur --') }}</option>
                                 {% for employer in employers %}
                                     <option value="{{ employer.id }}">{{ employer.name }}{% if employer.job_title %} ({{ employer.job_title }}){% endif %}</option>
                                 {% endfor %}
                             </select>
                             <small class="text-muted">
-                                <a href="{{ url_for('employers.add') }}"><i class="fas fa-plus"></i> Créer un nouvel employeur</a>
+                                <a href="{{ url_for('employers.add') }}"><i class="fas fa-plus"></i> {{ _('Créer un nouvel employeur') }}</a>
                             </small>
                         </div>
 
                         <div class="mb-3">
-                            <label for="revenue_type" class="form-label">Type de revenu</label>
+                            <label for="revenue_type" class="form-label">{{ _('Type') }} de revenu</label>
                             <select class="form-select" id="revenue_type" name="revenue_type">
-                                <option value="">-- Aucun type --</option>
+                                <option value="">{{ _('-- Aucun type --') }}</option>
                                 {% for code, name, icon, color in revenue_types %}
                                     <option value="{{ code }}">{{ name }}</option>
                                 {% endfor %}
@@ -46,14 +46,14 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="description" class="form-label">Description</label>
+                            <label for="description" class="form-label">{{ _('Description') }}</label>
                             <textarea class="form-control" id="description" name="description" rows="3"
-                                      placeholder="Informations complémentaires sur le revenu"></textarea>
+                                      placeholder="{{ _('Informations complémentaires sur le revenu') }}"></textarea>
                         </div>
 
                         <div class="row mb-3">
                             <div class="col-md-6">
-                                <label for="amount_display" class="form-label">Montant *</label>
+                                <label for="amount_display" class="form-label">{{ _('Montant') }} *</label>
                                 <div class="input-group">
                                     <input type="text" class="form-control text-end" id="amount_display"
                                            required placeholder="2 500,00">
@@ -64,32 +64,32 @@
                                         <option value="GBP" {% if current_user.default_currency == 'GBP' %}selected{% endif %}>£ GBP</option>
                                     </select>
                                 </div>
-                                <small class="text-muted">Format : espace pour les milliers, virgule pour les décimales</small>
+                                <small class="text-muted">{{ _('Format : espace pour les milliers, virgule pour les décimales') }}</small>
                             </div>
 
                             <div class="col-md-6">
-                                <label for="billing_cycle" class="form-label">Périodicité *</label>
+                                <label for="billing_cycle" class="form-label">{{ _('Périodicité') }} *</label>
                                 <select class="form-select" id="billing_cycle" name="billing_cycle" required>
-                                    <option value="monthly" selected>Mensuel</option>
-                                    <option value="quarterly">Trimestriel</option>
-                                    <option value="yearly">Annuel</option>
+                                    <option value="monthly" selected>{{ _('Mensuel') }}</option>
+                                    <option value="quarterly">{{ _('Trimestriel') }}</option>
+                                    <option value="yearly">{{ _('Annuel') }}</option>
                                 </select>
                             </div>
                         </div>
 
                         <div class="mb-3">
-                            <label for="start_date" class="form-label">Date de début *</label>
+                            <label for="start_date" class="form-label">{{ _('Date de début *') }}</label>
                             <input type="date" class="form-control" id="start_date" name="start_date"
                                    value="{{ now.strftime('%Y-%m-%d') }}" required>
-                            <small class="text-muted">Date du premier versement</small>
+                            <small class="text-muted">{{ _('Date du premier versement') }}</small>
                         </div>
 
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
-                                <i class="fas fa-plus"></i> Ajouter le revenu
+                                <i class="fas fa-plus"></i> {{ _('Ajouter le revenu') }}
                             </button>
                             <a href="{{ url_for('revenues.list') }}" class="btn btn-outline-secondary">
-                                Annuler
+                                {{ _('Annuler') }}
                             </a>
                         </div>
                     </form>
@@ -162,7 +162,7 @@ document.querySelector('form').addEventListener('submit', function(e) {
     const unformatted = unformatAmount(amountDisplay.value);
     if (!unformatted || isNaN(parseFloat(unformatted)) || parseFloat(unformatted) <= 0) {
         e.preventDefault();
-        alert('Veuillez entrer un montant valide');
+        alert('{{ _('Veuillez entrer un montant valide') }}');
         return false;
     }
 
@@ -174,7 +174,7 @@ document.querySelector('form').addEventListener('submit', function(e) {
         return false;
     }
     submitBtn.disabled = true;
-    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enregistrement en cours...';
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> {{ _('Enregistrement en cours...') }}';
 });
 </script>
 {% endblock %}

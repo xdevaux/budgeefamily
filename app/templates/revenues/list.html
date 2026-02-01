@@ -1,22 +1,22 @@
 {% extends "base.html" %}
 
-{% block title %}Mes revenus - Budgee Family{% endblock %}
+{% block title %}{{ _('Mes revenus') }} - Budgee Family{% endblock %}
 
 {% block content %}
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2><i class="fas fa-hand-holding-usd"></i> Mes revenus</h2>
+        <h2><i class="fas fa-hand-holding-usd"></i> {{ _('Mes revenus') }}</h2>
         <div class="d-flex gap-2">
             {% if current_user.can_add_revenue() %}
                 <a href="{{ url_for('revenues.add') }}" class="btn btn-primary">
-                    <i class="fas fa-plus"></i> Ajouter un revenu
+                    <i class="fas fa-plus"></i> {{ _('Ajouter un revenu') }}
                 </a>
             {% else %}
-                <button class="btn btn-secondary" disabled title="Limite atteinte pour le plan gratuit">
-                    <i class="fas fa-lock"></i> Limite atteinte (1/1)
+                <button class="btn btn-secondary" disabled title="{{ _('Limite atteinte pour le plan gratuit') }}">
+                    <i class="fas fa-lock"></i> {{ _('Limite atteinte (1/1)') }}
                 </button>
                 <a href="{{ url_for('main.pricing') }}" class="btn btn-warning">
-                    <i class="fas fa-crown"></i> Passer Premium
+                    <i class="fas fa-crown"></i> {{ _('Passer Premium') }}
                 </a>
             {% endif %}
         </div>
@@ -27,17 +27,17 @@
         <div class="card-body">
             <form method="GET" class="row g-3">
                 <div class="col-md-4">
-                    <label class="form-label">Statut</label>
+                    <label class="form-label">{{ _('Statut') }}</label>
                     <select name="status" class="form-select" onchange="this.form.submit()">
-                        <option value="all" {% if filter_status == 'all' %}selected{% endif %}>Tous</option>
-                        <option value="active" {% if filter_status == 'active' %}selected{% endif %}>Actifs</option>
-                        <option value="inactive" {% if filter_status == 'inactive' %}selected{% endif %}>Inactifs</option>
+                        <option value="all" {% if filter_status == 'all' %}selected{% endif %}>{{ _('Tous') }}</option>
+                        <option value="active" {% if filter_status == 'active' %}selected{% endif %}>{{ _('Actif') }}s</option>
+                        <option value="inactive" {% if filter_status == 'inactive' %}selected{% endif %}>{{ _('Inactif') }}s</option>
                     </select>
                 </div>
                 <div class="col-md-4">
-                    <label class="form-label">Type de revenu</label>
+                    <label class="form-label">{{ _('Type') }} de revenu</label>
                     <select name="type" class="form-select" onchange="this.form.submit()">
-                        <option value="">Tous</option>
+                        <option value="">{{ _('Tous') }}</option>
                         {% for code, name, icon, color in revenue_types %}
                             <option value="{{ code }}" {% if filter_type == code %}selected{% endif %}>
                                 {{ name }}
@@ -48,7 +48,7 @@
                 <div class="col-md-4">
                     <label class="form-label">&nbsp;</label>
                     <a href="{{ url_for('revenues.list') }}" class="btn btn-secondary w-100">
-                        <i class="fas fa-redo"></i> Réinitialiser
+                        <i class="fas fa-redo"></i> {{ _('Réinitialiser') }}
                     </a>
                 </div>
             </form>
@@ -63,13 +63,13 @@
                     <table class="table table-hover mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th>Nom</th>
-                                <th>Type</th>
-                                <th class="text-end">Montant</th>
-                                <th>Périodicité</th>
-                                <th>Prochain</th>
-                                <th>Statut</th>
-                                <th class="text-end">Actions</th>
+                                <th>{{ _('Nom') }}</th>
+                                <th>{{ _('Type') }}</th>
+                                <th class="text-end">{{ _('Montant') }}</th>
+                                <th>{{ _('Périodicité') }}</th>
+                                <th>{{ _('Prochain') }}</th>
+                                <th>{{ _('Statut') }}</th>
+                                <th class="text-end">{{ _('Actions') }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -99,29 +99,29 @@
                                     <td>{{ revenue.next_payment_date.strftime('%d/%m/%Y') }}</td>
                                     <td>
                                         {% if revenue.is_active %}
-                                            <span class="badge bg-success">Actif</span>
+                                            <span class="badge bg-success">{{ _('Actif') }}</span>
                                         {% else %}
-                                            <span class="badge bg-secondary">Inactif</span>
+                                            <span class="badge bg-secondary">{{ _('Inactif') }}</span>
                                         {% endif %}
                                     </td>
                                     <td class="text-end">
                                         <div class="btn-group">
                                             <a href="{{ url_for('revenues.detail', revenue_id=revenue.id) }}"
-                                               class="btn btn-sm btn-outline-primary" title="Voir">
+                                               class="btn btn-sm btn-outline-primary" title="{{ _('Voir') }}">
                                                 <i class="fas fa-eye"></i>
                                             </a>
                                             <a href="{{ url_for('revenues.edit', revenue_id=revenue.id) }}"
-                                               class="btn btn-sm btn-outline-warning" title="Modifier">
+                                               class="btn btn-sm btn-outline-warning" title="{{ _('Modifier') }}">
                                                 <i class="fas fa-edit"></i>
                                             </a>
                                             <form method="POST" action="{{ url_for('revenues.toggle', revenue_id=revenue.id) }}" class="d-inline">
-                                                <button type="submit" class="btn btn-sm btn-outline-info" title="Activer/Désactiver">
+                                                <button type="submit" class="btn btn-sm btn-outline-info" title="{{ _('Activer/Désactiver') }}">
                                                     <i class="fas fa-toggle-{% if revenue.is_active %}on{% else %}off{% endif %}"></i>
                                                 </button>
                                             </form>
                                             <form method="POST" action="{{ url_for('revenues.delete', revenue_id=revenue.id) }}"
-                                                  onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce revenu ?')" class="d-inline">
-                                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Supprimer">
+                                                  onsubmit="return confirm('{{ _('Êtes-vous sûr de vouloir supprimer ce revenu ?') }}')" class="d-inline">
+                                                <button type="submit" class="btn btn-sm btn-outline-danger" title="{{ _('Supprimer') }}">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </form>
@@ -132,7 +132,7 @@
                         </tbody>
                         <tfoot class="table-light">
                             <tr>
-                                <td colspan="2" class="text-end"><strong>Total mensuel :</strong></td>
+                                <td colspan="2" class="text-end"><strong>{{ _('Total mensuel :') }}</strong></td>
                                 <td class="text-end">
                                     <strong class="text-success">
                                         {% set total_eur = namespace(value=0) %}
@@ -180,7 +180,7 @@
             <ul class="pagination justify-content-center">
                 {% if revenues.has_prev %}
                     <li class="page-item">
-                        <a class="page-link" href="{{ url_for('revenues.list', page=revenues.prev_num) }}">Précédent</a>
+                        <a class="page-link" href="{{ url_for('revenues.list', page=revenues.prev_num) }}">{{ _('Précédent') }}</a>
                     </li>
                 {% endif %}
 
@@ -196,7 +196,7 @@
 
                 {% if revenues.has_next %}
                     <li class="page-item">
-                        <a class="page-link" href="{{ url_for('revenues.list', page=revenues.next_num) }}">Suivant</a>
+                        <a class="page-link" href="{{ url_for('revenues.list', page=revenues.next_num) }}">{{ _('Suivant') }}</a>
                     </li>
                 {% endif %}
             </ul>
@@ -207,7 +207,7 @@
         {% if current_user.is_premium() %}
         <div class="card mt-4" id="revenuesChartSection">
             <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #e5e7eb;">
-                <h5 class="mb-0"><i class="fas fa-chart-pie text-secondary"></i> Répartition des revenus actifs par type</h5>
+                <h5 class="mb-0"><i class="fas fa-chart-pie text-secondary"></i> {{ _('Répartition des revenus actifs par type') }}</h5>
                 <button class="btn btn-sm btn-outline-danger" onclick="exportRevenuesChartToPDF()" title="Exporter en PDF">
                     <i class="fas fa-file-pdf"></i>
                 </button>
@@ -215,7 +215,7 @@
             <div class="card-body">
                 <div class="row justify-content-center">
                     <div class="col-md-6">
-                        <canvas id="revenuesTypesChart" style="max-height: 350px;"></canvas>
+                        <canvas id="revenues{{ _('Type') }}sChart" style="max-height: 350px;"></canvas>
                     </div>
                 </div>
             </div>
@@ -225,10 +225,10 @@
         <div class="card">
             <div class="card-body text-center py-5">
                 <i class="fas fa-wallet fa-4x text-muted mb-3"></i>
-                <h4>Aucun revenu</h4>
-                <p class="text-muted">Commencez par ajouter votre premier revenu (salaire, freelance, etc.)</p>
+                <h4>{{ _('Aucun revenu') }}</h4>
+                <p class="text-muted">{{ _('Commencez par ajouter votre premier revenu (salaire, freelance, etc.)') }}</p>
                 <a href="{{ url_for('revenues.add') }}" class="btn btn-primary">
-                    <i class="fas fa-plus"></i> Ajouter un revenu
+                    <i class="fas fa-plus"></i> {{ _('Ajouter un revenu') }}
                 </a>
             </div>
         </div>
@@ -257,8 +257,8 @@ function formatAmount(value) {
 fetch('/api/revenues/distribution')
     .then(response => response.json())
     .then(data => {
-        // Graphique par Type de revenu
-        const typesCtx = document.getElementById('revenuesTypesChart').getContext('2d');
+        // Graphique par {{ _('Type') }} de revenu
+        const typesCtx = document.getElementById('revenues{{ _('Type') }}sChart').getContext('2d');
         new Chart(typesCtx, {
             type: 'doughnut',
             data: {
@@ -328,7 +328,7 @@ function exportRevenuesChartToPDF() {
 
         // Ajouter le titre
         pdf.setFontSize(16);
-        pdf.text('Répartition des revenus actifs par type', 105, 15, { align: 'center' });
+        pdf.text('{{ _('Répartition des revenus actifs par type') }}', 105, 15, { align: 'center' });
 
         // Ajouter la date
         pdf.setFontSize(10);

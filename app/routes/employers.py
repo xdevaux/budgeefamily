@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request, send_file, Response
 from flask_login import login_required, current_user
+from flask_babel import gettext as _
 from app import db, limiter
 from app.models import Employer, EmployerDocument
 from app.utils.file_security import validate_upload, get_safe_content_disposition
@@ -9,41 +10,44 @@ import io
 
 bp = Blueprint('employers', __name__, url_prefix='/employers')
 
-# Types de contrats disponibles
-CONTRACT_TYPES = [
-    ('cdi', 'CDI'),
-    ('cdd', 'CDD'),
-    ('interim', 'Intérim'),
-    ('freelance', 'Freelance'),
-    ('stage', 'Stage'),
-    ('apprentissage', 'Apprentissage'),
-    ('other', 'Autre'),
-]
+def get_contract_types():
+    """Retourne les types de contrats avec traduction"""
+    return [
+        ('cdi', _('CDI')),
+        ('cdd', _('CDD')),
+        ('interim', _('Intérim')),
+        ('freelance', _('Freelance')),
+        ('stage', _('Stage')),
+        ('apprentissage', _('Apprentissage')),
+        ('other', _('Autre')),
+    ]
 
-# Types de documents disponibles
-DOCUMENT_TYPES = [
-    ('contract', 'Contrat de travail', 'fa-file-signature', '#6366f1'),
-    ('payslip', 'Fiche de paie', 'fa-file-invoice-dollar', '#10b981'),
-    ('expense_report', 'Fiche de frais', 'fa-receipt', '#ec4899'),
-    ('certificate', 'Attestation', 'fa-certificate', '#f59e0b'),
-    ('amendment', 'Avenant', 'fa-file-contract', '#8b5cf6'),
-    ('other', 'Autre document', 'fa-file', '#6c757d'),
-]
+def get_document_types():
+    """Retourne les types de documents avec traduction"""
+    return [
+        ('contract', _('Contrat de travail'), 'fa-file-signature', '#6366f1'),
+        ('payslip', _('Fiche de paie'), 'fa-file-invoice-dollar', '#10b981'),
+        ('expense_report', _('Fiche de frais'), 'fa-receipt', '#ec4899'),
+        ('certificate', _('Attestation'), 'fa-certificate', '#f59e0b'),
+        ('amendment', _('Avenant'), 'fa-file-contract', '#8b5cf6'),
+        ('other', _('Autre document'), 'fa-file', '#6c757d'),
+    ]
 
-# Mois en français
-MONTHS_FR = [
-    (1, 'Janvier'), (2, 'Février'), (3, 'Mars'), (4, 'Avril'),
-    (5, 'Mai'), (6, 'Juin'), (7, 'Juillet'), (8, 'Août'),
-    (9, 'Septembre'), (10, 'Octobre'), (11, 'Novembre'), (12, 'Décembre')
-]
+def get_months():
+    """Retourne les mois avec traduction"""
+    return [
+        (1, _('Janvier')), (2, _('Février')), (3, _('Mars')), (4, _('Avril')),
+        (5, _('Mai')), (6, _('Juin')), (7, _('Juillet')), (8, _('Août')),
+        (9, _('Septembre')), (10, _('Octobre')), (11, _('Novembre')), (12, _('Décembre'))
+    ]
 
 
 def get_document_type_info(type_code):
     """Retourne les informations d'un type de document"""
-    for code, name, icon, color in DOCUMENT_TYPES:
+    for code, name, icon, color in get_document_types():
         if code == type_code:
             return {'code': code, 'name': name, 'icon': icon, 'color': color}
-    return {'code': 'other', 'name': 'Autre', 'icon': 'fa-file', 'color': '#6c757d'}
+    return {'code': 'other', 'name': _('Autre'), 'icon': 'fa-file', 'color': '#6c757d'}
 
 
 @bp.route('/', endpoint='list')
@@ -120,10 +124,10 @@ def add():
         db.session.add(employer)
         db.session.commit()
 
-        flash(f'L\'employeur "{name}" a été ajouté avec succès !', 'success')
+        flash(_('L\'employeur "%(name)s" a été ajouté avec succès !', name=name), 'success')
         return redirect(url_for('employers.detail', employer_id=employer.id))
 
-    return render_template('employers/add.html', contract_types=CONTRACT_TYPES)
+    return render_template('employers/add.html', contract_types=get_contract_types())
 
 
 @bp.route('/<int:employer_id>')
@@ -132,7 +136,7 @@ def detail(employer_id):
     employer = Employer.query.get_or_404(employer_id)
 
     if employer.user_id != current_user.id:
-        flash('Vous n\'avez pas accès à cet employeur.', 'danger')
+        flash(_('Vous n\'avez pas accès à cet employeur.'), 'danger')
         return redirect(url_for('employers.list'))
 
     # Récupérer les documents groupés par type et année
@@ -160,7 +164,7 @@ def detail(employer_id):
 
     # Compter les documents par type
     doc_counts = {}
-    for doc_type, _, _, _ in DOCUMENT_TYPES:
+    for doc_type, _, _, _ in get_document_types():
         doc_counts[doc_type] = employer.documents.filter_by(document_type=doc_type).count()
 
     # Calculer la taille totale des documents
@@ -171,7 +175,7 @@ def detail(employer_id):
     return render_template('employers/detail.html',
                          employer=employer,
                          documents=documents,
-                         document_types=DOCUMENT_TYPES,
+                         document_types=get_document_types(),
                          years=years,
                          filter_type=filter_type,
                          filter_year=filter_year,
@@ -187,7 +191,7 @@ def edit(employer_id):
     employer = Employer.query.get_or_404(employer_id)
 
     if employer.user_id != current_user.id:
-        flash('Vous n\'avez pas accès à cet employeur.', 'danger')
+        flash(_('Vous n\'avez pas accès à cet employeur.'), 'danger')
         return redirect(url_for('employers.list'))
 
     if request.method == 'POST':
@@ -225,12 +229,12 @@ def edit(employer_id):
 
         db.session.commit()
 
-        flash(f'L\'employeur "{employer.name}" a été mis à jour.', 'success')
+        flash(_('L\'employeur "%(name)s" a été mis à jour.', name=employer.name), 'success')
         return redirect(url_for('employers.detail', employer_id=employer.id))
 
     return render_template('employers/edit.html',
                          employer=employer,
-                         contract_types=CONTRACT_TYPES)
+                         contract_types=get_contract_types())
 
 
 @bp.route('/<int:employer_id>/delete', methods=['POST'])
@@ -239,14 +243,14 @@ def delete(employer_id):
     employer = Employer.query.get_or_404(employer_id)
 
     if employer.user_id != current_user.id:
-        flash('Vous n\'avez pas accès à cet employeur.', 'danger')
+        flash(_('Vous n\'avez pas accès à cet employeur.'), 'danger')
         return redirect(url_for('employers.list'))
 
     employer_name = employer.name
     db.session.delete(employer)
     db.session.commit()
 
-    flash(f'L\'employeur "{employer_name}" a été supprimé.', 'success')
+    flash(_('L\'employeur "%(name)s" a été supprimé.', name=employer_name), 'success')
     return redirect(url_for('employers.list'))
 
 
@@ -258,7 +262,7 @@ def add_document(employer_id):
     employer = Employer.query.get_or_404(employer_id)
 
     if employer.user_id != current_user.id:
-        flash('Vous n\'avez pas accès à cet employeur.', 'danger')
+        flash(_('Vous n\'avez pas accès à cet employeur.'), 'danger')
         return redirect(url_for('employers.list'))
 
     if request.method == 'POST':
@@ -296,7 +300,7 @@ def add_document(employer_id):
             if file and file.filename:
                 success, error, file_data, safe_filename = validate_upload(file)
                 if not success:
-                    flash(error, 'danger')
+                    flash(_(error), 'danger')
                     return redirect(url_for('employers.add_document', employer_id=employer_id))
 
                 document.file_data = file_data
@@ -307,7 +311,7 @@ def add_document(employer_id):
         db.session.add(document)
         db.session.commit()
 
-        flash(f'Le document "{name}" a été ajouté avec succès !', 'success')
+        flash(_('Le document "%(name)s" a été ajouté avec succès !', name=name), 'success')
         return redirect(url_for('employers.detail', employer_id=employer_id))
 
     current_year = datetime.now().year
@@ -315,8 +319,8 @@ def add_document(employer_id):
 
     return render_template('employers/add_document.html',
                          employer=employer,
-                         document_types=DOCUMENT_TYPES,
-                         months=MONTHS_FR,
+                         document_types=get_document_types(),
+                         months=get_months(),
                          years=years)
 
 
@@ -326,11 +330,11 @@ def download_document(document_id):
     document = EmployerDocument.query.get_or_404(document_id)
 
     if document.user_id != current_user.id:
-        flash('Vous n\'avez pas accès à ce document.', 'danger')
+        flash(_('Vous n\'avez pas accès à ce document.'), 'danger')
         return redirect(url_for('employers.list'))
 
     if not document.file_data:
-        flash('Ce document n\'a pas de fichier attaché.', 'warning')
+        flash(_('Ce document n\'a pas de fichier attaché.'), 'warning')
         return redirect(url_for('employers.detail', employer_id=document.employer_id))
 
     return Response(
@@ -346,11 +350,11 @@ def view_document(document_id):
     document = EmployerDocument.query.get_or_404(document_id)
 
     if document.user_id != current_user.id:
-        flash('Vous n\'avez pas accès à ce document.', 'danger')
+        flash(_('Vous n\'avez pas accès à ce document.'), 'danger')
         return redirect(url_for('employers.list'))
 
     if not document.file_data:
-        flash('Ce document n\'a pas de fichier attaché.', 'warning')
+        flash(_('Ce document n\'a pas de fichier attaché.'), 'warning')
         return redirect(url_for('employers.detail', employer_id=document.employer_id))
 
     return Response(
@@ -366,7 +370,7 @@ def edit_document(document_id):
     document = EmployerDocument.query.get_or_404(document_id)
 
     if document.user_id != current_user.id:
-        flash('Vous n\'avez pas accès à ce document.', 'danger')
+        flash(_('Vous n\'avez pas accès à ce document.'), 'danger')
         return redirect(url_for('employers.list'))
 
     if request.method == 'POST':
@@ -385,7 +389,7 @@ def edit_document(document_id):
             if file and file.filename:
                 success, error, file_data, safe_filename = validate_upload(file)
                 if not success:
-                    flash(error, 'danger')
+                    flash(_(error), 'danger')
                     return redirect(url_for('employers.edit_document', document_id=document_id))
 
                 document.file_data = file_data
@@ -395,7 +399,7 @@ def edit_document(document_id):
 
         db.session.commit()
 
-        flash(f'Le document "{document.name}" a été mis à jour.', 'success')
+        flash(_('Le document "%(name)s" a été mis à jour.', name=document.name), 'success')
         return redirect(url_for('employers.detail', employer_id=document.employer_id))
 
     current_year = datetime.now().year
@@ -404,8 +408,8 @@ def edit_document(document_id):
     return render_template('employers/edit_document.html',
                          document=document,
                          employer=document.employer,
-                         document_types=DOCUMENT_TYPES,
-                         months=MONTHS_FR,
+                         document_types=get_document_types(),
+                         months=get_months(),
                          years=years)
 
 
@@ -415,7 +419,7 @@ def delete_document(document_id):
     document = EmployerDocument.query.get_or_404(document_id)
 
     if document.user_id != current_user.id:
-        flash('Vous n\'avez pas accès à ce document.', 'danger')
+        flash(_('Vous n\'avez pas accès à ce document.'), 'danger')
         return redirect(url_for('employers.list'))
 
     employer_id = document.employer_id
@@ -423,5 +427,5 @@ def delete_document(document_id):
     db.session.delete(document)
     db.session.commit()
 
-    flash(f'Le document "{document_name}" a été supprimé.', 'success')
+    flash(_('Le document "%(name)s" a été supprimé.', name=document_name), 'success')
     return redirect(url_for('employers.detail', employer_id=employer_id))

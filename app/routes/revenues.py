@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_required, current_user
+from flask_babel import gettext as _
 from app import db
 from app.models import Revenue, Employer, Notification
 from app.utils.transactions import generate_future_transactions, update_future_transactions, cancel_future_transactions, calculate_next_future_date, delete_all_transactions
@@ -13,23 +14,24 @@ def get_user_employers():
     """Récupère les employeurs de l'utilisateur actuel"""
     return current_user.employers.filter_by(is_active=True).order_by(Employer.name).all()
 
-# Types de revenus disponibles
-REVENUE_TYPES = [
-    ('salary', 'Salaire', 'fa-briefcase', '#10b981'),
-    ('freelance', 'Freelance', 'fa-laptop', '#6366f1'),
-    ('rental', 'Revenus locatifs', 'fa-home', '#f59e0b'),
-    ('investment', 'Investissements', 'fa-chart-line', '#8b5cf6'),
-    ('pension', 'Pension/Retraite', 'fa-user-clock', '#3b82f6'),
-    ('other', 'Autre', 'fa-coins', '#6c757d'),
-]
+def get_revenue_types():
+    """Retourne les types de revenus avec traduction"""
+    return [
+        ('salary', _('Salaire'), 'fa-briefcase', '#10b981'),
+        ('freelance', _('Freelance'), 'fa-laptop', '#6366f1'),
+        ('rental', _('Revenus locatifs'), 'fa-home', '#f59e0b'),
+        ('investment', _('Investissements'), 'fa-chart-line', '#8b5cf6'),
+        ('pension', _('Pension/Retraite'), 'fa-user-clock', '#3b82f6'),
+        ('other', _('Autre'), 'fa-coins', '#6c757d'),
+    ]
 
 
 def get_revenue_type_info(type_code):
     """Retourne les informations d'un type de revenu"""
-    for code, name, icon, color in REVENUE_TYPES:
+    for code, name, icon, color in get_revenue_types():
         if code == type_code:
             return {'code': code, 'name': name, 'icon': icon, 'color': color}
-    return {'code': 'other', 'name': 'Autre', 'icon': 'fa-coins', 'color': '#6c757d'}
+    return {'code': 'other', 'name': _('Autre'), 'icon': 'fa-coins', 'color': '#6c757d'}
 
 
 @bp.route('/')
@@ -56,7 +58,7 @@ def list():
     employers = get_user_employers()
     return render_template('revenues/list.html',
                          revenues=revenues,
-                         revenue_types=REVENUE_TYPES,
+                         revenue_types=get_revenue_types(),
                          employers=employers,
                          filter_status=filter_status,
                          filter_type=filter_type,
@@ -69,7 +71,7 @@ def add():
     if request.method == 'POST':
         # Vérifier si l'utilisateur peut ajouter un revenu
         if not current_user.can_add_revenue():
-            flash('Vous avez atteint la limite de revenus pour le plan gratuit. Passez au plan Premium pour ajouter des revenus illimités.', 'warning')
+            flash(_('Vous avez atteint la limite de revenus pour le plan gratuit. Passez au plan Premium pour ajouter des revenus illimités.'), 'warning')
             return redirect(url_for('revenues.list'))
 
         name = request.form.get('name')
@@ -112,8 +114,8 @@ def add():
             revenue_id=revenue.id,
             created_by_user_id=current_user.id,
             type='revenue_added',
-            title='Nouveau revenu ajouté',
-            message=f'Votre revenu "{name}" a été ajouté avec succès.'
+            title=_('Nouveau revenu ajouté'),
+            message=_('Votre revenu "%(name)s" a été ajouté avec succès.', name=name)
         )
         db.session.add(notification)
         db.session.commit()
@@ -122,11 +124,11 @@ def add():
         from app.utils.email import send_notification_email
         send_notification_email(current_user, notification)
 
-        flash(f'Le revenu "{name}" a été ajouté avec succès !', 'success')
+        flash(_('Le revenu "%(name)s" a été ajouté avec succès !', name=name), 'success')
         return redirect(url_for('revenues.list'))
 
     employers = get_user_employers()
-    return render_template('revenues/add.html', revenue_types=REVENUE_TYPES, employers=employers)
+    return render_template('revenues/add.html', revenue_types=get_revenue_types(), employers=employers)
 
 
 @bp.route('/<int:revenue_id>/edit', methods=['GET', 'POST'])
@@ -135,7 +137,7 @@ def edit(revenue_id):
     revenue = Revenue.query.get_or_404(revenue_id)
 
     if revenue.user_id != current_user.id:
-        flash('Vous n\'avez pas accès à ce revenu.', 'danger')
+        flash(_('Vous n\'avez pas accès à ce revenu.'), 'danger')
         return redirect(url_for('revenues.list'))
 
     if request.method == 'POST':
@@ -156,13 +158,13 @@ def edit(revenue_id):
         update_future_transactions(revenue, 'revenue')
         db.session.commit()
 
-        flash(f'Le revenu "{revenue.name}" a été mis à jour.', 'success')
+        flash(_('Le revenu "%(name)s" a été mis à jour.', name=revenue.name), 'success')
         return redirect(url_for('revenues.list'))
 
     employers = get_user_employers()
     return render_template('revenues/edit.html',
                          revenue=revenue,
-                         revenue_types=REVENUE_TYPES,
+                         revenue_types=get_revenue_types(),
                          employers=employers)
 
 
@@ -172,7 +174,7 @@ def delete(revenue_id):
     revenue = Revenue.query.get_or_404(revenue_id)
 
     if revenue.user_id != current_user.id:
-        flash('Vous n\'avez pas accès à ce revenu.', 'danger')
+        flash(_('Vous n\'avez pas accès à ce revenu.'), 'danger')
         return redirect(url_for('revenues.list'))
 
     revenue_name = revenue.name
@@ -183,7 +185,7 @@ def delete(revenue_id):
     db.session.delete(revenue)
     db.session.commit()
 
-    flash(f'Le revenu "{revenue_name}" et toutes ses transactions ont été supprimés.', 'success')
+    flash(_('Le revenu "%(name)s" et toutes ses transactions ont été supprimés.', name=revenue_name), 'success')
 
     # Rediriger vers la page balance si le paramètre est présent
     redirect_to = request.args.get('redirect_to', 'revenues.list')
@@ -198,7 +200,7 @@ def toggle(revenue_id):
     revenue = Revenue.query.get_or_404(revenue_id)
 
     if revenue.user_id != current_user.id:
-        flash('Vous n\'avez pas accès à ce revenu.', 'danger')
+        flash(_('Vous n\'avez pas accès à ce revenu.'), 'danger')
         return redirect(url_for('revenues.list'))
 
     revenue.is_active = not revenue.is_active
@@ -212,8 +214,8 @@ def toggle(revenue_id):
 
     db.session.commit()
 
-    status = 'activé' if revenue.is_active else 'désactivé'
-    flash(f'Le revenu "{revenue.name}" a été {status}.', 'success')
+    status = _('activé') if revenue.is_active else _('désactivé')
+    flash(_('Le revenu "%(name)s" a été %(status)s.', name=revenue.name, status=status), 'success')
     return redirect(url_for('revenues.list'))
 
 
@@ -223,7 +225,7 @@ def detail(revenue_id):
     revenue = Revenue.query.get_or_404(revenue_id)
 
     if revenue.user_id != current_user.id:
-        flash('Vous n\'avez pas accès à ce revenu.', 'danger')
+        flash(_('Vous n\'avez pas accès à ce revenu.'), 'danger')
         return redirect(url_for('revenues.list'))
 
     return render_template('revenues/detail.html',

@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Nouveau chéquier - Budgee Family{% endblock %}
+{% block title %}{{ _('Nouveau chéquier') }} - Budgee Family{% endblock %}
 
 {% block content %}
 <div class="container py-4">
@@ -12,7 +12,7 @@
                     <p class="text-muted mb-0">Enregistrez un nouveau chéquier</p>
                 </div>
                 <a href="{{ url_for('checkbooks.list_checkbooks') }}" class="btn btn-outline-secondary">
-                    <i class="fas fa-arrow-left"></i> Retour
+                    <i class="fas fa-arrow-left"></i> {{ _('Retour') }}
                 </a>
             </div>
 
@@ -28,7 +28,7 @@
                         <div class="mb-3">
                             <label for="bank_id" class="form-label">Banque</label>
                             <select class="form-select" id="bank_id" name="bank_id">
-                                <option value="">-- Sélectionner une banque --</option>
+                                <option value="">-- {{ _('Sélectionner une banque') }} --</option>
                                 {% for bank in banks %}
                                     <option value="{{ bank.id }}">{{ bank.name }}</option>
                                 {% endfor %}
@@ -52,7 +52,7 @@
 
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-danger btn-lg">
-                                <i class="fas fa-save"></i> Enregistrer
+                                <i class="fas fa-save"></i> {{ _('Enregistrer') }}
                             </button>
                             <a href="{{ url_for('checkbooks.list_checkbooks') }}" class="btn btn-outline-secondary">
                                 Annuler

@@ -10,10 +10,10 @@
                 <h2><i class="fas fa-hand-holding-usd"></i> {{ revenue.name }}</h2>
                 <div class="d-flex gap-2">
                     <a href="{{ url_for('revenues.edit', revenue_id=revenue.id) }}" class="btn btn-warning">
-                        <i class="fas fa-edit"></i> Modifier
+                        <i class="fas fa-edit"></i> {{ _('Modifier') }}
                     </a>
                     <a href="{{ url_for('revenues.list') }}" class="btn btn-outline-secondary">
-                        <i class="fas fa-arrow-left"></i> Retour
+                        <i class="fas fa-arrow-left"></i> {{ _('Retour') }}
                     </a>
                 </div>
             </div>
@@ -22,69 +22,69 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-6">
-                            <h5 class="text-muted mb-3">Informations générales</h5>
+                            <h5 class="text-muted mb-3">{{ _('Informations générales') }}</h5>
 
-                            <p><strong>Nom :</strong> {{ revenue.name }}</p>
+                            <p><strong>{{ _('Nom') }} :</strong> {{ revenue.name }}</p>
 
                             {% if revenue.employer %}
                                 <p>
-                                    <strong>Employeur :</strong>
+                                    <strong>{{ _('Employeur') }} :</strong>
                                     <a href="{{ url_for('employers.detail', employer_id=revenue.employer.id) }}">
                                         <span class="badge bg-secondary"><i class="fas fa-building"></i> {{ revenue.employer.name }}</span>
                                     </a>
                                 </p>
                             {% elif revenue.company %}
                                 <p>
-                                    <strong>Société :</strong>
+                                    <strong>{{ _('Société :') }}</strong>
                                     <span class="badge bg-secondary"><i class="fas fa-building"></i> {{ revenue.company }}</span>
                                 </p>
                             {% endif %}
 
                             {% if revenue.description %}
-                                <p><strong>Description :</strong> {{ revenue.description }}</p>
+                                <p><strong>{{ _('Description') }} :</strong> {{ revenue.description }}</p>
                             {% endif %}
 
                             {% set type_info = get_revenue_type_info(revenue.revenue_type) %}
                             <p>
-                                <strong>Type :</strong>
+                                <strong>{{ _('Type') }} :</strong>
                                 {% if revenue.revenue_type %}
                                     <span class="badge" style="background-color: {{ type_info.color }};">
                                         <i class="fas {{ type_info.icon }}"></i>
                                         {{ type_info.name }}
                                     </span>
                                 {% else %}
-                                    <span class="text-muted">Non défini</span>
+                                    <span class="text-muted">{{ _('Non défini') }}</span>
                                 {% endif %}
                             </p>
 
                             <p>
-                                <strong>Statut :</strong>
+                                <strong>{{ _('Statut') }} :</strong>
                                 {% if revenue.is_active %}
-                                    <span class="badge bg-success">Actif</span>
+                                    <span class="badge bg-success">{{ _('Actif') }}</span>
                                 {% else %}
-                                    <span class="badge bg-secondary">Inactif</span>
+                                    <span class="badge bg-secondary">{{ _('Inactif') }}</span>
                                 {% endif %}
                             </p>
                         </div>
 
                         <div class="col-md-6">
-                            <h5 class="text-muted mb-3">Détails financiers</h5>
+                            <h5 class="text-muted mb-3">{{ _('Détails financiers') }}</h5>
 
                             <p>
-                                <strong>Montant :</strong>
+                                <strong>{{ _('Montant') }} :</strong>
                                 <span class="text-success fs-4">{{ revenue.amount | format_amount }} {{ revenue.currency | currency_symbol }}</span>
                             </p>
 
-                            <p><strong>Périodicité :</strong> {{ revenue.billing_cycle | translate_cycle }}</p>
+                            <p><strong>{{ _('Périodicité') }} :</strong> {{ revenue.billing_cycle | translate_cycle }}</p>
 
                             <p>
-                                <strong>Équivalent mensuel :</strong>
+                                <strong>{{ _('Équivalent mensuel :') }}</strong>
                                 <span class="text-success">{{ revenue.get_monthly_amount() | format_amount }} {{ revenue.currency | currency_symbol }}</span>
                             </p>
 
-                            <p><strong>Date de début :</strong> {{ revenue.start_date.strftime('%d/%m/%Y') }}</p>
+                            <p><strong>{{ _('Date de début') }} :</strong> {{ revenue.start_date.strftime('%d/%m/%Y') }}</p>
 
-                            <p><strong>Prochain versement :</strong> {{ revenue.next_payment_date.strftime('%d/%m/%Y') }}</p>
+                            <p><strong>{{ _('Prochain') }} versement :</strong> {{ revenue.next_payment_date.strftime('%d/%m/%Y') }}</p>
                         </div>
                     </div>
 
@@ -93,9 +93,9 @@
                     <div class="row">
                         <div class="col-12">
                             <small class="text-muted">
-                                Créé le {{ revenue.created_at | format_datetime }}
+                                {{ _('Créé le') }} {{ revenue.created_at | format_datetime }}
                                 {% if revenue.updated_at and revenue.updated_at != revenue.created_at %}
-                                    | Modifié le {{ revenue.updated_at | format_datetime }}
+                                    | {{ _('Modifié le') }} {{ revenue.updated_at | format_datetime }}
                                 {% endif %}
                             </small>
                         </div>
@@ -103,22 +103,22 @@
                 </div>
             </div>
 
-            <!-- Actions -->
+            <!-- {{ _('Actions') }} -->
             <div class="card mt-3">
                 <div class="card-body">
-                    <h5 class="card-title">Actions</h5>
+                    <h5 class="card-title">{{ _('Actions') }}</h5>
                     <div class="d-flex gap-2 flex-wrap">
                         <form method="POST" action="{{ url_for('revenues.toggle', revenue_id=revenue.id) }}" class="d-inline">
                             <button type="submit" class="btn btn-{% if revenue.is_active %}warning{% else %}success{% endif %}">
                                 <i class="fas fa-toggle-{% if revenue.is_active %}off{% else %}on{% endif %}"></i>
-                                {% if revenue.is_active %}Désactiver{% else %}Activer{% endif %}
+                                {% if revenue.is_active %}{{ _('Désactiver') }}{% else %}Activer{% endif %}
                             </button>
                         </form>
 
                         <form method="POST" action="{{ url_for('revenues.delete', revenue_id=revenue.id) }}"
-                              onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce revenu ?')" class="d-inline">
+                              onsubmit="return confirm('{{ _('Êtes-vous sûr de vouloir supprimer ce revenu ?') }}')" class="d-inline">
                             <button type="submit" class="btn btn-danger">
-                                <i class="fas fa-trash"></i> Supprimer
+                                <i class="fas fa-trash"></i> {{ _('Supprimer') }}
                             </button>
                         </form>
                     </div>

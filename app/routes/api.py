@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify, current_app, redirect, url_for, make_response
 from flask_login import login_required, current_user
+from flask_babel import gettext as _
 from app import db
 from app.models import User, Plan, Notification, Subscription, Category, Service
 import stripe
@@ -679,16 +680,13 @@ def card_purchases_distribution():
 def revenues_distribution():
     """API endpoint pour récupérer la répartition des revenus actifs par type"""
     from app.models import Revenue
+    from app.routes.revenues import get_revenue_types
 
-    # Définition des types de revenus avec couleurs
-    REVENUE_TYPES = {
-        'salary': {'name': 'Salaire', 'color': '#10b981'},
-        'freelance': {'name': 'Freelance', 'color': '#6366f1'},
-        'rental': {'name': 'Revenus locatifs', 'color': '#f59e0b'},
-        'investment': {'name': 'Investissements', 'color': '#8b5cf6'},
-        'pension': {'name': 'Pension/Retraite', 'color': '#3b82f6'},
-        'other': {'name': 'Autre', 'color': '#6c757d'},
-    }
+    # Définition des types de revenus avec couleurs (avec traductions)
+    revenue_types_list = get_revenue_types()
+    REVENUE_TYPES = {}
+    for code, name, icon, color in revenue_types_list:
+        REVENUE_TYPES[code] = {'name': name, 'color': color}
 
     # Récupérer tous les revenus actifs de l'utilisateur
     active_revenues = current_user.revenues.filter_by(is_active=True).all()

@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Modifier chèque #{{ check.check_number }} - Budgee Family{% endblock %}
+{% block title %}{{ _('Modifier chèque') }} #{{ check.check_number }} - Budgee Family{% endblock %}
 
 {% block content %}
 <div class="container py-4">
@@ -8,11 +8,11 @@
         <div class="col-lg-8">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <div>
-                    <h2><i class="fas fa-edit text-danger"></i> Modifier le chèque</h2>
-                    <p class="text-muted mb-0">Chèque #{{ check.check_number }}</p>
+                    <h2><i class="fas fa-edit text-danger"></i> {{ _('Modifier le chèque') }}</h2>
+                    <p class="text-muted mb-0">{{ _('Chèque') }} #{{ check.check_number }}</p>
                 </div>
                 <a href="{{ url_for('checkbooks.detail', checkbook_id=check.checkbook_id) }}" class="btn btn-outline-secondary">
-                    <i class="fas fa-arrow-left"></i> Retour
+                    <i class="fas fa-arrow-left"></i> {{ _('Retour') }}
                 </a>
             </div>
 
@@ -20,24 +20,24 @@
                 <div class="card-body p-4">
                     <form method="POST">
                         <div class="alert alert-info">
-                            <i class="fas fa-info-circle"></i> Le numéro du chèque ne peut pas être modifié : <strong>#{{ check.check_number }}</strong>
+                            <i class="fas fa-info-circle"></i> {{ _('Le numéro du chèque ne peut pas être modifié :') }} <strong>#{{ check.check_number }}</strong>
                         </div>
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label for="check_date" class="form-label">Date du chèque *</label>
+                                <label for="check_date" class="form-label">{{ _('Date du chèque') }} *</label>
                                 <input type="date" class="form-control" id="check_date" name="check_date" required
                                        value="{{ check.check_date.strftime('%Y-%m-%d') }}">
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="amount" class="form-label">Montant *</label>
+                                <label for="amount" class="form-label">{{ _('Montant') }} *</label>
                                 <input type="number" class="form-control" id="amount" name="amount" required
                                        step="0.01" min="0" value="{{ check.amount }}">
                             </div>
                         </div>
 
                         <div class="mb-3">
-                            <label for="currency" class="form-label">Devise</label>
+                            <label for="currency" class="form-label">{{ _('Devise') }}</label>
                             <select class="form-select" id="currency" name="currency">
                                 <option value="EUR" {% if check.currency == 'EUR' %}selected{% endif %}>EUR (€)</option>
                                 <option value="USD" {% if check.currency == 'USD' %}selected{% endif %}>USD ($)</option>
@@ -46,34 +46,33 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="payee" class="form-label">Bénéficiaire</label>
+                            <label for="payee" class="form-label">{{ _('Bénéficiaire') }}</label>
                             <input type="text" class="form-control" id="payee" name="payee"
                                    value="{{ check.payee or '' }}">
                         </div>
 
                         <div class="mb-3">
-                            <label for="description" class="form-label">Description</label>
+                            <label for="description" class="form-label">{{ _('Description') }}</label>
                             <textarea class="form-control" id="description" name="description" rows="2">{{ check.description or '' }}</textarea>
                         </div>
 
                         <div class="mb-4">
-                            <label for="status" class="form-label">Statut *</label>
+                            <label for="status" class="form-label">{{ _('Statut') }} *</label>
                             <select class="form-select" id="status" name="status" required>
-                                <option value="used" {% if check.status == 'used' %}selected{% endif %}>Utilisé (ajouté à la balance)</option>
-                                <option value="cancelled" {% if check.status == 'cancelled' %}selected{% endif %}>Annulé</option>
+                                <option value="used" {% if check.status == 'used' %}selected{% endif %}>{{ _('Utilisé (ajouté à la balance)') }}</option>
+                                <option value="cancelled" {% if check.status == 'cancelled' %}selected{% endif %}>{{ _('Annulé') }}</option>
                             </select>
                             <small class="text-muted">
-                                Si vous passez le chèque en "Utilisé", une transaction sera créée dans la balance.
-                                Si vous l'annulez, la transaction associée sera annulée.
+                                {{ _('Si vous passez le chèque en "Utilisé", une transaction sera créée dans la balance. Si vous l\'annulez, la transaction associée sera annulée.') }}
                             </small>
                         </div>
 
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-danger btn-lg">
-                                <i class="fas fa-save"></i> Enregistrer
+                                <i class="fas fa-save"></i> {{ _('Enregistrer') }}
                             </button>
                             <a href="{{ url_for('checkbooks.detail', checkbook_id=check.checkbook_id) }}" class="btn btn-outline-secondary">
-                                Annuler
+                                {{ _('Annuler') }}
                             </a>
                         </div>
                     </form>

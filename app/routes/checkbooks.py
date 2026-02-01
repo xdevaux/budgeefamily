@@ -3,6 +3,7 @@ Routes pour gérer les chéquiers
 """
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_required, current_user
+from flask_babel import gettext as _
 from app import db
 from app.models import Checkbook, Check, Bank, Transaction
 from datetime import datetime
@@ -45,7 +46,7 @@ def add():
 
         # Validation du numéro de départ
         if not start_number:
-            flash('Le numéro du premier chèque est requis.', 'danger')
+            flash(_('Le numéro du premier chèque est requis.'), 'danger')
             return redirect(url_for('checkbooks.add'))
 
         # Si end_number n'est pas fourni, calculer automatiquement (+25)
@@ -54,7 +55,7 @@ def add():
 
         # Validation
         if start_number >= end_number:
-            flash('Le numéro de fin doit être supérieur au numéro de début.', 'danger')
+            flash(_('Le numéro de fin doit être supérieur au numéro de début.'), 'danger')
             return redirect(url_for('checkbooks.add'))
 
         checkbook = Checkbook(
@@ -83,7 +84,7 @@ def add():
 
         db.session.commit()
 
-        flash(f'Chéquier "{name}" ajouté avec succès avec {checkbook.total_checks()} chèques !', 'success')
+        flash(_('Chéquier "%(name)s" ajouté avec succès avec %(count)s chèques !', name=name, count=checkbook.total_checks()), 'success')
         return redirect(url_for('checkbooks.detail', checkbook_id=checkbook.id))
 
     # Récupérer les banques pour le formulaire
@@ -99,7 +100,7 @@ def detail(checkbook_id):
     checkbook = Checkbook.query.get_or_404(checkbook_id)
 
     if checkbook.user_id != current_user.id:
-        flash('Vous n\'avez pas accès à ce chéquier.', 'danger')
+        flash(_('Vous n\'avez pas accès à ce chéquier.'), 'danger')
         return redirect(url_for('checkbooks.list_checkbooks'))
 
     # Récupérer les chèques avec pagination
@@ -132,7 +133,7 @@ def edit(checkbook_id):
     checkbook = Checkbook.query.get_or_404(checkbook_id)
 
     if checkbook.user_id != current_user.id:
-        flash('Vous n\'avez pas accès à ce chéquier.', 'danger')
+        flash(_('Vous n\'avez pas accès à ce chéquier.'), 'danger')
         return redirect(url_for('checkbooks.list_checkbooks'))
 
     if request.method == 'POST':
@@ -142,7 +143,7 @@ def edit(checkbook_id):
 
         db.session.commit()
 
-        flash('Chéquier modifié avec succès !', 'success')
+        flash(_('Chéquier modifié avec succès !'), 'success')
         return redirect(url_for('checkbooks.detail', checkbook_id=checkbook.id))
 
     # Récupérer les banques pour le formulaire
@@ -158,14 +159,14 @@ def toggle(checkbook_id):
     checkbook = Checkbook.query.get_or_404(checkbook_id)
 
     if checkbook.user_id != current_user.id:
-        flash('Vous n\'avez pas accès à ce chéquier.', 'danger')
+        flash(_('Vous n\'avez pas accès à ce chéquier.'), 'danger')
         return redirect(url_for('checkbooks.list_checkbooks'))
 
     checkbook.is_active = not checkbook.is_active
     db.session.commit()
 
-    status = 'activé' if checkbook.is_active else 'désactivé'
-    flash(f'Le chéquier "{checkbook.name}" a été {status}.', 'success')
+    status = _('activé') if checkbook.is_active else _('désactivé')
+    flash(_('Le chéquier "%(name)s" a été %(status)s.', name=checkbook.name, status=status), 'success')
     return redirect(url_for('checkbooks.list_checkbooks'))
 
 
@@ -176,19 +177,19 @@ def delete(checkbook_id):
     checkbook = Checkbook.query.get_or_404(checkbook_id)
 
     if checkbook.user_id != current_user.id:
-        flash('Vous n\'avez pas accès à ce chéquier.', 'danger')
+        flash(_('Vous n\'avez pas accès à ce chéquier.'), 'danger')
         return redirect(url_for('checkbooks.list_checkbooks'))
 
     # Vérifier si des chèques sont associés
     if checkbook.checks.count() > 0:
-        flash('Impossible de supprimer ce chéquier car il contient des chèques.', 'warning')
+        flash(_('Impossible de supprimer ce chéquier car il contient des chèques.'), 'warning')
         return redirect(url_for('checkbooks.detail', checkbook_id=checkbook_id))
 
     checkbook_name = checkbook.name
     db.session.delete(checkbook)
     db.session.commit()
 
-    flash(f'Chéquier "{checkbook_name}" supprimé avec succès !', 'success')
+    flash(_('Chéquier "%(name)s" supprimé avec succès !', name=checkbook_name), 'success')
     return redirect(url_for('checkbooks.list_checkbooks'))
 
 
@@ -200,14 +201,14 @@ def add_check(checkbook_id):
     checkbook = Checkbook.query.get_or_404(checkbook_id)
 
     if checkbook.user_id != current_user.id:
-        flash('Vous n\'avez pas accès à ce chéquier.', 'danger')
+        flash(_('Vous n\'avez pas accès à ce chéquier.'), 'danger')
         return redirect(url_for('checkbooks.list_checkbooks'))
 
     # Récupérer les chèques disponibles
     available_checks = checkbook.checks.filter_by(status='available').order_by(Check.check_number).all()
 
     if not available_checks:
-        flash('Aucun chèque disponible dans ce chéquier.', 'warning')
+        flash(_('Aucun chèque disponible dans ce chéquier.'), 'warning')
         return redirect(url_for('checkbooks.detail', checkbook_id=checkbook_id))
 
     if request.method == 'POST':
@@ -222,7 +223,7 @@ def add_check(checkbook_id):
 
         # Vérifier que le chèque est disponible
         if check.status != 'available' or check.checkbook_id != checkbook_id:
-            flash('Ce chèque n\'est pas disponible.', 'danger')
+            flash(_('Ce chèque n\'est pas disponible.'), 'danger')
             return redirect(url_for('checkbooks.add_check', checkbook_id=checkbook_id))
 
         check_date = datetime.strptime(check_date_str, '%Y-%m-%d').date() if check_date_str else datetime.now().date()
@@ -236,7 +237,7 @@ def add_check(checkbook_id):
 
         if action == 'cancel':
             check.status = 'cancelled'
-            flash(f'Chèque #{check.check_number} annulé avec succès !', 'success')
+            flash(_('Chèque #%(number)s annulé avec succès !', number=check.check_number), 'success')
         else:
             check.status = 'used'
 
@@ -256,7 +257,7 @@ def add_check(checkbook_id):
                 status='completed'
             )
             db.session.add(transaction)
-            flash(f'Chèque #{check.check_number} utilisé avec succès !', 'success')
+            flash(_('Chèque #%(number)s utilisé avec succès !', number=check.check_number), 'success')
 
         db.session.commit()
 
@@ -278,12 +279,12 @@ def edit_check(check_id):
     check = Check.query.get_or_404(check_id)
 
     if check.user_id != current_user.id:
-        flash('Vous n\'avez pas accès à ce chèque.', 'danger')
+        flash(_('Vous n\'avez pas accès à ce chèque.'), 'danger')
         return redirect(url_for('checkbooks.list_checkbooks'))
 
     # Bloquer l'édition des chèques 'available' (non utilisés)
     if check.status == 'available':
-        flash('Vous ne pouvez pas modifier un chèque non utilisé. Veuillez l\'utiliser d\'abord.', 'warning')
+        flash(_('Vous ne pouvez pas modifier un chèque non utilisé. Veuillez l\'utiliser d\'abord.'), 'warning')
         return redirect(url_for('checkbooks.detail', checkbook_id=check.checkbook_id))
 
     if request.method == 'POST':
@@ -331,7 +332,7 @@ def edit_check(check_id):
         checkbook = Checkbook.query.get(check.checkbook_id)
         checkbook.auto_finish_if_complete()
 
-        flash(f'Chèque #{check.check_number} modifié avec succès !', 'success')
+        flash(_('Chèque #%(number)s modifié avec succès !', number=check.check_number), 'success')
         return redirect(url_for('checkbooks.detail', checkbook_id=check.checkbook_id))
 
     return render_template('checkbooks/edit_check.html', check=check)
@@ -344,7 +345,7 @@ def delete_check(check_id):
     check = Check.query.get_or_404(check_id)
 
     if check.user_id != current_user.id:
-        flash('Vous n\'avez pas accès à ce chèque.', 'danger')
+        flash(_('Vous n\'avez pas accès à ce chèque.'), 'danger')
         return redirect(url_for('checkbooks.list_checkbooks'))
 
     checkbook_id = check.checkbook_id
@@ -360,5 +361,5 @@ def delete_check(check_id):
     db.session.delete(check)
     db.session.commit()
 
-    flash(f'Chèque #{check.check_number} supprimé avec succès !', 'success')
+    flash(_('Chèque #%(number)s supprimé avec succès !', number=check.check_number), 'success')
     return redirect(url_for('checkbooks.detail', checkbook_id=checkbook_id))
