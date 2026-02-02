@@ -8,40 +8,40 @@ from sqlalchemy import or_, and_
 
 bp = Blueprint('reminders', __name__, url_prefix='/reminders')
 
-# Types de documents disponibles pour les rappels
+# Document types available for reminders
 DOCUMENT_TYPES = [
-    ('invoice', 'Facture', 'fa-file-invoice', '#10b981'),
-    ('contract', 'Contrat', 'fa-file-signature', '#6366f1'),
-    ('report', 'Rapport/Certificat', 'fa-file-alt', '#f59e0b'),
-    ('certificate', 'Attestation', 'fa-certificate', '#8b5cf6'),
-    ('other', 'Autre document', 'fa-file', '#6c757d'),
+    ('invoice', 'Invoice', 'fa-file-invoice', '#10b981'),
+    ('contract', 'Contract', 'fa-file-signature', '#6366f1'),
+    ('report', 'Report/Certificate', 'fa-file-alt', '#f59e0b'),
+    ('certificate', 'Certificate', 'fa-certificate', '#8b5cf6'),
+    ('other', 'Other document', 'fa-file', '#6c757d'),
 ]
 
-# Types de récurrence
+# Recurrence types
 RECURRENCE_TYPES = [
-    ('weekly', 'Hebdomadaire'),
-    ('monthly', 'Mensuel'),
-    ('quarterly', 'Trimestriel (tous les 3 mois)'),
-    ('semiannual', 'Semestriel (tous les 6 mois)'),
-    ('annual', 'Annuel'),
-    ('biennial', 'Bisannuel (tous les 2 ans)'),
-    ('once', 'Ponctuel (une seule fois)'),
+    ('weekly', 'Weekly'),
+    ('monthly', 'Monthly'),
+    ('quarterly', 'Quarterly (every 3 months)'),
+    ('semiannual', 'Semiannual (every 6 months)'),
+    ('annual', 'Annual'),
+    ('biennial', 'Biennial (every 2 years)'),
+    ('once', 'Once (one time only)'),
 ]
 
-# Mois en français
-MONTHS_FR = [
-    (1, 'Janvier'), (2, 'Février'), (3, 'Mars'), (4, 'Avril'),
-    (5, 'Mai'), (6, 'Juin'), (7, 'Juillet'), (8, 'Août'),
-    (9, 'Septembre'), (10, 'Octobre'), (11, 'Novembre'), (12, 'Décembre')
+# Months in English
+MONTHS = [
+    (1, 'January'), (2, 'February'), (3, 'March'), (4, 'April'),
+    (5, 'May'), (6, 'June'), (7, 'July'), (8, 'August'),
+    (9, 'September'), (10, 'October'), (11, 'November'), (12, 'December')
 ]
 
 
 def get_document_type_info(type_code):
-    """Retourne les informations d'un type de document"""
+    """Returns information for a document type"""
     for code, name, icon, color in DOCUMENT_TYPES:
         if code == type_code:
             return {'code': code, 'name': name, 'icon': icon, 'color': color}
-    return {'code': 'other', 'name': 'Autre', 'icon': 'fa-file', 'color': '#6c757d'}
+    return {'code': 'other', 'name': 'Other', 'icon': 'fa-file', 'color': '#6c757d'}
 
 
 @bp.route('/', endpoint='list')
@@ -78,7 +78,7 @@ def reminder_list():
 @login_required
 def add():
     if not current_user.can_add_reminder():
-        flash('Limite de rappels atteinte. Passez à Premium pour en ajouter plus.', 'warning')
+        flash('Reminder limit reached. Upgrade to Premium to add more.', 'warning')
         return redirect(url_for('reminders.list'))
 
     if request.method == 'POST':
@@ -104,7 +104,7 @@ def add():
         db.session.add(reminder)
         db.session.commit()
 
-        flash(f'Le rappel "{reminder.name}" a été ajouté.', 'success')
+        flash(f'The reminder "{reminder.name}" has been added.', 'success')
         return redirect(url_for('reminders.detail', reminder_id=reminder.id))
 
     providers = current_user.providers.filter_by(is_active=True).all()
@@ -114,7 +114,7 @@ def add():
     return render_template('reminders/add.html',
                          recurrence_types=RECURRENCE_TYPES,
                          providers=providers,
-                         months=MONTHS_FR,
+                         months=MONTHS,
                          years=years)
 
 
@@ -124,11 +124,11 @@ def detail(reminder_id):
     reminder = Reminder.query.get_or_404(reminder_id)
 
     if reminder.user_id != current_user.id:
-        flash('Vous n\'avez pas accès à ce rappel.', 'danger')
+        flash('You do not have access to this reminder.', 'danger')
         return redirect(url_for('reminders.list'))
 
-    # Récupérer TOUS les rappels de la même prestation (même provider_id et même name)
-    # pour afficher tous les documents associés
+    # Retrieve ALL reminders for the same service (same provider_id and same name)
+    # to display all associated documents
     related_reminder_ids = db.session.query(Reminder.id).filter(
         Reminder.user_id == current_user.id,
         Reminder.provider_id == reminder.provider_id,
@@ -136,12 +136,12 @@ def detail(reminder_id):
     ).all()
     related_reminder_ids = [r[0] for r in related_reminder_ids]
 
-    # Récupérer les documents avec filtres
+    # Retrieve documents with filters
     filter_type = request.args.get('doc_type', None)
     filter_year = request.args.get('year', None, type=int)
     search = request.args.get('search', None)
 
-    # Requête sur tous les documents des rappels liés (actifs ET archivés)
+    # Query all documents from related reminders (active AND archived)
     query = ReminderDocument.query.filter(
         ReminderDocument.reminder_id.in_(related_reminder_ids)
     )
@@ -155,14 +155,14 @@ def detail(reminder_id):
 
     documents = query.order_by(ReminderDocument.year.desc(), ReminderDocument.month.desc(), ReminderDocument.document_date.desc()).all()
 
-    # Obtenir les années disponibles pour le filtre
+    # Get available years for filter
     years = db.session.query(ReminderDocument.year).filter(
         ReminderDocument.reminder_id.in_(related_reminder_ids),
         ReminderDocument.year.isnot(None)
     ).distinct().order_by(ReminderDocument.year.desc()).all()
     years = [y[0] for y in years]
 
-    # Compter les documents par type (sur tous les rappels liés)
+    # Count documents by type (across all related reminders)
     doc_counts = {}
     for doc_type, _, _, _ in DOCUMENT_TYPES:
         doc_counts[doc_type] = ReminderDocument.query.filter(
@@ -170,7 +170,7 @@ def detail(reminder_id):
             ReminderDocument.document_type == doc_type
         ).count()
 
-    # Calculer la taille totale des documents (sur tous les rappels liés)
+    # Calculate total size of documents (across all related reminders)
     total_size = db.session.query(db.func.sum(ReminderDocument.file_size)).filter(
         ReminderDocument.reminder_id.in_(related_reminder_ids)
     ).scalar() or 0
@@ -194,7 +194,7 @@ def edit(reminder_id):
     reminder = Reminder.query.get_or_404(reminder_id)
 
     if reminder.user_id != current_user.id:
-        flash('Vous n\'avez pas accès à ce rappel.', 'danger')
+        flash('You do not have access to this reminder.', 'danger')
         return redirect(url_for('reminders.list'))
 
     if request.method == 'POST':
@@ -208,7 +208,7 @@ def edit(reminder_id):
 
         db.session.commit()
 
-        flash(f'Le rappel "{reminder.name}" a été modifié.', 'success')
+        flash(f'The reminder "{reminder.name}" has been updated.', 'success')
         return redirect(url_for('reminders.detail', reminder_id=reminder.id))
 
     providers = current_user.providers.filter_by(is_active=True).all()
@@ -219,7 +219,7 @@ def edit(reminder_id):
                          reminder=reminder,
                          recurrence_types=RECURRENCE_TYPES,
                          providers=providers,
-                         months=MONTHS_FR,
+                         months=MONTHS,
                          years=years)
 
 
@@ -229,14 +229,14 @@ def delete(reminder_id):
     reminder = Reminder.query.get_or_404(reminder_id)
 
     if reminder.user_id != current_user.id:
-        flash('Vous n\'avez pas accès à ce rappel.', 'danger')
+        flash('You do not have access to this reminder.', 'danger')
         return redirect(url_for('reminders.list'))
 
     name = reminder.name
     db.session.delete(reminder)
     db.session.commit()
 
-    flash(f'Le rappel "{name}" a été supprimé.', 'success')
+    flash(f'The reminder "{name}" has been deleted.', 'success')
     return redirect(url_for('reminders.list'))
 
 
@@ -246,7 +246,7 @@ def toggle_appointment(reminder_id):
     reminder = Reminder.query.get_or_404(reminder_id)
 
     if reminder.user_id != current_user.id:
-        flash('Vous n\'avez pas accès à ce rappel.', 'danger')
+        flash('You do not have access to this reminder.', 'danger')
         return redirect(url_for('reminders.list'))
 
     reminder.appointment_booked = not reminder.appointment_booked
@@ -260,8 +260,8 @@ def toggle_appointment(reminder_id):
 
     db.session.commit()
 
-    status = "pris" if reminder.appointment_booked else "annulé"
-    flash(f'Rendez-vous {status}.', 'success')
+    status = "booked" if reminder.appointment_booked else "cancelled"
+    flash(f'Appointment {status}.', 'success')
 
     return redirect(url_for('reminders.detail', reminder_id=reminder.id))
 
@@ -272,18 +272,18 @@ def archive(reminder_id):
     reminder = Reminder.query.get_or_404(reminder_id)
 
     if reminder.user_id != current_user.id:
-        flash('Vous n\'avez pas accès à ce rappel.', 'danger')
+        flash('You do not have access to this reminder.', 'danger')
         return redirect(url_for('reminders.list'))
 
-    # Archiver le rappel actuel
+    # Archive current reminder
     reminder.is_active = False
     reminder.archived_at = datetime.utcnow()
 
-    # Créer nouveau rappel si récurrent
+    # Create new reminder if recurring
     if reminder.recurrence != 'once':
         from dateutil.relativedelta import relativedelta
 
-        # Calculer date du prochain rappel
+        # Calculate date of next reminder
         current_date = date(reminder.reminder_year, reminder.reminder_month, 1)
 
         if reminder.recurrence == 'weekly':
@@ -302,7 +302,7 @@ def archive(reminder_id):
         next_year = next_date.year
         next_month = next_date.month
 
-        # Créer nouveau rappel
+        # Create new reminder
         new_reminder = Reminder(
             user_id=reminder.user_id,
             provider_id=reminder.provider_id,
@@ -319,7 +319,7 @@ def archive(reminder_id):
 
     db.session.commit()
 
-    flash(f'Le rappel "{reminder.name}" a été archivé.', 'success')
+    flash(f'The reminder "{reminder.name}" has been archived.', 'success')
     return redirect(url_for('reminders.list'))
 
 
@@ -329,20 +329,20 @@ def unarchive(reminder_id):
     reminder = Reminder.query.get_or_404(reminder_id)
 
     if reminder.user_id != current_user.id:
-        flash('Vous n\'avez pas accès à ce rappel.', 'danger')
+        flash('You do not have access to this reminder.', 'danger')
         return redirect(url_for('reminders.list'))
 
-    # Désarchiver le rappel
+    # Unarchive the reminder
     reminder.is_active = True
     reminder.archived_at = None
 
     db.session.commit()
 
-    flash(f'Le rappel "{reminder.name}" a été désarchivé.', 'success')
+    flash(f'The reminder "{reminder.name}" has been unarchived.', 'success')
     return redirect(url_for('reminders.list'))
 
 
-# ==================== GESTION DES DOCUMENTS ====================
+# ==================== DOCUMENT MANAGEMENT ====================
 
 @bp.route('/<int:reminder_id>/documents/add', methods=['GET', 'POST'])
 @login_required
@@ -351,7 +351,7 @@ def add_document(reminder_id):
     reminder = Reminder.query.get_or_404(reminder_id)
 
     if reminder.user_id != current_user.id:
-        flash('Vous n\'avez pas accès à ce rappel.', 'danger')
+        flash('You do not have access to this reminder.', 'danger')
         return redirect(url_for('reminders.list'))
 
     if request.method == 'POST':
@@ -366,7 +366,7 @@ def add_document(reminder_id):
 
         document_date = datetime.strptime(document_date_str, '%Y-%m-%d').date() if document_date_str else None
 
-        # Auto-remplir année et mois depuis la date si non fournis
+        # Auto-fill year and month from date if not provided
         if document_date and not year:
             year = document_date.year
         if document_date and not month:
@@ -383,7 +383,7 @@ def add_document(reminder_id):
             month=month
         )
 
-        # Gestion du fichier avec validation de sécurité
+        # File handling with security validation
         if 'file' in request.files:
             file = request.files['file']
             if file and file.filename:
@@ -400,7 +400,7 @@ def add_document(reminder_id):
         db.session.add(document)
         db.session.commit()
 
-        flash(f'Le document "{name}" a été ajouté avec succès !', 'success')
+        flash(f'The document "{name}" has been added successfully!', 'success')
         return redirect(url_for('reminders.detail', reminder_id=reminder_id))
 
     current_year = datetime.now().year
@@ -409,7 +409,7 @@ def add_document(reminder_id):
     return render_template('reminders/add_document.html',
                          reminder=reminder,
                          document_types=DOCUMENT_TYPES,
-                         months=MONTHS_FR,
+                         months=MONTHS,
                          years=years)
 
 
@@ -419,11 +419,11 @@ def view_document(document_id):
     document = ReminderDocument.query.get_or_404(document_id)
 
     if document.user_id != current_user.id:
-        flash('Vous n\'avez pas accès à ce document.', 'danger')
+        flash('You do not have access to this document.', 'danger')
         return redirect(url_for('reminders.list'))
 
     if not document.file_data:
-        flash('Ce document n\'a pas de fichier attaché.', 'warning')
+        flash('This document does not have an attached file.', 'warning')
         return redirect(url_for('reminders.detail', reminder_id=document.reminder_id))
 
     return Response(
@@ -439,11 +439,11 @@ def download_document(document_id):
     document = ReminderDocument.query.get_or_404(document_id)
 
     if document.user_id != current_user.id:
-        flash('Vous n\'avez pas accès à ce document.', 'danger')
+        flash('You do not have access to this document.', 'danger')
         return redirect(url_for('reminders.list'))
 
     if not document.file_data:
-        flash('Ce document n\'a pas de fichier attaché.', 'warning')
+        flash('This document does not have an attached file.', 'warning')
         return redirect(url_for('reminders.detail', reminder_id=document.reminder_id))
 
     return Response(
@@ -459,7 +459,7 @@ def edit_document(document_id):
     document = ReminderDocument.query.get_or_404(document_id)
 
     if document.user_id != current_user.id:
-        flash('Vous n\'avez pas accès à ce document.', 'danger')
+        flash('You do not have access to this document.', 'danger')
         return redirect(url_for('reminders.list'))
 
     if request.method == 'POST':
@@ -472,7 +472,7 @@ def edit_document(document_id):
         document_date_str = request.form.get('document_date')
         document.document_date = datetime.strptime(document_date_str, '%Y-%m-%d').date() if document_date_str else None
 
-        # Gestion du fichier avec validation de sécurité
+        # File handling with security validation
         if 'file' in request.files:
             file = request.files['file']
             if file and file.filename:
@@ -488,7 +488,7 @@ def edit_document(document_id):
 
         db.session.commit()
 
-        flash(f'Le document "{document.name}" a été mis à jour.', 'success')
+        flash(f'The document "{document.name}" has been updated.', 'success')
         return redirect(url_for('reminders.detail', reminder_id=document.reminder_id))
 
     current_year = datetime.now().year
@@ -498,7 +498,7 @@ def edit_document(document_id):
                          document=document,
                          reminder=document.reminder,
                          document_types=DOCUMENT_TYPES,
-                         months=MONTHS_FR,
+                         months=MONTHS,
                          years=years)
 
 
@@ -508,7 +508,7 @@ def delete_document(document_id):
     document = ReminderDocument.query.get_or_404(document_id)
 
     if document.user_id != current_user.id:
-        flash('Vous n\'avez pas accès à ce document.', 'danger')
+        flash('You do not have access to this document.', 'danger')
         return redirect(url_for('reminders.list'))
 
     reminder_id = document.reminder_id
@@ -516,5 +516,5 @@ def delete_document(document_id):
     db.session.delete(document)
     db.session.commit()
 
-    flash(f'Le document "{document_name}" a été supprimé.', 'success')
+    flash(f'The document "{document_name}" has been deleted.', 'success')
     return redirect(url_for('reminders.detail', reminder_id=reminder_id))

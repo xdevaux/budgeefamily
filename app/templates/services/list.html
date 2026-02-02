@@ -1,16 +1,16 @@
 {% extends "base.html" %}
 
-{% block title %}Services - Budgee Family{% endblock %}
+{% block title %}{{ _('Services') }} - Budgee Family{% endblock %}
 
 {% block content %}
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h2><i class="fas fa-store"></i> Services</h2>
+            <h2><i class="fas fa-store"></i> {{ _('Services') }}</h2>
             {% if not current_user.is_premium() %}
                 <small class="text-muted">
                     <i class="fas fa-info-circle"></i>
-                    {{ current_user.get_custom_services_count() }}/5 services personnalisés utilisés
+                    {{ _('%(count)s/5 custom services used', count=current_user.get_custom_services_count()) }}
                 </small>
             {% endif %}
         </div>
@@ -26,21 +26,21 @@
             </div>
             {% if current_user.is_premium() %}
                 <div class="btn-group">
-                    <a href="{{ url_for('exports.export_services', format='excel') }}" class="btn btn-outline-success" title="Exporter en Excel">
+                    <a href="{{ url_for('exports.export_services', format='excel') }}" class="btn btn-outline-success" title="{{ _('Export to Excel') }}">
                         <i class="fas fa-file-excel"></i>
                     </a>
-                    <a href="{{ url_for('exports.export_services', format='pdf') }}" class="btn btn-outline-danger" title="Exporter en PDF">
+                    <a href="{{ url_for('exports.export_services', format='pdf') }}" class="btn btn-outline-danger" title="{{ _('Export to PDF') }}">
                         <i class="fas fa-file-pdf"></i>
                     </a>
                 </div>
             {% endif %}
             {% if current_user.can_create_custom_service() %}
                 <a href="{{ url_for('services.add') }}" class="btn btn-primary">
-                    <i class="fas fa-plus"></i> Créer un service
+                    <i class="fas fa-plus"></i> {{ _('Create a service') }}
                 </a>
             {% else %}
-                <button class="btn btn-secondary" disabled title="Limite atteinte (5/5)">
-                    <i class="fas fa-lock"></i> Limite atteinte
+                <button class="btn btn-secondary" disabled title="{{ _('Limit reached (5/5)') }}">
+                    <i class="fas fa-lock"></i> {{ _('Limit reached') }}
                 </button>
             {% endif %}
         </div>
@@ -52,14 +52,14 @@
         <div class="alert alert-warning border-0 shadow-sm mb-4">
             <div class="row align-items-center">
                 <div class="col-md-8">
-                    <h5 class="alert-heading"><i class="fas fa-exclamation-triangle"></i> Limite atteinte</h5>
+                    <h5 class="alert-heading"><i class="fas fa-exclamation-triangle"></i> {{ _('Limit reached') }}</h5>
                     <p class="mb-0">
-                        Vous avez atteint la limite de 5 services personnalisés pour le plan gratuit. Passez au plan Premium pour créer un nombre illimité de services.
+                        {{ _('You have reached the limit of 5 custom services for the free plan. Upgrade to Premium to create unlimited services.') }}
                     </p>
                 </div>
                 <div class="col-md-4 text-end">
                     <a href="{{ url_for('main.pricing') }}" class="btn btn-warning">
-                        <i class="fas fa-crown"></i> Passer à Premium
+                        <i class="fas fa-crown"></i> {{ _('Upgrade to Premium') }}
                     </a>
                 </div>
             </div>
@@ -68,14 +68,14 @@
         <div class="alert alert-info border-0 shadow-sm mb-4">
             <div class="row align-items-center">
                 <div class="col-md-8">
-                    <h5 class="alert-heading"><i class="fas fa-info-circle"></i> Services personnalisés</h5>
+                    <h5 class="alert-heading"><i class="fas fa-info-circle"></i> {{ _('Custom services') }}</h5>
                     <p class="mb-0">
-                        Vous pouvez créer jusqu'à 5 services personnalisés avec le plan gratuit. Passez à Premium pour un nombre illimité.
+                        {{ _('You can create up to 5 custom services with the free plan. Upgrade to Premium for unlimited.') }}
                     </p>
                 </div>
                 <div class="col-md-4 text-end">
                     <a href="{{ url_for('main.pricing') }}" class="btn btn-outline-primary">
-                        <i class="fas fa-crown"></i> Découvrir Premium
+                        <i class="fas fa-crown"></i> {{ _('Discover Premium') }}
                     </a>
                 </div>
             </div>
@@ -87,7 +87,7 @@
     {% if custom_services %}
     <div class="mb-5">
         <h4 class="mb-3">
-            <i class="fas fa-user"></i> Mes services personnalisés
+            <i class="fas fa-user"></i> {{ _('My custom services') }}
             <span class="badge bg-primary">{{ custom_services|length }}</span>
         </h4>
 
@@ -110,17 +110,18 @@
                                 <h5 class="mb-0">
                                     {{ service.name }}
                                     {% if not service.is_active %}
-                                        <span class="badge bg-secondary">Désactivé</span>
+                                        <span class="badge bg-secondary">{{ _('Disabled') }}</span>
                                     {% endif %}
                                 </h5>
                                 <small class="text-muted">
-                                    {{ service.plans|length }} formule{{ 's' if service.plans|length > 1 else '' }}
+                                    {{ service.plans|length }} {{ _('plan') if service.plans|length == 1 else _('plans') }}
                                 </small>
                             </div>
                         </div>
 
-                        {% if service.description %}
-                        <p class="text-muted mb-3 small">{{ service.description[:100] }}{% if service.description|length > 100 %}...{% endif %}</p>
+                        {% set desc = service | get_translated_description %}
+                        {% if desc %}
+                        <p class="text-muted mb-3 small">{{ desc[:100] }}{% if desc|length > 100 %}...{% endif %}</p>
                         {% endif %}
 
                         {% if service.category %}
@@ -134,23 +135,23 @@
                         <!-- Actions -->
                         <div class="btn-group w-100 mt-2">
                             <a href="{{ url_for('services.plans', service_id=service.id) }}"
-                               class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" title="Voir les formules">
+                               class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" title="{{ _('View plans') }}">
                                 <i class="fas fa-list"></i>
                             </a>
                             <a href="{{ url_for('services.edit', service_id=service.id) }}"
-                               class="btn btn-sm btn-outline-warning" data-bs-toggle="tooltip" title="Modifier">
+                               class="btn btn-sm btn-outline-warning" data-bs-toggle="tooltip" title="{{ _('Edit') }}">
                                 <i class="fas fa-edit"></i>
                             </a>
                             <form method="POST" action="{{ url_for('services.delete', service_id=service.id) }}"
-                                  onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce service ?')" class="d-inline">
-                                <button type="submit" class="btn btn-sm btn-outline-danger" data-bs-toggle="tooltip" title="Supprimer">
+                                  onsubmit="return confirm('{{ _('Are you sure you want to delete this service?') }}')" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-outline-danger" data-bs-toggle="tooltip" title="{{ _('Delete') }}">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </form>
                         </div>
                         {% if service.website_url %}
-                        <a href="{{ service.website_url }}" target="_blank" class="btn btn-sm btn-outline-info w-100 mt-2" data-bs-toggle="tooltip" title="Visiter le site">
-                            <i class="fas fa-external-link-alt"></i> Site web
+                        <a href="{{ service.website_url }}" target="_blank" class="btn btn-sm btn-outline-info w-100 mt-2" data-bs-toggle="tooltip" title="{{ _('Visit website') }}">
+                            <i class="fas fa-external-link-alt"></i> {{ _('Website') }}
                         </a>
                         {% endif %}
                     </div>
@@ -166,12 +167,12 @@
                     <table class="table table-hover mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th>Service</th>
-                                <th>Description</th>
-                                <th>Catégorie</th>
-                                <th>Formules</th>
-                                <th>Statut</th>
-                                <th class="text-end">Actions</th>
+                                <th>{{ _('Service') }}</th>
+                                <th>{{ _('Description') }}</th>
+                                <th>{{ _('Category') }}</th>
+                                <th>{{ _('Plans') }}</th>
+                                <th>{{ _('Status') }}</th>
+                                <th class="text-end">{{ _('Actions') }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -191,7 +192,8 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <small class="text-muted">{{ service.description[:80] if service.description else '-' }}{% if service.description and service.description|length > 80 %}...{% endif %}</small>
+                                    {% set desc = service | get_translated_description %}
+                                    <small class="text-muted">{{ desc[:80] if desc else \'-\' }}{% if desc and desc|length > 80 %}...{% endif %}</small>
                                 </td>
                                 <td>
                                     {% if service.category %}
@@ -204,34 +206,34 @@
                                 </td>
                                 <td>
                                     <span class="badge bg-info">
-                                        {{ service.plans|length }} formule{{ 's' if service.plans|length > 1 else '' }}
+                                        {{ service.plans|length }} {{ _('plan') if service.plans|length == 1 else _('plans') }}
                                     </span>
                                 </td>
                                 <td>
                                     {% if service.is_active %}
-                                        <span class="badge bg-success">Actif</span>
+                                        <span class="badge bg-success">{{ _('Active') }}</span>
                                     {% else %}
-                                        <span class="badge bg-secondary">Désactivé</span>
+                                        <span class="badge bg-secondary">{{ _('Disabled') }}</span>
                                     {% endif %}
                                 </td>
                                 <td class="text-end">
                                     <div class="btn-group">
                                         <a href="{{ url_for('services.plans', service_id=service.id) }}"
-                                           class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" title="Voir les formules">
+                                           class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" title="{{ _('View plans') }}">
                                             <i class="fas fa-list"></i>
                                         </a>
                                         {% if service.website_url %}
-                                        <a href="{{ service.website_url }}" target="_blank" class="btn btn-sm btn-outline-info" data-bs-toggle="tooltip" title="Visiter le site">
+                                        <a href="{{ service.website_url }}" target="_blank" class="btn btn-sm btn-outline-info" data-bs-toggle="tooltip" title="{{ _('Visit website') }}">
                                             <i class="fas fa-external-link-alt"></i>
                                         </a>
                                         {% endif %}
                                         <a href="{{ url_for('services.edit', service_id=service.id) }}"
-                                           class="btn btn-sm btn-outline-warning" data-bs-toggle="tooltip" title="Modifier">
+                                           class="btn btn-sm btn-outline-warning" data-bs-toggle="tooltip" title="{{ _('Edit') }}">
                                             <i class="fas fa-edit"></i>
                                         </a>
                                         <form method="POST" action="{{ url_for('services.delete', service_id=service.id) }}"
-                                              onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce service ?')" class="d-inline">
-                                            <button type="submit" class="btn btn-sm btn-outline-danger" data-bs-toggle="tooltip" title="Supprimer">
+                                              onsubmit="return confirm('{{ _('Are you sure you want to delete this service?') }}')" class="d-inline">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" data-bs-toggle="tooltip" title="{{ _('Delete') }}">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </form>
@@ -251,7 +253,7 @@
     {% if global_services %}
     <div class="mb-5">
         <h4 class="mb-3">
-            <i class="fas fa-globe"></i> Services disponibles
+            <i class="fas fa-globe"></i> {{ _('Available services') }}
             <span class="badge bg-primary">{{ global_services|length }}</span>
         </h4>
 
@@ -273,13 +275,14 @@
                             <div class="flex-grow-1">
                                 <h5 class="mb-0">{{ service.name }}</h5>
                                 <small class="text-muted">
-                                    {{ service.plans|length }} formule{{ 's' if service.plans|length > 1 else '' }}
+                                    {{ service.plans|length }} {{ _('plan') if service.plans|length == 1 else _('plans') }}
                                 </small>
                             </div>
                         </div>
 
-                        {% if service.description %}
-                        <p class="text-muted mb-3 small">{{ service.description[:100] }}{% if service.description|length > 100 %}...{% endif %}</p>
+                        {% set desc = service | get_translated_description %}
+                        {% if desc %}
+                        <p class="text-muted mb-3 small">{{ desc[:100] }}{% if desc|length > 100 %}...{% endif %}</p>
                         {% endif %}
 
                         {% if service.category %}
@@ -292,23 +295,23 @@
 
                         {% if current_user.is_premium() %}
                         <div class="btn-group w-100">
-                            <a href="{{ url_for('services.plans', service_id=service.id) }}" class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" title="Voir les formules">
+                            <a href="{{ url_for('services.plans', service_id=service.id) }}" class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" title="{{ _('View plans') }}">
                                 <i class="fas fa-list"></i>
                             </a>
                             <form method="POST" action="{{ url_for('services.customize', service_id=service.id) }}" class="flex-fill">
-                                <button type="submit" class="btn btn-sm btn-outline-warning w-100" data-bs-toggle="tooltip" title="Personnaliser ce service">
+                                <button type="submit" class="btn btn-sm btn-outline-warning w-100" data-bs-toggle="tooltip" title="{{ _('Customize this service') }}">
                                     <i class="fas fa-edit"></i>
                                 </button>
                             </form>
-                            <form method="POST" action="{{ url_for('services.hide', service_id=service.id) }}" class="flex-fill" onsubmit="return confirm('Masquer ce service ?')">
-                                <button type="submit" class="btn btn-sm btn-outline-danger w-100" data-bs-toggle="tooltip" title="Masquer ce service">
+                            <form method="POST" action="{{ url_for('services.hide', service_id=service.id) }}" class="flex-fill" onsubmit="return confirm('{{ _('Hide this service?') }}')">
+                                <button type="submit" class="btn btn-sm btn-outline-danger w-100" data-bs-toggle="tooltip" title="{{ _('Hide this service') }}">
                                     <i class="fas fa-eye-slash"></i>
                                 </button>
                             </form>
                         </div>
                         {% else %}
-                        <a href="{{ url_for('services.plans', service_id=service.id) }}" class="btn btn-sm btn-outline-primary w-100" data-bs-toggle="tooltip" title="Voir les formules">
-                            <i class="fas fa-list"></i> Formules
+                        <a href="{{ url_for('services.plans', service_id=service.id) }}" class="btn btn-sm btn-outline-primary w-100" data-bs-toggle="tooltip" title="{{ _('View plans') }}">
+                            <i class="fas fa-list"></i> {{ _('Plans') }}
                         </a>
                         {% endif %}
                     </div>
@@ -324,11 +327,11 @@
                     <table class="table table-hover mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th>Service</th>
-                                <th>Description</th>
-                                <th>Catégorie</th>
-                                <th>Formules</th>
-                                <th class="text-end">Actions</th>
+                                <th>{{ _('Service') }}</th>
+                                <th>{{ _('Description') }}</th>
+                                <th>{{ _('Category') }}</th>
+                                <th>{{ _('Plans') }}</th>
+                                <th class="text-end">{{ _('Actions') }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -348,7 +351,8 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <small class="text-muted">{{ service.description[:80] if service.description else '-' }}{% if service.description and service.description|length > 80 %}...{% endif %}</small>
+                                    {% set desc = service | get_translated_description %}
+                                    <small class="text-muted">{{ desc[:80] if desc else \'-\' }}{% if desc and desc|length > 80 %}...{% endif %}</small>
                                 </td>
                                 <td>
                                     {% if service.category %}
@@ -361,22 +365,22 @@
                                 </td>
                                 <td>
                                     <span class="badge bg-info">
-                                        {{ service.plans|length }} formule{{ 's' if service.plans|length > 1 else '' }}
+                                        {{ service.plans|length }} {{ _('plan') if service.plans|length == 1 else _('plans') }}
                                     </span>
                                 </td>
                                 <td class="text-end">
                                     <div class="btn-group">
-                                        <a href="{{ url_for('services.plans', service_id=service.id) }}" class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" title="Voir les formules">
+                                        <a href="{{ url_for('services.plans', service_id=service.id) }}" class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" title="{{ _('View plans') }}">
                                             <i class="fas fa-list"></i>
                                         </a>
                                         {% if current_user.is_premium() %}
                                         <form method="POST" action="{{ url_for('services.customize', service_id=service.id) }}" class="d-inline">
-                                            <button type="submit" class="btn btn-sm btn-outline-warning" data-bs-toggle="tooltip" title="Personnaliser ce service">
+                                            <button type="submit" class="btn btn-sm btn-outline-warning" data-bs-toggle="tooltip" title="{{ _('Customize this service') }}">
                                                 <i class="fas fa-edit"></i>
                                             </button>
                                         </form>
-                                        <form method="POST" action="{{ url_for('services.hide', service_id=service.id) }}" class="d-inline" onsubmit="return confirm('Masquer ce service ?')">
-                                            <button type="submit" class="btn btn-sm btn-outline-danger" data-bs-toggle="tooltip" title="Masquer ce service">
+                                        <form method="POST" action="{{ url_for('services.hide', service_id=service.id) }}" class="d-inline" onsubmit="return confirm('{{ _('Hide this service?') }}')">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" data-bs-toggle="tooltip" title="{{ _('Hide this service') }}">
                                                 <i class="fas fa-eye-slash"></i>
                                             </button>
                                         </form>

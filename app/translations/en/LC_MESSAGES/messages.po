@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-01-31 17:36+0100\n"
+"POT-Creation-Date: 2026-02-02 07:26+0100\n"
 "PO-Revision-Date: 2026-01-31 15:29+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -17,6 +17,715 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.17.0\n"
+
+# Cycle translations (for translate_cycle filter)
+#: app/__init__.py:137 app/templates/index.html:177
+#: app/templates/index.html:196 app/templates/index.html:215
+#: app/templates/revenues/add.html:73 app/templates/revenues/edit.html:72
+#: app/templates/subscriptions/add.html:78
+#: app/templates/subscriptions/add.html:196
+#: app/templates/subscriptions/edit.html:78
+#: app/templates/subscriptions/edit.html:188
+#: app/templates/subscriptions/list.html:79
+msgid "Mensuel"
+msgstr "Monthly"
+
+#: app/__init__.py:138 app/templates/index.html:230
+#: app/templates/index.html:234 app/templates/revenues/add.html:75
+#: app/templates/revenues/edit.html:74 app/templates/subscriptions/add.html:80
+#: app/templates/subscriptions/add.html:198
+#: app/templates/subscriptions/edit.html:80
+#: app/templates/subscriptions/edit.html:190
+#: app/templates/subscriptions/list.html:80
+msgid "Annuel"
+msgstr "Annual"
+
+#: app/__init__.py:139 app/templates/subscriptions/add.html:77
+#: app/templates/subscriptions/add.html:195
+#: app/templates/subscriptions/edit.html:77
+#: app/templates/subscriptions/edit.html:187
+msgid "Hebdomadaire"
+msgstr "Weekly"
+
+#: app/__init__.py:140 app/templates/revenues/add.html:74
+#: app/templates/revenues/edit.html:73 app/templates/subscriptions/add.html:79
+#: app/templates/subscriptions/add.html:197
+#: app/templates/subscriptions/edit.html:79
+#: app/templates/subscriptions/edit.html:189
+msgid "Trimestriel"
+msgstr "Quarterly"
+
+# Month abbreviations (for translate_month filter)
+#: app/__init__.py:159
+msgid "Janv."
+msgstr "Jan."
+
+#: app/__init__.py:160
+msgid "Fév."
+msgstr "Feb."
+
+#: app/__init__.py:161 app/routes/employers.py:39
+msgid "Mars"
+msgstr "March"
+
+#: app/__init__.py:162
+msgid "Avr."
+msgstr "Apr."
+
+#: app/__init__.py:163 app/routes/employers.py:40
+msgid "Mai"
+msgstr "May"
+
+#: app/__init__.py:164 app/routes/employers.py:40
+msgid "Juin"
+msgstr "June"
+
+#: app/__init__.py:165
+msgid "Juil."
+msgstr "Jul."
+
+#: app/__init__.py:166 app/routes/employers.py:40
+msgid "Août"
+msgstr "August"
+
+#: app/__init__.py:167
+msgid "Sept."
+msgstr "Sep."
+
+#: app/__init__.py:168
+msgid "Oct."
+msgstr "Oct."
+
+#: app/__init__.py:169
+msgid "Nov."
+msgstr "Nov."
+
+#: app/__init__.py:170
+msgid "Déc."
+msgstr "Dec."
+
+# Default Category Names
+#: app/__init__.py:180
+msgid "Alimentation"
+msgstr "Food"
+
+#: app/__init__.py:181
+msgid "Carburant"
+msgstr "Fuel"
+
+#: app/__init__.py:182
+msgid "Habillement"
+msgstr "Clothing"
+
+#: app/__init__.py:183
+msgid "Restaurant"
+msgstr "Restaurant"
+
+#: app/__init__.py:184
+msgid "Transport"
+msgstr "Transportation"
+
+#: app/__init__.py:185
+msgid "Santé & Pharmacie"
+msgstr "Health & Pharmacy"
+
+#: app/__init__.py:186
+msgid "Loisirs & Culture"
+msgstr "Leisure & Culture"
+
+#: app/__init__.py:187
+msgid "Maison & Jardin"
+msgstr "Home & Garden"
+
+#: app/__init__.py:188
+msgid "Électronique & High-tech"
+msgstr "Electronics & Tech"
+
+#: app/__init__.py:189
+msgid "Sport & Fitness"
+msgstr "Sports & Fitness"
+
+#: app/__init__.py:190
+msgid "Beauté & Cosmétiques"
+msgstr "Beauty & Cosmetics"
+
+#: app/__init__.py:191
+msgid "Éducation & Formation"
+msgstr "Education & Training"
+
+#: app/__init__.py:192
+msgid "Voyages & Hébergement"
+msgstr "Travel & Accommodation"
+
+#: app/__init__.py:193
+msgid "Cadeaux"
+msgstr "Gifts"
+
+#: app/__init__.py:194
+msgid "Animaux"
+msgstr "Pets"
+
+#: app/__init__.py:195 app/routes/employers.py:22 app/routes/employers.py:50
+#: app/routes/revenues.py:25 app/routes/revenues.py:34
+msgid "Autre"
+msgstr "Other"
+
+# Default Category Descriptions
+#: app/__init__.py:197
+msgid "Courses alimentaires, supermarché"
+msgstr "Groceries, supermarket"
+
+#: app/__init__.py:198
+msgid "Essence, diesel, station-service"
+msgstr "Gas, diesel, service station"
+
+#: app/__init__.py:199
+msgid "Vêtements, chaussures, accessoires"
+msgstr "Clothes, shoes, accessories"
+
+#: app/__init__.py:200
+msgid "Restaurants, fast-food, livraison"
+msgstr "Restaurants, fast-food, delivery"
+
+#: app/__init__.py:201
+msgid "Transports en commun, taxi, parking"
+msgstr "Public transport, taxi, parking"
+
+#: app/__init__.py:202
+msgid "Médicaments, pharmacie, soins"
+msgstr "Medications, pharmacy, healthcare"
+
+#: app/__init__.py:203
+msgid "Cinéma, concerts, musées, spectacles"
+msgstr "Cinema, concerts, museums, shows"
+
+#: app/__init__.py:204
+msgid "Bricolage, jardinage, décoration"
+msgstr "DIY, gardening, decoration"
+
+#: app/__init__.py:205
+msgid "Informatique, électronique, gadgets"
+msgstr "Computers, electronics, gadgets"
+
+#: app/__init__.py:206
+msgid "Équipement sportif, salle de sport"
+msgstr "Sports equipment, gym"
+
+#: app/__init__.py:207
+msgid "Coiffeur, esthétique, cosmétiques"
+msgstr "Hairdresser, beauty salon, cosmetics"
+
+#: app/__init__.py:208
+msgid "Livres, formations, cours"
+msgstr "Books, training, courses"
+
+#: app/__init__.py:209
+msgid "Hôtels, voyages, locations"
+msgstr "Hotels, travel, rentals"
+
+#: app/__init__.py:210
+msgid "Cadeaux pour occasions spéciales"
+msgstr "Gifts for special occasions"
+
+#: app/__init__.py:211
+msgid "Nourriture et soins pour animaux"
+msgstr "Pet food and care"
+
+#: app/__init__.py:212
+msgid "Dépenses diverses non catégorisées"
+msgstr "Miscellaneous uncategorized expenses"
+
+# Card Purchase Categories page - Python routes
+#: app/routes/card_purchase_categories.py:53
+msgid "Le nom de la catégorie est obligatoire."
+msgstr "The category name is required."
+
+#: app/routes/card_purchase_categories.py:70
+#, python-format
+msgid "La catégorie \"%(name)s\" a été créée avec succès."
+msgstr "Category \"%(name)s\" has been successfully created."
+
+#: app/routes/card_purchase_categories.py:84
+msgid "Vous ne pouvez modifier que vos propres catégories."
+msgstr "You can only edit your own categories."
+
+#: app/routes/card_purchase_categories.py:96
+#, python-format
+msgid "La catégorie \"%(name)s\" a été modifiée."
+msgstr "Category \"%(name)s\" has been updated."
+
+#: app/routes/card_purchase_categories.py:110
+msgid "Vous ne pouvez supprimer que vos propres catégories."
+msgstr "You can only delete your own categories."
+
+#: app/routes/card_purchase_categories.py:117
+#, python-format
+msgid "La catégorie \"%(name)s\" a été supprimée."
+msgstr "Category \"%(name)s\" has been deleted."
+
+# Checkbooks Page - Python
+#: app/routes/checkbooks.py:49
+msgid "Le numéro du premier chèque est requis."
+msgstr "The first check number is required."
+
+#: app/routes/checkbooks.py:58
+msgid "Le numéro de fin doit être supérieur au numéro de début."
+msgstr "The end number must be greater than the start number."
+
+#: app/routes/checkbooks.py:87
+#, python-format
+msgid "Chéquier \"%(name)s\" ajouté avec succès avec %(count)s chèques !"
+msgstr "Checkbook \"%(name)s\" added successfully with %(count)s checks!"
+
+#: app/routes/checkbooks.py:103 app/routes/checkbooks.py:136
+#: app/routes/checkbooks.py:162 app/routes/checkbooks.py:180
+#: app/routes/checkbooks.py:204
+msgid "Vous n'avez pas accès à ce chéquier."
+msgstr "You do not have access to this checkbook."
+
+#: app/routes/checkbooks.py:146
+msgid "Chéquier modifié avec succès !"
+msgstr "Checkbook updated successfully!"
+
+#: app/routes/checkbooks.py:168 app/routes/revenues.py:217
+#: app/routes/subscriptions.py:249
+msgid "activé"
+msgstr "enabled"
+
+#: app/routes/checkbooks.py:168 app/routes/revenues.py:217
+#: app/routes/subscriptions.py:249
+msgid "désactivé"
+msgstr "disabled"
+
+#: app/routes/checkbooks.py:169
+#, python-format
+msgid "Le chéquier \"%(name)s\" a été %(status)s."
+msgstr "Checkbook \"%(name)s\" has been %(status)s."
+
+#: app/routes/checkbooks.py:185
+msgid "Impossible de supprimer ce chéquier car il contient des chèques."
+msgstr "Cannot delete this checkbook because it contains checks."
+
+#: app/routes/checkbooks.py:192
+#, python-format
+msgid "Chéquier \"%(name)s\" supprimé avec succès !"
+msgstr "Checkbook \"%(name)s\" deleted successfully!"
+
+#: app/routes/checkbooks.py:211
+msgid "Aucun chèque disponible dans ce chéquier."
+msgstr "No checks available in this checkbook."
+
+#: app/routes/checkbooks.py:226
+msgid "Ce chèque n'est pas disponible."
+msgstr "This check is not available."
+
+#: app/routes/checkbooks.py:240
+#, python-format
+msgid "Chèque #%(number)s annulé avec succès !"
+msgstr "Check #%(number)s cancelled successfully!"
+
+#: app/routes/checkbooks.py:260
+#, python-format
+msgid "Chèque #%(number)s utilisé avec succès !"
+msgstr "Check #%(number)s used successfully!"
+
+#: app/routes/checkbooks.py:282 app/routes/checkbooks.py:348
+msgid "Vous n'avez pas accès à ce chèque."
+msgstr "You do not have access to this check."
+
+#: app/routes/checkbooks.py:287
+msgid ""
+"Vous ne pouvez pas modifier un chèque non utilisé. Veuillez l'utiliser "
+"d'abord."
+msgstr "You cannot edit an unused check. Please use it first."
+
+#: app/routes/checkbooks.py:335
+#, python-format
+msgid "Chèque #%(number)s modifié avec succès !"
+msgstr "Check #%(number)s updated successfully!"
+
+#: app/routes/checkbooks.py:364
+#, python-format
+msgid "Chèque #%(number)s supprimé avec succès !"
+msgstr "Check #%(number)s deleted successfully!"
+
+# Employers page - Python routes
+#: app/routes/employers.py:16
+msgid "CDI"
+msgstr "Permanent contract"
+
+#: app/routes/employers.py:17
+msgid "CDD"
+msgstr "Fixed-term contract"
+
+#: app/routes/employers.py:18
+msgid "Intérim"
+msgstr "Temporary work"
+
+#: app/routes/employers.py:19 app/routes/revenues.py:21
+msgid "Freelance"
+msgstr "Freelance"
+
+#: app/routes/employers.py:20
+msgid "Stage"
+msgstr "Internship"
+
+#: app/routes/employers.py:21
+msgid "Apprentissage"
+msgstr "Apprenticeship"
+
+#: app/routes/employers.py:28
+msgid "Contrat de travail"
+msgstr "Employment contract"
+
+#: app/routes/employers.py:29 app/templates/index.html:267
+msgid "Fiche de paie"
+msgstr "Pay slip"
+
+#: app/routes/employers.py:30
+msgid "Fiche de frais"
+msgstr "Expense report"
+
+#: app/routes/employers.py:31
+msgid "Attestation"
+msgstr "Certificate"
+
+#: app/routes/employers.py:32
+msgid "Avenant"
+msgstr "Amendment"
+
+#: app/routes/employers.py:33
+msgid "Autre document"
+msgstr "Other document"
+
+#: app/routes/employers.py:39
+msgid "Janvier"
+msgstr "January"
+
+#: app/routes/employers.py:39
+msgid "Février"
+msgstr "February"
+
+#: app/routes/employers.py:39
+msgid "Avril"
+msgstr "April"
+
+#: app/routes/employers.py:40
+msgid "Juillet"
+msgstr "July"
+
+#: app/routes/employers.py:41
+msgid "Septembre"
+msgstr "September"
+
+#: app/routes/employers.py:41
+msgid "Octobre"
+msgstr "October"
+
+#: app/routes/employers.py:41
+msgid "Novembre"
+msgstr "November"
+
+#: app/routes/employers.py:41
+msgid "Décembre"
+msgstr "December"
+
+# Flash messages
+#: app/routes/employers.py:127
+#, python-format
+msgid "L'employeur \"%(name)s\" a été ajouté avec succès !"
+msgstr "Employer \"%(name)s\" has been successfully added!"
+
+#: app/routes/employers.py:139 app/routes/employers.py:194
+#: app/routes/employers.py:246 app/routes/employers.py:265
+msgid "Vous n'avez pas accès à cet employeur."
+msgstr "You don't have access to this employer."
+
+#: app/routes/employers.py:232
+#, python-format
+msgid "L'employeur \"%(name)s\" a été mis à jour."
+msgstr "Employer \"%(name)s\" has been updated."
+
+#: app/routes/employers.py:253
+#, python-format
+msgid "L'employeur \"%(name)s\" a été supprimé."
+msgstr "Employer \"%(name)s\" has been deleted."
+
+#: app/routes/employers.py:314
+#, python-format
+msgid "Le document \"%(name)s\" a été ajouté avec succès !"
+msgstr "Document \"%(name)s\" has been successfully added!"
+
+#: app/routes/employers.py:333 app/routes/employers.py:353
+#: app/routes/employers.py:373 app/routes/employers.py:422
+msgid "Vous n'avez pas accès à ce document."
+msgstr "You don't have access to this document."
+
+#: app/routes/employers.py:337 app/routes/employers.py:357
+msgid "Ce document n'a pas de fichier attaché."
+msgstr "This document has no attached file."
+
+#: app/routes/employers.py:402
+#, python-format
+msgid "Le document \"%(name)s\" a été mis à jour."
+msgstr "Document \"%(name)s\" has been updated."
+
+#: app/routes/employers.py:430
+#, python-format
+msgid "Le document \"%(name)s\" a été supprimé."
+msgstr "Document \"%(name)s\" has been deleted."
+
+# Providers Page - Python
+#: app/routes/providers.py:56
+#, python-format
+msgid "Le prestataire \"%(name)s\" a été ajouté avec succès !"
+msgstr "Provider \"%(name)s\" has been added successfully!"
+
+#: app/routes/providers.py:68 app/routes/providers.py:93
+msgid "Vous n'avez pas accès à ce prestataire."
+msgstr "You do not have access to this provider."
+
+#: app/routes/providers.py:81
+#, python-format
+msgid "Le prestataire \"%(name)s\" a été modifié avec succès !"
+msgstr "Provider \"%(name)s\" has been updated successfully!"
+
+#: app/routes/providers.py:98
+msgid "Impossible de supprimer ce prestataire car des rappels y sont associés."
+msgstr "Cannot delete this provider because reminders are associated with it."
+
+#: app/routes/providers.py:105
+#, python-format
+msgid "Le prestataire \"%(name)s\" a été supprimé."
+msgstr "Provider \"%(name)s\" has been deleted."
+
+# Revenues page - Python routes
+#: app/routes/revenues.py:20
+msgid "Salaire"
+msgstr "Salary"
+
+#: app/routes/revenues.py:22
+msgid "Revenus locatifs"
+msgstr "Rental income"
+
+#: app/routes/revenues.py:23
+msgid "Investissements"
+msgstr "Investments"
+
+#: app/routes/revenues.py:24
+msgid "Pension/Retraite"
+msgstr "Pension/Retirement"
+
+#: app/routes/revenues.py:74
+msgid ""
+"Vous avez atteint la limite de revenus pour le plan gratuit. Passez au "
+"plan Premium pour ajouter des revenus illimités."
+msgstr ""
+"You have reached the revenue limit for the free plan. Upgrade to Premium "
+"to add unlimited revenues."
+
+#: app/routes/revenues.py:117
+msgid "Nouveau revenu ajouté"
+msgstr "New revenue added"
+
+#: app/routes/revenues.py:118
+#, python-format
+msgid "Votre revenu \"%(name)s\" a été ajouté avec succès."
+msgstr "Your revenue \"%(name)s\" has been successfully added."
+
+#: app/routes/revenues.py:127
+#, python-format
+msgid "Le revenu \"%(name)s\" a été ajouté avec succès !"
+msgstr "Revenue \"%(name)s\" has been successfully added!"
+
+#: app/routes/revenues.py:140 app/routes/revenues.py:177
+#: app/routes/revenues.py:203 app/routes/revenues.py:228
+msgid "Vous n'avez pas accès à ce revenu."
+msgstr "You don't have access to this revenue."
+
+#: app/routes/revenues.py:161
+#, python-format
+msgid "Le revenu \"%(name)s\" a été mis à jour."
+msgstr "Revenue \"%(name)s\" has been updated."
+
+#: app/routes/revenues.py:188
+#, python-format
+msgid "Le revenu \"%(name)s\" et toutes ses transactions ont été supprimés."
+msgstr "Revenue \"%(name)s\" and all its transactions have been deleted."
+
+#: app/routes/revenues.py:218
+#, python-format
+msgid "Le revenu \"%(name)s\" a été %(status)s."
+msgstr "Revenue \"%(name)s\" has been %(status)s."
+
+#: app/routes/services.py:61
+msgid "Vous avez atteint la limite de services personnalisés."
+msgstr "You have reached the custom services limit."
+
+#: app/routes/services.py:64
+#, python-format
+msgid ""
+"Vous avez atteint la limite de 5 services personnalisés pour le plan "
+"gratuit (%(count)s/5). Passez au plan Premium pour créer un nombre "
+"illimité de services."
+msgstr ""
+"You have reached the limit of 5 custom services for the free plan "
+"(%(count)s/5). Upgrade to Premium to create unlimited services."
+
+#: app/routes/services.py:104
+#, python-format
+msgid "Le service \"%(name)s\" a été créé avec succès !"
+msgstr "Service \"%(name)s\" has been successfully created!"
+
+#: app/routes/services.py:118 app/routes/services.py:161
+#: app/routes/services.py:179 app/routes/services.py:199
+msgid "Vous n'avez pas accès à ce service."
+msgstr "You don't have access to this service."
+
+#: app/routes/services.py:145
+#, python-format
+msgid "Le service \"%(name)s\" a été mis à jour."
+msgstr "Service \"%(name)s\" has been updated."
+
+#: app/routes/services.py:168
+#, python-format
+msgid "Le service \"%(name)s\" a été supprimé."
+msgstr "Service \"%(name)s\" has been deleted."
+
+#: app/routes/services.py:205
+msgid "Vous avez atteint la limite de plans personnalisés."
+msgstr "You have reached the custom plans limit."
+
+#: app/routes/services.py:208
+#, python-format
+msgid ""
+"Vous avez atteint la limite de 10 plans personnalisés pour le plan "
+"gratuit (%(count)s/10). Passez au plan Premium pour créer un nombre "
+"illimité de plans."
+msgstr ""
+"You have reached the limit of 10 custom plans for the free plan "
+"(%(count)s/10). Upgrade to Premium to create unlimited plans."
+
+#: app/routes/services.py:239
+#, python-format
+msgid ""
+"La formule \"%(plan_name)s\" a été ajoutée au service "
+"\"%(service_name)s\"."
+msgstr "Plan \"%(plan_name)s\" has been added to service \"%(service_name)s\"."
+
+#: app/routes/services.py:263
+msgid "Vous n'avez pas l'autorisation de modifier cette formule."
+msgstr "You don't have permission to edit this plan."
+
+#: app/routes/services.py:275
+#, python-format
+msgid "La formule \"%(name)s\" a été mise à jour."
+msgstr "Plan \"%(name)s\" has been updated."
+
+#: app/routes/services.py:299
+msgid "Vous n'avez pas l'autorisation de supprimer cette formule."
+msgstr "You don't have permission to delete this plan."
+
+#: app/routes/services.py:307
+#, python-format
+msgid "La formule \"%(name)s\" a été supprimée."
+msgstr "Plan \"%(name)s\" has been deleted."
+
+#: app/routes/services.py:317
+msgid "La personnalisation des services est réservée aux utilisateurs Premium."
+msgstr "Service customization is reserved for Premium users."
+
+#: app/routes/services.py:325
+msgid "Seuls les services par défaut peuvent être personnalisés."
+msgstr "Only default services can be customized."
+
+#: app/routes/services.py:331
+#, python-format
+msgid "Vous avez déjà un service nommé \"%(name)s\". Modifiez-le directement."
+msgstr "You already have a service named \"%(name)s\". Edit it directly."
+
+#: app/routes/services.py:365
+#, python-format
+msgid ""
+"Le service \"%(name)s\" et ses formules ont été dupliqués. Vous pouvez "
+"maintenant les personnaliser."
+msgstr ""
+"Service \"%(name)s\" and its plans have been duplicated. You can now "
+"customize them."
+
+#: app/routes/services.py:375
+msgid "Le masquage des services est réservé aux utilisateurs Premium."
+msgstr "Hiding services is reserved for Premium users."
+
+#: app/routes/services.py:383
+msgid "Seuls les services par défaut peuvent être masqués."
+msgstr "Only default services can be hidden."
+
+#: app/routes/services.py:390
+#, python-format
+msgid "Le service \"%(name)s\" a été masqué."
+msgstr "Service \"%(name)s\" has been hidden."
+
+#: app/routes/services.py:392
+#, python-format
+msgid "Le service \"%(name)s\" est déjà masqué."
+msgstr "Service \"%(name)s\" is already hidden."
+
+#: app/routes/services.py:403
+msgid "La gestion des services masqués est réservée aux utilisateurs Premium."
+msgstr "Managing hidden services is reserved for Premium users."
+
+#: app/routes/services.py:413
+#, python-format
+msgid "Le service \"%(name)s\" est de nouveau visible."
+msgstr "Service \"%(name)s\" is visible again."
+
+#: app/routes/services.py:415
+#, python-format
+msgid "Le service \"%(name)s\" n'était pas masqué."
+msgstr "Service \"%(name)s\" was not hidden."
+
+#: app/routes/subscriptions.py:99
+msgid ""
+"Vous avez atteint la limite d'abonnements pour le plan gratuit (5/5). "
+"Passez au plan Premium pour ajouter des abonnements illimités."
+msgstr ""
+"You have reached the subscription limit for the free plan (5/5). Upgrade "
+"to Premium to add unlimited subscriptions."
+
+#: app/routes/subscriptions.py:145
+msgid "Nouvel abonnement ajouté"
+msgstr "New subscription added"
+
+#: app/routes/subscriptions.py:146
+#, python-format
+msgid "Votre abonnement \"%(name)s\" a été ajouté avec succès."
+msgstr "Your subscription \"%(name)s\" has been successfully added."
+
+#: app/routes/subscriptions.py:155
+#, python-format
+msgid "L'abonnement \"%(name)s\" a été ajouté avec succès !"
+msgstr "Subscription \"%(name)s\" has been successfully added!"
+
+#: app/routes/subscriptions.py:169 app/routes/subscriptions.py:208
+#: app/routes/subscriptions.py:234 app/routes/subscriptions.py:260
+msgid "Vous n'avez pas accès à cet abonnement."
+msgstr "You don't have access to this subscription."
+
+#: app/routes/subscriptions.py:191
+#, python-format
+msgid "L'abonnement \"%(name)s\" a été mis à jour."
+msgstr "Subscription \"%(name)s\" has been updated."
+
+#: app/routes/subscriptions.py:219
+#, python-format
+msgid "L'abonnement \"%(name)s\" et toutes ses transactions ont été supprimés."
+msgstr "Subscription \"%(name)s\" and all its transactions have been deleted."
+
+#: app/routes/subscriptions.py:250
+#, python-format
+msgid "L'abonnement \"%(name)s\" a été %(status)s."
+msgstr "Subscription \"%(name)s\" has been %(status)s."
 
 #: app/templates/base.html:883 app/templates/base.html:952
 msgid "Admin"
@@ -43,7 +752,8 @@ msgstr "Dashboard"
 msgid "Revenus"
 msgstr "Income"
 
-#: app/templates/base.html:903
+#: app/templates/base.html:903 app/templates/revenues/list.html:3
+#: app/templates/revenues/list.html:8
 msgid "Mes revenus"
 msgstr "My income"
 
@@ -55,7 +765,9 @@ msgstr "Employers"
 msgid "Dépenses"
 msgstr "Expenses"
 
-#: app/templates/base.html:913
+# Checkbooks Page - Templates
+#: app/templates/base.html:913 app/templates/checkbooks/list.html:3
+#: app/templates/checkbooks/list.html:9
 msgid "Mes chéquiers"
 msgstr "My checkbooks"
 
@@ -68,7 +780,8 @@ msgid "Mes rappels"
 msgstr "My reminders"
 
 #: app/templates/base.html:917 app/templates/base.html:928
-#: app/templates/base.html:965
+#: app/templates/base.html:965 app/templates/categories/list.html:3
+#: app/templates/categories/list.html:9
 msgid "Catégories"
 msgstr "Categories"
 
@@ -76,15 +789,18 @@ msgstr "Categories"
 msgid "Gérer les prestataires pour mes rappels"
 msgstr "Manage providers for my reminders"
 
-#: app/templates/base.html:923
+#: app/templates/base.html:923 app/templates/categories/list.html:175
+#: app/templates/categories/list.html:325
 msgid "Abonnements"
 msgstr "Subscriptions"
 
-#: app/templates/base.html:926
+#: app/templates/base.html:926 app/templates/subscriptions/list.html:3
+#: app/templates/subscriptions/list.html:8
 msgid "Mes abonnements"
 msgstr "My subscriptions"
 
 #: app/templates/base.html:929 app/templates/base.html:966
+#: app/templates/services/list.html:3 app/templates/services/list.html:9
 msgid "Services"
 msgstr "Services"
 
@@ -194,7 +910,9 @@ msgid ""
 " brefs délais."
 msgstr "Fill out the form below and we will get back to you as soon as possible."
 
-#: app/templates/contact.html:29
+#: app/templates/categories/add.html:64 app/templates/categories/edit.html:79
+#: app/templates/contact.html:29 app/templates/employers/add.html:44
+#: app/templates/employers/edit.html:58
 msgid "Site web"
 msgstr "Website"
 
@@ -248,7 +966,9 @@ msgstr "Average response time: 24-48 hours"
 
 #: app/templates/auth/login.html:19 app/templates/auth/profile.html:113
 #: app/templates/auth/register.html:26 app/templates/contact.html:133
-#: app/templates/pricing.html:411
+#: app/templates/employers/add.html:89 app/templates/employers/edit.html:103
+#: app/templates/pricing.html:411 app/templates/providers/add.html:36
+#: app/templates/providers/edit.html:36 app/templates/providers/list.html:47
 msgid "Email"
 msgstr "Email"
 
@@ -390,13 +1110,10 @@ msgstr "Detailed statistics"
 msgid "Analysez vos dépenses par catégorie"
 msgstr "Analyze your expenses by category"
 
-#: app/templates/index.html:177 app/templates/index.html:196
-#: app/templates/index.html:215
-msgid "Mensuel"
-msgstr "Monthly"
-
 #: app/templates/index.html:181 app/templates/index.html:200
 #: app/templates/index.html:219 app/templates/index.html:238
+#: app/templates/revenues/detail.html:87 app/templates/revenues/list.html:70
+#: app/templates/subscriptions/list.html:82
 msgid "Prochain"
 msgstr "Next"
 
@@ -404,17 +1121,9 @@ msgstr "Next"
 msgid "Standard"
 msgstr "Standard"
 
-#: app/templates/index.html:230 app/templates/index.html:234
-msgid "Annuel"
-msgstr "Annual"
-
 #: app/templates/index.html:247
 msgid "4 abonnements actifs"
 msgstr "4 active subscriptions"
-
-#: app/templates/index.html:267
-msgid "Fiche de paie"
-msgstr "Pay slip"
 
 #: app/templates/index.html:269
 msgid "Salaire - Janvier 2026"
@@ -706,7 +1415,10 @@ msgid ""
 "L'ensemble des contenus présents sur le Site (textes, images, graphismes,"
 " logos, icônes, sons, logiciels) est la propriété exclusive de LINKINFO "
 "ou de ses partenaires, sauf mention contraire."
-msgstr "All content on the Site (texts, images, graphics, logos, icons, sounds, software) is the exclusive property of LINKINFO or its partners, unless otherwise stated."
+msgstr ""
+"All content on the Site (texts, images, graphics, logos, icons, sounds, "
+"software) is the exclusive property of LINKINFO or its partners, unless "
+"otherwise stated."
 
 #: app/templates/mentions_legales.html:46
 msgid ""
@@ -714,7 +1426,11 @@ msgid ""
 " de tout ou partie des éléments du Site, quel que soit le moyen ou le "
 "procédé utilisé, est interdite, sauf autorisation écrite préalable de "
 "LINKINFO."
-msgstr "Any reproduction, representation, modification, publication, or adaptation of all or part of the elements of the Site, regardless of the means or process used, is prohibited without prior written authorization from LINKINFO."
+msgstr ""
+"Any reproduction, representation, modification, publication, or "
+"adaptation of all or part of the elements of the Site, regardless of the "
+"means or process used, is prohibited without prior written authorization "
+"from LINKINFO."
 
 #: app/templates/mentions_legales.html:47
 msgid ""
@@ -722,7 +1438,11 @@ msgid ""
 "éléments qu'il contient sera considérée comme constitutive d'une "
 "contrefaçon et poursuivie conformément aux dispositions des articles "
 "L.335-2 et suivants du Code de Propriété Intellectuelle."
-msgstr "Any unauthorized use of the Site or any of its elements will be considered as counterfeiting and prosecuted in accordance with the provisions of articles L.335-2 and following of the Intellectual Property Code."
+msgstr ""
+"Any unauthorized use of the Site or any of its elements will be "
+"considered as counterfeiting and prosecuted in accordance with the "
+"provisions of articles L.335-2 and following of the Intellectual Property"
+" Code."
 
 #: app/templates/mentions_legales.html:52
 msgid "4. Limitations de responsabilité"
@@ -735,14 +1455,20 @@ msgid ""
 "et résultant soit de l'utilisation d'un matériel ne répondant pas aux "
 "spécifications indiquées, soit de l'apparition d'un bug ou d'une "
 "incompatibilité."
-msgstr "LINKINFO cannot be held liable for direct and indirect damage caused to the user's equipment when accessing the Site, resulting either from the use of equipment that does not meet the specified requirements, or from the occurrence of a bug or incompatibility."
+msgstr ""
+"LINKINFO cannot be held liable for direct and indirect damage caused to "
+"the user's equipment when accessing the Site, resulting either from the "
+"use of equipment that does not meet the specified requirements, or from "
+"the occurrence of a bug or incompatibility."
 
 #: app/templates/mentions_legales.html:54
 msgid ""
 "LINKINFO ne pourra également être tenu responsable des dommages indirects"
 " (tels par exemple qu'une perte de marché ou perte d'une chance) "
 "consécutifs à l'utilisation du Site."
-msgstr "LINKINFO also cannot be held liable for indirect damages (such as loss of business or loss of opportunity) resulting from the use of the Site."
+msgstr ""
+"LINKINFO also cannot be held liable for indirect damages (such as loss of"
+" business or loss of opportunity) resulting from the use of the Site."
 
 #: app/templates/mentions_legales.html:55
 msgid ""
@@ -752,7 +1478,11 @@ msgid ""
 "dans cet espace qui contreviendrait à la législation applicable en "
 "France, en particulier aux dispositions relatives à la protection des "
 "données."
-msgstr "Interactive spaces (possibility to ask questions in the contact area) are available to users. LINKINFO reserves the right to delete, without prior notice, any content posted in this space that violates applicable French law, particularly provisions relating to data protection."
+msgstr ""
+"Interactive spaces (possibility to ask questions in the contact area) are"
+" available to users. LINKINFO reserves the right to delete, without prior"
+" notice, any content posted in this space that violates applicable French"
+" law, particularly provisions relating to data protection."
 
 #: app/templates/mentions_legales.html:56
 msgid ""
@@ -761,7 +1491,11 @@ msgid ""
 "en cas de message à caractère raciste, injurieux, diffamant, ou "
 "pornographique, quel que soit le support utilisé (texte, photographie, "
 "etc.)."
-msgstr "Where applicable, LINKINFO also reserves the right to hold the user civilly and/or criminally liable, particularly in the case of racist, insulting, defamatory, or pornographic content, regardless of the medium used (text, photograph, etc.)."
+msgstr ""
+"Where applicable, LINKINFO also reserves the right to hold the user "
+"civilly and/or criminally liable, particularly in the case of racist, "
+"insulting, defamatory, or pornographic content, regardless of the medium "
+"used (text, photograph, etc.)."
 
 #: app/templates/mentions_legales.html:61
 msgid "5. Gestion des données personnelles"
@@ -772,7 +1506,10 @@ msgid ""
 "En France, les données personnelles sont notamment protégées par la loi "
 "n° 78-87 du 6 janvier 1978, la loi n° 2004-801 du 6 août 2004, l'article "
 "L. 226-13 du Code pénal et la Directive Européenne du 24 octobre 1995."
-msgstr "In France, personal data is protected by law n° 78-87 of January 6, 1978, law n° 2004-801 of August 6, 2004, article L. 226-13 of the Penal Code, and the European Directive of October 24, 1995."
+msgstr ""
+"In France, personal data is protected by law n° 78-87 of January 6, 1978,"
+" law n° 2004-801 of August 6, 2004, article L. 226-13 of the Penal Code, "
+"and the European Directive of October 24, 1995."
 
 #: app/templates/mentions_legales.html:64
 msgid "5.1 Données collectées"
@@ -783,7 +1520,10 @@ msgid ""
 "Lors de l'utilisation du Site, peuvent être collectées : l'adresse e-mail"
 " de l'utilisateur, son nom, prénom, et toute autre information relative "
 "aux abonnements gérés par l'utilisateur."
-msgstr "When using the Site, the following may be collected: the user's email address, first name, last name, and any other information related to subscriptions managed by the user."
+msgstr ""
+"When using the Site, the following may be collected: the user's email "
+"address, first name, last name, and any other information related to "
+"subscriptions managed by the user."
 
 #: app/templates/mentions_legales.html:67
 msgid "5.2 Finalités"
@@ -824,14 +1564,21 @@ msgid ""
 "libertés, et au Règlement Général sur la Protection des Données (RGPD), "
 "toute personne peut obtenir communication et, le cas échéant, "
 "rectification ou suppression des informations la concernant."
-msgstr "In accordance with articles 39 and following of law n° 78-17 of January 6, 1978 as amended in 2004 relating to data processing, files and freedoms, and the General Data Protection Regulation (RGPD), any person may obtain access to and, where applicable, rectification or deletion of information concerning them."
+msgstr ""
+"In accordance with articles 39 and following of law n° 78-17 of January "
+"6, 1978 as amended in 2004 relating to data processing, files and "
+"freedoms, and the General Data Protection Regulation (RGPD), any person "
+"may obtain access to and, where applicable, rectification or deletion of "
+"information concerning them."
 
 #: app/templates/mentions_legales.html:79
 msgid ""
 "Pour exercer ce droit, vous pouvez contacter LINKINFO via l'interface de "
 "contact du Site ou en vous rendant dans les paramètres de votre compte "
 "utilisateur."
-msgstr "To exercise this right, you can contact LINKINFO via the Site's contact interface or by going to your user account settings."
+msgstr ""
+"To exercise this right, you can contact LINKINFO via the Site's contact "
+"interface or by going to your user account settings."
 
 #: app/templates/mentions_legales.html:81
 msgid "5.4 Non-communication des données personnelles"
@@ -842,7 +1589,10 @@ msgid ""
 "LINKINFO s'engage à ne pas vendre, louer ou céder les données "
 "personnelles collectées à des tiers, sauf autorisation expresse de "
 "l'utilisateur ou obligation légale."
-msgstr "LINKINFO undertakes not to sell, rent or transfer the personal data collected to third parties, except with the express authorization of the user or legal obligation."
+msgstr ""
+"LINKINFO undertakes not to sell, rent or transfer the personal data "
+"collected to third parties, except with the express authorization of the "
+"user or legal obligation."
 
 #: app/templates/mentions_legales.html:87
 msgid "6. Cookies"
@@ -852,7 +1602,9 @@ msgstr "6. Cookies"
 msgid ""
 "Le Site peut utiliser des cookies pour améliorer l'expérience utilisateur"
 " et permettre le fonctionnement de certaines fonctionnalités."
-msgstr "The Site may use cookies to improve the user experience and enable certain functionalities."
+msgstr ""
+"The Site may use cookies to improve the user experience and enable "
+"certain functionalities."
 
 #: app/templates/mentions_legales.html:89
 msgid ""
@@ -860,7 +1612,10 @@ msgid ""
 "l'utilisateur lors de la consultation d'un site web. Un cookie ne permet "
 "pas d'identifier l'utilisateur, mais il enregistre des informations "
 "relatives à la navigation de son ordinateur sur le Site."
-msgstr "A cookie is a small text file stored on the user's hard drive when visiting a website. A cookie does not identify the user, but it records information about their computer's navigation on the Site."
+msgstr ""
+"A cookie is a small text file stored on the user's hard drive when "
+"visiting a website. A cookie does not identify the user, but it records "
+"information about their computer's navigation on the Site."
 
 #: app/templates/mentions_legales.html:90
 msgid ""
@@ -868,7 +1623,10 @@ msgid ""
 "les paramètres appropriés de son navigateur. Cependant, une telle "
 "désactivation pourrait empêcher l'utilisation de certaines "
 "fonctionnalités du Site."
-msgstr "Users can disable the use of cookies by selecting the appropriate settings in their browser. However, such deactivation could prevent the use of certain features of the Site."
+msgstr ""
+"Users can disable the use of cookies by selecting the appropriate "
+"settings in their browser. However, such deactivation could prevent the "
+"use of certain features of the Site."
 
 #: app/templates/mentions_legales.html:95
 msgid "7. Liens hypertextes"
@@ -879,13 +1637,18 @@ msgid ""
 "Le Site peut contenir des liens hypertextes vers d'autres sites présents "
 "sur le réseau Internet. Les liens vers ces autres sites ne sauraient "
 "engager la responsabilité de LINKINFO quant à leur contenu."
-msgstr "The Site may contain hyperlinks to other sites on the Internet. Links to these other sites cannot engage the responsibility of LINKINFO regarding their content."
+msgstr ""
+"The Site may contain hyperlinks to other sites on the Internet. Links to "
+"these other sites cannot engage the responsibility of LINKINFO regarding "
+"their content."
 
 #: app/templates/mentions_legales.html:97
 msgid ""
 "La mise en place d'un lien hypertexte vers le Site nécessite une "
 "autorisation préalable et écrite de LINKINFO."
-msgstr "Creating a hyperlink to the Site requires prior written authorization from LINKINFO."
+msgstr ""
+"Creating a hyperlink to the Site requires prior written authorization "
+"from LINKINFO."
 
 #: app/templates/mentions_legales.html:102
 msgid "8. Droit applicable et attribution de juridiction"
@@ -896,7 +1659,9 @@ msgid ""
 "Tout litige en relation avec l'utilisation du Site est soumis au droit "
 "français. En cas de litige, les tribunaux français seront seuls "
 "compétents."
-msgstr "Any dispute relating to the use of the Site is subject to French law. In the event of a dispute, French courts will have sole jurisdiction."
+msgstr ""
+"Any dispute relating to the use of the Site is subject to French law. In "
+"the event of a dispute, French courts will have sole jurisdiction."
 
 #: app/templates/mentions_legales.html:108
 msgid "9. Principales lois concernées"
@@ -906,7 +1671,9 @@ msgstr "9. Main Laws Concerned"
 msgid ""
 "Loi n° 78-17 du 6 janvier 1978, modifiée par la loi n° 2004-801 du 6 août"
 " 2004 relative à l'informatique, aux fichiers et aux libertés"
-msgstr "Law n° 78-17 of January 6, 1978, as amended by law n° 2004-801 of August 6, 2004 relating to data processing, files and freedoms"
+msgstr ""
+"Law n° 78-17 of January 6, 1978, as amended by law n° 2004-801 of August "
+"6, 2004 relating to data processing, files and freedoms"
 
 #: app/templates/mentions_legales.html:111
 msgid ""
@@ -941,7 +1708,10 @@ msgid ""
 "Les informations qui permettent, sous quelque forme que ce soit, "
 "directement ou non, l'identification des personnes physiques auxquelles "
 "elles s'appliquent (article 4 de la loi n° 78-17 du 6 janvier 1978)."
-msgstr "Information that allows, in any form whatsoever, directly or indirectly, the identification of the natural persons to whom it applies (article 4 of law n° 78-17 of January 6, 1978)."
+msgstr ""
+"Information that allows, in any form whatsoever, directly or indirectly, "
+"the identification of the natural persons to whom it applies (article 4 "
+"of law n° 78-17 of January 6, 1978)."
 
 #: app/templates/mentions_legales.html:130
 msgid "Contact"
@@ -951,7 +1721,9 @@ msgstr "Contact"
 msgid ""
 "Pour toute question concernant ces mentions légales ou le traitement de "
 "vos données personnelles, vous pouvez nous contacter :"
-msgstr "For any questions regarding this legal notice or the processing of your personal data, you can contact us:"
+msgstr ""
+"For any questions regarding this legal notice or the processing of your "
+"personal data, you can contact us:"
 
 #: app/templates/mentions_legales.html:133
 msgid "Email :"
@@ -985,7 +1757,7 @@ msgstr "Read"
 msgid "Archivées"
 msgstr "Archived"
 
-#: app/templates/notifications.html:26
+#: app/templates/notifications.html:26 app/templates/subscriptions/list.html:50
 msgid "Toutes"
 msgstr "All"
 
@@ -1021,7 +1793,15 @@ msgstr "Archived"
 msgid "Notification lue"
 msgstr "Notification read"
 
-#: app/templates/notifications.html:130
+#: app/templates/card_purchase_categories/list.html:50
+#: app/templates/categories/list.html:150
+#: app/templates/categories/list.html:234
+#: app/templates/checkbooks/detail.html:140
+#: app/templates/checkbooks/list.html:97 app/templates/employers/list.html:207
+#: app/templates/notifications.html:130 app/templates/providers/list.html:89
+#: app/templates/revenues/detail.html:121 app/templates/revenues/list.html:124
+#: app/templates/subscriptions/detail.html:134
+#: app/templates/subscriptions/list.html:174
 msgid "Supprimer"
 msgstr "Delete"
 
@@ -1178,7 +1958,7 @@ msgid "Export des données (PDF, CSV)"
 msgstr "Data export (PDF, CSV)"
 
 #: app/templates/auth/profile.html:31 app/templates/auth/profile.html:199
-#: app/templates/pricing.html:177
+#: app/templates/categories/list.html:62 app/templates/pricing.html:177
 msgid "Passer à Premium"
 msgstr "Upgrade to Premium"
 
@@ -1326,6 +2106,7 @@ msgid "Minimum 6 caractères"
 msgstr "Minimum 6 characters"
 
 #: app/templates/auth/profile.html:129 app/templates/auth/register.html:46
+#: app/templates/employers/add.html:77 app/templates/employers/edit.html:91
 #: app/templates/pricing.html:424
 msgid "Pays"
 msgstr "Country"
@@ -1336,7 +2117,7 @@ msgid "Sélectionnez votre pays"
 msgstr "Select your country"
 
 #: app/templates/auth/profile.html:132 app/templates/auth/register.html:49
-#: app/templates/pricing.html:427
+#: app/templates/employers/add.html:79 app/templates/pricing.html:427
 msgid "France"
 msgstr "France"
 
@@ -1432,7 +2213,8 @@ msgstr "Sign in"
 msgid "Pas encore de compte ?"
 msgstr "Don't have an account yet?"
 
-#: app/templates/auth/profile.html:20
+#: app/templates/auth/profile.html:20 app/templates/services/plans.html:112
+#: app/templates/services/plans.html:193
 msgid "Plan"
 msgstr "Plan"
 
@@ -1606,7 +2388,7 @@ msgstr "New Caledonia"
 msgid "Fuseau horaire actuel:"
 msgstr "Current timezone:"
 
-#: app/templates/auth/profile.html:165
+#: app/templates/auth/profile.html:165 app/templates/revenues/detail.html:56
 msgid "Non défini"
 msgstr "Not set"
 
@@ -1655,6 +2437,11 @@ msgid "Confirmer"
 msgstr "Confirm"
 
 #: app/templates/auth/profile.html:227
+#: app/templates/card_purchase_categories/edit.html:85
+#: app/templates/categories/edit.html:110 app/templates/employers/edit.html:167
+#: app/templates/employers/edit_document.html:87
+#: app/templates/revenues/edit.html:87
+#: app/templates/subscriptions/edit.html:103
 msgid "Enregistrer les modifications"
 msgstr "Save Changes"
 
@@ -1737,6 +2524,18 @@ msgid "Vous pourrez repasser à Premium à tout moment depuis la page"
 msgstr "You can upgrade back to Premium at any time from the"
 
 #: app/templates/auth/profile.html:290
+#: app/templates/card_purchase_categories/add.html:75
+#: app/templates/card_purchase_categories/edit.html:82
+#: app/templates/categories/add.html:89 app/templates/categories/edit.html:107
+#: app/templates/checkbooks/edit_check.html:75
+#: app/templates/employers/add.html:155
+#: app/templates/employers/add_document.html:89
+#: app/templates/employers/edit.html:170
+#: app/templates/employers/edit_document.html:90
+#: app/templates/providers/add.html:56 app/templates/providers/edit.html:56
+#: app/templates/revenues/add.html:92 app/templates/revenues/edit.html:90
+#: app/templates/subscriptions/add.html:110
+#: app/templates/subscriptions/edit.html:100
 msgid "Annuler"
 msgstr "Cancel"
 
@@ -1822,131 +2621,898 @@ msgstr "Create my account"
 msgid "Déjà un compte ?"
 msgstr "Already have an account?"
 
-# Employers page - Python routes
-#: app/routes/employers.py:14
-msgid "CDI"
-msgstr "Permanent contract"
+# Card Purchase Categories - Add/Edit Templates
+#: app/templates/card_purchase_categories/add.html:3
+#: app/templates/card_purchase_categories/add.html:10
+#: app/templates/categories/add.html:3 app/templates/categories/add.html:10
+#: app/templates/categories/list.html:39 app/templates/categories/list.html:393
+msgid "Créer une catégorie"
+msgstr "Create a Category"
 
-#: app/routes/employers.py:15
-msgid "CDD"
-msgstr "Fixed-term contract"
+#: app/templates/card_purchase_categories/add.html:12
+#: app/templates/card_purchase_categories/edit.html:12
+#: app/templates/categories/add.html:12 app/templates/categories/edit.html:12
+#: app/templates/checkbooks/add.html:15
+#: app/templates/checkbooks/add_check.html:15
+#: app/templates/checkbooks/detail.html:19
+#: app/templates/checkbooks/edit.html:15
+#: app/templates/checkbooks/edit_check.html:15
+#: app/templates/employers/add.html:12 app/templates/revenues/add.html:12
+#: app/templates/revenues/detail.html:16 app/templates/revenues/edit.html:12
+#: app/templates/subscriptions/add.html:12
+#: app/templates/subscriptions/detail.html:12
+#: app/templates/subscriptions/edit.html:12
+msgid "Retour"
+msgstr "Back"
 
-#: app/routes/employers.py:16
-msgid "Intérim"
-msgstr "Temporary work"
+#: app/templates/card_purchase_categories/add.html:20
+#: app/templates/card_purchase_categories/add.html:66
+#: app/templates/card_purchase_categories/add.html:208
+#: app/templates/card_purchase_categories/edit.html:20
+#: app/templates/card_purchase_categories/edit.html:215
+#: app/templates/categories/add.html:20 app/templates/categories/add.html:80
+#: app/templates/categories/add.html:235 app/templates/categories/edit.html:20
+#: app/templates/categories/edit.html:253
+msgid "Nom de la catégorie"
+msgstr "Category Name"
 
-#: app/routes/employers.py:17
-msgid "Freelance"
-msgstr "Freelance"
+#: app/templates/card_purchase_categories/add.html:22
+msgid "Ex: Alimentation, Transport, Loisirs..."
+msgstr "e.g.: Food, Transport, Leisure..."
 
-#: app/routes/employers.py:18
-msgid "Stage"
-msgstr "Internship"
+#: app/templates/card_purchase_categories/add.html:26
+#: app/templates/card_purchase_categories/edit.html:26
+#: app/templates/categories/add.html:26 app/templates/categories/edit.html:26
+#: app/templates/categories/list.html:174
+#: app/templates/categories/list.html:324
+#: app/templates/checkbooks/add_check.html:53
+#: app/templates/checkbooks/detail.html:107
+#: app/templates/checkbooks/edit_check.html:55
+#: app/templates/employers/add_document.html:39
+#: app/templates/employers/edit_document.html:39
+#: app/templates/revenues/add.html:49 app/templates/revenues/detail.html:44
+#: app/templates/revenues/edit.html:50 app/templates/services/add.html:25
+#: app/templates/services/add_plan.html:32 app/templates/services/edit.html:25
+#: app/templates/services/edit_plan.html:26
+#: app/templates/services/list.html:170 app/templates/services/list.html:328
+#: app/templates/services/plans.html:113 app/templates/services/plans.html:194
+#: app/templates/subscriptions/add.html:53
+#: app/templates/subscriptions/detail.html:115
+#: app/templates/subscriptions/edit.html:54
+msgid "Description"
+msgstr "Description"
 
-#: app/routes/employers.py:19
-msgid "Apprentissage"
-msgstr "Apprenticeship"
+#: app/templates/card_purchase_categories/add.html:28
+#: app/templates/categories/add.html:28
+msgid "Description courte de cette catégorie"
+msgstr "Short description of this category"
 
-#: app/routes/employers.py:20
-msgid "Autre"
-msgstr "Other"
+#: app/templates/card_purchase_categories/add.html:33
+#: app/templates/card_purchase_categories/edit.html:32
+#: app/templates/categories/add.html:33 app/templates/categories/edit.html:32
+msgid "Couleur"
+msgstr "Color"
 
-#: app/routes/employers.py:25
-msgid "Contrat de travail"
-msgstr "Employment contract"
+#: app/templates/card_purchase_categories/add.html:36
+#: app/templates/card_purchase_categories/edit.html:35
+#: app/templates/categories/add.html:36 app/templates/categories/edit.html:35
+msgid "Choisir une couleur"
+msgstr "Choose a color"
 
-#: app/routes/employers.py:26
-msgid "Fiche de paie"
-msgstr "Pay slip"
+#: app/templates/card_purchase_categories/add.html:40
+#: app/templates/categories/add.html:40
+msgid "Couleur utilisée pour identifier la catégorie"
+msgstr "Color used to identify the category"
 
-#: app/routes/employers.py:27
-msgid "Fiche de frais"
-msgstr "Expense report"
+#: app/templates/card_purchase_categories/add.html:45
+#: app/templates/card_purchase_categories/edit.html:43
+#: app/templates/categories/add.html:45 app/templates/categories/edit.html:43
+msgid "Icône"
+msgstr "Icon"
 
-#: app/routes/employers.py:28
-msgid "Attestation"
-msgstr "Certificate"
+#: app/templates/card_purchase_categories/add.html:50
+#: app/templates/card_purchase_categories/add.html:93
+#: app/templates/card_purchase_categories/edit.html:52
+#: app/templates/card_purchase_categories/edit.html:100
+#: app/templates/categories/add.html:50 app/templates/categories/add.html:107
+#: app/templates/categories/edit.html:52 app/templates/categories/edit.html:125
+msgid "Choisir une icône"
+msgstr "Choose an icon"
 
-#: app/routes/employers.py:29
-msgid "Avenant"
-msgstr "Amendment"
+#: app/templates/card_purchase_categories/add.html:52
+#: app/templates/card_purchase_categories/edit.html:55
+#: app/templates/categories/add.html:52 app/templates/categories/edit.html:55
+msgid "Cliquez pour sélectionner une icône"
+msgstr "Click to select an icon"
 
-#: app/routes/employers.py:30
-msgid "Autre document"
-msgstr "Other document"
+#: app/templates/card_purchase_categories/add.html:59
+#: app/templates/card_purchase_categories/edit.html:62
+#: app/templates/categories/add.html:73 app/templates/categories/edit.html:87
+msgid "Prévisualisation"
+msgstr "Preview"
 
-#: app/routes/employers.py:35
-msgid "Janvier"
-msgstr "January"
+#: app/templates/card_purchase_categories/add.html:67
+#: app/templates/card_purchase_categories/edit.html:74
+#: app/templates/categories/add.html:81 app/templates/categories/edit.html:99
+msgid "Catégorie personnalisée"
+msgstr "Custom Category"
 
-#: app/routes/employers.py:35
-msgid "Février"
-msgstr "February"
+#: app/templates/card_purchase_categories/add.html:78
+#: app/templates/categories/add.html:92
+msgid "Créer la catégorie"
+msgstr "Create Category"
 
-#: app/routes/employers.py:35
-msgid "Mars"
-msgstr "March"
+#: app/templates/card_purchase_categories/add.html:94
+#: app/templates/card_purchase_categories/edit.html:101
+#: app/templates/employers/detail.html:400
+msgid "Fermer"
+msgstr "Close"
 
-#: app/routes/employers.py:35
-msgid "Avril"
-msgstr "April"
+#: app/templates/card_purchase_categories/add.html:97
+#: app/templates/card_purchase_categories/edit.html:104
+#: app/templates/categories/add.html:111 app/templates/categories/edit.html:129
+msgid "Rechercher une icône..."
+msgstr "Search for an icon..."
 
-#: app/routes/employers.py:36
-msgid "Mai"
-msgstr "May"
+#: app/templates/card_purchase_categories/edit.html:3
+#: app/templates/card_purchase_categories/list.html:41
+#: app/templates/categories/edit.html:3 app/templates/categories/list.html:139
+#: app/templates/categories/list.html:223
+#: app/templates/checkbooks/detail.html:135
+#: app/templates/checkbooks/list.html:92
+#: app/templates/employers/detail.html:144
+#: app/templates/employers/detail.html:361 app/templates/employers/edit.html:3
+#: app/templates/employers/edit.html:10
+#: app/templates/employers/edit_document.html:3
+#: app/templates/employers/edit_document.html:11
+#: app/templates/employers/list.html:111 app/templates/employers/list.html:202
+#: app/templates/providers/list.html:84 app/templates/revenues/detail.html:13
+#: app/templates/revenues/edit.html:3 app/templates/revenues/edit.html:10
+#: app/templates/revenues/list.html:114
+#: app/templates/subscriptions/detail.html:123
+#: app/templates/subscriptions/list.html:164
+msgid "Modifier"
+msgstr "Edit"
 
-#: app/routes/employers.py:36
-msgid "Juin"
-msgstr "June"
+#: app/templates/card_purchase_categories/edit.html:10
+#: app/templates/categories/edit.html:10
+msgid "Modifier la catégorie"
+msgstr "Edit Category"
 
-#: app/routes/employers.py:36
-msgid "Juillet"
-msgstr "July"
+# Card Purchase Categories page - Templates
+#: app/templates/card_purchase_categories/list.html:3
+#: app/templates/card_purchase_categories/list.html:9
+msgid "Catégories d'achats CB"
+msgstr "Card Purchase Categories"
 
-#: app/routes/employers.py:36
-msgid "Août"
-msgstr "August"
+#: app/templates/card_purchase_categories/list.html:10
+msgid "Gérez vos catégories pour classer vos achats par carte bancaire"
+msgstr "Manage your categories to classify your card purchases"
 
-#: app/routes/employers.py:37
-msgid "Septembre"
-msgstr "September"
+#: app/templates/card_purchase_categories/list.html:14
+msgid "Nouvelle catégorie"
+msgstr "New Category"
 
-#: app/routes/employers.py:37
-msgid "Octobre"
-msgstr "October"
+#: app/templates/card_purchase_categories/list.html:23
+#: app/templates/categories/list.html:90
+msgid "Mes catégories personnalisées"
+msgstr "My Custom Categories"
 
-#: app/routes/employers.py:37
-msgid "Novembre"
-msgstr "November"
+#: app/templates/card_purchase_categories/list.html:47
+msgid "Confirmer la suppression ?"
+msgstr "Confirm deletion?"
 
-#: app/routes/employers.py:37
-msgid "Décembre"
-msgstr "December"
+#: app/templates/card_purchase_categories/list.html:71
+#: app/templates/categories/list.html:256
+msgid "Catégories par défaut"
+msgstr "Default Categories"
 
-# Employers page - Templates
-#: app/templates/employers/list.html:3
-msgid "Mes employeurs - Budgee Family"
-msgstr "My Employers - Budgee Family"
+#: app/templates/card_purchase_categories/list.html:93
+msgid "Aucune catégorie par défaut disponible."
+msgstr "No default categories available."
 
-#: app/templates/employers/list.html:8
-msgid "Mes employeurs"
-msgstr "My Employers"
+#: app/templates/card_purchase_categories/list.html:100
+msgid "Retour aux achats CB"
+msgstr "Back to Card Purchases"
 
+#: app/templates/categories/add.html:22
+msgid "Ex: Abonnements Professionnels, Services Cloud..."
+msgstr "e.g., Professional Subscriptions, Cloud Services..."
+
+#: app/templates/categories/add.html:57 app/templates/categories/edit.html:61
+#: app/templates/employers/add.html:32 app/templates/employers/edit.html:32
+#: app/templates/services/add.html:47 app/templates/services/edit.html:56
+msgid "Logo"
+msgstr "Logo"
+
+#: app/templates/categories/add.html:57 app/templates/categories/add.html:64
+#: app/templates/categories/edit.html:79
+msgid "optionnel"
+msgstr "optional"
+
+#: app/templates/categories/add.html:60
+msgid "Formats acceptés : PNG, JPG, GIF, SVG, WebP (max 5 MB)"
+msgstr "Accepted formats: PNG, JPG, GIF, SVG, WebP (max 5 MB)"
+
+#: app/templates/categories/add.html:67
+msgid "URL du site web associé à cette catégorie"
+msgstr "URL of the website associated with this category"
+
+#: app/templates/categories/edit.html:63
+msgid "Actuellement défini"
+msgstr "Currently set"
+
+#: app/templates/categories/edit.html:68
+msgid "Logo actuel"
+msgstr "Current logo"
+
+#: app/templates/categories/edit.html:75
+msgid "Laisser vide pour conserver le logo actuel"
+msgstr "Leave empty to keep current logo"
+
+#: app/templates/categories/list.html:13
+msgid "catégories personnalisées utilisées"
+msgstr "custom categories used"
+
+#: app/templates/categories/list.html:29
+#: app/templates/subscriptions/list.html:12
+msgid "Exporter en Excel"
+msgstr "Export to Excel"
+
+#: app/templates/categories/list.html:32
+#: app/templates/subscriptions/list.html:15
+#: app/templates/subscriptions/list.html:310
+msgid "Exporter en PDF"
+msgstr "Export to PDF"
+
+#: app/templates/categories/list.html:42
+#: app/templates/subscriptions/list.html:26
+msgid "Limite atteinte (5/5)"
+msgstr "Limit reached (5/5)"
+
+#: app/templates/categories/list.html:43 app/templates/categories/list.html:55
+msgid "Limite atteinte"
+msgstr "Limit reached"
+
+#: app/templates/categories/list.html:57
+#, fuzzy
+msgid ""
+"Vous avez atteint la limite de 5 catégories personnalisées pour le plan "
+"gratuit. Passez au plan Premium pour créer un nombre illimité de "
+"catégories."
+msgstr ""
+"You have reached the limit of 5 custom services for the free plan "
+"(%(count)s/5). Upgrade to Premium to create unlimited services."
+
+#: app/templates/categories/list.html:71
+msgid "Catégories personnalisées"
+msgstr "Custom categories"
+
+#: app/templates/categories/list.html:73
+#, fuzzy
+msgid ""
+"Vous pouvez créer jusqu'à 5 catégories personnalisées avec le plan "
+"gratuit. Passez à Premium pour un nombre illimité."
+msgstr ""
+"You have reached the limit of 5 custom services for the free plan "
+"(%(count)s/5). Upgrade to Premium to create unlimited services."
+
+#: app/templates/categories/list.html:78
+msgid "Découvrir Premium"
+msgstr "Discover Premium"
+
+#: app/templates/categories/list.html:116
+#: app/templates/categories/list.html:211
+msgid "Désactivée"
+msgstr "Disabled"
+
+#: app/templates/categories/list.html:120
+#: app/templates/categories/list.html:204
+#: app/templates/categories/list.html:281
+#: app/templates/categories/list.html:353
+msgid "abonnement(s)"
+msgstr "subscription(s)"
+
+#: app/templates/categories/list.html:130
+#: app/templates/categories/list.html:218
+#: app/templates/categories/list.html:291
+#: app/templates/categories/list.html:359
+msgid "Visiter le site"
+msgstr "Visit website"
+
+#: app/templates/categories/list.html:144
+#: app/templates/categories/list.html:228
+#: app/templates/revenues/detail.html:114
+#: app/templates/subscriptions/detail.html:128
+msgid "Désactiver"
+msgstr "Disable"
+
+#: app/templates/categories/list.html:144
+#: app/templates/categories/list.html:228
+#: app/templates/subscriptions/detail.html:128
+msgid "Activer"
+msgstr "Enable"
+
+#: app/templates/categories/list.html:149
+#: app/templates/categories/list.html:233
+msgid "Êtes-vous sûr de vouloir supprimer cette catégorie ?"
+msgstr "Are you sure you want to delete this category?"
+
+#: app/templates/categories/list.html:157
+msgid "Plan Premium requis pour gérer cette catégorie"
+msgstr "Premium plan required to manage this category"
+
+#: app/templates/categories/list.html:173
+#: app/templates/categories/list.html:323
+#: app/templates/subscriptions/add.html:87
+#: app/templates/subscriptions/edit.html:86
+#: app/templates/subscriptions/list.html:48
+#: app/templates/subscriptions/list.html:78
+msgid "Catégorie"
+msgstr "Category"
+
+#: app/templates/categories/list.html:176
+#: app/templates/checkbooks/edit_check.html:60
+#: app/templates/checkbooks/list.html:52 app/templates/employers/list.html:30
+#: app/templates/employers/list.html:131 app/templates/providers/list.html:19
+#: app/templates/revenues/detail.html:61 app/templates/revenues/list.html:30
+#: app/templates/revenues/list.html:71 app/templates/subscriptions/list.html:40
+#: app/templates/subscriptions/list.html:83
+msgid "Statut"
+msgstr "Status"
+
+#: app/templates/categories/list.html:177
+#: app/templates/categories/list.html:326
+#: app/templates/checkbooks/detail.html:110
+#: app/templates/checkbooks/list.html:53 app/templates/employers/list.html:133
+#: app/templates/providers/list.html:49 app/templates/revenues/detail.html:106
+#: app/templates/revenues/detail.html:109 app/templates/revenues/list.html:72
+#: app/templates/services/list.html:174 app/templates/services/list.html:331
+#: app/templates/services/plans.html:197
+#: app/templates/subscriptions/list.html:84
+msgid "Actions"
+msgstr "Actions"
+
+#: app/templates/categories/list.html:209 app/templates/services/list.html:212
+msgid "Active"
+msgstr "Active"
+
+#: app/templates/categories/list.html:240
+#, fuzzy
+msgid "Premium requis"
+msgstr "Monthly Premium"
+
+#: app/templates/categories/list.html:299
+#: app/templates/categories/list.html:365
+msgid "Personnaliser cette catégorie"
+msgstr "Customize this category"
+
+# Card Purchase Categories - Add/Edit Templates
+#: app/templates/categories/list.html:303
+#: app/templates/categories/list.html:369
+msgid "Masquer cette catégorie ?"
+msgstr "Hide this category?"
+
+# Card Purchase Categories - Add/Edit Templates
+#: app/templates/categories/list.html:304
+#: app/templates/categories/list.html:370
+msgid "Masquer cette catégorie"
+msgstr "Hide this category"
+
+#: app/templates/categories/list.html:390
+msgid "Aucune catégorie disponible"
+msgstr "No categories available"
+
+#: app/templates/categories/list.html:391
+msgid "Créez votre première catégorie personnalisée"
+msgstr "Create your first custom category"
+
+#: app/templates/checkbooks/add.html:3 app/templates/checkbooks/list.html:13
+msgid "Nouveau chéquier"
+msgstr "New Checkbook"
+
+#: app/templates/checkbooks/add.html:31
+msgid "Sélectionner une banque"
+msgstr "Select a bank"
+
+#: app/templates/checkbooks/add.html:55 app/templates/checkbooks/edit.html:47
+#: app/templates/checkbooks/edit_check.html:72
+#: app/templates/providers/add.html:53 app/templates/providers/edit.html:53
+msgid "Enregistrer"
+msgstr "Save"
+
+#: app/templates/checkbooks/detail.html:16
+msgid "Utiliser un chèque"
+msgstr "Use a Check"
+
+# Checkbooks Detail - Missing translations
+#: app/templates/checkbooks/detail.html:26
+msgid "Ce chéquier est terminé. Tous les chèques ont été utilisés ou annulés."
+msgstr "This checkbook is finished. All checks have been used or cancelled."
+
+#: app/templates/checkbooks/detail.html:35
+msgid "Total chèques"
+msgstr "Total Checks"
+
+#: app/templates/checkbooks/detail.html:37
+msgid "N°"
+msgstr ""
+
+#: app/templates/checkbooks/detail.html:37
+msgid "à"
+msgstr "to"
+
+#: app/templates/checkbooks/detail.html:44
+#: app/templates/checkbooks/detail.html:79
+#: app/templates/checkbooks/list.html:48
+msgid "Disponibles"
+msgstr "Available"
+
+#: app/templates/checkbooks/detail.html:52
+#: app/templates/checkbooks/detail.html:83
+#: app/templates/checkbooks/list.html:49
+msgid "Utilisés"
+msgstr "Used"
+
+#: app/templates/checkbooks/detail.html:60
+msgid "Total montants"
+msgstr "Total Amounts"
+
+#: app/templates/checkbooks/detail.html:75
+#: app/templates/checkbooks/list.html:23 app/templates/employers/list.html:32
+#: app/templates/providers/list.html:21 app/templates/revenues/list.html:32
+#: app/templates/revenues/list.html:40 app/templates/subscriptions/list.html:42
+msgid "Tous"
+msgstr "All"
+
+#: app/templates/checkbooks/detail.html:87
+#: app/templates/checkbooks/list.html:50
+msgid "Annulés"
+msgstr "Cancelled"
+
+#: app/templates/checkbooks/detail.html:96
+msgid "Chèques émis"
+msgstr "Issued Checks"
+
+#: app/templates/checkbooks/detail.html:104
+msgid "N° Chèque"
+msgstr "Check #"
+
+#: app/templates/checkbooks/detail.html:105
+msgid "Date"
+msgstr "Date"
+
+#: app/templates/checkbooks/detail.html:106
+#: app/templates/checkbooks/edit_check.html:49
+msgid "Bénéficiaire"
+msgstr "Payee"
+
+#: app/templates/checkbooks/detail.html:108
+#: app/templates/checkbooks/edit_check.html:33
+#: app/templates/revenues/add.html:56 app/templates/revenues/detail.html:74
+#: app/templates/revenues/edit.html:57 app/templates/revenues/list.html:68
+#: app/templates/subscriptions/add.html:60
+#: app/templates/subscriptions/edit.html:60
+msgid "Montant"
+msgstr "Amount"
+
+#: app/templates/checkbooks/detail.html:125
+msgid "Disponible"
+msgstr "Available"
+
+#: app/templates/checkbooks/detail.html:127
+msgid "Utilisé"
+msgstr "Used"
+
+#: app/templates/checkbooks/detail.html:129
+#: app/templates/checkbooks/edit_check.html:63
+msgid "Annulé"
+msgstr "Cancelled"
+
+#: app/templates/checkbooks/detail.html:139
+msgid "Êtes-vous sûr de vouloir supprimer ce chèque ?"
+msgstr "Are you sure you want to delete this check?"
+
+#: app/templates/checkbooks/detail.html:159
+#: app/templates/checkbooks/list.html:117 app/templates/providers/list.html:108
+#: app/templates/revenues/list.html:183
+#: app/templates/subscriptions/list.html:282
+msgid "Précédent"
+msgstr "Previous"
+
+#: app/templates/checkbooks/detail.html:175
+#: app/templates/checkbooks/list.html:133 app/templates/employers/list.html:243
+#: app/templates/providers/list.html:124 app/templates/revenues/list.html:199
+#: app/templates/subscriptions/list.html:298
+msgid "Suivant"
+msgstr "Next"
+
+#: app/templates/checkbooks/detail.html:185
+msgid "Aucun chèque émis"
+msgstr "No checks issued"
+
+# Edit Check - Missing translations
+#: app/templates/checkbooks/edit_check.html:3
+msgid "Modifier chèque"
+msgstr "Edit Check"
+
+#: app/templates/checkbooks/edit_check.html:11
+msgid "Modifier le chèque"
+msgstr "Edit Check"
+
+#: app/templates/checkbooks/edit_check.html:12
+msgid "Chèque"
+msgstr "Check"
+
+#: app/templates/checkbooks/edit_check.html:23
+msgid "Le numéro du chèque ne peut pas être modifié :"
+msgstr "The check number cannot be modified:"
+
+#: app/templates/checkbooks/edit_check.html:28
+msgid "Date du chèque"
+msgstr "Check date"
+
+#: app/templates/checkbooks/edit_check.html:40
+msgid "Devise"
+msgstr "Currency"
+
+#: app/templates/checkbooks/edit_check.html:62
+msgid "Utilisé (ajouté à la balance)"
+msgstr "Used (added to balance)"
+
+#: app/templates/checkbooks/edit_check.html:66
+msgid ""
+"Si vous passez le chèque en \"Utilisé\", une transaction sera créée dans "
+"la balance. Si vous l'annulez, la transaction associée sera annulée."
+msgstr ""
+"If you set the check to \"Used\", a transaction will be created in the "
+"balance. If you cancel it, the associated transaction will be cancelled."
+
+# Checkbooks - Missing translations
+#: app/templates/checkbooks/list.html:10
+msgid "Gérez vos chéquiers et vos chèques émis"
+msgstr "Manage your checkbooks and issued checks"
+
+#: app/templates/checkbooks/list.html:27 app/templates/employers/list.html:33
+#: app/templates/providers/list.html:23
+#: app/templates/subscriptions/list.html:43
+msgid "Actifs"
+msgstr "Active"
+
+#: app/templates/checkbooks/list.html:31
+msgid "Terminés"
+msgstr "Finished"
+
+#: app/templates/checkbooks/list.html:45 app/templates/providers/list.html:44
+#: app/templates/revenues/add.html:20 app/templates/revenues/detail.html:27
+#: app/templates/revenues/edit.html:20 app/templates/revenues/list.html:66
+#: app/templates/subscriptions/list.html:76
+msgid "Nom"
+msgstr "Name"
+
+#: app/templates/checkbooks/list.html:46
+msgid "Banque"
+msgstr "Bank"
+
+#: app/templates/checkbooks/list.html:47
+msgid "Total"
+msgstr "Total"
+
+#: app/templates/checkbooks/list.html:51
+msgid "Numéros"
+msgstr "Numbers"
+
+#: app/templates/checkbooks/list.html:80
+msgid "Terminé"
+msgstr "Finished"
+
+#: app/templates/checkbooks/list.html:82 app/templates/employers/list.html:189
+#: app/templates/revenues/detail.html:63 app/templates/revenues/list.html:33
+#: app/templates/revenues/list.html:102
+#: app/templates/subscriptions/detail.html:67
+#: app/templates/subscriptions/list.html:152
+msgid "Actif"
+msgstr "Active"
+
+#: app/templates/checkbooks/list.html:88
+msgid "Voir les détails"
+msgstr "View Details"
+
+#: app/templates/checkbooks/list.html:96
+msgid "Êtes-vous sûr de vouloir supprimer ce chéquier ?"
+msgstr "Are you sure you want to delete this checkbook?"
+
+#: app/templates/checkbooks/list.html:143
+msgid "Aucun chéquier"
+msgstr "No Checkbooks"
+
+#: app/templates/checkbooks/list.html:144
+msgid "Commencez par créer votre premier chéquier"
+msgstr "Start by creating your first checkbook"
+
+#: app/templates/checkbooks/list.html:146
+msgid "Ajouter un chéquier"
+msgstr "Add a Checkbook"
+
+#: app/templates/employers/add.html:3 app/templates/employers/add.html:10
 #: app/templates/employers/list.html:20 app/templates/employers/list.html:256
 msgid "Ajouter un employeur"
 msgstr "Add an Employer"
 
-#: app/templates/employers/list.html:30
-msgid "Statut"
-msgstr "Status"
+#: app/templates/employers/add.html:22 app/templates/employers/edit.html:22
+msgid "Informations de l'entreprise"
+msgstr "Company Information"
 
-#: app/templates/employers/list.html:32
-msgid "Tous"
-msgstr "All"
+#: app/templates/employers/add.html:26 app/templates/employers/edit.html:26
+msgid "Nom de l'entreprise *"
+msgstr "Company Name *"
 
-#: app/templates/employers/list.html:33
-msgid "Actifs"
-msgstr "Active"
+#: app/templates/employers/add.html:28
+msgid "ex: Google, Microsoft, Mon Entreprise..."
+msgstr "e.g.: Google, Microsoft, My Company..."
+
+#: app/templates/employers/add.html:34
+msgid "Format recommandé : PNG ou JPG, max 2 Mo"
+msgstr "Recommended format: PNG or JPG, max 2 MB"
+
+#: app/templates/employers/add.html:38 app/templates/employers/detail.html:194
+#: app/templates/employers/edit.html:52
+msgid "SIRET"
+msgstr "SIRET"
+
+#: app/templates/employers/add.html:40
+msgid "ex: 123 456 789 00012"
+msgstr "e.g.: 123 456 789 00012"
+
+#: app/templates/employers/add.html:51 app/templates/employers/add.html:54
+#: app/templates/employers/edit.html:65 app/templates/employers/edit.html:68
+msgid "Coordonnées"
+msgstr "Contact Information"
+
+#: app/templates/employers/add.html:58 app/templates/employers/edit.html:72
+#: app/templates/providers/add.html:42 app/templates/providers/edit.html:42
+msgid "Adresse"
+msgstr "Address"
+
+#: app/templates/employers/add.html:60
+msgid "ex: 123 Rue de la Paix"
+msgstr "e.g.: 123 Peace Street"
+
+#: app/templates/employers/add.html:65 app/templates/employers/edit.html:79
+msgid "Code postal"
+msgstr "Postal code"
+
+#: app/templates/employers/add.html:70 app/templates/employers/edit.html:84
+msgid "Ville"
+msgstr "City"
+
+#: app/templates/employers/add.html:72
+msgid "Paris"
+msgstr "Paris"
+
+#: app/templates/employers/add.html:84 app/templates/employers/edit.html:98
+#: app/templates/providers/add.html:32 app/templates/providers/edit.html:32
+#: app/templates/providers/list.html:46
+msgid "Téléphone"
+msgstr "Phone"
+
+#: app/templates/employers/add.html:98 app/templates/employers/add.html:102
+#: app/templates/employers/edit.html:112 app/templates/employers/edit.html:116
+msgid "Informations sur l'emploi"
+msgstr "Employment Information"
+
+#: app/templates/employers/add.html:106 app/templates/employers/edit.html:120
+msgid "Poste occupé"
+msgstr "Job Title"
+
+#: app/templates/employers/add.html:108
+msgid "ex: Développeur Full Stack, Chef de projet..."
+msgstr "e.g.: Full Stack Developer, Project Manager..."
+
+#: app/templates/employers/add.html:112 app/templates/employers/edit.html:126
+msgid "Type de contrat"
+msgstr "Contract Type"
+
+#: app/templates/employers/add.html:114 app/templates/employers/edit.html:128
+#: app/templates/employers/edit_document.html:25
+msgid "-- Sélectionner --"
+msgstr "-- Select --"
+
+#: app/templates/employers/add.html:123 app/templates/employers/edit.html:137
+#: app/templates/employers/list.html:130
+msgid "Date d'embauche"
+msgstr "Hire date"
+
+#: app/templates/employers/add.html:127 app/templates/employers/edit.html:142
+msgid "Date de fin"
+msgstr "End Date"
+
+#: app/templates/employers/add.html:129 app/templates/employers/edit.html:145
+msgid "Laisser vide si encore en poste"
+msgstr "Leave blank if still employed"
+
+#: app/templates/employers/add.html:135 app/templates/employers/add.html:138
+#: app/templates/employers/detail.html:203
+#: app/templates/employers/detail.html:207
+#: app/templates/employers/edit.html:151 app/templates/employers/edit.html:154
+#: app/templates/providers/add.html:47 app/templates/providers/edit.html:47
+msgid "Notes"
+msgstr "Notes"
+
+#: app/templates/employers/add.html:143
+msgid "Informations complémentaires, notes personnelles..."
+msgstr "Additional information, personal notes..."
+
+#: app/templates/employers/add.html:152
+msgid "Ajouter l'employeur"
+msgstr "Add Employer"
+
+#: app/templates/employers/add_document.html:3
+#: app/templates/employers/add_document.html:11
+#: app/templates/employers/detail.html:262
+#: app/templates/employers/detail.html:381
+msgid "Ajouter un document"
+msgstr "Add a Document"
+
+#: app/templates/employers/add_document.html:23
+#: app/templates/employers/edit_document.html:23
+msgid "Type de document *"
+msgstr "Document Type *"
+
+#: app/templates/employers/add_document.html:25
+msgid "-- Selectionner --"
+msgstr "-- Select --"
+
+#: app/templates/employers/add_document.html:33
+#: app/templates/employers/edit_document.html:33
+msgid "Nom du document *"
+msgstr "Document Name *"
+
+#: app/templates/employers/add_document.html:35
+msgid "ex: Contrat CDI, Fiche de paie Janvier 2024..."
+msgstr "e.g.: Permanent Contract, January 2024 Pay Slip..."
+
+#: app/templates/employers/add_document.html:41
+msgid "Informations complementaires..."
+msgstr "Additional information..."
+
+#: app/templates/employers/add_document.html:46
+#: app/templates/employers/edit_document.html:45
+msgid "Date du document"
+msgstr "Document Date"
+
+#: app/templates/employers/add_document.html:50
+#: app/templates/employers/add_document.html:52
+msgid "Annee"
+msgstr "Year"
+
+#: app/templates/employers/add_document.html:57
+msgid "Pour le classement"
+msgstr "For classification"
+
+#: app/templates/employers/add_document.html:60
+#: app/templates/employers/add_document.html:62
+#: app/templates/employers/add_document.html:109
+#: app/templates/employers/edit_document.html:59
+#: app/templates/employers/edit_document.html:61
+msgid "Mois"
+msgstr "Month"
+
+#: app/templates/employers/add_document.html:67
+msgid "Pour les fiches de paie"
+msgstr "For pay slips"
+
+#: app/templates/employers/add_document.html:72
+msgid "Fichier *"
+msgstr "File *"
+
+#: app/templates/employers/add_document.html:81
+#: app/templates/employers/edit_document.html:82
+msgid "Formats acceptés : PDF, Word, Excel, Images (taille max : 16 Mo)"
+msgstr "Accepted formats: PDF, Word, Excel, Images (max size: 16 MB)"
+
+#: app/templates/employers/add_document.html:86
+msgid "Ajouter le document"
+msgstr "Add Document"
+
+#: app/templates/employers/detail.html:131
+msgid "En poste"
+msgstr "Currently employed"
+
+#: app/templates/employers/detail.html:137
+msgid "Depuis"
+msgstr "Since"
+
+#: app/templates/employers/detail.html:159
+#: app/templates/employers/detail.html:162
+msgid "Coordonnees"
+msgstr "Contact"
+
+#: app/templates/employers/detail.html:198
+msgid "Aucune coordonnee renseignee"
+msgstr "No contact information provided"
+
+#: app/templates/employers/detail.html:218
+#: app/templates/employers/detail.html:245
+#: app/templates/employers/list.html:132
+msgid "Documents"
+msgstr "Documents"
+
+#: app/templates/employers/detail.html:271
+msgid "Tous les types"
+msgstr "All types"
+
+#: app/templates/employers/detail.html:279
+msgid "Toutes les annees"
+msgstr "All years"
+
+#: app/templates/employers/detail.html:287
+msgid "Rechercher..."
+msgstr "Search..."
+
+#: app/templates/employers/detail.html:351
+msgid "Visualiser"
+msgstr "Preview"
+
+#: app/templates/employers/detail.html:356
+msgid "Telecharger"
+msgstr "Download"
+
+#: app/templates/employers/detail.html:365
+msgid "Supprimer ce document ?"
+msgstr "Delete this document?"
+
+#: app/templates/employers/detail.html:378
+msgid "Aucun document"
+msgstr "No documents"
+
+#: app/templates/employers/detail.html:379
+msgid "Ajoutez vos contrats, fiches de paie et autres documents"
+msgstr "Add your contracts, pay slips and other documents"
+
+#: app/templates/employers/detail.html:425
+msgid "Apercu non disponible pour ce type de fichier"
+msgstr "Preview not available for this file type"
+
+#: app/templates/employers/edit.html:42
+msgid "Supprimer le logo"
+msgstr "Delete logo"
+
+#: app/templates/employers/edit.html:48
+msgid "Laisser vide pour garder le logo actuel"
+msgstr "Leave blank to keep current logo"
+
+#: app/templates/employers/edit.html:175 app/templates/employers/edit.html:178
+msgid "Zone de danger"
+msgstr "Danger Zone"
+
+#: app/templates/employers/edit.html:181
+msgid ""
+"La suppression de cet employeur supprimera également tous les documents "
+"associés."
+msgstr "Deleting this employer will also delete all associated documents."
+
+#: app/templates/employers/edit.html:185
+msgid "Supprimer cet employeur"
+msgstr "Delete this Employer"
+
+#: app/templates/employers/edit_document.html:50
+#: app/templates/employers/edit_document.html:52
+msgid "Année"
+msgstr "Year"
+
+#: app/templates/employers/edit_document.html:70
+#: app/templates/employers/edit_document.html:73
+msgid "Fichier"
+msgstr "File"
+
+#: app/templates/employers/edit_document.html:76
+msgid "Télécharger"
+msgstr "Download"
+
+#: app/templates/employers/list.html:3 app/templates/employers/list.html:8
+msgid "Mes employeurs"
+msgstr "My Employers"
 
 #: app/templates/employers/list.html:34
 msgid "Anciens emplois"
@@ -1973,14 +3539,13 @@ msgid "document(s)"
 msgstr "document(s)"
 
 #: app/templates/employers/list.html:108 app/templates/employers/list.html:199
+#: app/templates/revenues/list.html:110
+#: app/templates/subscriptions/list.html:160
 msgid "Voir"
 msgstr "View"
 
-#: app/templates/employers/list.html:111 app/templates/employers/list.html:202
-msgid "Modifier"
-msgstr "Edit"
-
-#: app/templates/employers/list.html:126
+#: app/templates/employers/list.html:126 app/templates/revenues/add.html:26
+#: app/templates/revenues/detail.html:31 app/templates/revenues/edit.html:27
 msgid "Employeur"
 msgstr "Employer"
 
@@ -1996,25 +3561,9 @@ msgstr "Location"
 msgid "Contrat"
 msgstr "Contract"
 
-#: app/templates/employers/list.html:130
-msgid "Date d'embauche"
-msgstr "Hire date"
-
-#: app/templates/employers/list.html:132
-msgid "Documents"
-msgstr "Documents"
-
-#: app/templates/employers/list.html:133
-msgid "Actions"
-msgstr "Actions"
-
 #: app/templates/employers/list.html:181
 msgid "au"
 msgstr "to"
-
-#: app/templates/employers/list.html:189
-msgid "Actif"
-msgstr "Active"
 
 #: app/templates/employers/list.html:206
 msgid "Etes-vous sur de vouloir supprimer cet employeur ?"
@@ -2024,10 +3573,6 @@ msgstr "Are you sure you want to delete this employer?"
 msgid "Precedent"
 msgstr "Previous"
 
-#: app/templates/employers/list.html:243
-msgid "Suivant"
-msgstr "Next"
-
 #: app/templates/employers/list.html:253
 msgid "Aucun employeur"
 msgstr "No employers"
@@ -2036,702 +3581,115 @@ msgstr "No employers"
 msgid "Commencez par ajouter votre premier employeur"
 msgstr "Start by adding your first employer"
 
-#: app/templates/employers/add.html:3
-msgid "Ajouter un employeur - Budgee Family"
-msgstr "Add an Employer - Budgee Family"
-
-#: app/templates/employers/add.html:10
-msgid "Ajouter un employeur"
-msgstr "Add an Employer"
-
-#: app/templates/employers/add.html:12 app/templates/employers/detail.html:147
-#: app/templates/employers/edit.html:12 app/templates/employers/add_document.html:15
-#: app/templates/employers/edit_document.html:15
-msgid "Retour"
-msgstr "Back"
-
-#: app/templates/employers/add.html:22 app/templates/employers/edit.html:22
-msgid "Informations de l'entreprise"
-msgstr "Company Information"
-
-#: app/templates/employers/add.html:26 app/templates/employers/edit.html:26
-msgid "Nom de l'entreprise *"
-msgstr "Company Name *"
-
-#: app/templates/employers/add.html:28
-msgid "ex: Google, Microsoft, Mon Entreprise..."
-msgstr "e.g.: Google, Microsoft, My Company..."
-
-#: app/templates/employers/add.html:32 app/templates/employers/edit.html:32
-msgid "Logo"
-msgstr "Logo"
-
-#: app/templates/employers/add.html:34
-msgid "Format recommandé : PNG ou JPG, max 2 Mo"
-msgstr "Recommended format: PNG or JPG, max 2 MB"
-
-#: app/templates/employers/add.html:38 app/templates/employers/edit.html:52
-msgid "SIRET"
-msgstr "SIRET"
-
-#: app/templates/employers/add.html:40
-msgid "ex: 123 456 789 00012"
-msgstr "e.g.: 123 456 789 00012"
-
-#: app/templates/employers/add.html:44 app/templates/employers/edit.html:58
-msgid "Site web"
-msgstr "Website"
-
-#: app/templates/employers/add.html:54 app/templates/employers/edit.html:68
-msgid "Coordonnées"
-msgstr "Contact Information"
-
-#: app/templates/employers/add.html:58 app/templates/employers/edit.html:72
-msgid "Adresse"
-msgstr "Address"
-
-#: app/templates/employers/add.html:60
-msgid "ex: 123 Rue de la Paix"
-msgstr "e.g.: 123 Peace Street"
-
-#: app/templates/employers/add.html:65 app/templates/employers/edit.html:79
-msgid "Code postal"
-msgstr "Postal code"
-
-#: app/templates/employers/add.html:70 app/templates/employers/edit.html:84
-msgid "Ville"
-msgstr "City"
-
-#: app/templates/employers/add.html:72
-msgid "Paris"
-msgstr "Paris"
-
-#: app/templates/employers/add.html:77 app/templates/employers/edit.html:91
-msgid "Pays"
-msgstr "Country"
-
-#: app/templates/employers/add.html:79
-msgid "France"
-msgstr "France"
-
-#: app/templates/employers/add.html:84 app/templates/employers/edit.html:98
-msgid "Téléphone"
-msgstr "Phone"
-
-#: app/templates/employers/add.html:89 app/templates/employers/edit.html:103
-msgid "Email"
-msgstr "Email"
-
-#: app/templates/employers/add.html:102 app/templates/employers/edit.html:116
-msgid "Informations sur l'emploi"
-msgstr "Employment Information"
-
-#: app/templates/employers/add.html:106 app/templates/employers/edit.html:120
-msgid "Poste occupé"
-msgstr "Job Title"
-
-#: app/templates/employers/add.html:108
-msgid "ex: Développeur Full Stack, Chef de projet..."
-msgstr "e.g.: Full Stack Developer, Project Manager..."
-
-#: app/templates/employers/add.html:112 app/templates/employers/edit.html:126
-msgid "Type de contrat"
-msgstr "Contract Type"
-
-#: app/templates/employers/add.html:114 app/templates/employers/edit.html:128
-#: app/templates/employers/add_document.html:25 app/templates/employers/edit_document.html:25
-msgid "-- Sélectionner --"
-msgstr "-- Select --"
-
-#: app/templates/employers/add.html:123 app/templates/employers/edit.html:137
-msgid "Date d'embauche"
-msgstr "Hire Date"
-
-#: app/templates/employers/add.html:127 app/templates/employers/edit.html:142
-msgid "Date de fin"
-msgstr "End Date"
-
-#: app/templates/employers/add.html:129 app/templates/employers/edit.html:145
-msgid "Laisser vide si encore en poste"
-msgstr "Leave blank if still employed"
-
-#: app/templates/employers/add.html:138 app/templates/employers/edit.html:154
-#: app/templates/employers/detail.html:207
-msgid "Notes"
-msgstr "Notes"
-
-#: app/templates/employers/add.html:143
-msgid "Informations complémentaires, notes personnelles..."
-msgstr "Additional information, personal notes..."
-
-#: app/templates/employers/add.html:152
-msgid "Ajouter l'employeur"
-msgstr "Add Employer"
-
-#: app/templates/employers/add.html:155 app/templates/employers/edit.html:170
-#: app/templates/employers/add_document.html:83 app/templates/employers/edit_document.html:90
-msgid "Annuler"
-msgstr "Cancel"
-
-#: app/templates/employers/detail.html:131
-msgid "En poste"
-msgstr "Currently employed"
-
-#: app/templates/employers/detail.html:137
-msgid "Depuis"
-msgstr "Since"
-
-#: app/templates/employers/detail.html:144
-msgid "Modifier"
-msgstr "Edit"
-
-#: app/templates/employers/detail.html:162
-msgid "Coordonnees"
-msgstr "Contact"
-
-#: app/templates/employers/detail.html:194
-msgid "SIRET :"
-msgstr "SIRET:"
-
-#: app/templates/employers/detail.html:198
-msgid "Aucune coordonnee renseignee"
-msgstr "No contact information provided"
-
-#: app/templates/employers/detail.html:218
-msgid "Documents"
-msgstr "Documents"
-
-#: app/templates/employers/detail.html:245
-msgid "Documents"
-msgstr "Documents"
-
-#: app/templates/employers/detail.html:262
-msgid "Ajouter un document"
-msgstr "Add a Document"
-
-#: app/templates/employers/detail.html:271
-msgid "Tous les types"
-msgstr "All types"
-
-#: app/templates/employers/detail.html:279
-msgid "Toutes les annees"
-msgstr "All years"
-
-#: app/templates/employers/detail.html:287
-msgid "Rechercher..."
-msgstr "Search..."
-
-#: app/templates/employers/detail.html:327
-msgid "Janv."
-msgstr "Jan."
-
-#: app/templates/employers/detail.html:327
-msgid "Fev."
-msgstr "Feb."
-
-#: app/templates/employers/detail.html:327
-msgid "Mars"
-msgstr "Mar."
-
-#: app/templates/employers/detail.html:327
-msgid "Avr."
-msgstr "Apr."
-
-#: app/templates/employers/detail.html:327
-msgid "Juil."
-msgstr "Jul."
-
-#: app/templates/employers/detail.html:327
-msgid "Aout"
-msgstr "Aug."
-
-#: app/templates/employers/detail.html:327
-msgid "Sept."
-msgstr "Sep."
-
-#: app/templates/employers/detail.html:327
-msgid "Oct."
-msgstr "Oct."
-
-#: app/templates/employers/detail.html:327
-msgid "Nov."
-msgstr "Nov."
-
-#: app/templates/employers/detail.html:327
-msgid "Dec."
-msgstr "Dec."
-
-#: app/templates/employers/detail.html:352
-msgid "Visualiser"
-msgstr "Preview"
-
-#: app/templates/employers/detail.html:356
-msgid "Telecharger"
-msgstr "Download"
-
-#: app/templates/employers/detail.html:365
-msgid "Supprimer ce document ?"
-msgstr "Delete this document?"
-
-#: app/templates/employers/detail.html:378
-msgid "Aucun document"
-msgstr "No documents"
-
-#: app/templates/employers/detail.html:379
-msgid "Ajoutez vos contrats, fiches de paie et autres documents"
-msgstr "Add your contracts, pay slips and other documents"
-
-#: app/templates/employers/detail.html:400
-msgid "Fermer"
-msgstr "Close"
-
-#: app/templates/employers/detail.html:425
-msgid "Apercu non disponible pour ce type de fichier"
-msgstr "Preview not available for this file type"
-
-#: app/templates/employers/detail.html:425
-msgid "Ouvrir dans un nouvel onglet"
-msgstr "Open in a new tab"
-
-#: app/templates/employers/edit.html:3
-msgid "Modifier {{ employer.name }} - Budgee Family"
-msgstr "Edit {{ employer.name }} - Budgee Family"
-
-#: app/templates/employers/edit.html:10
-msgid "Modifier l'employeur"
-msgstr "Edit Employer"
-
-#: app/templates/employers/edit.html:42
-msgid "Supprimer le logo"
-msgstr "Delete logo"
-
-#: app/templates/employers/edit.html:48
-msgid "Laisser vide pour garder le logo actuel"
-msgstr "Leave blank to keep current logo"
-
-#: app/templates/employers/edit.html:167
-msgid "Enregistrer les modifications"
-msgstr "Save Changes"
-
-#: app/templates/employers/edit.html:178
-msgid "Zone de danger"
-msgstr "Danger Zone"
-
-#: app/templates/employers/edit.html:181
-msgid "La suppression de cet employeur supprimera également tous les documents associés."
-msgstr "Deleting this employer will also delete all associated documents."
-
-#: app/templates/employers/edit.html:183
-msgid "Êtes-vous sûr de vouloir supprimer cet employeur et tous ses documents ?"
-msgstr "Are you sure you want to delete this employer and all its documents?"
-
-#: app/templates/employers/edit.html:185
-msgid "Supprimer cet employeur"
-msgstr "Delete this Employer"
-
-#: app/templates/employers/add_document.html:3
-msgid "Ajouter un document - {{ employer.name }} - Budgee Family"
-msgstr "Add a Document - {{ employer.name }} - Budgee Family"
-
-#: app/templates/employers/add_document.html:11
-msgid "Ajouter un document"
-msgstr "Add a Document"
-
-#: app/templates/employers/add_document.html:12
-msgid "Pour {{ employer.name }}"
-msgstr "For {{ employer.name }}"
-
-#: app/templates/employers/add_document.html:23
-msgid "Type de document *"
-msgstr "Document Type *"
-
-#: app/templates/employers/add_document.html:25
-msgid "-- Selectionner --"
-msgstr "-- Select --"
-
-#: app/templates/employers/add_document.html:33
-msgid "Nom du document *"
-msgstr "Document Name *"
-
-#: app/templates/employers/add_document.html:35
-msgid "ex: Contrat CDI, Fiche de paie Janvier 2024..."
-msgstr "e.g.: Permanent Contract, January 2024 Pay Slip..."
-
-#: app/templates/employers/add_document.html:39 app/templates/employers/edit_document.html:39
-msgid "Description"
-msgstr "Description"
-
-#: app/templates/employers/add_document.html:41
-msgid "Informations complementaires..."
-msgstr "Additional information..."
-
-#: app/templates/employers/add_document.html:46 app/templates/employers/edit_document.html:45
-msgid "Date du document"
-msgstr "Document Date"
-
-#: app/templates/employers/add_document.html:50 app/templates/employers/edit_document.html:50
-msgid "Annee"
-msgstr "Year"
-
-#: app/templates/employers/add_document.html:52 app/templates/employers/edit_document.html:52
-msgid "-- Annee --"
-msgstr "-- Year --"
-
-#: app/templates/employers/add_document.html:57
-msgid "Pour le classement"
-msgstr "For classification"
-
-#: app/templates/employers/add_document.html:60 app/templates/employers/edit_document.html:59
-msgid "Mois"
-msgstr "Month"
-
-#: app/templates/employers/add_document.html:62 app/templates/employers/edit_document.html:61
-msgid "-- Mois --"
-msgstr "-- Month --"
-
-#: app/templates/employers/add_document.html:67
-msgid "Pour les fiches de paie"
-msgstr "For pay slips"
-
-#: app/templates/employers/add_document.html:72
-msgid "Fichier *"
-msgstr "File *"
-
-#: app/templates/employers/add_document.html:75
-msgid "Formats acceptés : PDF, Word, Excel, Images (taille max : 16 Mo)"
-msgstr "Accepted formats: PDF, Word, Excel, Images (max size: 16 MB)"
-
-#: app/templates/employers/add_document.html:80
-msgid "Ajouter le document"
-msgstr "Add Document"
-
-#: app/templates/employers/edit_document.html:3
-msgid "Modifier {{ document.name }} - Budgee Family"
-msgstr "Edit {{ document.name }} - Budgee Family"
-
-#: app/templates/employers/edit_document.html:11
-msgid "Modifier le document"
-msgstr "Edit Document"
-
-#: app/templates/employers/edit_document.html:33 app/templates/employers/add_document.html:33
-msgid "Nom du document *"
-msgstr "Document Name *"
-
-#: app/templates/employers/edit_document.html:50
-msgid "Année"
-msgstr "Year"
-
-#: app/templates/employers/edit_document.html:70
-msgid "Fichier"
-msgstr "File"
-
-#: app/templates/employers/edit_document.html:73
-msgid "Fichier actuel :"
-msgstr "Current file:"
-
-#: app/templates/employers/edit_document.html:76
-msgid "Télécharger"
-msgstr "Download"
-
-#: app/templates/employers/edit_document.html:82
-msgid "Formats acceptés : PDF, Word, Excel, Images (taille max : 16 Mo) - Laisser vide pour garder le fichier actuel"
-msgstr "Accepted formats: PDF, Word, Excel, Images (max size: 16 MB) - Leave blank to keep current file"
-
-# Flash messages
-#: app/routes/employers.py:123
-msgid "L'employeur \"%(name)s\" a été ajouté avec succès !"
-msgstr "Employer \"%(name)s\" has been successfully added!"
-
-#: app/routes/employers.py:135 app/routes/employers.py:191 app/routes/employers.py:260
-#: app/routes/employers.py:329 app/routes/employers.py:350 app/routes/employers.py:370 app/routes/employers.py:419
-msgid "Vous n'avez pas accès à cet employeur."
-msgstr "You don't have access to this employer."
-
-#: app/routes/employers.py:228
-msgid "L'employeur \"%(name)s\" a été mis à jour."
-msgstr "Employer \"%(name)s\" has been updated."
-
-#: app/routes/employers.py:249
-msgid "L'employeur \"%(name)s\" a été supprimé."
-msgstr "Employer \"%(name)s\" has been deleted."
-
-#: app/routes/employers.py:310
-msgid "Le document \"%(name)s\" a été ajouté avec succès !"
-msgstr "Document \"%(name)s\" has been successfully added!"
-
-#: app/routes/employers.py:328 app/routes/employers.py:349 app/routes/employers.py:369 app/routes/employers.py:418
-msgid "Vous n'avez pas accès à ce document."
-msgstr "You don't have access to this document."
-
-#: app/routes/employers.py:334 app/routes/employers.py:355
-msgid "Ce document n'a pas de fichier attaché."
-msgstr "This document has no attached file."
-
-#: app/routes/employers.py:398
-msgid "Le document \"%(name)s\" a été mis à jour."
-msgstr "Document \"%(name)s\" has been updated."
-
-#: app/routes/employers.py:426
-msgid "Le document \"%(name)s\" a été supprimé."
-msgstr "Document \"%(name)s\" has been deleted."
-
-# Revenues page - Python routes
-#: app/routes/revenues.py:18
-msgid "Salaire"
-msgstr "Salary"
-
-#: app/routes/revenues.py:19
-msgid "Freelance"
-msgstr "Freelance"
-
-#: app/routes/revenues.py:20
-msgid "Revenus locatifs"
-msgstr "Rental income"
-
-#: app/routes/revenues.py:21
-msgid "Investissements"
-msgstr "Investments"
-
-#: app/routes/revenues.py:22
-msgid "Pension/Retraite"
-msgstr "Pension/Retirement"
-
-#: app/routes/revenues.py:72
-msgid "Vous avez atteint la limite de revenus pour le plan gratuit. Passez au plan Premium pour ajouter des revenus illimités."
-msgstr "You have reached the revenue limit for the free plan. Upgrade to Premium to add unlimited revenues."
-
-#: app/routes/revenues.py:115
-msgid "Nouveau revenu ajouté"
-msgstr "New revenue added"
-
-#: app/routes/revenues.py:116
-msgid "Votre revenu \"%(name)s\" a été ajouté avec succès."
-msgstr "Your revenue \"%(name)s\" has been successfully added."
-
-#: app/routes/revenues.py:125
-msgid "Le revenu \"%(name)s\" a été ajouté avec succès !"
-msgstr "Revenue \"%(name)s\" has been successfully added!"
-
-#: app/routes/revenues.py:138 app/routes/revenues.py:175 app/routes/revenues.py:201 app/routes/revenues.py:226
-msgid "Vous n'avez pas accès à ce revenu."
-msgstr "You don't have access to this revenue."
-
-#: app/routes/revenues.py:159
-msgid "Le revenu \"%(name)s\" a été mis à jour."
-msgstr "Revenue \"%(name)s\" has been updated."
-
-#: app/routes/revenues.py:186
-msgid "Le revenu \"%(name)s\" et toutes ses transactions ont été supprimés."
-msgstr "Revenue \"%(name)s\" and all its transactions have been deleted."
-
-#: app/routes/revenues.py:215
-msgid "activé"
-msgstr "enabled"
-
-#: app/routes/revenues.py:215
-msgid "désactivé"
-msgstr "disabled"
-
-#: app/routes/revenues.py:216
-msgid "Le revenu \"%(name)s\" a été %(status)s."
-msgstr "Revenue \"%(name)s\" has been %(status)s."
-
-# Revenues page - Templates
-#: app/templates/revenues/list.html:3
-msgid "Mes revenus - Budgee Family"
-msgstr "My Revenues - Budgee Family"
-
-#: app/templates/revenues/list.html:8
-msgid "Mes revenus"
-msgstr "My Revenues"
-
-#: app/templates/revenues/list.html:12
-msgid "Ajouter un revenu"
-msgstr "Add a Revenue"
-
-#: app/templates/revenues/list.html:16
-msgid "Limite atteinte pour le plan gratuit"
-msgstr "Limit reached for free plan"
-
-#: app/templates/revenues/list.html:16
-msgid "Limite atteinte (1/1)"
-msgstr "Limit reached (1/1)"
-
-#: app/templates/revenues/list.html:19
-msgid "Passer Premium"
-msgstr "Upgrade to Premium"
-
-#: app/templates/revenues/list.html:30
-msgid "Statut"
-msgstr "Status"
-
-#: app/templates/revenues/list.html:32 app/templates/revenues/list.html:40
-msgid "Tous"
-msgstr "All"
-
-#: app/templates/revenues/list.html:33
-msgid "Actifs"
-msgstr "Active"
-
-#: app/templates/revenues/list.html:34
+#: app/templates/providers/add.html:3 app/templates/providers/add.html:15
+#: app/templates/providers/list.html:10 app/templates/providers/list.html:137
+msgid "Ajouter un prestataire"
+msgstr "Add a Provider"
+
+#: app/templates/providers/add.html:9 app/templates/providers/edit.html:9
+msgid "Retour à la liste"
+msgstr "Back to List"
+
+#: app/templates/providers/add.html:21 app/templates/providers/edit.html:21
+msgid "Nom du prestataire"
+msgstr "Provider Name"
+
+#: app/templates/providers/add.html:25 app/templates/providers/edit.html:25
+msgid "Type de prestataire"
+msgstr "Provider Type"
+
+#: app/templates/providers/add.html:26 app/templates/providers/edit.html:26
+msgid "Ex: Plombier, Électricien, Médecin..."
+msgstr "e.g.: Plumber, Electrician, Doctor..."
+
+#: app/templates/providers/add.html:33 app/templates/providers/edit.html:33
+msgid "Ex: 01 23 45 67 89"
+msgstr "e.g.: 01 23 45 67 89"
+
+#: app/templates/providers/add.html:37 app/templates/providers/edit.html:37
+msgid "Ex: contact@prestataire.fr"
+msgstr "e.g.: contact@provider.com"
+
+#: app/templates/providers/edit.html:3 app/templates/providers/edit.html:15
+msgid "Modifier un prestataire"
+msgstr "Edit Provider"
+
+# Providers Page - Templates
+#: app/templates/providers/list.html:3 app/templates/providers/list.html:8
+msgid "Mes prestataires"
+msgstr "My Providers"
+
+#: app/templates/providers/list.html:24
+#: app/templates/subscriptions/list.html:44
 msgid "Inactifs"
 msgstr "Inactive"
 
-#: app/templates/revenues/list.html:38
-msgid "Type de revenu"
-msgstr "Revenue Type"
-
-#: app/templates/revenues/list.html:51
+#: app/templates/providers/list.html:30 app/templates/revenues/list.html:51
+#: app/templates/subscriptions/list.html:61
 msgid "Réinitialiser"
 msgstr "Reset"
 
-#: app/templates/revenues/list.html:66
-msgid "Nom"
-msgstr "Name"
-
-#: app/templates/revenues/list.html:67
+#: app/templates/providers/list.html:45 app/templates/revenues/add.html:39
+#: app/templates/revenues/detail.html:49 app/templates/revenues/edit.html:40
+#: app/templates/revenues/list.html:38 app/templates/revenues/list.html:67
+#: app/templates/revenues/list.html:218 app/templates/revenues/list.html:260
+#: app/templates/revenues/list.html:261
 msgid "Type"
 msgstr "Type"
 
-#: app/templates/revenues/list.html:68
-msgid "Montant"
-msgstr "Amount"
+#: app/templates/providers/list.html:48
+msgid "Rappels"
+msgstr "Reminders"
 
-#: app/templates/revenues/list.html:69
-msgid "Périodicité"
-msgstr "Frequency"
+#: app/templates/providers/list.html:88
+msgid "Êtes-vous sûr de vouloir supprimer ce prestataire ?"
+msgstr "Are you sure you want to delete this provider?"
 
-#: app/templates/revenues/list.html:70
-msgid "Prochain"
-msgstr "Next"
+#: app/templates/providers/list.html:134
+msgid "Aucun prestataire"
+msgstr "No Providers"
 
-#: app/templates/revenues/list.html:72
-msgid "Actions"
-msgstr "Actions"
+#: app/templates/providers/list.html:135
+msgid "Commencez par ajouter votre premier prestataire"
+msgstr "Start by adding your first provider"
 
-#: app/templates/revenues/list.html:102
-msgid "Actif"
-msgstr "Active"
-
-#: app/templates/revenues/list.html:104
-msgid "Inactif"
-msgstr "Inactive"
-
-#: app/templates/revenues/list.html:110
-msgid "Voir"
-msgstr "View"
-
-#: app/templates/revenues/list.html:114
-msgid "Modifier"
-msgstr "Edit"
-
-#: app/templates/revenues/list.html:118
-msgid "Activer/Désactiver"
-msgstr "Enable/Disable"
-
-#: app/templates/revenues/list.html:123
-msgid "Êtes-vous sûr de vouloir supprimer ce revenu ?"
-msgstr "Are you sure you want to delete this revenue?"
-
-#: app/templates/revenues/list.html:124
-msgid "Supprimer"
-msgstr "Delete"
-
-#: app/templates/revenues/list.html:135
-msgid "Total mensuel :"
-msgstr "Monthly total:"
-
-#: app/templates/revenues/list.html:183
-msgid "Précédent"
-msgstr "Previous"
-
-#: app/templates/revenues/list.html:199
-msgid "Suivant"
-msgstr "Next"
-
-#: app/templates/revenues/list.html:210
-msgid "Répartition des revenus actifs par type"
-msgstr "Distribution of active revenues by type"
-
-#: app/templates/revenues/list.html:228
-msgid "Aucun revenu"
-msgstr "No revenues"
-
-#: app/templates/revenues/list.html:229
-msgid "Commencez par ajouter votre premier revenu (salaire, freelance, etc.)"
-msgstr "Start by adding your first revenue (salary, freelance, etc.)"
-
-#: app/templates/revenues/add.html:3
-msgid "Ajouter un revenu - Budgee Family"
-msgstr "Add a Revenue - Budgee Family"
-
-#: app/templates/revenues/add.html:10
+#: app/templates/revenues/add.html:3 app/templates/revenues/add.html:10
+#: app/templates/revenues/list.html:12 app/templates/revenues/list.html:231
 msgid "Ajouter un revenu"
 msgstr "Add a Revenue"
 
-#: app/templates/revenues/add.html:12
-msgid "Retour"
-msgstr "Back"
-
-#: app/templates/revenues/add.html:20
-msgid "Nom du revenu *"
-msgstr "Revenue Name *"
-
-#: app/templates/revenues/add.html:22
+#: app/templates/revenues/add.html:22 app/templates/revenues/edit.html:23
 msgid "ex: Salaire CDI, Freelance, Loyer perçu..."
 msgstr "e.g.: Permanent Salary, Freelance, Rent received..."
 
-#: app/templates/revenues/add.html:26
-msgid "Employeur"
-msgstr "Employer"
-
-#: app/templates/revenues/add.html:28
+#: app/templates/revenues/add.html:28 app/templates/revenues/edit.html:29
 msgid "-- Aucun employeur --"
 msgstr "-- No employer --"
 
-#: app/templates/revenues/add.html:34
+#: app/templates/revenues/add.html:34 app/templates/revenues/edit.html:35
 msgid "Créer un nouvel employeur"
 msgstr "Create a new employer"
 
-#: app/templates/revenues/add.html:39
-msgid "Type de revenu"
-msgstr "Revenue Type"
-
-#: app/templates/revenues/add.html:41
+#: app/templates/revenues/add.html:41 app/templates/revenues/edit.html:42
 msgid "-- Aucun type --"
 msgstr "-- No type --"
 
-#: app/templates/revenues/add.html:49
-msgid "Description"
-msgstr "Description"
-
-#: app/templates/revenues/add.html:51
+#: app/templates/revenues/add.html:51 app/templates/revenues/edit.html:52
 msgid "Informations complémentaires sur le revenu"
 msgstr "Additional information about the revenue"
 
-#: app/templates/revenues/add.html:56
-msgid "Montant *"
-msgstr "Amount *"
-
-#: app/templates/revenues/add.html:67
+#: app/templates/revenues/add.html:67 app/templates/subscriptions/add.html:71
+#: app/templates/subscriptions/edit.html:71
 msgid "Format : espace pour les milliers, virgule pour les décimales"
 msgstr "Format: space for thousands, comma for decimals"
 
-#: app/templates/revenues/add.html:71
-msgid "Périodicité *"
-msgstr "Frequency *"
-
-#: app/templates/revenues/add.html:73
-msgid "Mensuel"
-msgstr "Monthly"
-
-#: app/templates/revenues/add.html:74
-msgid "Trimestriel"
-msgstr "Quarterly"
-
-#: app/templates/revenues/add.html:75
-msgid "Annuel"
-msgstr "Annual"
+#: app/templates/revenues/add.html:71 app/templates/revenues/detail.html:78
+#: app/templates/revenues/edit.html:70 app/templates/revenues/list.html:69
+#: app/templates/subscriptions/add.html:75
+#: app/templates/subscriptions/edit.html:75
+#: app/templates/subscriptions/list.html:81
+msgid "Périodicité"
+msgstr "Frequency"
 
 #: app/templates/revenues/add.html:81
 msgid "Date de début *"
@@ -2745,110 +3703,44 @@ msgstr "Date of first payment"
 msgid "Ajouter le revenu"
 msgstr "Add Revenue"
 
-#: app/templates/revenues/add.html:92
-msgid "Annuler"
-msgstr "Cancel"
-
-#: app/templates/revenues/add.html:166
+#: app/templates/revenues/add.html:165 app/templates/subscriptions/add.html:331
+#: app/templates/subscriptions/edit.html:341
 msgid "Veuillez entrer un montant valide"
 msgstr "Please enter a valid amount"
 
-#: app/templates/revenues/add.html:177
+#: app/templates/revenues/add.html:177 app/templates/subscriptions/add.html:343
 msgid "Enregistrement en cours..."
 msgstr "Saving..."
 
-#: app/templates/revenues/edit.html:3
-msgid "Modifier un revenu - Budgee Family"
-msgstr "Edit a Revenue - Budgee Family"
-
-#: app/templates/revenues/edit.html:10
-msgid "Modifier le revenu"
-msgstr "Edit Revenue"
-
-#: app/templates/revenues/edit.html:80
-msgid "Date de début"
-msgstr "Start Date"
-
-#: app/templates/revenues/edit.html:82
-msgid "La date de début ne peut pas être modifiée"
-msgstr "The start date cannot be modified"
-
-#: app/templates/revenues/edit.html:87
-msgid "Enregistrer les modifications"
-msgstr "Save Changes"
-
-#: app/templates/revenues/detail.html:13
-msgid "Modifier"
-msgstr "Edit"
-
 #: app/templates/revenues/detail.html:25
+#: app/templates/subscriptions/detail.html:20
 msgid "Informations générales"
 msgstr "General Information"
-
-#: app/templates/revenues/detail.html:27
-msgid "Nom :"
-msgstr "Name:"
-
-#: app/templates/revenues/detail.html:31
-msgid "Employeur :"
-msgstr "Employer:"
 
 #: app/templates/revenues/detail.html:38
 msgid "Société :"
 msgstr "Company:"
 
-#: app/templates/revenues/detail.html:44
-msgid "Description :"
-msgstr "Description:"
-
-#: app/templates/revenues/detail.html:49
-msgid "Type :"
-msgstr "Type:"
-
-#: app/templates/revenues/detail.html:56
-msgid "Non défini"
-msgstr "Not defined"
-
-#: app/templates/revenues/detail.html:61
-msgid "Statut :"
-msgstr "Status:"
+#: app/templates/revenues/detail.html:65 app/templates/revenues/list.html:34
+#: app/templates/revenues/list.html:104
+#: app/templates/subscriptions/detail.html:69
+#: app/templates/subscriptions/list.html:154
+msgid "Inactif"
+msgstr "Inactive"
 
 #: app/templates/revenues/detail.html:71
+#: app/templates/subscriptions/detail.html:87
 msgid "Détails financiers"
 msgstr "Financial Details"
-
-#: app/templates/revenues/detail.html:74
-msgid "Montant :"
-msgstr "Amount:"
-
-#: app/templates/revenues/detail.html:78
-msgid "Périodicité :"
-msgstr "Frequency:"
 
 #: app/templates/revenues/detail.html:81
 msgid "Équivalent mensuel :"
 msgstr "Monthly equivalent:"
 
-#: app/templates/revenues/detail.html:85
-msgid "Date de début :"
-msgstr "Start date:"
-
-#: app/templates/revenues/detail.html:87
-msgid "Prochain versement :"
-msgstr "Next payment:"
-
-#: app/templates/revenues/detail.html:109
-msgid "Actions"
-msgstr "Actions"
-
-#: app/templates/revenues/detail.html:114
-msgid "Désactiver"
-msgstr "Disable"
-
-#: app/templates/revenues/detail.html:114
-msgid "Activer"
-msgstr "Enable"
-
+#: app/templates/revenues/detail.html:85 app/templates/revenues/edit.html:80
+#: app/templates/subscriptions/add.html:97
+msgid "Date de début"
+msgstr "Start Date"
 
 #: app/templates/revenues/detail.html:96
 msgid "Créé le"
@@ -2858,631 +3750,729 @@ msgstr "Created on"
 msgid "Modifié le"
 msgstr "Modified on"
 
-# Cycle translations (for translate_cycle filter)
-#: app/__init__.py:136
-msgid "Mensuel"
-msgstr "Monthly"
-
-#: app/__init__.py:137
-msgid "Annuel"
-msgstr "Annual"
-
-#: app/__init__.py:138
-msgid "Hebdomadaire"
-msgstr "Weekly"
-
-#: app/__init__.py:139
-msgid "Trimestriel"
-msgstr "Quarterly"
-
-# Month abbreviations (for translate_month filter)
-#: app/__init__.py:156
-msgid "Janv."
-msgstr "Jan."
-
-#: app/__init__.py:157
-msgid "Fév."
-msgstr "Feb."
-
-#: app/__init__.py:158
-msgid "Mars"
-msgstr "Mar."
-
-#: app/__init__.py:159
-msgid "Avr."
-msgstr "Apr."
-
-#: app/__init__.py:160
-msgid "Mai"
-msgstr "May"
-
-#: app/__init__.py:161
-msgid "Juin"
-msgstr "Jun."
-
-#: app/__init__.py:162
-msgid "Juil."
-msgstr "Jul."
-
-#: app/__init__.py:163
-msgid "Août"
-msgstr "Aug."
-
-#: app/__init__.py:164
-msgid "Sept."
-msgstr "Sep."
-
-#: app/__init__.py:165
-msgid "Oct."
-msgstr "Oct."
-
-#: app/__init__.py:166
-msgid "Nov."
-msgstr "Nov."
-
-#: app/__init__.py:167
-msgid "Déc."
-msgstr "Dec."
-
-# Card Purchase Categories page - Python routes
-#: app/routes/card_purchase_categories.py:52
-msgid "Le nom de la catégorie est obligatoire."
-msgstr "The category name is required."
-
-#: app/routes/card_purchase_categories.py:69
-msgid "La catégorie \"%(name)s\" a été créée avec succès."
-msgstr "Category \"%(name)s\" has been successfully created."
-
-#: app/routes/card_purchase_categories.py:83
-msgid "Vous ne pouvez modifier que vos propres catégories."
-msgstr "You can only edit your own categories."
-
-#: app/routes/card_purchase_categories.py:95
-msgid "La catégorie \"%(name)s\" a été modifiée."
-msgstr "Category \"%(name)s\" has been updated."
-
-#: app/routes/card_purchase_categories.py:109
-msgid "Vous ne pouvez supprimer que vos propres catégories."
-msgstr "You can only delete your own categories."
-
-#: app/routes/card_purchase_categories.py:116
-msgid "La catégorie \"%(name)s\" a été supprimée."
-msgstr "Category \"%(name)s\" has been deleted."
-
-# Card Purchase Categories page - Templates
-#: app/templates/card_purchase_categories/list.html:3
-msgid "Catégories d'achats CB"
-msgstr "Card Purchase Categories"
-
-#: app/templates/card_purchase_categories/list.html:9
-msgid "Catégories d'achats CB"
-msgstr "Card Purchase Categories"
-
-#: app/templates/card_purchase_categories/list.html:10
-msgid "Gérez vos catégories pour classer vos achats par carte bancaire"
-msgstr "Manage your categories to classify your card purchases"
-
-#: app/templates/card_purchase_categories/list.html:14
-msgid "Nouvelle catégorie"
-msgstr "New Category"
-
-#: app/templates/card_purchase_categories/list.html:23
-msgid "Mes catégories personnalisées"
-msgstr "My Custom Categories"
-
-#: app/templates/card_purchase_categories/list.html:41
-msgid "Modifier"
-msgstr "Edit"
-
-#: app/templates/card_purchase_categories/list.html:47
-msgid "Confirmer la suppression ?"
-msgstr "Confirm deletion?"
-
-#: app/templates/card_purchase_categories/list.html:50
-msgid "Supprimer"
-msgstr "Delete"
-
-#: app/templates/card_purchase_categories/list.html:71
-msgid "Catégories par défaut"
-msgstr "Default Categories"
-
-#: app/templates/card_purchase_categories/list.html:93
-msgid "Aucune catégorie par défaut disponible."
-msgstr "No default categories available."
-
-#: app/templates/card_purchase_categories/list.html:100
-msgid "Retour aux achats CB"
-msgstr "Back to Card Purchases"
-
-# Card Purchase Categories - Add/Edit Templates
-msgid "Créer une catégorie"
-msgstr "Create a Category"
-
-msgid "Nom de la catégorie"
-msgstr "Category Name"
-
-msgid "Ex: Alimentation, Transport, Loisirs..."
-msgstr "e.g.: Food, Transport, Leisure..."
-
-msgid "Description courte de cette catégorie"
-msgstr "Short description of this category"
-
-msgid "Couleur"
-msgstr "Color"
-
-msgid "Choisir une couleur"
-msgstr "Choose a color"
-
-msgid "Couleur utilisée pour identifier la catégorie"
-msgstr "Color used to identify the category"
-
-msgid "Icône"
-msgstr "Icon"
-
-msgid "Choisir une icône"
-msgstr "Choose an icon"
-
-msgid "Cliquez pour sélectionner une icône"
-msgstr "Click to select an icon"
-
-msgid "Prévisualisation"
-msgstr "Preview"
-
-msgid "Catégorie personnalisée"
-msgstr "Custom Category"
-
-msgid "Créer la catégorie"
-msgstr "Create Category"
-
-msgid "Rechercher une icône..."
-msgstr "Search for an icon..."
-
-msgid "Modifier la catégorie"
-msgstr "Edit Category"
-
-# Default Category Names
-msgid "Alimentation"
-msgstr "Food"
-
-msgid "Carburant"
-msgstr "Fuel"
-
-msgid "Habillement"
-msgstr "Clothing"
-
-msgid "Restaurant"
-msgstr "Restaurant"
-
-msgid "Transport"
-msgstr "Transportation"
-
-msgid "Santé & Pharmacie"
-msgstr "Health & Pharmacy"
-
-msgid "Loisirs & Culture"
-msgstr "Leisure & Culture"
-
-msgid "Maison & Jardin"
-msgstr "Home & Garden"
-
-msgid "Électronique & High-tech"
-msgstr "Electronics & Tech"
-
-msgid "Sport & Fitness"
-msgstr "Sports & Fitness"
-
-msgid "Beauté & Cosmétiques"
-msgstr "Beauty & Cosmetics"
-
-msgid "Éducation & Formation"
-msgstr "Education & Training"
-
-msgid "Voyages & Hébergement"
-msgstr "Travel & Accommodation"
-
-msgid "Cadeaux"
-msgstr "Gifts"
-
-msgid "Animaux"
-msgstr "Pets"
-
-msgid "Autre"
-msgstr "Other"
-
-# Default Category Descriptions
-msgid "Courses alimentaires, supermarché"
-msgstr "Groceries, supermarket"
-
-msgid "Essence, diesel, station-service"
-msgstr "Gas, diesel, service station"
-
-msgid "Vêtements, chaussures, accessoires"
-msgstr "Clothes, shoes, accessories"
-
-msgid "Restaurants, fast-food, livraison"
-msgstr "Restaurants, fast-food, delivery"
-
-msgid "Transports en commun, taxi, parking"
-msgstr "Public transport, taxi, parking"
-
-msgid "Médicaments, pharmacie, soins"
-msgstr "Medications, pharmacy, healthcare"
-
-msgid "Cinéma, concerts, musées, spectacles"
-msgstr "Cinema, concerts, museums, shows"
-
-msgid "Bricolage, jardinage, décoration"
-msgstr "DIY, gardening, decoration"
-
-msgid "Informatique, électronique, gadgets"
-msgstr "Computers, electronics, gadgets"
-
-msgid "Équipement sportif, salle de sport"
-msgstr "Sports equipment, gym"
-
-msgid "Coiffeur, esthétique, cosmétiques"
-msgstr "Hairdresser, beauty salon, cosmetics"
-
-msgid "Livres, formations, cours"
-msgstr "Books, training, courses"
-
-msgid "Hôtels, voyages, locations"
-msgstr "Hotels, travel, rentals"
-
-msgid "Cadeaux pour occasions spéciales"
-msgstr "Gifts for special occasions"
-
-msgid "Nourriture et soins pour animaux"
-msgstr "Pet food and care"
-
-msgid "Dépenses diverses non catégorisées"
-msgstr "Miscellaneous uncategorized expenses"
-
-# Providers Page - Python
-msgid "Le prestataire \"%(name)s\" a été ajouté avec succès !"
-msgstr "Provider \"%(name)s\" has been added successfully!"
-
-msgid "Vous n'avez pas accès à ce prestataire."
-msgstr "You do not have access to this provider."
-
-msgid "Le prestataire \"%(name)s\" a été modifié avec succès !"
-msgstr "Provider \"%(name)s\" has been updated successfully!"
-
-msgid "Impossible de supprimer ce prestataire car des rappels y sont associés."
-msgstr "Cannot delete this provider because reminders are associated with it."
-
-msgid "Le prestataire \"%(name)s\" a été supprimé."
-msgstr "Provider \"%(name)s\" has been deleted."
-
-# Providers Page - Templates
-msgid "Mes prestataires"
-msgstr "My Providers"
-
-msgid "Ajouter un prestataire"
-msgstr "Add a Provider"
-
-msgid "Statut"
-msgstr "Status"
-
-msgid "Tous"
-msgstr "All"
-
-msgid "Actifs"
-msgstr "Active"
-
-msgid "Inactifs"
-msgstr "Inactive"
-
-msgid "Réinitialiser"
-msgstr "Reset"
-
-msgid "Type"
-msgstr "Type"
-
-msgid "Téléphone"
-msgstr "Phone"
-
-msgid "Email"
-msgstr "Email"
-
-msgid "Rappels"
-msgstr "Reminders"
-
-msgid "Actions"
-msgstr "Actions"
-
-msgid "Êtes-vous sûr de vouloir supprimer ce prestataire ?"
-msgstr "Are you sure you want to delete this provider?"
-
-msgid "Précédent"
-msgstr "Previous"
-
-msgid "Suivant"
-msgstr "Next"
-
-msgid "Aucun prestataire"
-msgstr "No Providers"
-
-msgid "Commencez par ajouter votre premier prestataire"
-msgstr "Start by adding your first provider"
-
-msgid "Retour à la liste"
-msgstr "Back to List"
-
-msgid "Modifier un prestataire"
-msgstr "Edit Provider"
-
-msgid "Nom du prestataire"
-msgstr "Provider Name"
-
-msgid "Type de prestataire"
-msgstr "Provider Type"
-
-msgid "Ex: Plombier, Électricien, Médecin..."
-msgstr "e.g.: Plumber, Electrician, Doctor..."
-
-msgid "Ex: 01 23 45 67 89"
-msgstr "e.g.: 01 23 45 67 89"
-
-msgid "Ex: contact@prestataire.fr"
-msgstr "e.g.: contact@provider.com"
-
-msgid "Adresse"
-msgstr "Address"
-
-msgid "Notes"
-msgstr "Notes"
-
-msgid "Enregistrer"
-msgstr "Save"
-
-# Checkbooks Page - Python
-msgid "Le numéro du premier chèque est requis."
-msgstr "The first check number is required."
-
-msgid "Le numéro de fin doit être supérieur au numéro de début."
-msgstr "The end number must be greater than the start number."
-
-msgid "Chéquier \"%(name)s\" ajouté avec succès avec %(count)s chèques !"
-msgstr "Checkbook \"%(name)s\" added successfully with %(count)s checks!"
-
-msgid "Vous n'avez pas accès à ce chéquier."
-msgstr "You do not have access to this checkbook."
-
-msgid "Chéquier modifié avec succès !"
-msgstr "Checkbook updated successfully!"
-
-msgid "activé"
-msgstr "enabled"
-
-msgid "désactivé"
-msgstr "disabled"
-
-msgid "Le chéquier \"%(name)s\" a été %(status)s."
-msgstr "Checkbook \"%(name)s\" has been %(status)s."
-
-msgid "Impossible de supprimer ce chéquier car il contient des chèques."
-msgstr "Cannot delete this checkbook because it contains checks."
-
-msgid "Chéquier \"%(name)s\" supprimé avec succès !"
-msgstr "Checkbook \"%(name)s\" deleted successfully!"
-
-msgid "Aucun chèque disponible dans ce chéquier."
-msgstr "No checks available in this checkbook."
-
-msgid "Ce chèque n'est pas disponible."
-msgstr "This check is not available."
-
-msgid "Chèque #%(number)s annulé avec succès !"
-msgstr "Check #%(number)s cancelled successfully!"
-
-msgid "Chèque #%(number)s utilisé avec succès !"
-msgstr "Check #%(number)s used successfully!"
-
-msgid "Vous n'avez pas accès à ce chèque."
-msgstr "You do not have access to this check."
-
-msgid "Vous ne pouvez pas modifier un chèque non utilisé. Veuillez l'utiliser d'abord."
-msgstr "You cannot edit an unused check. Please use it first."
-
-msgid "Chèque #%(number)s modifié avec succès !"
-msgstr "Check #%(number)s updated successfully!"
-
-msgid "Chèque #%(number)s supprimé avec succès !"
-msgstr "Check #%(number)s deleted successfully!"
-
-# Checkbooks Page - Templates
-msgid "Mes chéquiers"
-msgstr "My Checkbooks"
-
-msgid "Nouveau chéquier"
-msgstr "New Checkbook"
-
-msgid "En cours"
-msgstr "Active"
-
-msgid "Terminés"
-msgstr "Finished"
-
-msgid "Chéquier"
-msgstr "Checkbook"
-
-msgid "Banque"
-msgstr "Bank"
-
-msgid "Chèques"
-msgstr "Checks"
-
-msgid "Disponibles"
-msgstr "Available"
-
-msgid "Utilisés"
-msgstr "Used"
-
-msgid "Voir les détails"
-msgstr "View Details"
-
-msgid "Aucun chéquier"
-msgstr "No Checkbooks"
-
-msgid "Commencez par créer votre premier chéquier"
-msgstr "Start by creating your first checkbook"
-
-msgid "Nom du chéquier"
-msgstr "Checkbook Name"
-
-msgid "Mon chéquier principal"
-msgstr "My main checkbook"
-
-msgid "Banque (optionnel)"
-msgstr "Bank (optional)"
-
-msgid "Sélectionner une banque"
-msgstr "Select a bank"
-
-msgid "N° du premier chèque"
-msgstr "First check number"
-
-msgid "N° du dernier chèque"
-msgstr "Last check number"
-
-msgid "Si non renseigné, 25 chèques seront créés automatiquement"
-msgstr "If not specified, 25 checks will be created automatically"
-
-msgid "Modifier le chéquier"
-msgstr "Edit Checkbook"
-
-msgid "Supprimer le chéquier"
-msgstr "Delete Checkbook"
-
-msgid "Utiliser un chèque"
-msgstr "Use a Check"
-
-msgid "Banque :"
-msgstr "Bank:"
-
-msgid "Non renseignée"
-msgstr "Not specified"
-
-msgid "Chèques :"
-msgstr "Checks:"
-
-msgid "Disponibles :"
-msgstr "Available:"
-
-msgid "Créé le :"
-msgstr "Created on:"
-
-msgid "N° Chèque"
-msgstr "Check #"
-
-msgid "Date"
-msgstr "Date"
-
-msgid "Bénéficiaire"
-msgstr "Payee"
-
-msgid "Montant"
-msgstr "Amount"
-
-msgid "Disponible"
-msgstr "Available"
-
-msgid "Utilisé"
-msgstr "Used"
-
-msgid "Annulé"
-msgstr "Cancelled"
-
-msgid "Sélectionner le chèque"
-msgstr "Select check"
-
-msgid "Choisir un chèque"
-msgstr "Choose a check"
-
-msgid "Date du chèque"
-msgstr "Check date"
-
-msgid "Description"
-msgstr "Description"
-
-msgid "Utiliser ce chèque"
-msgstr "Use this Check"
-
-msgid "Annuler ce chèque"
-msgstr "Cancel this Check"
-
-msgid "Modifier le chèque"
-msgstr "Edit Check"
-
-# Checkbooks - Missing translations
-msgid "Gérez vos chéquiers et vos chèques émis"
-msgstr "Manage your checkbooks and issued checks"
-
-msgid "Actifs"
-msgstr "Active"
-
-msgid "Total"
-msgstr "Total"
-
-msgid "Annulés"
-msgstr "Cancelled"
-
-msgid "Numéros"
-msgstr "Numbers"
-
-msgid "Terminé"
-msgstr "Finished"
-
-msgid "Actif"
-msgstr "Active"
-
-msgid "Êtes-vous sûr de vouloir supprimer ce chéquier ?"
-msgstr "Are you sure you want to delete this checkbook?"
-
-msgid "Ajouter un chéquier"
-msgstr "Add a Checkbook"
-
-msgid "Retour"
+#: app/templates/revenues/detail.html:119 app/templates/revenues/list.html:123
+msgid "Êtes-vous sûr de vouloir supprimer ce revenu ?"
+msgstr "Are you sure you want to delete this revenue?"
+
+#: app/templates/revenues/edit.html:82
+msgid "La date de début ne peut pas être modifiée"
+msgstr "The start date cannot be modified"
+
+#: app/templates/revenues/list.html:15 app/templates/subscriptions/list.html:25
+msgid "Limite atteinte pour le plan gratuit"
+msgstr "Limit reached for free plan"
+
+#: app/templates/revenues/list.html:16
+msgid "Limite atteinte (1/1)"
+msgstr "Limit reached (1/1)"
+
+#: app/templates/revenues/list.html:19 app/templates/subscriptions/list.html:29
+msgid "Passer Premium"
+msgstr "Upgrade to Premium"
+
+#: app/templates/revenues/list.html:118
+#: app/templates/subscriptions/list.html:168
+msgid "Activer/Désactiver"
+msgstr "Enable/Disable"
+
+#: app/templates/revenues/list.html:135
+msgid "Total mensuel :"
+msgstr "Monthly total:"
+
+#: app/templates/revenues/list.html:210 app/templates/revenues/list.html:331
+msgid "Répartition des revenus actifs par type"
+msgstr "Distribution of active revenues by type"
+
+#: app/templates/revenues/list.html:228
+msgid "Aucun revenu"
+msgstr "No revenues"
+
+#: app/templates/revenues/list.html:229
+msgid "Commencez par ajouter votre premier revenu (salaire, freelance, etc.)"
+msgstr "Start by adding your first revenue (salary, freelance, etc.)"
+
+#: app/templates/services/add.html:3 app/templates/services/add.html:10
+#: app/templates/services/list.html:39
+msgid "Create a service"
+msgstr "Create a service"
+
+#: app/templates/services/add.html:12 app/templates/services/add_plan.html:12
+#: app/templates/services/edit.html:12 app/templates/services/edit_plan.html:12
+#: app/templates/services/plans.html:31
+msgid "Back"
 msgstr "Back"
 
-# Checkbooks Detail - Missing translations
-msgid "Ce chéquier est terminé. Tous les chèques ont été utilisés ou annulés."
-msgstr "This checkbook is finished. All checks have been used or cancelled."
+#: app/templates/services/add.html:20 app/templates/services/edit.html:20
+msgid "Service name"
+msgstr "Service name"
 
-msgid "Total chèques"
-msgstr "Total Checks"
+#: app/templates/services/add.html:21
+msgid "E.g.: Netflix"
+msgstr "E.g.: Netflix"
 
-msgid "à"
-msgstr "to"
+#: app/templates/services/add.html:26
+msgid "Service description"
+msgstr "Service description"
 
-msgid "Total montants"
-msgstr "Total Amounts"
+#: app/templates/services/add.html:31 app/templates/services/edit.html:31
+#: app/templates/services/list.html:171 app/templates/services/list.html:329
+#, fuzzy
+msgid "Category"
+msgstr "Categories"
 
-msgid "Chèques émis"
-msgstr "Issued Checks"
+#: app/templates/services/add.html:33 app/templates/services/edit.html:33
+#, fuzzy
+msgid "No category"
+msgstr "Contact us"
 
-msgid "Êtes-vous sûr de vouloir supprimer ce chèque ?"
-msgstr "Are you sure you want to delete this check?"
+#: app/templates/services/add.html:41 app/templates/services/edit.html:43
+#: app/templates/services/list.html:153
+msgid "Website"
+msgstr "Website"
 
-msgid "Aucun chèque émis"
-msgstr "No checks issued"
+#: app/templates/services/add.html:49 app/templates/services/edit.html:58
+msgid "Accepted formats: PNG, JPG, JPEG, GIF, SVG, WebP"
+msgstr "Accepted formats: PNG, JPG, JPEG, GIF, SVG, WebP"
 
-# Edit Check - Missing translations
-msgid "Modifier chèque"
-msgstr "Edit Check"
+#: app/templates/services/add.html:54
+msgid "Create service"
+msgstr "Create service"
 
-msgid "Chèque"
-msgstr "Check"
+#: app/templates/services/add_plan.html:3
+msgid "Add a plan"
+msgstr "Add a plan"
 
-msgid "Le numéro du chèque ne peut pas être modifié :"
-msgstr "The check number cannot be modified:"
+#: app/templates/services/add_plan.html:10
+#, python-format
+msgid "Add custom plan to %(name)s"
+msgstr "Add custom plan to %(name)s"
 
-msgid "Devise"
-msgstr "Currency"
+#: app/templates/services/add_plan.html:19
+#, fuzzy
+msgid "Info:"
+msgstr "Name:"
 
-msgid "Utilisé (ajouté à la balance)"
-msgstr "Used (added to balance)"
+#: app/templates/services/add_plan.html:19
+msgid ""
+"You are creating a custom plan for this service. It will be visible only "
+"to you and can be used when creating your subscriptions."
+msgstr ""
+"You are creating a custom plan for this service. It will be visible only "
+"to you and can be used when creating your subscriptions."
 
-msgid "Si vous passez le chèque en \"Utilisé\", une transaction sera créée dans la balance. Si vous l'annulez, la transaction associée sera annulée."
-msgstr "If you set the check to \"Used\", a transaction will be created in the balance. If you cancel it, the associated transaction will be cancelled."
+#: app/templates/services/add_plan.html:27
+#: app/templates/services/edit_plan.html:20
+msgid "Plan name"
+msgstr "Plan name"
+
+#: app/templates/services/add_plan.html:28
+#: app/templates/services/edit_plan.html:22
+msgid "E.g.: Standard, Premium, Family"
+msgstr "E.g.: Standard, Premium, Family"
+
+#: app/templates/services/add_plan.html:33
+#: app/templates/services/edit_plan.html:28
+msgid "Features of this plan"
+msgstr "Features of this plan"
+
+#: app/templates/services/add_plan.html:38
+#: app/templates/services/edit_plan.html:33
+#: app/templates/services/plans.html:114 app/templates/services/plans.html:195
+#, fuzzy
+msgid "Amount"
+msgstr "Aug."
+
+#: app/templates/services/add_plan.html:51
+#: app/templates/services/edit_plan.html:46
+#: app/templates/services/plans.html:115 app/templates/services/plans.html:196
+#, fuzzy
+msgid "Frequency"
+msgstr "Freelance"
+
+#: app/templates/services/add_plan.html:53
+#: app/templates/services/edit_plan.html:48
+msgid "Weekly"
+msgstr "Weekly"
+
+#: app/templates/services/add_plan.html:54
+#: app/templates/services/edit_plan.html:49
+msgid "Monthly"
+msgstr "Monthly"
+
+#: app/templates/services/add_plan.html:55
+#: app/templates/services/edit_plan.html:50
+msgid "Quarterly"
+msgstr "Quarterly"
+
+#: app/templates/services/add_plan.html:56
+#: app/templates/services/edit_plan.html:51
+msgid "Yearly"
+msgstr "Yearly"
+
+#: app/templates/services/add_plan.html:63
+#, fuzzy
+msgid "Add plan"
+msgstr "Plan"
+
+#: app/templates/services/edit.html:3 app/templates/services/edit.html:10
+#, python-format
+msgid "Edit %(name)s"
+msgstr "Edit %(name)s"
+
+#: app/templates/services/edit.html:50
+msgid "Current logo"
+msgstr "Current logo"
+
+#: app/templates/services/edit.html:56
+msgid "Change logo"
+msgstr "Change logo"
+
+#: app/templates/services/edit.html:63 app/templates/services/edit_plan.html:58
+msgid "Save changes"
+msgstr "Save changes"
+
+#: app/templates/services/edit_plan.html:3
+#, fuzzy
+msgid "Edit plan"
+msgstr "Plan"
+
+#: app/templates/services/edit_plan.html:10
+#, python-format
+msgid "Edit plan \"%(name)s\""
+msgstr "Edit plan \"%(name)s\""
+
+#: app/templates/services/list.html:13
+#, python-format
+msgid "%(count)s/5 custom services used"
+msgstr "%(count)s/5 custom services used"
+
+#: app/templates/services/list.html:29
+msgid "Export to Excel"
+msgstr "Export to Excel"
+
+#: app/templates/services/list.html:32
+msgid "Export to PDF"
+msgstr "Export to PDF"
+
+#: app/templates/services/list.html:42
+#, fuzzy
+msgid "Limit reached (5/5)"
+msgstr "Limit reached (1/1)"
+
+#: app/templates/services/list.html:43 app/templates/services/list.html:55
+#: app/templates/services/plans.html:39 app/templates/services/plans.html:50
+msgid "Limit reached"
+msgstr "Limit reached"
+
+#: app/templates/services/list.html:57
+msgid ""
+"You have reached the limit of 5 custom services for the free plan. "
+"Upgrade to Premium to create unlimited services."
+msgstr ""
+"You have reached the limit of 5 custom services for the free plan. "
+"Upgrade to Premium to create unlimited services."
+
+#: app/templates/services/list.html:62 app/templates/services/plans.html:57
+#, fuzzy
+msgid "Upgrade to Premium"
+msgstr "Upgrade to Premium"
+
+#: app/templates/services/list.html:71
+#, fuzzy
+msgid "Custom services"
+msgstr "Services"
+
+#: app/templates/services/list.html:73
+msgid ""
+"You can create up to 5 custom services with the free plan. Upgrade to "
+"Premium for unlimited."
+msgstr ""
+"You can create up to 5 custom services with the free plan. Upgrade to "
+"Premium for unlimited."
+
+#: app/templates/services/list.html:78
+#, fuzzy
+msgid "Discover Premium"
+msgstr "Upgrade to Premium"
+
+#: app/templates/services/list.html:90
+#, fuzzy
+msgid "My custom services"
+msgstr "Services"
+
+#: app/templates/services/list.html:113 app/templates/services/list.html:214
+#, fuzzy
+msgid "Disabled"
+msgstr "Available"
+
+#: app/templates/services/list.html:117 app/templates/services/list.html:207
+#: app/templates/services/list.html:276 app/templates/services/list.html:364
+#, fuzzy
+msgid "plan"
+msgstr "Plan"
+
+#: app/templates/services/list.html:117 app/templates/services/list.html:207
+#: app/templates/services/list.html:276 app/templates/services/list.html:364
+#, fuzzy
+msgid "plans"
+msgstr "Plan"
+
+#: app/templates/services/list.html:137 app/templates/services/list.html:220
+#: app/templates/services/list.html:295 app/templates/services/list.html:310
+#: app/templates/services/list.html:369
+msgid "View plans"
+msgstr "View plans"
+
+#: app/templates/services/list.html:141 app/templates/services/list.html:229
+#: app/templates/services/plans.html:171 app/templates/services/plans.html:220
+msgid "Edit"
+msgstr "Edit"
+
+#: app/templates/services/list.html:145 app/templates/services/list.html:233
+msgid "Are you sure you want to delete this service?"
+msgstr "Are you sure you want to delete this service?"
+
+#: app/templates/services/list.html:146 app/templates/services/list.html:234
+#: app/templates/services/plans.html:176 app/templates/services/plans.html:225
+#, fuzzy
+msgid "Delete"
+msgstr "Date"
+
+#: app/templates/services/list.html:152 app/templates/services/list.html:224
+msgid "Visit website"
+msgstr "Visit website"
+
+#: app/templates/services/list.html:169 app/templates/services/list.html:327
+#, fuzzy
+msgid "Service"
+msgstr "Services"
+
+#: app/templates/services/list.html:172 app/templates/services/list.html:311
+#: app/templates/services/list.html:330 app/templates/services/plans.html:3
+#, fuzzy
+msgid "Plans"
+msgstr "Plan"
+
+#: app/templates/services/list.html:173
+#, fuzzy
+msgid "Status"
+msgstr "Status"
+
+#: app/templates/services/list.html:254
+#, fuzzy
+msgid "Available services"
+msgstr "Services"
+
+#: app/templates/services/list.html:299 app/templates/services/list.html:374
+msgid "Customize this service"
+msgstr "Customize this service"
+
+#: app/templates/services/list.html:303 app/templates/services/list.html:378
+msgid "Hide this service?"
+msgstr "Hide this service?"
+
+#: app/templates/services/list.html:304 app/templates/services/list.html:379
+msgid "Hide this service"
+msgstr "Hide this service"
+
+#: app/templates/services/plans.html:17
+#, python-format
+msgid "%(count)s/10 custom plans used"
+msgstr "%(count)s/10 custom plans used"
+
+#: app/templates/services/plans.html:24
+msgid "Grid"
+msgstr "Grid"
+
+#: app/templates/services/plans.html:27
+msgid "List"
+msgstr "List"
+
+#: app/templates/services/plans.html:35
+msgid "Add custom plan"
+msgstr "Add custom plan"
+
+#: app/templates/services/plans.html:38
+#, fuzzy
+msgid "Limit reached (10/10)"
+msgstr "Limit reached (1/1)"
+
+#: app/templates/services/plans.html:52
+msgid ""
+"You have reached the limit of 10 custom plans for the free plan. Upgrade "
+"to Premium to create unlimited plans."
+msgstr ""
+"You have reached the limit of 10 custom plans for the free plan. Upgrade "
+"to Premium to create unlimited plans."
+
+#: app/templates/services/plans.html:74
+msgid "Official plans"
+msgstr "Official plans"
+
+#: app/templates/services/plans.html:96
+msgid "View on website"
+msgstr "View on website"
+
+#: app/templates/services/plans.html:148
+msgid "My custom plans"
+msgstr "My custom plans"
+
+#: app/templates/services/plans.html:174 app/templates/services/plans.html:223
+msgid "Are you sure you want to delete this plan?"
+msgstr "Are you sure you want to delete this plan?"
+
+#: app/templates/services/plans.html:238
+msgid "You have not yet created a custom plan for this service."
+msgstr "You have not yet created a custom plan for this service."
+
+#: app/templates/services/plans.html:241
+msgid "Create my first custom plan"
+msgstr "Create my first custom plan"
+
+#: app/templates/subscriptions/add.html:3
+#: app/templates/subscriptions/add.html:10
+#: app/templates/subscriptions/list.html:22
+#: app/templates/subscriptions/list.html:335
+msgid "Ajouter un abonnement"
+msgstr "Add a subscription"
+
+#: app/templates/subscriptions/add.html:20
+#: app/templates/subscriptions/edit.html:20
+msgid "Service (optionnel)"
+msgstr "Service (optional)"
+
+#: app/templates/subscriptions/add.html:22
+#: app/templates/subscriptions/edit.html:22
+msgid "-- Saisie manuelle --"
+msgstr "-- Manual entry --"
+
+#: app/templates/subscriptions/add.html:33
+#: app/templates/subscriptions/edit.html:34
+msgid "Sélectionnez un service pour pré-remplir les informations"
+msgstr "Select a service to pre-fill the information"
+
+#: app/templates/subscriptions/add.html:37
+#: app/templates/subscriptions/edit.html:38
+#: app/templates/subscriptions/list.html:77
+msgid "Formule"
+msgstr "Plan"
+
+#: app/templates/subscriptions/add.html:39
+#: app/templates/subscriptions/add.html:240
+#: app/templates/subscriptions/add.html:273
+#: app/templates/subscriptions/edit.html:40
+#: app/templates/subscriptions/edit.html:232
+#: app/templates/subscriptions/edit.html:264
+msgid "-- Choisir une formule --"
+msgstr "-- Choose a plan --"
+
+#: app/templates/subscriptions/add.html:41
+#: app/templates/subscriptions/edit.html:42
+msgid "Sélectionnez une formule pour remplir automatiquement le montant"
+msgstr "Select a plan to automatically fill the amount"
+
+#: app/templates/subscriptions/add.html:47
+#: app/templates/subscriptions/edit.html:48
+msgid "Nom de l'abonnement"
+msgstr "Subscription name"
+
+#: app/templates/subscriptions/add.html:49
+msgid "ex: Netflix, Spotify, Adobe Creative Cloud..."
+msgstr "e.g.: Netflix, Spotify, Adobe Creative Cloud..."
+
+#: app/templates/subscriptions/add.html:55
+msgid "Informations complémentaires sur l'abonnement"
+msgstr "Additional information about the subscription"
+
+# Card Purchase Categories - Add/Edit Templates
+#: app/templates/subscriptions/add.html:89
+#: app/templates/subscriptions/edit.html:88
+msgid "Aucune catégorie"
+msgstr "No category"
+
+#: app/templates/subscriptions/add.html:105
+#, fuzzy
+msgid "Info :"
+msgstr "Name:"
+
+#: app/templates/subscriptions/add.html:105
+msgid ""
+"La prochaine date de facturation sera calculée automatiquement en "
+"fonction de la périodicité choisie."
+msgstr ""
+"The next billing date will be calculated automatically based on the "
+"selected frequency."
+
+#: app/templates/subscriptions/add.html:113
+msgid "Enregistrer l'abonnement"
+msgstr "Save subscription"
+
+#: app/templates/subscriptions/detail.html:23
+msgid "Nom :"
+msgstr "Name:"
+
+#: app/templates/subscriptions/detail.html:28
+#, fuzzy
+msgid "Service :"
+msgstr "Services"
+
+#: app/templates/subscriptions/detail.html:38
+msgid "Formule :"
+msgstr "Plan:"
+
+#: app/templates/subscriptions/detail.html:52
+msgid "Catégorie :"
+msgstr "Category:"
+
+#: app/templates/subscriptions/detail.html:59
+msgid "Non catégorisé"
+msgstr "Uncategorized"
+
+#: app/templates/subscriptions/detail.html:64
+msgid "Statut :"
+msgstr "Status:"
+
+#: app/templates/subscriptions/detail.html:74
+msgid "Renouvellement :"
+msgstr "Renewal:"
+
+#: app/templates/subscriptions/detail.html:77
+#, fuzzy
+msgid "Automatique"
+msgstr "Martinique"
+
+#: app/templates/subscriptions/detail.html:79
+#, fuzzy
+msgid "Manuel"
+msgstr "Annual"
+
+#: app/templates/subscriptions/detail.html:90
+msgid "Montant :"
+msgstr "Amount:"
+
+#: app/templates/subscriptions/detail.html:94
+msgid "Périodicité :"
+msgstr "Frequency:"
+
+#: app/templates/subscriptions/detail.html:98
+msgid "Date de début :"
+msgstr "Start date:"
+
+#: app/templates/subscriptions/detail.html:102
+msgid "Prochain paiement :"
+msgstr "Next payment:"
+
+#: app/templates/subscriptions/detail.html:106
+msgid "Total payé :"
+msgstr "Total paid:"
+
+#: app/templates/subscriptions/detail.html:132
+#: app/templates/subscriptions/list.html:173
+msgid "Êtes-vous sûr de vouloir supprimer cet abonnement ?"
+msgstr "Are you sure you want to delete this subscription?"
+
+#: app/templates/subscriptions/detail.html:144
+#, fuzzy
+msgid "Liens utiles"
+msgstr "Clients"
+
+#: app/templates/subscriptions/detail.html:148
+#, fuzzy, python-format
+msgid "Site web de %(name)s"
+msgstr "Website:"
+
+#: app/templates/subscriptions/detail.html:153
+msgid "Site web de la catégorie"
+msgstr "Category website"
+
+#: app/templates/subscriptions/edit.html:3
+#, fuzzy, python-format
+msgid "Modifier %(name)s"
+msgstr "Edit"
+
+#: app/templates/subscriptions/edit.html:10
+msgid "Modifier l'abonnement"
+msgstr "Edit subscription"
+
+#: app/templates/subscriptions/list.html:185
+#, fuzzy
+msgid "Total :"
+msgstr "Total"
+
+#: app/templates/subscriptions/list.html:309
+#: app/templates/subscriptions/list.html:483
+msgid "Répartition des abonnements actifs"
+msgstr "Distribution of active subscriptions"
+
+#: app/templates/subscriptions/list.html:317
+msgid "Par Service"
+msgstr "By Service"
+
+#: app/templates/subscriptions/list.html:321
+msgid "Par Catégorie"
+msgstr "By Category"
+
+#: app/templates/subscriptions/list.html:332
+msgid "Aucun abonnement"
+msgstr "No subscriptions"
+
+#: app/templates/subscriptions/list.html:333
+msgid "Commencez par ajouter votre premier abonnement"
+msgstr "Start by adding your first subscription"
+
+#: app/templates/subscriptions/list.html:488
+#, fuzzy
+msgid "Généré le"
+msgstr "Created on"
+
+#: app/templates/subscriptions/list.html:501
+msgid "Erreur lors de la génération du PDF"
+msgstr "Error generating PDF"
+
+# Employers page - Templates
+#~ msgid "Mes employeurs - Budgee Family"
+#~ msgstr "My Employers - Budgee Family"
+
+#~ msgid "Ajouter un employeur - Budgee Family"
+#~ msgstr "Add an Employer - Budgee Family"
+
+#~ msgid "SIRET :"
+#~ msgstr "SIRET:"
+
+#~ msgid "Fev."
+#~ msgstr "Feb."
+
+#~ msgid "Dec."
+#~ msgstr "Dec."
+
+#~ msgid "Ouvrir dans un nouvel onglet"
+#~ msgstr "Open in a new tab"
+
+#~ msgid "Modifier {{ employer.name }} - Budgee Family"
+#~ msgstr "Edit {{ employer.name }} - Budgee Family"
+
+#~ msgid "Modifier l'employeur"
+#~ msgstr "Edit Employer"
+
+#~ msgid ""
+#~ "Êtes-vous sûr de vouloir supprimer "
+#~ "cet employeur et tous ses documents "
+#~ "?"
+#~ msgstr "Are you sure you want to delete this employer and all its documents?"
+
+#~ msgid "Ajouter un document - {{ employer.name }} - Budgee Family"
+#~ msgstr "Add a Document - {{ employer.name }} - Budgee Family"
+
+#~ msgid "Pour {{ employer.name }}"
+#~ msgstr "For {{ employer.name }}"
+
+#~ msgid "-- Mois --"
+#~ msgstr "-- Month --"
+
+#~ msgid "Modifier {{ document.name }} - Budgee Family"
+#~ msgstr "Edit {{ document.name }} - Budgee Family"
+
+#~ msgid "Fichier actuel :"
+#~ msgstr "Current file:"
+
+#~ msgid ""
+#~ "Formats acceptés : PDF, Word, Excel, "
+#~ "Images (taille max : 16 Mo) - "
+#~ "Laisser vide pour garder le fichier "
+#~ "actuel"
+#~ msgstr ""
+#~ "Accepted formats: PDF, Word, Excel, "
+#~ "Images (max size: 16 MB) - Leave"
+#~ " blank to keep current file"
+
+# Revenues page - Templates
+#~ msgid "Mes revenus - Budgee Family"
+#~ msgstr "My Revenues - Budgee Family"
+
+#~ msgid "Type de revenu"
+#~ msgstr "Revenue Type"
+
+#~ msgid "Ajouter un revenu - Budgee Family"
+#~ msgstr "Add a Revenue - Budgee Family"
+
+#~ msgid "Nom du revenu *"
+#~ msgstr "Revenue Name *"
+
+#~ msgid "Montant *"
+#~ msgstr "Amount *"
+
+#~ msgid "Périodicité *"
+#~ msgstr "Frequency *"
+
+#~ msgid "Modifier un revenu - Budgee Family"
+#~ msgstr "Edit a Revenue - Budgee Family"
+
+#~ msgid "Modifier le revenu"
+#~ msgstr "Edit Revenue"
+
+#~ msgid "Employeur :"
+#~ msgstr "Employer:"
+
+#~ msgid "Description :"
+#~ msgstr "Description:"
+
+#~ msgid "Type :"
+#~ msgstr "Type:"
+
+#~ msgid "En cours"
+#~ msgstr "Active"
+
+#~ msgid "Chéquier"
+#~ msgstr "Checkbook"
+
+#~ msgid "Chèques"
+#~ msgstr "Checks"
+
+#~ msgid "Nom du chéquier"
+#~ msgstr "Checkbook Name"
+
+#~ msgid "Mon chéquier principal"
+#~ msgstr "My main checkbook"
+
+#~ msgid "N° du premier chèque"
+#~ msgstr "First check number"
+
+#~ msgid "N° du dernier chèque"
+#~ msgstr "Last check number"
+
+#~ msgid "Si non renseigné, 25 chèques seront créés automatiquement"
+#~ msgstr "If not specified, 25 checks will be created automatically"
+
+#~ msgid "Modifier le chéquier"
+#~ msgstr "Edit Checkbook"
+
+#~ msgid "Supprimer le chéquier"
+#~ msgstr "Delete Checkbook"
+
+#~ msgid "Banque :"
+#~ msgstr "Bank:"
+
+#~ msgid "Non renseignée"
+#~ msgstr "Not specified"
+
+#~ msgid "Chèques :"
+#~ msgstr "Checks:"
+
+#~ msgid "Disponibles :"
+#~ msgstr "Available:"
+
+#~ msgid "Créé le :"
+#~ msgstr "Created on:"
+
+#~ msgid "Sélectionner le chèque"
+#~ msgstr "Select check"
+
+#~ msgid "Choisir un chèque"
+#~ msgstr "Choose a check"
+
+#~ msgid "Utiliser ce chèque"
+#~ msgstr "Use this Check"
+
+#~ msgid "Annuler ce chèque"
+#~ msgstr "Cancel this Check"
+

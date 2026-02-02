@@ -1,15 +1,15 @@
 {% extends "base.html" %}
 
-{% block title %}Modifier {{ subscription.name }} - Budgee Family{% endblock %}
+{% block title %}{{ _('Modifier %(name)s', name=subscription.name) }} - Budgee Family{% endblock %}
 
 {% block content %}
 <div class="container py-4">
     <div class="row justify-content-center">
         <div class="col-lg-8">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2>Modifier l'abonnement</h2>
+                <h2>{{ _('Modifier l\'abonnement') }}</h2>
                 <a href="{{ url_for('subscriptions.list') }}" class="btn btn-outline-secondary">
-                    <i class="fas fa-arrow-left"></i> Retour
+                    <i class="fas fa-arrow-left"></i> {{ _('Retour') }}
                 </a>
             </div>
 
@@ -17,9 +17,9 @@
                 <div class="card-body p-4">
                     <form method="POST">
                         <div class="mb-3">
-                            <label for="service_id" class="form-label">Service (optionnel)</label>
+                            <label for="service_id" class="form-label">{{ _('Service (optionnel)') }}</label>
                             <select class="form-select" id="service_id" name="service_id" onchange="updateFromService()">
-                                <option value="">-- Saisie manuelle --</option>
+                                <option value="">{{ _('-- Saisie manuelle --') }}</option>
                                 {% if services %}
                                     {% for service in services %}
                                         <option value="{{ service.id }}"
@@ -31,33 +31,33 @@
                                     {% endfor %}
                                 {% endif %}
                             </select>
-                            <small class="text-muted">Sélectionnez un service pour pré-remplir les informations</small>
+                            <small class="text-muted">{{ _('Sélectionnez un service pour pré-remplir les informations') }}</small>
                         </div>
 
                         <div id="plan-selector" class="mb-3" style="display: none;">
-                            <label for="plan_select" class="form-label">Formule</label>
+                            <label for="plan_select" class="form-label">{{ _('Formule') }}</label>
                             <select class="form-select" id="plan_select" onchange="updateFromPlan()">
-                                <option value="">-- Choisir une formule --</option>
+                                <option value="">{{ _('-- Choisir une formule --') }}</option>
                             </select>
-                            <small class="text-muted">Sélectionnez une formule pour remplir automatiquement le montant</small>
+                            <small class="text-muted">{{ _('Sélectionnez une formule pour remplir automatiquement le montant') }}</small>
                         </div>
 
                         <input type="hidden" id="plan_id" name="plan_id" value="{{ subscription.plan_id or '' }}">
 
                         <div class="mb-3">
-                            <label for="name" class="form-label">Nom de l'abonnement *</label>
+                            <label for="name" class="form-label">{{ _('Nom de l\'abonnement') }} *</label>
                             <input type="text" class="form-control" id="name" name="name" required
                                    value="{{ subscription.name }}">
                         </div>
 
                         <div class="mb-3">
-                            <label for="description" class="form-label">Description</label>
+                            <label for="description" class="form-label">{{ _('Description') }}</label>
                             <textarea class="form-control" id="description" name="description" rows="3">{{ subscription.description or '' }}</textarea>
                         </div>
 
                         <div class="row mb-3">
                             <div class="col-md-6">
-                                <label for="amount_display" class="form-label">Montant *</label>
+                                <label for="amount_display" class="form-label">{{ _('Montant') }} *</label>
                                 <div class="input-group">
                                     <input type="text" class="form-control text-end" id="amount_display"
                                            required placeholder="9,99">
@@ -68,24 +68,24 @@
                                         <option value="GBP" {% if subscription.currency == 'GBP' %}selected{% endif %}>£ GBP</option>
                                     </select>
                                 </div>
-                                <small class="text-muted">Format : espace pour les milliers, virgule pour les décimales</small>
+                                <small class="text-muted">{{ _('Format : espace pour les milliers, virgule pour les décimales') }}</small>
                             </div>
 
                             <div class="col-md-6">
-                                <label for="billing_cycle" class="form-label">Périodicité *</label>
+                                <label for="billing_cycle" class="form-label">{{ _('Périodicité') }} *</label>
                                 <select class="form-select" id="billing_cycle" name="billing_cycle" required>
-                                    <option value="weekly" {% if subscription.billing_cycle == 'weekly' %}selected{% endif %}>Hebdomadaire</option>
-                                    <option value="monthly" {% if subscription.billing_cycle == 'monthly' %}selected{% endif %}>Mensuel</option>
-                                    <option value="quarterly" {% if subscription.billing_cycle == 'quarterly' %}selected{% endif %}>Trimestriel</option>
-                                    <option value="yearly" {% if subscription.billing_cycle == 'yearly' %}selected{% endif %}>Annuel</option>
+                                    <option value="weekly" {% if subscription.billing_cycle == 'weekly' %}selected{% endif %}>{{ _('Hebdomadaire') }}</option>
+                                    <option value="monthly" {% if subscription.billing_cycle == 'monthly' %}selected{% endif %}>{{ _('Mensuel') }}</option>
+                                    <option value="quarterly" {% if subscription.billing_cycle == 'quarterly' %}selected{% endif %}>{{ _('Trimestriel') }}</option>
+                                    <option value="yearly" {% if subscription.billing_cycle == 'yearly' %}selected{% endif %}>{{ _('Annuel') }}</option>
                                 </select>
                             </div>
                         </div>
 
                         <div class="mb-3">
-                            <label for="category_id" class="form-label">Catégorie</label>
+                            <label for="category_id" class="form-label">{{ _('Catégorie') }}</label>
                             <select class="form-select" id="category_id" name="category_id">
-                                <option value="">Aucune catégorie</option>
+                                <option value="">{{ _('Aucune catégorie') }}</option>
                                 {% for category in categories %}
                                     <option value="{{ category.id }}"
                                             {% if subscription.category_id == category.id %}selected{% endif %}>
@@ -97,10 +97,10 @@
 
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                             <a href="{{ url_for('subscriptions.list') }}" class="btn btn-outline-secondary">
-                                Annuler
+                                {{ _('Annuler') }}
                             </a>
                             <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save"></i> Enregistrer les modifications
+                                <i class="fas fa-save"></i> {{ _('Enregistrer les modifications') }}
                             </button>
                         </div>
                     </form>
@@ -184,10 +184,10 @@ console.log('Services data loaded:', servicesData);
 
 // Traduction des cycles de facturation
 const cycleTranslations = {
-    'weekly': 'Hebdomadaire',
-    'monthly': 'Mensuel',
-    'quarterly': 'Trimestriel',
-    'yearly': 'Annuel'
+    'weekly': "{{ _('Hebdomadaire') }}",
+    'monthly': "{{ _('Mensuel') }}",
+    'quarterly': "{{ _('Trimestriel') }}",
+    'yearly': "{{ _('Annuel') }}"
 };
 
 // Symboles de devises
@@ -229,7 +229,7 @@ function updateFromService() {
         const plans = service.plans || [];
         console.log('Plans found:', plans);
 
-        planSelect.innerHTML = '<option value="">-- Choisir une formule --</option>';
+        planSelect.innerHTML = '<option value="">{{ _("-- Choisir une formule --") }}</option>';
 
         let activePlansCount = 0;
         plans.forEach(plan => {
@@ -261,7 +261,7 @@ function updateFromService() {
         // Réinitialiser
         console.log('Service deselected, resetting form');
         planSelector.style.display = 'none';
-        planSelect.innerHTML = '<option value="">-- Choisir une formule --</option>';
+        planSelect.innerHTML = '<option value="">{{ _("-- Choisir une formule --") }}</option>';
         document.getElementById('plan_id').value = '';
     }
 }
@@ -338,7 +338,7 @@ document.querySelector('form').addEventListener('submit', function(e) {
     const unformatted = unformatAmount(amountDisplay.value);
     if (!unformatted || isNaN(parseFloat(unformatted)) || parseFloat(unformatted) <= 0) {
         e.preventDefault();
-        alert('Veuillez entrer un montant valide');
+        alert("{{ _('Veuillez entrer un montant valide') }}");
         return false;
     }
 

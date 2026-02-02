@@ -1,31 +1,31 @@
 {% extends "base.html" %}
 
-{% block title %}Ajouter un document - {{ reminder.name }} - Budgee Family{% endblock %}
+{% block title %}Add Document - {{ reminder.name }} - Budgee Family{% endblock %}
 
 {% block content %}
 <div class="container py-4">
     <div class="mb-4">
         <a href="{{ url_for('reminders.detail', reminder_id=reminder.id) }}" class="btn btn-outline-secondary">
-            <i class="fas fa-arrow-left"></i> Retour au rappel
+            <i class="fas fa-arrow-left"></i> Back to reminder
         </a>
     </div>
 
     <div class="card">
         <div class="card-header" style="background-color: #e5e7eb;">
             <h4 class="mb-0">
-                <i class="fas fa-plus text-secondary"></i> Ajouter un document
+                <i class="fas fa-plus text-secondary"></i> Add Document
             </h4>
-            <small class="text-muted">Pour : {{ reminder.name }}</small>
+            <small class="text-muted">For: {{ reminder.name }}</small>
         </div>
         <div class="card-body">
             <form method="POST" enctype="multipart/form-data">
                 <div class="row mb-3">
                     <div class="col-md-6">
-                        <label for="name" class="form-label">Nom du document <span class="text-danger">*</span></label>
+                        <label for="name" class="form-label">Document name <span class="text-danger">*</span></label>
                         <input type="text" class="form-control" id="name" name="name" required>
                     </div>
                     <div class="col-md-6">
-                        <label for="document_type" class="form-label">Type de document <span class="text-danger">*</span></label>
+                        <label for="document_type" class="form-label">Document type <span class="text-danger">*</span></label>
                         <select class="form-select" id="document_type" name="document_type" required>
                             {% for code, name, icon, color in document_types %}
                                 <option value="{{ code }}">{{ name }}</option>
@@ -35,7 +35,7 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="document_date" class="form-label">Date du document</label>
+                    <label for="document_date" class="form-label">Document date</label>
                     <input type="date" class="form-control" id="document_date" name="document_date">
                 </div>
 
@@ -45,21 +45,42 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="file" class="form-label">Fichier</label>
-                    <input type="file" class="form-control" id="file" name="file" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xls,.xlsx">
-                    <small class="text-muted">Formats acceptés : PDF, images (JPG, PNG), documents Office. Taille max : 10 Mo</small>
+                    <label for="file" class="form-label">File</label>
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <input type="file" class="d-none" id="file" name="file" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xls,.xlsx" onchange="updateFileName(this)">
+                        <button type="button" class="btn btn-outline-secondary" onclick="document.getElementById('file').click()">
+                            <i class="fas fa-folder-open"></i> Browse...
+                        </button>
+                        <span id="file-name-display" class="text-muted flex-grow-1">No file selected</span>
+                    </div>
+                    <small class="text-muted">Accepted formats: PDF, images (JPG, PNG), Office documents. Max size: 10 MB</small>
                 </div>
 
                 <div class="d-flex gap-2">
                     <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save"></i> Enregistrer
+                        <i class="fas fa-save"></i> Save
                     </button>
                     <a href="{{ url_for('reminders.detail', reminder_id=reminder.id) }}" class="btn btn-secondary">
-                        <i class="fas fa-times"></i> Annuler
+                        <i class="fas fa-times"></i> Cancel
                     </a>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
+<script>
+function updateFileName(input) {
+    const display = document.getElementById('file-name-display');
+    if (input.files && input.files.length > 0) {
+        display.textContent = input.files[0].name;
+        display.classList.remove('text-muted');
+        display.classList.add('text-success', 'fw-bold');
+    } else {
+        display.textContent = 'No file selected';
+        display.classList.remove('text-success', 'fw-bold');
+        display.classList.add('text-muted');
+    }
+}
+</script>
 {% endblock %}

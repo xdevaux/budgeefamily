@@ -14,16 +14,16 @@ bp = Blueprint('card_purchases', __name__, url_prefix='/card-purchases')
 @bp.route('/')
 @login_required
 def list_purchases():
-    """Liste tous les achats CB de l'utilisateur"""
+    """List all user's card purchases"""
     page = request.args.get('page', 1, type=int)
     filter_category = request.args.get('category', None, type=int)
 
-    # Définir les filtres par défaut au mois et année en cours si pas de paramètre dans l'URL
+    # Set default filters to current month and year if no parameters in URL
     current_month = datetime.now().month
     current_year = datetime.now().year
 
-    # Si aucun paramètre de mois/année n'est présent, utiliser le mois/année en cours
-    # Sinon, utiliser ce qui est fourni (peut être None si l'utilisateur choisit "Tous")
+    # If no month/year parameters present, use current month/year
+    # Otherwise, use what is provided (can be None if user chooses "All")
     if 'month' not in request.args and 'year' not in request.args:
         filter_month = current_month
         filter_year = current_year
@@ -33,7 +33,7 @@ def list_purchases():
 
     query = current_user.card_purchases.filter_by(is_active=True)
 
-    # Filtres
+    # Filters
     if filter_category:
         query = query.filter_by(category_id=filter_category)
     if filter_month and filter_year:
@@ -46,7 +46,7 @@ def list_purchases():
         page=page, per_page=20, error_out=False
     )
 
-    # Récupérer les catégories pour le filtre (seulement celles pour achats CB ou 'all')
+    # Get categories for filter (only those for card purchases or 'all')
     categories = Category.query.filter(
         db.or_(
             Category.user_id == current_user.id,
@@ -70,9 +70,9 @@ def list_purchases():
 @bp.route('/add', methods=['GET', 'POST'])
 @login_required
 def add_manual():
-    """Ajouter un achat CB manuellement (mode par défaut)"""
+    """Add a card purchase manually (default mode)"""
 
-    # Récupérer les catégories (seulement celles pour achats CB ou 'all')
+    # Get categories (only those for card purchases or 'all')
     categories = Category.query.filter(
         db.or_(
             Category.user_id == current_user.id,
@@ -86,7 +86,7 @@ def add_manual():
 
     if request.method == 'POST':
         try:
-            # Récupérer les données du formulaire
+            # Get form data
             merchant_name = request.form.get('merchant_name')
             amount = float(request.form.get('amount'))
             purchase_date = request.form.get('purchase_date')
@@ -94,7 +94,7 @@ def add_manual():
             category_id = request.form.get('category_id', type=int)
             description = request.form.get('description', '')
 
-            # Créer l'achat CB
+            # Create card purchase
             purchase = CardPurchase(
                 user_id=current_user.id,
                 purchase_date=datetime.strptime(f'{purchase_date} {purchase_time}', '%Y-%m-%d %H:%M'),
@@ -102,27 +102,27 @@ def add_manual():
                 amount=amount,
                 currency='EUR',
                 description=description,
-                ocr_confidence=0,  # Pas d'OCR
+                ocr_confidence=0,  # No OCR
                 was_manually_edited=True,
-                entry_method='manual',  # Saisie manuelle
+                entry_method='manual',  # Manual entry
             )
 
-            # Associer une catégorie si sélectionnée
+            # Associate a category if selected
             if category_id:
                 category = Category.query.get(category_id)
                 if category:
                     purchase.category_id = category_id
                     purchase.category_name = category.name
 
-            # Gérer le reçu uploadé (optionnel)
+            # Handle uploaded receipt (optional)
             receipt_file = request.files.get('receipt_file')
             if receipt_file and receipt_file.filename:
-                # Valider le fichier
+                # Validate file
                 is_valid, error_message, file_data, safe_filename = validate_upload(receipt_file)
                 if not is_valid:
-                    flash(f'Erreur avec le reçu : {error_message}', 'warning')
+                    flash(f'Error with receipt: {error_message}', 'warning')
                 else:
-                    # Stocker le fichier
+                    # Store file
                     purchase.receipt_image_data = file_data
                     purchase.receipt_image_name = safe_filename
                     purchase.receipt_image_mime_type = receipt_file.content_type
@@ -131,14 +131,14 @@ def add_manual():
             db.session.add(purchase)
             db.session.flush()
 
-            # Créer la transaction dans la balance
+            # Create transaction in balance
             transaction = Transaction(
                 user_id=current_user.id,
                 transaction_date=purchase.purchase_date.date(),
                 transaction_type='card_purchase',
                 source_id=purchase.id,
                 source_type='card_purchase',
-                name=f'Achat CB - {purchase.merchant_name}',
+                name=f'Card Purchase - {purchase.merchant_name}',
                 description=purchase.description,
                 amount=purchase.amount,
                 currency='EUR',
@@ -149,14 +149,14 @@ def add_manual():
             db.session.add(transaction)
             db.session.commit()
 
-            flash('Achat CB ajouté avec succès !', 'success')
+            flash('Card purchase added successfully!', 'success')
             return redirect(url_for('card_purchases.list_purchases'))
 
         except Exception as e:
             db.session.rollback()
-            flash(f'Erreur lors de l\'ajout : {str(e)}', 'danger')
+            flash(f'Error adding purchase: {str(e)}', 'danger')
 
-    # GET : Afficher le formulaire
+    # GET: Display form
     return render_template('card_purchases/add_manual.html',
                          categories=categories,
                          today=datetime.now().strftime('%Y-%m-%d'))
@@ -166,44 +166,44 @@ def add_manual():
 @login_required
 @limiter.limit("50 per hour")
 def upload_receipts():
-    """Upload multiple avec traitement OCR et grille de validation"""
+    """Multiple upload with OCR processing and validation grid"""
 
     if request.method == 'POST':
-        # Récupérer tous les fichiers uploadés
+        # Get all uploaded files
         files = request.files.getlist('receipts')
 
         if not files or len(files) == 0:
-            flash('Aucun fichier sélectionné.', 'warning')
+            flash('No file selected.', 'warning')
             return redirect(url_for('card_purchases.upload_receipts'))
 
-        # Limiter à 10 fichiers par upload
+        # Limit to 10 files per upload
         if len(files) > 10:
-            flash('Maximum 10 fichiers par upload.', 'warning')
+            flash('Maximum 10 files per upload.', 'warning')
             return redirect(url_for('card_purchases.upload_receipts'))
 
         processed_receipts = []
 
-        # Traiter chaque fichier
+        # Process each file
         for file in files:
             if not file or not file.filename:
                 continue
 
-            # Valider le fichier
+            # Validate file
             success, error, file_data, safe_filename = validate_upload(file)
 
             if not success:
-                flash(f'Erreur avec {file.filename}: {error}', 'danger')
+                flash(f'Error with {file.filename}: {error}', 'danger')
                 continue
 
-            # Traiter l'OCR
+            # Process OCR
             try:
                 import logging
                 logger = logging.getLogger(__name__)
-                logger.info(f"Traitement OCR de {safe_filename} ({file.content_type}, {len(file_data)} bytes)")
+                logger.info(f"OCR processing {safe_filename} ({file.content_type}, {len(file_data)} bytes)")
 
                 ocr_data = process_receipt_ocr(file_data)
 
-                logger.info(f"OCR réussi: {ocr_data['merchant_name']}, {ocr_data['amount']}€, confiance={ocr_data['ocr_confidence']:.1f}%")
+                logger.info(f"OCR successful: {ocr_data['merchant_name']}, {ocr_data['amount']}€, confidence={ocr_data['ocr_confidence']:.1f}%")
 
                 processed_receipts.append({
                     'file_data_base64': base64.b64encode(file_data).decode('utf-8'),
@@ -220,22 +220,22 @@ def upload_receipts():
             except Exception as e:
                 import logging
                 logger = logging.getLogger(__name__)
-                logger.error(f'Erreur OCR avec {safe_filename}: {type(e).__name__}: {str(e)}')
+                logger.error(f'OCR error with {safe_filename}: {type(e).__name__}: {str(e)}')
                 import traceback
                 logger.error(traceback.format_exc())
 
-                # Message d'erreur plus informatif pour l'utilisateur
+                # More informative error message for user
                 if 'PDF' in str(e) or safe_filename.lower().endswith('.pdf'):
-                    flash(f'Erreur lors de la conversion du PDF "{file.filename}". Assurez-vous que le PDF est lisible et contient du texte.', 'danger')
+                    flash(f'Error converting PDF "{file.filename}". Make sure the PDF is readable and contains text.', 'danger')
                 else:
-                    flash(f'Erreur OCR avec "{file.filename}": {str(e)}', 'danger')
+                    flash(f'OCR error with "{file.filename}": {str(e)}', 'danger')
                 continue
 
         if not processed_receipts:
-            flash('Aucun reçu valide n\'a pu être traité.', 'danger')
+            flash('No valid receipt could be processed.', 'danger')
             return redirect(url_for('card_purchases.upload_receipts'))
 
-        # Récupérer les catégories pour le formulaire (seulement celles pour achats CB ou 'all')
+        # Get categories for form (only those for card purchases or 'all')
         categories = Category.query.filter(
             db.or_(
                 Category.user_id == current_user.id,
@@ -251,42 +251,42 @@ def upload_receipts():
                              receipts=processed_receipts,
                              categories=categories)
 
-    # GET : Afficher le formulaire d'upload
+    # GET: Display upload form
     return render_template('card_purchases/upload.html')
 
 
 @bp.route('/validate', methods=['POST'])
 @login_required
 def validate_purchases():
-    """Valide et enregistre les achats après modification par l'utilisateur"""
+    """Validate and save purchases after user modification"""
 
-    # Récupérer les données du formulaire
+    # Get form data
     purchases_data = request.form.get('purchases_json')
 
     if not purchases_data:
-        flash('Aucune donnée à enregistrer.', 'danger')
+        flash('No data to save.', 'danger')
         return redirect(url_for('card_purchases.upload_receipts'))
 
     try:
         purchases = json.loads(purchases_data)
     except json.JSONDecodeError:
-        flash('Erreur lors du traitement des données.', 'danger')
+        flash('Error processing data.', 'danger')
         return redirect(url_for('card_purchases.upload_receipts'))
 
     saved_count = 0
 
     for purchase_data in purchases:
-        # Vérifier si l'utilisateur veut garder cet achat
+        # Check if user wants to keep this purchase
         if not purchase_data.get('keep', True):
             continue
 
-        # Décoder l'image
+        # Decode image
         try:
             receipt_data = base64.b64decode(purchase_data['file_data_base64'])
         except Exception:
             receipt_data = None
 
-        # Créer l'achat CB
+        # Create card purchase
         purchase = CardPurchase(
             user_id=current_user.id,
             purchase_date=datetime.strptime(
@@ -300,14 +300,14 @@ def validate_purchases():
             description=purchase_data.get('description', ''),
             ocr_confidence=float(purchase_data.get('ocr_confidence', 0)),
             was_manually_edited=purchase_data.get('was_edited', False),
-            entry_method='ocr',  # Saisie par OCR
+            entry_method='ocr',  # OCR entry
             receipt_image_data=receipt_data,
             receipt_image_name=purchase_data.get('file_name'),
             receipt_image_mime_type=purchase_data.get('file_mime_type'),
             receipt_image_size=purchase_data.get('file_size')
         )
 
-        # Associer une catégorie si possible
+        # Associate a category if possible
         if purchase_data.get('category_id'):
             category_id = int(purchase_data['category_id'])
             category = Category.query.get(category_id)
@@ -318,38 +318,38 @@ def validate_purchases():
         db.session.add(purchase)
         db.session.flush()
 
-        # Créer la transaction dans la balance
+        # Create transaction in balance
         transaction = Transaction(
             user_id=current_user.id,
             transaction_date=purchase.purchase_date.date(),
             transaction_type='card_purchase',
             source_id=purchase.id,
             source_type='card_purchase',
-            name=f'Achat CB - {purchase.merchant_name}',
+            name=f'Card Purchase - {purchase.merchant_name}',
             description=purchase.description,
             amount=purchase.amount,
             currency='EUR',
-            is_positive=False,  # C'est une dépense
+            is_positive=False,  # It's an expense
             category_name=purchase.category_name,
-            status='completed'  # Déjà effectué
+            status='completed'  # Already done
         )
         db.session.add(transaction)
         saved_count += 1
 
     db.session.commit()
 
-    flash(f'{saved_count} achat(s) CB enregistré(s) avec succès !', 'success')
+    flash(f'{saved_count} card purchase(s) saved successfully!', 'success')
     return redirect(url_for('card_purchases.list_purchases'))
 
 
 @bp.route('/<int:purchase_id>')
 @login_required
 def detail(purchase_id):
-    """Détail d'un achat CB"""
+    """Card purchase detail"""
     purchase = CardPurchase.query.get_or_404(purchase_id)
 
     if purchase.user_id != current_user.id:
-        flash('Vous n\'avez pas accès à cet achat.', 'danger')
+        flash('You don\'t have access to this purchase.', 'danger')
         return redirect(url_for('card_purchases.list_purchases'))
 
     return render_template('card_purchases/detail.html', purchase=purchase)
@@ -358,11 +358,11 @@ def detail(purchase_id):
 @bp.route('/<int:purchase_id>/edit', methods=['GET', 'POST'])
 @login_required
 def edit(purchase_id):
-    """Modifier un achat CB"""
+    """Edit a card purchase"""
     purchase = CardPurchase.query.get_or_404(purchase_id)
 
     if purchase.user_id != current_user.id:
-        flash('Vous n\'avez pas accès à cet achat.', 'danger')
+        flash('You don\'t have access to this purchase.', 'danger')
         return redirect(url_for('card_purchases.list_purchases'))
 
     if request.method == 'POST':
@@ -377,22 +377,22 @@ def edit(purchase_id):
         purchase.notes = request.form.get('notes')
         purchase.was_manually_edited = True
 
-        # Mettre à jour la catégorie
+        # Update category
         category_id = request.form.get('category_id', type=int)
         if category_id:
             category = Category.query.get(category_id)
             purchase.category_id = category_id
             purchase.category_name = category.name
 
-        # Gérer le reçu uploadé (optionnel)
+        # Handle uploaded receipt (optional)
         receipt_file = request.files.get('receipt_file')
         if receipt_file and receipt_file.filename:
-            # Valider le fichier
+            # Validate file
             is_valid, error_message, file_data, safe_filename = validate_upload(receipt_file)
             if not is_valid:
-                flash(f'Erreur avec le reçu : {error_message}', 'warning')
+                flash(f'Error with receipt: {error_message}', 'warning')
             else:
-                # Stocker le fichier (remplace l'ancien s'il existe)
+                # Store file (replaces old one if exists)
                 purchase.receipt_image_data = file_data
                 purchase.receipt_image_name = safe_filename
                 purchase.receipt_image_mime_type = receipt_file.content_type
@@ -400,7 +400,7 @@ def edit(purchase_id):
 
         db.session.commit()
 
-        # Mettre à jour la transaction associée
+        # Update associated transaction
         transaction = Transaction.query.filter_by(
             source_id=purchase.id,
             source_type='card_purchase'
@@ -408,16 +408,16 @@ def edit(purchase_id):
 
         if transaction:
             transaction.transaction_date = purchase.purchase_date.date()
-            transaction.name = f'Achat CB - {purchase.merchant_name}'
+            transaction.name = f'Card Purchase - {purchase.merchant_name}'
             transaction.description = purchase.description
             transaction.amount = purchase.amount
             transaction.category_name = purchase.category_name
             db.session.commit()
 
-        flash('L\'achat a été modifié avec succès.', 'success')
+        flash('Purchase updated successfully.', 'success')
         return redirect(url_for('card_purchases.detail', purchase_id=purchase.id))
 
-    # Récupérer les catégories (seulement celles pour achats CB ou 'all')
+    # Get categories (only those for card purchases or 'all')
     categories = Category.query.filter(
         db.or_(
             Category.user_id == current_user.id,
@@ -437,14 +437,14 @@ def edit(purchase_id):
 @bp.route('/<int:purchase_id>/delete', methods=['POST'])
 @login_required
 def delete(purchase_id):
-    """Supprimer un achat CB"""
+    """Delete a card purchase"""
     purchase = CardPurchase.query.get_or_404(purchase_id)
 
     if purchase.user_id != current_user.id:
-        flash('Vous n\'avez pas accès à cet achat.', 'danger')
+        flash('You don\'t have access to this purchase.', 'danger')
         return redirect(url_for('card_purchases.list_purchases'))
 
-    # Supprimer la transaction associée
+    # Delete associated transaction
     transaction = Transaction.query.filter_by(
         source_id=purchase.id,
         source_type='card_purchase'
@@ -456,28 +456,28 @@ def delete(purchase_id):
     purchase.is_active = False
     db.session.commit()
 
-    flash('L\'achat a été supprimé.', 'success')
+    flash('Purchase deleted.', 'success')
     return redirect(url_for('card_purchases.list_purchases'))
 
 
 @bp.route('/<int:purchase_id>/receipt')
 @login_required
 def view_receipt(purchase_id):
-    """Afficher le reçu (image ou PDF)"""
+    """Display receipt (image or PDF)"""
     purchase = CardPurchase.query.get_or_404(purchase_id)
 
     if purchase.user_id != current_user.id:
-        flash('Vous n\'avez pas accès à cet achat.', 'danger')
+        flash('You don\'t have access to this purchase.', 'danger')
         return redirect(url_for('card_purchases.list_purchases'))
 
     if not purchase.receipt_image_data:
-        flash('Aucun reçu disponible.', 'warning')
+        flash('No receipt available.', 'warning')
         return redirect(url_for('card_purchases.detail', purchase_id=purchase.id))
 
-    # Déterminer le mimetype correct
+    # Determine correct mimetype
     mimetype = purchase.receipt_image_mime_type or 'application/octet-stream'
 
-    # Si le nom de fichier indique un PDF, s'assurer que le mimetype est correct
+    # If filename indicates PDF, ensure mimetype is correct
     if purchase.receipt_image_name and purchase.receipt_image_name.lower().endswith('.pdf'):
         mimetype = 'application/pdf'
 
@@ -491,18 +491,18 @@ def view_receipt(purchase_id):
 @bp.route('/<int:purchase_id>/receipt/download')
 @login_required
 def download_receipt(purchase_id):
-    """Télécharger le reçu"""
+    """Download receipt"""
     purchase = CardPurchase.query.get_or_404(purchase_id)
 
     if purchase.user_id != current_user.id:
-        flash('Vous n\'avez pas accès à cet achat.', 'danger')
+        flash('You don\'t have access to this purchase.', 'danger')
         return redirect(url_for('card_purchases.list_purchases'))
 
     if not purchase.receipt_image_data:
-        flash('Aucun reçu disponible.', 'warning')
+        flash('No receipt available.', 'warning')
         return redirect(url_for('card_purchases.detail', purchase_id=purchase.id))
 
-    # Déterminer le mimetype correct
+    # Determine correct mimetype
     mimetype = purchase.receipt_image_mime_type or 'application/octet-stream'
 
     if purchase.receipt_image_name and purchase.receipt_image_name.lower().endswith('.pdf'):

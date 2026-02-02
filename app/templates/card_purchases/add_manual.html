@@ -1,30 +1,30 @@
 {% extends "base.html" %}
 
-{% block title %}Ajouter un achat CB{% endblock %}
+{% block title %}Add Card Purchase{% endblock %}
 
 {% block content %}
 <div class="container mt-4">
     <div class="row">
         <div class="col-lg-8 mx-auto">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2><i class="fas fa-credit-card"></i> Ajouter un achat CB</h2>
+                <h2><i class="fas fa-credit-card"></i> Add Card Purchase</h2>
                 <a href="{{ url_for('card_purchases.list_purchases') }}" class="btn btn-outline-secondary">
-                    <i class="fas fa-arrow-left"></i> Retour
+                    <i class="fas fa-arrow-left"></i> Back
                 </a>
             </div>
 
-            <!-- Navigation entre modes -->
+            <!-- Navigation between modes -->
             <div class="alert alert-light border">
                 <div class="d-flex gap-2">
                     <a href="{{ url_for('card_purchases.add_manual') }}" class="btn btn-primary">
-                        <i class="fas fa-keyboard"></i> Saisie manuelle
+                        <i class="fas fa-keyboard"></i> Manual Entry
                     </a>
                     <a href="{{ url_for('card_purchases.upload_receipts') }}" class="btn btn-outline-primary">
-                        <i class="fas fa-robot"></i> Scanner avec OCR
+                        <i class="fas fa-robot"></i> Scan with OCR
                     </a>
                 </div>
                 <small class="text-muted d-block mt-2">
-                    <i class="fas fa-info-circle"></i> Vous pouvez saisir manuellement ou utiliser l'OCR pour scanner vos tickets
+                    <i class="fas fa-info-circle"></i> You can enter manually or use OCR to scan your receipts
                 </small>
             </div>
 
@@ -34,19 +34,19 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="merchant_name" class="form-label">
-                                    <i class="fas fa-store"></i> Commerçant <span class="text-danger">*</span>
+                                    <i class="fas fa-store"></i> Merchant <span class="text-danger">*</span>
                                 </label>
                                 <input type="text"
                                        class="form-control"
                                        id="merchant_name"
                                        name="merchant_name"
                                        required
-                                       placeholder="Ex: Carrefour, McDonald's...">
+                                       placeholder="e.g., Walmart, McDonald's...">
                             </div>
 
                             <div class="col-md-6 mb-3">
                                 <label for="amount" class="form-label">
-                                    <i class="fas fa-euro-sign"></i> Montant <span class="text-danger">*</span>
+                                    <i class="fas fa-euro-sign"></i> Amount <span class="text-danger">*</span>
                                 </label>
                                 <input type="number"
                                        class="form-control"
@@ -74,7 +74,7 @@
 
                             <div class="col-md-6 mb-3">
                                 <label for="purchase_time" class="form-label">
-                                    <i class="fas fa-clock"></i> Heure
+                                    <i class="fas fa-clock"></i> Time
                                 </label>
                                 <input type="time"
                                        class="form-control"
@@ -86,17 +86,17 @@
 
                         <div class="mb-3">
                             <label for="category_id" class="form-label">
-                                <i class="fas fa-tag"></i> Catégorie
+                                <i class="fas fa-tag"></i> Category
                             </label>
                             <select class="form-select" id="category_id" name="category_id">
-                                <option value="">-- Choisir une catégorie --</option>
+                                <option value="">-- Choose a category --</option>
                                 {% for category in categories %}
                                 <option value="{{ category.id }}">
                                     {{ category.name }}
                                 </option>
                                 {% endfor %}
                             </select>
-                            <small class="text-muted">Optionnel - Permet de classer vos dépenses</small>
+                            <small class="text-muted">Optional - Helps classify your expenses</small>
                         </div>
 
                         <div class="mb-3">
@@ -107,29 +107,36 @@
                                       id="description"
                                       name="description"
                                       rows="3"
-                                      placeholder="Notes complémentaires (optionnel)"></textarea>
+                                      placeholder="Additional notes (optional)"></textarea>
                         </div>
 
                         <div class="mb-3">
                             <label for="receipt_file" class="form-label">
-                                <i class="fas fa-receipt"></i> Reçu / Ticket
+                                <i class="fas fa-receipt"></i> Receipt / Ticket
                             </label>
-                            <input type="file"
-                                   class="form-control"
-                                   id="receipt_file"
-                                   name="receipt_file"
-                                   accept="image/jpeg,image/png,image/jpg,application/pdf">
+                            <div class="d-flex align-items-center gap-2">
+                                <input type="file"
+                                       class="d-none"
+                                       id="receipt_file"
+                                       name="receipt_file"
+                                       accept="image/jpeg,image/png,image/jpg,application/pdf"
+                                       onchange="updateFileName(this)">
+                                <button type="button" class="btn btn-outline-secondary" onclick="document.getElementById('receipt_file').click()">
+                                    <i class="fas fa-folder-open"></i> Browse...
+                                </button>
+                                <span id="file-name-display" class="text-muted flex-grow-1">No file selected</span>
+                            </div>
                             <small class="text-muted">
-                                Optionnel - Formats acceptés : JPG, PNG, PDF (max 5 Mo)
+                                Optional - Accepted formats: JPG, PNG, PDF (max 5 MB)
                             </small>
                         </div>
 
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-primary btn-lg">
-                                <i class="fas fa-save"></i> Enregistrer l'achat
+                                <i class="fas fa-save"></i> Save Purchase
                             </button>
                             <a href="{{ url_for('card_purchases.list_purchases') }}" class="btn btn-outline-secondary">
-                                <i class="fas fa-times"></i> Annuler
+                                <i class="fas fa-times"></i> Cancel
                             </a>
                         </div>
                     </form>
@@ -138,4 +145,19 @@
         </div>
     </div>
 </div>
+
+<script>
+function updateFileName(input) {
+    const display = document.getElementById('file-name-display');
+    if (input.files && input.files.length > 0) {
+        display.textContent = input.files[0].name;
+        display.classList.remove('text-muted');
+        display.classList.add('text-success', 'fw-bold');
+    } else {
+        display.textContent = 'No file selected';
+        display.classList.remove('text-success', 'fw-bold');
+        display.classList.add('text-muted');
+    }
+}
+</script>
 {% endblock %}

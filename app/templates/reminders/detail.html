@@ -43,7 +43,7 @@
         padding: 0.35em 0.65em;
     }
 
-    /* Styles pour la modal de preview */
+    /* Styles for preview modal */
     .document-preview-modal .modal-dialog {
         max-width: 80%;
         max-height: 90vh;
@@ -103,23 +103,23 @@
         <h2><i class="fas fa-bell"></i> {{ reminder.name }}</h2>
         <div class="btn-group">
             <a href="{{ url_for('reminders.edit', reminder_id=reminder.id) }}" class="btn btn-warning">
-                <i class="fas fa-edit"></i> Modifier
+                <i class="fas fa-edit"></i> Edit
             </a>
             <a href="{{ url_for('reminders.list') }}" class="btn btn-outline-secondary">
-                <i class="fas fa-arrow-left"></i> Retour
+                <i class="fas fa-arrow-left"></i> Back
             </a>
         </div>
     </div>
 
-    <!-- Informations principales -->
+    <!-- Main information -->
     <div class="row mb-4">
         <div class="col-md-4">
             <div class="card text-center">
                 <div class="card-body">
-                    <h6 class="text-muted">Date du rappel</h6>
+                    <h6 class="text-muted">Reminder date</h6>
                     <h2 class="mb-0">{{ '%02d'|format(reminder.reminder_month) }}/{{ reminder.reminder_year }}</h2>
                     <small class="text-muted">
-                        {% if reminder.recurrence == 'annual' %}Annuel{% elif reminder.recurrence == 'semiannual' %}Semestriel{% elif reminder.recurrence == 'biennial' %}Bisannuel{% else %}Ponctuel{% endif %}
+                        {% if reminder.recurrence == 'annual' %}Annual{% elif reminder.recurrence == 'semiannual' %}Semiannual{% elif reminder.recurrence == 'biennial' %}Biennial{% else %}Once{% endif %}
                     </small>
                 </div>
             </div>
@@ -128,7 +128,7 @@
         <div class="col-md-4">
             <div class="card text-center">
                 <div class="card-body">
-                    <h6 class="text-muted">Coût estimé</h6>
+                    <h6 class="text-muted">Estimated cost</h6>
                     <h2 class="mb-0">
                         {% if reminder.estimated_cost %}
                             {{ reminder.estimated_cost | format_amount }} {{ reminder.currency | currency_symbol }}
@@ -136,7 +136,7 @@
                             <span class="text-muted">-</span>
                         {% endif %}
                     </h2>
-                    <small class="text-muted">Budget prévisionnel</small>
+                    <small class="text-muted">Projected budget</small>
                 </div>
             </div>
         </div>
@@ -144,18 +144,18 @@
         <div class="col-md-4">
             <div class="card text-center {% if reminder.appointment_booked %}border-success{% else %}border-warning{% endif %}">
                 <div class="card-body">
-                    <h6 class="text-muted">Rendez-vous</h6>
+                    <h6 class="text-muted">Appointment</h6>
                     {% if reminder.appointment_booked %}
                         <h2 class="mb-0 text-success"><i class="fas fa-check-circle"></i></h2>
                         <small class="text-success">
-                            RDV pris
+                            Appointment booked
                             {% if reminder.appointment_date %}
                                 <br>{{ reminder.appointment_date.strftime('%d/%m/%Y') }}
                             {% endif %}
                         </small>
                     {% else %}
                         <h2 class="mb-0 text-warning"><i class="fas fa-clock"></i></h2>
-                        <small class="text-warning">À planifier</small>
+                        <small class="text-warning">To schedule</small>
                     {% endif %}
                 </div>
             </div>
@@ -163,77 +163,77 @@
     </div>
 
     <div class="row">
-        <!-- Colonne informations -->
+        <!-- Information column -->
         <div class="col-lg-4">
-            <!-- Détails du rappel -->
+            <!-- Reminder details -->
             <div class="card mb-4">
                 <div class="card-header" style="background-color: #e5e7eb;">
-                    <h5 class="mb-0"><i class="fas fa-info-circle text-secondary"></i> Détails</h5>
+                    <h5 class="mb-0"><i class="fas fa-info-circle text-secondary"></i> Details</h5>
                 </div>
                 <div class="card-body">
                     <div class="mb-3">
-                        <strong>Prestataire :</strong><br>
+                        <strong>Provider:</strong><br>
                         {% if reminder.provider %}
                             <i class="fas fa-user-tie text-primary"></i> {{ reminder.provider.name }}
                             {% if reminder.provider.contact_info %}
                                 <br><small class="text-muted">{{ reminder.provider.contact_info }}</small>
                             {% endif %}
                         {% else %}
-                            <span class="text-muted">Non défini</span>
+                            <span class="text-muted">Not defined</span>
                         {% endif %}
                     </div>
 
                     <div class="mb-3">
-                        <strong>Statut :</strong><br>
+                        <strong>Status:</strong><br>
                         {% if reminder.is_active %}
-                            <span class="badge bg-success">Actif</span>
+                            <span class="badge bg-success">Active</span>
                         {% else %}
-                            <span class="badge bg-secondary">Archivé</span>
+                            <span class="badge bg-secondary">Archived</span>
                         {% endif %}
                     </div>
 
                     {% if reminder.description %}
                     <div class="mb-0">
-                        <strong>Description :</strong><br>
+                        <strong>Description:</strong><br>
                         <p class="mb-0">{{ reminder.description }}</p>
                     </div>
                     {% endif %}
                 </div>
             </div>
 
-            <!-- Gestion du rendez-vous -->
+            <!-- Appointment management -->
             <div class="card mb-4">
                 <div class="card-header" style="background-color: #e5e7eb;">
-                    <h5 class="mb-0"><i class="fas fa-calendar-check text-secondary"></i> Rendez-vous</h5>
+                    <h5 class="mb-0"><i class="fas fa-calendar-check text-secondary"></i> Appointment</h5>
                 </div>
                 <div class="card-body">
                     {% if reminder.appointment_booked %}
                         <div class="alert alert-success mb-3">
-                            <i class="fas fa-check-circle"></i> Rendez-vous pris
+                            <i class="fas fa-check-circle"></i> Appointment booked
                             {% if reminder.appointment_date %}
-                                <br>Le <strong>{{ reminder.appointment_date.strftime('%d/%m/%Y') }}</strong>
+                                <br>On <strong>{{ reminder.appointment_date.strftime('%d/%m/%Y') }}</strong>
                             {% endif %}
                         </div>
                         <form method="POST" action="{{ url_for('reminders.toggle_appointment', reminder_id=reminder.id) }}">
                             <button type="submit" class="btn btn-warning w-100">
-                                <i class="fas fa-times"></i> Annuler le RDV
+                                <i class="fas fa-times"></i> Cancel appointment
                             </button>
                         </form>
                     {% else %}
                         <form method="POST" action="{{ url_for('reminders.toggle_appointment', reminder_id=reminder.id) }}">
                             <div class="mb-3">
-                                <label for="appointment_date" class="form-label">Date du RDV :</label>
+                                <label for="appointment_date" class="form-label">Appointment date:</label>
                                 <input type="date" class="form-control" id="appointment_date" name="appointment_date" required>
                             </div>
                             <button type="submit" class="btn btn-success w-100">
-                                <i class="fas fa-check"></i> Marquer RDV comme pris
+                                <i class="fas fa-check"></i> Mark appointment as booked
                             </button>
                         </form>
                     {% endif %}
                 </div>
             </div>
 
-            <!-- Statistiques documents -->
+            <!-- Document statistics -->
             <div class="card mb-4">
                 <div class="card-header" style="background-color: #e5e7eb;">
                     <i class="fas fa-chart-pie text-secondary"></i> Documents
@@ -266,23 +266,23 @@
                     <div class="d-grid gap-2">
                         {% if reminder.is_active %}
                             <form method="POST" action="{{ url_for('reminders.archive', reminder_id=reminder.id) }}"
-                                  onsubmit="return confirm('Archiver ce rappel ? Un nouveau rappel sera créé automatiquement si récurrent.')">
+                                  onsubmit="return confirm('Archive this reminder? A new reminder will be automatically created if recurring.')">
                                 <button type="submit" class="btn btn-info w-100">
-                                    <i class="fas fa-archive"></i> Archiver
+                                    <i class="fas fa-archive"></i> Archive
                                 </button>
                             </form>
                         {% else %}
                             <form method="POST" action="{{ url_for('reminders.unarchive', reminder_id=reminder.id) }}"
-                                  onsubmit="return confirm('Désarchiver ce rappel ?')">
+                                  onsubmit="return confirm('Unarchive this reminder?')">
                                 <button type="submit" class="btn btn-success w-100">
-                                    <i class="fas fa-box-open"></i> Désarchiver
+                                    <i class="fas fa-box-open"></i> Unarchive
                                 </button>
                             </form>
                         {% endif %}
                         <form method="POST" action="{{ url_for('reminders.delete', reminder_id=reminder.id) }}"
-                              onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce rappel ?')">
+                              onsubmit="return confirm('Are you sure you want to delete this reminder?')">
                             <button type="submit" class="btn btn-danger w-100">
-                                <i class="fas fa-trash"></i> Supprimer
+                                <i class="fas fa-trash"></i> Delete
                             </button>
                         </form>
                     </div>
@@ -290,7 +290,7 @@
             </div>
         </div>
 
-        <!-- Colonne documents -->
+        <!-- Documents column -->
         <div class="col-lg-8">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #e5e7eb;">
@@ -300,28 +300,28 @@
                             <span class="badge bg-info ms-2">
                                 <i class="fas fa-hdd"></i>
                                 {% if total_size >= 1073741824 %}
-                                    {{ "%.2f"|format(total_size / 1073741824) }} Go
+                                    {{ "%.2f"|format(total_size / 1073741824) }} GB
                                 {% elif total_size >= 1048576 %}
-                                    {{ "%.2f"|format(total_size / 1048576) }} Mo
+                                    {{ "%.2f"|format(total_size / 1048576) }} MB
                                 {% elif total_size >= 1024 %}
-                                    {{ "%.2f"|format(total_size / 1024) }} Ko
+                                    {{ "%.2f"|format(total_size / 1024) }} KB
                                 {% else %}
-                                    {{ total_size }} octets
+                                    {{ total_size }} bytes
                                 {% endif %}
                             </span>
                         {% endif %}
                     </span>
                     <a href="{{ url_for('reminders.add_document', reminder_id=reminder.id) }}" class="btn btn-sm btn-primary">
-                        <i class="fas fa-plus"></i> Ajouter un document
+                        <i class="fas fa-plus"></i> Add document
                     </a>
                 </div>
                 <div class="card-body">
-                    <!-- Filtres et recherche -->
+                    <!-- Filters and search -->
                     <form method="GET" class="mb-4">
                         <div class="row g-2">
                             <div class="col-md-4">
                                 <select name="doc_type" class="form-select form-select-sm" onchange="this.form.submit()">
-                                    <option value="">Tous les types</option>
+                                    <option value="">All types</option>
                                     {% for code, name, icon, color in document_types %}
                                         <option value="{{ code }}" {% if filter_type == code %}selected{% endif %}>{{ name }}</option>
                                     {% endfor %}
@@ -329,7 +329,7 @@
                             </div>
                             <div class="col-md-3">
                                 <select name="year" class="form-select form-select-sm" onchange="this.form.submit()">
-                                    <option value="">Toutes les années</option>
+                                    <option value="">All years</option>
                                     {% for y in years %}
                                         <option value="{{ y }}" {% if filter_year == y %}selected{% endif %}>{{ y }}</option>
                                     {% endfor %}
@@ -337,7 +337,7 @@
                             </div>
                             <div class="col-md-4">
                                 <div class="input-group input-group-sm">
-                                    <input type="text" class="form-control" name="search" placeholder="Rechercher..."
+                                    <input type="text" class="form-control" name="search" placeholder="Search..."
                                            value="{{ search or '' }}">
                                     <button class="btn btn-outline-secondary" type="submit">
                                         <i class="fas fa-search"></i>
@@ -352,7 +352,7 @@
                         </div>
                     </form>
 
-                    <!-- Liste des documents -->
+                    <!-- Document list -->
                     {% if documents %}
                         {% set current_year = namespace(value=None) %}
                         {% for document in documents %}
@@ -378,7 +378,7 @@
                                                 </span>
                                                 {% if document.month %}
                                                     <span class="badge bg-light text-dark ms-2">
-                                                        {{ ['', 'Janv.', 'Fév.', 'Mars', 'Avr.', 'Mai', 'Juin', 'Juil.', 'Août', 'Sept.', 'Oct.', 'Nov.', 'Déc.'][document.month] }} {{ document.year }}
+                                                        {{ ['', 'Jan.', 'Feb.', 'Mar.', 'Apr.', 'May', 'Jun.', 'Jul.', 'Aug.', 'Sep.', 'Oct.', 'Nov.', 'Dec.'][document.month] }} {{ document.year }}
                                                     </span>
                                                 {% endif %}
                                             </div>
@@ -402,22 +402,22 @@
                                                     <button type="button"
                                                        class="btn btn-sm btn-outline-primary"
                                                        onclick="openPreviewModal('{{ url_for('reminders.view_document', document_id=document.id) }}', '{{ document.name | e }}', '{{ document.file_mime_type }}')"
-                                                       title="Visualiser">
+                                                       title="View">
                                                         <i class="fas fa-eye"></i>
                                                     </button>
                                                 {% endif %}
                                                 <a href="{{ url_for('reminders.download_document', document_id=document.id) }}"
-                                                   class="btn btn-sm btn-outline-success" title="Télécharger">
+                                                   class="btn btn-sm btn-outline-success" title="Download">
                                                     <i class="fas fa-download"></i>
                                                 </a>
                                             {% endif %}
                                             <a href="{{ url_for('reminders.edit_document', document_id=document.id) }}"
-                                               class="btn btn-sm btn-outline-warning" title="Modifier">
+                                               class="btn btn-sm btn-outline-warning" title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </a>
                                             <form method="POST" action="{{ url_for('reminders.delete_document', document_id=document.id) }}"
-                                                  onsubmit="return confirm('Supprimer ce document ?')" class="d-inline">
-                                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Supprimer">
+                                                  onsubmit="return confirm('Delete this document?')" class="d-inline">
+                                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </form>
@@ -429,16 +429,16 @@
                     {% else %}
                         <div class="text-center py-5">
                             <i class="fas fa-folder-open fa-4x text-muted mb-3"></i>
-                            <h5>Aucun document</h5>
+                            <h5>No documents</h5>
                             <p class="text-muted">
                                 {% if filter_type or filter_year or search %}
-                                    Aucun document ne correspond aux critères de recherche.
+                                    No documents match the search criteria.
                                 {% else %}
-                                    Ajoutez vos factures, contrats et autres documents liés à cette prestation.
+                                    Add your invoices, contracts and other documents related to this service.
                                 {% endif %}
                             </p>
                             <a href="{{ url_for('reminders.add_document', reminder_id=reminder.id) }}" class="btn btn-primary">
-                                <i class="fas fa-plus"></i> Ajouter un document
+                                <i class="fas fa-plus"></i> Add document
                             </a>
                         </div>
                     {% endif %}
@@ -448,7 +448,7 @@
     </div>
 </div>
 
-<!-- Modal de visualisation de document -->
+<!-- Document preview modal -->
 <div class="modal fade document-preview-modal" id="documentPreviewModal" tabindex="-1" aria-labelledby="documentPreviewModalLabel" aria-hidden="true" data-bs-backdrop="true" data-bs-keyboard="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -457,10 +457,10 @@
                     <i class="fas fa-file-alt me-2"></i>
                     <span id="previewDocName">Document</span>
                 </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" id="documentPreviewContent">
-                <!-- Le contenu sera inséré dynamiquement -->
+                <!-- Content will be inserted dynamically -->
             </div>
         </div>
     </div>
@@ -472,29 +472,29 @@ function openPreviewModal(docUrl, docName, docType) {
     const previewContent = document.getElementById('documentPreviewContent');
     const previewDocName = document.getElementById('previewDocName');
 
-    // Mettre à jour le titre
+    // Update title
     previewDocName.textContent = docName;
 
-    // Déterminer le type de contenu
+    // Determine content type
     if (docType.startsWith('application/pdf')) {
         previewContent.innerHTML = '<embed src="' + docUrl + '" type="application/pdf" />';
     } else if (docType.startsWith('image/')) {
         previewContent.innerHTML = '<div class="preview-image-container"><img src="' + docUrl + '" alt="' + docName + '" /></div>';
     } else {
-        previewContent.innerHTML = '<div class="text-center p-5"><i class="fas fa-file fa-4x text-muted mb-3"></i><p>Aperçu non disponible pour ce type de fichier</p><a href="' + docUrl + '" target="_blank" class="btn btn-primary">Ouvrir dans un nouvel onglet</a></div>';
+        previewContent.innerHTML = '<div class="text-center p-5"><i class="fas fa-file fa-4x text-muted mb-3"></i><p>Preview not available for this file type</p><a href="' + docUrl + '" target="_blank" class="btn btn-primary">Open in new tab</a></div>';
     }
 
-    // Utiliser l'API Bootstrap standard
+    // Use standard Bootstrap API
     var modal = bootstrap.Modal.getOrCreateInstance(modalElement);
     modal.show();
 }
 
-// Nettoyage quand la modal est fermée
+// Cleanup when modal is closed
 document.getElementById('documentPreviewModal').addEventListener('hidden.bs.modal', function() {
-    // Vider le contenu
+    // Clear content
     document.getElementById('documentPreviewContent').innerHTML = '';
 
-    // Nettoyage force après un court délai
+    // Force cleanup after a short delay
     setTimeout(function() {
         document.body.classList.remove('modal-open');
         document.body.style.overflow = '';

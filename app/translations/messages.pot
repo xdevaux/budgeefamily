@@ -1,18 +1,17 @@
-# French translations for PROJECT.
+# Translations template for PROJECT.
 # Copyright (C) 2026 ORGANIZATION
 # This file is distributed under the same license as the PROJECT project.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
 #
+#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2026-02-02 07:26+0100\n"
-"PO-Revision-Date: 2026-01-31 15:29+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language: fr\n"
-"Language-Team: fr <LL@li.org>\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -71,9 +70,8 @@ msgid "Avr."
 msgstr ""
 
 #: app/__init__.py:163 app/routes/employers.py:40
-#, fuzzy
 msgid "Mai"
-msgstr "Email :"
+msgstr ""
 
 #: app/__init__.py:164 app/routes/employers.py:40
 msgid "Juin"
@@ -152,9 +150,8 @@ msgid "Éducation & Formation"
 msgstr ""
 
 #: app/__init__.py:192
-#, fuzzy
 msgid "Voyages & Hébergement"
-msgstr "2. Hébergement"
+msgstr ""
 
 #: app/__init__.py:193
 msgid "Cadeaux"
@@ -875,7 +872,7 @@ msgstr ""
 #: app/templates/base.html:1109 app/templates/mentions_legales.html:3
 #: app/templates/mentions_legales.html:11
 msgid "Mentions Légales"
-msgstr "Mentions Légales"
+msgstr ""
 
 #: app/templates/base.html:1110 app/templates/index.html:76
 msgid "Gérez votre budget familial en toute simplicité"
@@ -979,7 +976,7 @@ msgstr ""
 
 #: app/templates/contact.html:168 app/templates/mentions_legales.html:147
 msgid "Retour à l'accueil"
-msgstr "Retour à l'accueil"
+msgstr ""
 
 #: app/templates/contact.html:222
 msgid "Votre message doit contenir au moins 10 caractères."
@@ -1323,52 +1320,52 @@ msgstr ""
 
 #: app/templates/mentions_legales.html:14
 msgid "Dernière mise à jour :"
-msgstr "Dernière mise à jour :"
+msgstr ""
 
 #: app/templates/mentions_legales.html:18
 msgid "1. Éditeur du site"
-msgstr "1. Éditeur du site"
+msgstr ""
 
 #: app/templates/mentions_legales.html:19
 msgid "Le site web"
-msgstr "Le site web"
+msgstr ""
 
 #: app/templates/mentions_legales.html:19
 msgid "(ci-après \"le Site\") est édité par :"
-msgstr "(ci-après \"le Site\") est édité par :"
+msgstr ""
 
 #: app/templates/mentions_legales.html:23
 msgid "Éditeur et propriétaire du site"
-msgstr "Éditeur et propriétaire du site"
+msgstr ""
 
 #: app/templates/mentions_legales.html:24
 #: app/templates/mentions_legales.html:38
 msgid "Site web :"
-msgstr "Site web :"
+msgstr ""
 
 #: app/templates/mentions_legales.html:30
 msgid "2. Hébergement"
-msgstr "2. Hébergement"
+msgstr ""
 
 #: app/templates/mentions_legales.html:31
 msgid "Le Site est hébergé par :"
-msgstr "Le Site est hébergé par :"
+msgstr ""
 
 #: app/templates/mentions_legales.html:36
 msgid "Siège social :"
-msgstr "Siège social :"
+msgstr ""
 
 #: app/templates/mentions_legales.html:37
 msgid "Téléphone :"
-msgstr "Téléphone :"
+msgstr ""
 
 #: app/templates/mentions_legales.html:37
 msgid "(numéro non surtaxé)"
-msgstr "(numéro non surtaxé)"
+msgstr ""
 
 #: app/templates/mentions_legales.html:44
 msgid "3. Propriété intellectuelle"
-msgstr "3. Propriété intellectuelle"
+msgstr ""
 
 #: app/templates/mentions_legales.html:45
 msgid ""
@@ -1395,7 +1392,7 @@ msgstr ""
 
 #: app/templates/mentions_legales.html:52
 msgid "4. Limitations de responsabilité"
-msgstr "4. Limitations de responsabilité"
+msgstr ""
 
 #: app/templates/mentions_legales.html:53
 msgid ""
@@ -1434,7 +1431,7 @@ msgstr ""
 
 #: app/templates/mentions_legales.html:61
 msgid "5. Gestion des données personnelles"
-msgstr "5. Gestion des données personnelles"
+msgstr ""
 
 #: app/templates/mentions_legales.html:62
 msgid ""
@@ -1445,7 +1442,7 @@ msgstr ""
 
 #: app/templates/mentions_legales.html:64
 msgid "5.1 Données collectées"
-msgstr "5.1 Données collectées"
+msgstr ""
 
 #: app/templates/mentions_legales.html:65
 msgid ""
@@ -1456,35 +1453,35 @@ msgstr ""
 
 #: app/templates/mentions_legales.html:67
 msgid "5.2 Finalités"
-msgstr "5.2 Finalités"
+msgstr ""
 
 #: app/templates/mentions_legales.html:68
 msgid "Les données collectées sont utilisées pour :"
-msgstr "Les données collectées sont utilisées pour :"
+msgstr ""
 
 #: app/templates/mentions_legales.html:70
 msgid "La gestion des comptes utilisateurs"
-msgstr "La gestion des comptes utilisateurs"
+msgstr ""
 
 #: app/templates/mentions_legales.html:71
 msgid "La fourniture des services proposés par le Site"
-msgstr "La fourniture des services proposés par le Site"
+msgstr ""
 
 #: app/templates/mentions_legales.html:72
 msgid "L'amélioration de la navigation sur le Site"
-msgstr "L'amélioration de la navigation sur le Site"
+msgstr ""
 
 #: app/templates/mentions_legales.html:73
 msgid "La prévention et la détection de la fraude"
-msgstr "La prévention et la détection de la fraude"
+msgstr ""
 
 #: app/templates/mentions_legales.html:74
 msgid "L'envoi d'informations et de notifications relatives au service"
-msgstr "L'envoi d'informations et de notifications relatives au service"
+msgstr ""
 
 #: app/templates/mentions_legales.html:77
 msgid "5.3 Droit d'accès, de rectification et de suppression"
-msgstr "5.3 Droit d'accès, de rectification et de suppression"
+msgstr ""
 
 #: app/templates/mentions_legales.html:78
 msgid ""
@@ -1504,7 +1501,7 @@ msgstr ""
 
 #: app/templates/mentions_legales.html:81
 msgid "5.4 Non-communication des données personnelles"
-msgstr "5.4 Non-communication des données personnelles"
+msgstr ""
 
 #: app/templates/mentions_legales.html:82
 msgid ""
@@ -1515,7 +1512,7 @@ msgstr ""
 
 #: app/templates/mentions_legales.html:87
 msgid "6. Cookies"
-msgstr "6. Cookies"
+msgstr ""
 
 #: app/templates/mentions_legales.html:88
 msgid ""
@@ -1541,7 +1538,7 @@ msgstr ""
 
 #: app/templates/mentions_legales.html:95
 msgid "7. Liens hypertextes"
-msgstr "7. Liens hypertextes"
+msgstr ""
 
 #: app/templates/mentions_legales.html:96
 msgid ""
@@ -1558,7 +1555,7 @@ msgstr ""
 
 #: app/templates/mentions_legales.html:102
 msgid "8. Droit applicable et attribution de juridiction"
-msgstr "8. Droit applicable et attribution de juridiction"
+msgstr ""
 
 #: app/templates/mentions_legales.html:103
 msgid ""
@@ -1569,7 +1566,7 @@ msgstr ""
 
 #: app/templates/mentions_legales.html:108
 msgid "9. Principales lois concernées"
-msgstr "9. Principales lois concernées"
+msgstr ""
 
 #: app/templates/mentions_legales.html:110
 msgid ""
@@ -1591,19 +1588,19 @@ msgstr ""
 
 #: app/templates/mentions_legales.html:118
 msgid "10. Lexique"
-msgstr "10. Lexique"
+msgstr ""
 
 #: app/templates/mentions_legales.html:120
 msgid "Utilisateur"
-msgstr "Utilisateur"
+msgstr ""
 
 #: app/templates/mentions_legales.html:121
 msgid "Internaute se connectant, utilisant le Site susnommé."
-msgstr "Internaute se connectant, utilisant le Site susnommé."
+msgstr ""
 
 #: app/templates/auth/profile.html:89 app/templates/mentions_legales.html:123
 msgid "Informations personnelles"
-msgstr "Informations personnelles"
+msgstr ""
 
 #: app/templates/mentions_legales.html:124
 msgid ""
@@ -1614,7 +1611,7 @@ msgstr ""
 
 #: app/templates/mentions_legales.html:130
 msgid "Contact"
-msgstr "Contact"
+msgstr ""
 
 #: app/templates/mentions_legales.html:131
 msgid ""
@@ -1624,19 +1621,19 @@ msgstr ""
 
 #: app/templates/mentions_legales.html:133
 msgid "Email :"
-msgstr "Email :"
+msgstr ""
 
 #: app/templates/mentions_legales.html:134
 msgid "Ou via l'interface de contact du Site"
-msgstr "Ou via l'interface de contact du Site"
+msgstr ""
 
 #: app/templates/mentions_legales.html:140
 msgid "Ces mentions légales ont été mises à jour le"
-msgstr "Ces mentions légales ont été mises à jour le"
+msgstr ""
 
 #: app/templates/mentions_legales.html:140
 msgid "et sont conformes à la législation française en vigueur."
-msgstr "et sont conformes à la législation française en vigueur."
+msgstr ""
 
 #: app/templates/notifications.html:3 app/templates/notifications.html:9
 msgid "Notifications"
@@ -2758,9 +2755,8 @@ msgid ""
 msgstr ""
 
 #: app/templates/categories/list.html:71
-#, fuzzy
 msgid "Catégories personnalisées"
-msgstr "Informations personnelles"
+msgstr ""
 
 #: app/templates/categories/list.html:73
 msgid ""
@@ -2788,9 +2784,8 @@ msgstr ""
 #: app/templates/categories/list.html:218
 #: app/templates/categories/list.html:291
 #: app/templates/categories/list.html:359
-#, fuzzy
 msgid "Visiter le site"
-msgstr "1. Éditeur du site"
+msgstr ""
 
 #: app/templates/categories/list.html:144
 #: app/templates/categories/list.html:228
@@ -2919,9 +2914,8 @@ msgstr ""
 #: app/templates/checkbooks/detail.html:52
 #: app/templates/checkbooks/detail.html:83
 #: app/templates/checkbooks/list.html:49
-#, fuzzy
 msgid "Utilisés"
-msgstr "Utilisateur"
+msgstr ""
 
 #: app/templates/checkbooks/detail.html:60
 msgid "Total montants"
@@ -2962,18 +2956,16 @@ msgstr ""
 #: app/templates/revenues/edit.html:57 app/templates/revenues/list.html:68
 #: app/templates/subscriptions/add.html:60
 #: app/templates/subscriptions/edit.html:60
-#, fuzzy
 msgid "Montant"
-msgstr "Contact"
+msgstr ""
 
 #: app/templates/checkbooks/detail.html:125
 msgid "Disponible"
 msgstr ""
 
 #: app/templates/checkbooks/detail.html:127
-#, fuzzy
 msgid "Utilisé"
-msgstr "Utilisateur"
+msgstr ""
 
 #: app/templates/checkbooks/detail.html:129
 #: app/templates/checkbooks/edit_check.html:63
@@ -3160,15 +3152,13 @@ msgstr ""
 #: app/templates/employers/add.html:84 app/templates/employers/edit.html:98
 #: app/templates/providers/add.html:32 app/templates/providers/edit.html:32
 #: app/templates/providers/list.html:46
-#, fuzzy
 msgid "Téléphone"
-msgstr "Téléphone :"
+msgstr ""
 
 #: app/templates/employers/add.html:98 app/templates/employers/add.html:102
 #: app/templates/employers/edit.html:112 app/templates/employers/edit.html:116
-#, fuzzy
 msgid "Informations sur l'emploi"
-msgstr "Informations personnelles"
+msgstr ""
 
 #: app/templates/employers/add.html:106 app/templates/employers/edit.html:120
 msgid "Poste occupé"
@@ -3209,9 +3199,8 @@ msgid "Notes"
 msgstr ""
 
 #: app/templates/employers/add.html:143
-#, fuzzy
 msgid "Informations complémentaires, notes personnelles..."
-msgstr "Informations personnelles"
+msgstr ""
 
 #: app/templates/employers/add.html:152
 msgid "Ajouter l'employeur"
@@ -3243,9 +3232,8 @@ msgid "ex: Contrat CDI, Fiche de paie Janvier 2024..."
 msgstr ""
 
 #: app/templates/employers/add_document.html:41
-#, fuzzy
 msgid "Informations complementaires..."
-msgstr "Informations personnelles"
+msgstr ""
 
 #: app/templates/employers/add_document.html:46
 #: app/templates/employers/edit_document.html:45
@@ -3429,9 +3417,8 @@ msgid "Localisation"
 msgstr ""
 
 #: app/templates/employers/list.html:129
-#, fuzzy
 msgid "Contrat"
-msgstr "Contact"
+msgstr ""
 
 #: app/templates/employers/list.html:181
 msgid "au"
@@ -3459,9 +3446,8 @@ msgid "Ajouter un prestataire"
 msgstr ""
 
 #: app/templates/providers/add.html:9 app/templates/providers/edit.html:9
-#, fuzzy
 msgid "Retour à la liste"
-msgstr "Retour à l'accueil"
+msgstr ""
 
 #: app/templates/providers/add.html:21 app/templates/providers/edit.html:21
 msgid "Nom du prestataire"
@@ -3586,9 +3572,8 @@ msgstr ""
 
 #: app/templates/revenues/detail.html:25
 #: app/templates/subscriptions/detail.html:20
-#, fuzzy
 msgid "Informations générales"
-msgstr "Informations personnelles"
+msgstr ""
 
 #: app/templates/revenues/detail.html:38
 msgid "Société :"
@@ -4025,9 +4010,8 @@ msgid "ex: Netflix, Spotify, Adobe Creative Cloud..."
 msgstr ""
 
 #: app/templates/subscriptions/add.html:55
-#, fuzzy
 msgid "Informations complémentaires sur l'abonnement"
-msgstr "Informations personnelles"
+msgstr ""
 
 #: app/templates/subscriptions/add.html:89
 #: app/templates/subscriptions/edit.html:88
@@ -4085,9 +4069,8 @@ msgid "Manuel"
 msgstr ""
 
 #: app/templates/subscriptions/detail.html:90
-#, fuzzy
 msgid "Montant :"
-msgstr "Contact"
+msgstr ""
 
 #: app/templates/subscriptions/detail.html:94
 msgid "Périodicité :"
@@ -4115,9 +4098,9 @@ msgid "Liens utiles"
 msgstr ""
 
 #: app/templates/subscriptions/detail.html:148
-#, fuzzy, python-format
+#, python-format
 msgid "Site web de %(name)s"
-msgstr "Site web :"
+msgstr ""
 
 #: app/templates/subscriptions/detail.html:153
 msgid "Site web de la catégorie"

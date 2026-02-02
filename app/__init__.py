@@ -171,6 +171,13 @@ def create_app(config_class=Config):
         }
         return months.get(month_number, '')
 
+    @app.template_filter('get_translated_description')
+    def get_translated_description(obj):
+        """Retourne la description traduite pour un objet Category ou Service"""
+        if obj and hasattr(obj, 'get_description'):
+            return obj.get_description(locale=get_locale())
+        return obj.description if obj and hasattr(obj, 'description') else ''
+
     @app.template_filter('translate_category')
     def translate_category(category_name):
         """Traduit les noms et descriptions des catégories par défaut"""

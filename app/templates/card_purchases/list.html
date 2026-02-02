@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Mes achats CB{% endblock %}
+{% block title %}My Card Purchases{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -61,12 +61,12 @@
 <div class="container py-4">
     <div class="row mb-4">
         <div class="col-md-6">
-            <h2><i class="fas fa-credit-card"></i> Mes achats CB</h2>
+            <h2><i class="fas fa-credit-card"></i> My Card Purchases</h2>
         </div>
         <div class="col-md-6 text-end">
             <div class="btn-group" role="group">
                 <a href="{{ url_for('card_purchases.add_manual') }}" class="btn btn-primary">
-                    <i class="fas fa-plus"></i> Ajouter un achat
+                    <i class="fas fa-plus"></i> Add Purchase
                 </a>
                 <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
                     <span class="visually-hidden">Toggle Dropdown</span>
@@ -74,12 +74,12 @@
                 <ul class="dropdown-menu dropdown-menu-end">
                     <li>
                         <a class="dropdown-item" href="{{ url_for('card_purchases.add_manual') }}">
-                            <i class="fas fa-keyboard"></i> Saisie manuelle
+                            <i class="fas fa-keyboard"></i> Manual Entry
                         </a>
                     </li>
                     <li>
                         <a class="dropdown-item" href="{{ url_for('card_purchases.upload_receipts') }}">
-                            <i class="fas fa-robot"></i> Scanner avec OCR
+                            <i class="fas fa-robot"></i> Scan with OCR
                         </a>
                     </li>
                 </ul>
@@ -92,9 +92,9 @@
         <div class="card-body">
             <form method="get" class="row g-3">
                 <div class="col-md-4">
-                    <label class="form-label">Catégorie</label>
+                    <label class="form-label">Category</label>
                     <select name="category" class="form-select">
-                        <option value="">Toutes les catégories</option>
+                        <option value="">All categories</option>
                         {% for category in categories %}
                             <option value="{{ category.id }}"
                                     {% if filter_category == category.id %}selected{% endif %}>
@@ -104,10 +104,10 @@
                     </select>
                 </div>
                 <div class="col-md-3">
-                    <label class="form-label">Mois</label>
+                    <label class="form-label">Month</label>
                     <select name="month" class="form-select">
-                        <option value="">Tous</option>
-                        {% set month_names = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'] %}
+                        <option value="">All</option>
+                        {% set month_names = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'] %}
                         {% for i in range(1, 13) %}
                             <option value="{{ i }}" {% if filter_month == i %}selected{% endif %}>
                                 {{ month_names[i-1] }}
@@ -116,9 +116,9 @@
                     </select>
                 </div>
                 <div class="col-md-3">
-                    <label class="form-label">Année</label>
+                    <label class="form-label">Year</label>
                     <select name="year" class="form-select">
-                        <option value="">Toutes</option>
+                        <option value="">All</option>
                         {% for year in range(now.year, now.year - 5, -1) %}
                             <option value="{{ year }}" {% if filter_year == year %}selected{% endif %}>
                                 {{ year }}
@@ -128,7 +128,7 @@
                 </div>
                 <div class="col-md-2 d-flex align-items-end">
                     <button type="submit" class="btn btn-primary w-100">
-                        <i class="fas fa-filter"></i> Filtrer
+                        <i class="fas fa-filter"></i> Filter
                     </button>
                 </div>
             </form>
@@ -143,10 +143,10 @@
                     <thead class="table-light">
                         <tr>
                             <th>Date</th>
-                            <th>Commerçant</th>
-                            <th>Catégorie</th>
-                            <th class="text-end">Montant</th>
-                            <th class="text-center">Reçu</th>
+                            <th>Merchant</th>
+                            <th>Category</th>
+                            <th class="text-end">Amount</th>
+                            <th class="text-center">Receipt</th>
                             <th class="text-end">Actions</th>
                         </tr>
                     </thead>
@@ -159,7 +159,7 @@
                             <td>
                                 <strong>{{ purchase.merchant_name }}</strong>
                                 {% if purchase.was_manually_edited %}
-                                    <i class="fas fa-user-edit text-muted" title="Modifié manuellement"></i>
+                                    <i class="fas fa-user-edit text-muted" title="Manually edited"></i>
                                 {% endif %}
                             </td>
                             <td>
@@ -169,7 +169,7 @@
                                     </span>
                                 {% else %}
                                     <span class="badge bg-secondary">
-                                        Non catégorisé
+                                        Uncategorized
                                     </span>
                                 {% endif %}
                             </td>
@@ -181,7 +181,7 @@
                                     <button type="button"
                                        class="btn btn-sm btn-outline-primary"
                                        onclick="openPreviewModal('{{ url_for('card_purchases.view_receipt', purchase_id=purchase.id) }}', '{{ purchase.receipt_image_name | e }}', '{{ purchase.receipt_image_mime_type }}')"
-                                       title="Visualiser le reçu">
+                                       title="View receipt">
                                         <i class="fas fa-eye"></i>
                                     </button>
                                 {% else %}
@@ -191,21 +191,21 @@
                             <td class="text-end">
                                 <a href="{{ url_for('card_purchases.detail', purchase_id=purchase.id) }}"
                                    class="btn btn-sm btn-outline-info"
-                                   title="Détails">
+                                   title="Details">
                                     <i class="fas fa-eye"></i>
                                 </a>
                                 <a href="{{ url_for('card_purchases.edit', purchase_id=purchase.id) }}"
                                    class="btn btn-sm btn-outline-warning"
-                                   title="Modifier">
+                                   title="Edit">
                                     <i class="fas fa-edit"></i>
                                 </a>
                                 <form method="post"
                                       action="{{ url_for('card_purchases.delete', purchase_id=purchase.id) }}"
                                       style="display:inline;"
-                                      onsubmit="return confirm('Confirmer la suppression ?');">
+                                      onsubmit="return confirm('Confirm deletion?');">
                                     <button type="submit"
                                             class="btn btn-sm btn-outline-danger"
-                                            title="Supprimer">
+                                            title="Delete">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </form>
@@ -215,14 +215,14 @@
                         <tr>
                             <td colspan="6" class="text-center text-muted py-4">
                                 <i class="fas fa-inbox fa-3x mb-3"></i><br>
-                                Aucun achat CB enregistré.
+                                No card purchases recorded.
                             </td>
                         </tr>
                         {% endfor %}
                     </tbody>
                     <tfoot class="table-light">
                         <tr>
-                            <td colspan="3" class="text-end"><strong>Total :</strong></td>
+                            <td colspan="3" class="text-end"><strong>Total:</strong></td>
                             <td class="text-end text-danger">
                                 <strong>
                                     {% set total_amount = namespace(value=0) %}
@@ -246,7 +246,7 @@
         <ul class="pagination justify-content-center">
             {% if purchases.has_prev %}
                 <li class="page-item">
-                    <a class="page-link" href="?page={{ purchases.prev_num }}">Précédent</a>
+                    <a class="page-link" href="?page={{ purchases.prev_num }}">Previous</a>
                 </li>
             {% endif %}
             {% for page in purchases.iter_pages() %}
@@ -258,7 +258,7 @@
             {% endfor %}
             {% if purchases.has_next %}
                 <li class="page-item">
-                    <a class="page-link" href="?page={{ purchases.next_num }}">Suivant</a>
+                    <a class="page-link" href="?page={{ purchases.next_num }}">Next</a>
                 </li>
             {% endif %}
         </ul>
@@ -269,19 +269,19 @@
     {% if current_user.is_premium() %}
     <div class="card mt-4" id="cardPurchasesChartsSection">
         <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #e5e7eb;">
-            <h5 class="mb-0"><i class="fas fa-chart-pie text-secondary"></i> Répartition des achats CB actifs</h5>
-            <button class="btn btn-sm btn-outline-danger" onclick="exportCardPurchasesChartsToPDF()" title="Exporter en PDF">
+            <h5 class="mb-0"><i class="fas fa-chart-pie text-secondary"></i> Active Card Purchases Distribution</h5>
+            <button class="btn btn-sm btn-outline-danger" onclick="exportCardPurchasesChartsToPDF()" title="Export to PDF">
                 <i class="fas fa-file-pdf"></i>
             </button>
         </div>
         <div class="card-body">
             <div class="row">
                 <div class="col-md-6 mb-3">
-                    <h6 class="text-center mb-3">Par Commerçant</h6>
+                    <h6 class="text-center mb-3">By Merchant</h6>
                     <canvas id="merchantsChart" style="max-height: 350px;"></canvas>
                 </div>
                 <div class="col-md-6 mb-3">
-                    <h6 class="text-center mb-3">Par Catégorie</h6>
+                    <h6 class="text-center mb-3">By Category</h6>
                     <canvas id="cardPurchasesCategoriesChart" style="max-height: 350px;"></canvas>
                 </div>
             </div>
@@ -297,9 +297,9 @@
             <div class="modal-header">
                 <h5 class="modal-title" id="documentPreviewModalLabel">
                     <i class="fas fa-receipt me-2"></i>
-                    <span id="previewDocName">Reçu</span>
+                    <span id="previewDocName">Receipt</span>
                 </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" id="documentPreviewContent">
                 <!-- Le contenu sera inséré dynamiquement -->
@@ -316,16 +316,16 @@
         const previewContent = document.getElementById('documentPreviewContent');
         const previewDocName = document.getElementById('previewDocName');
 
-        // Mettre à jour le titre
-        previewDocName.textContent = docName || 'Reçu';
+        // Update the title
+        previewDocName.textContent = docName || 'Receipt';
 
-        // Déterminer le type de contenu
+        // Determine content type
         if (docType && docType.startsWith('application/pdf')) {
             previewContent.innerHTML = '<embed src="' + docUrl + '" type="application/pdf" />';
         } else if (docType && docType.startsWith('image/')) {
-            previewContent.innerHTML = '<div class="preview-image-container"><img src="' + docUrl + '" alt="' + (docName || 'Reçu') + '" /></div>';
+            previewContent.innerHTML = '<div class="preview-image-container"><img src="' + docUrl + '" alt="' + (docName || 'Receipt') + '" /></div>';
         } else {
-            previewContent.innerHTML = '<div class="text-center p-5"><i class="fas fa-file fa-4x text-muted mb-3"></i><p>Aperçu non disponible pour ce type de fichier</p><a href="' + docUrl + '" target="_blank" class="btn btn-primary">Ouvrir dans un nouvel onglet</a></div>';
+            previewContent.innerHTML = '<div class="text-center p-5"><i class="fas fa-file fa-4x text-muted mb-3"></i><p>Preview not available for this file type</p><a href="' + docUrl + '" target="_blank" class="btn btn-primary">Open in new tab</a></div>';
         }
 
         // Utiliser l'API Bootstrap standard
@@ -333,12 +333,12 @@
         modal.show();
     }
 
-    // Nettoyage quand la modal est fermée
+    // Cleanup when modal is closed
     document.getElementById('documentPreviewModal').addEventListener('hidden.bs.modal', function() {
-        // Vider le contenu
+        // Clear content
         document.getElementById('documentPreviewContent').innerHTML = '';
 
-        // Nettoyage forcé après un court délai
+        // Force cleanup after a short delay
         setTimeout(function() {
             document.body.classList.remove('modal-open');
             document.body.style.overflow = '';
@@ -358,14 +358,14 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <script>
-// Palette de couleurs
+// Color palette
 const chartColors = [
     '#0d6efd', '#6610f2', '#6f42c1', '#d63384', '#dc3545',
     '#fd7e14', '#ffc107', '#198754', '#20c997', '#0dcaf0',
     '#6c757d', '#adb5bd', '#e83e8c', '#fd4d91', '#f47b7b'
 ];
 
-// Fonction pour formater les montants
+// Function to format amounts
 function formatAmount(value) {
     return new Intl.NumberFormat('fr-FR', {
         minimumFractionDigits: 2,
@@ -373,11 +373,11 @@ function formatAmount(value) {
     }).format(value);
 }
 
-// Charger les données de répartition
+// Load distribution data
 fetch('/api/card-purchases/distribution')
     .then(response => response.json())
     .then(data => {
-        // Graphique par Commerçant
+        // Chart by Merchant
         const merchantsCtx = document.getElementById('merchantsChart').getContext('2d');
         new Chart(merchantsCtx, {
             type: 'doughnut',
@@ -418,7 +418,7 @@ fetch('/api/card-purchases/distribution')
             }
         });
 
-        // Graphique par Catégorie (avec couleurs des catégories)
+        // Chart by Category (with category colors)
         const categoriesCtx = document.getElementById('cardPurchasesCategoriesChart').getContext('2d');
         new Chart(categoriesCtx, {
             type: 'doughnut',
@@ -460,15 +460,15 @@ fetch('/api/card-purchases/distribution')
         });
     })
     .catch(error => {
-        console.error('Erreur lors du chargement des graphiques:', error);
+        console.error('Error loading charts:', error);
     });
 
-// Fonction pour exporter les graphiques en PDF
+// Function to export charts to PDF
 function exportCardPurchasesChartsToPDF() {
     const { jsPDF } = window.jspdf;
     const chartsSection = document.getElementById('cardPurchasesChartsSection');
 
-    // Afficher un indicateur de chargement
+    // Show loading indicator
     const btn = event.target.closest('button');
     const originalHTML = btn.innerHTML;
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
@@ -482,32 +482,32 @@ function exportCardPurchasesChartsToPDF() {
         const imgData = canvas.toDataURL('image/png');
         const pdf = new jsPDF('p', 'mm', 'a4');
 
-        // Calculer les dimensions pour ajuster au PDF
+        // Calculate dimensions to fit PDF
         const imgWidth = 210; // A4 width in mm
         const pageHeight = 297; // A4 height in mm
         const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
-        // Ajouter le titre
+        // Add title
         pdf.setFontSize(16);
-        pdf.text('Répartition des achats CB actifs', 105, 15, { align: 'center' });
+        pdf.text('Active Card Purchases Distribution', 105, 15, { align: 'center' });
 
-        // Ajouter la date
+        // Add date
         pdf.setFontSize(10);
-        const today = new Date().toLocaleDateString('fr-FR');
-        pdf.text('Généré le ' + today, 105, 22, { align: 'center' });
+        const today = new Date().toLocaleDateString('en-US');
+        pdf.text('Generated on ' + today, 105, 22, { align: 'center' });
 
-        // Ajouter l'image
+        // Add image
         pdf.addImage(imgData, 'PNG', 0, 30, imgWidth, imgHeight);
 
-        // Télécharger le PDF
-        pdf.save('repartition-achats-cb-' + new Date().toISOString().split('T')[0] + '.pdf');
+        // Download PDF
+        pdf.save('card-purchases-distribution-' + new Date().toISOString().split('T')[0] + '.pdf');
 
-        // Restaurer le bouton
+        // Restore button
         btn.innerHTML = originalHTML;
         btn.disabled = false;
     }).catch(error => {
-        console.error('Erreur lors de la génération du PDF:', error);
-        alert('Erreur lors de la génération du PDF');
+        console.error('Error generating PDF:', error);
+        alert('Error generating PDF');
         btn.innerHTML = originalHTML;
         btn.disabled = false;
     });

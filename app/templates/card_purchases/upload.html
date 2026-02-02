@@ -1,30 +1,30 @@
 {% extends "base.html" %}
 
-{% block title %}Upload de reçus CB{% endblock %}
+{% block title %}Upload Card Receipts{% endblock %}
 
 {% block content %}
 <div class="container mt-4">
     <div class="row">
         <div class="col-lg-8 mx-auto">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2><i class="fas fa-robot"></i> Scanner des tickets avec OCR</h2>
+                <h2><i class="fas fa-robot"></i> Scan Receipts with OCR</h2>
                 <a href="{{ url_for('card_purchases.list_purchases') }}" class="btn btn-outline-secondary">
-                    <i class="fas fa-arrow-left"></i> Retour
+                    <i class="fas fa-arrow-left"></i> Back
                 </a>
             </div>
 
-            <!-- Navigation entre modes -->
+            <!-- Navigation between modes -->
             <div class="alert alert-light border">
                 <div class="d-flex gap-2">
                     <a href="{{ url_for('card_purchases.add_manual') }}" class="btn btn-outline-primary">
-                        <i class="fas fa-keyboard"></i> Saisie manuelle
+                        <i class="fas fa-keyboard"></i> Manual Entry
                     </a>
                     <a href="{{ url_for('card_purchases.upload_receipts') }}" class="btn btn-primary">
-                        <i class="fas fa-robot"></i> Scanner avec OCR
+                        <i class="fas fa-robot"></i> Scan with OCR
                     </a>
                 </div>
                 <small class="text-muted d-block mt-2">
-                    <i class="fas fa-info-circle"></i> Vous pouvez saisir manuellement ou utiliser l'OCR pour scanner vos tickets
+                    <i class="fas fa-info-circle"></i> You can enter manually or use OCR to scan your receipts
                 </small>
             </div>
 
@@ -33,41 +33,47 @@
                     <form method="post" enctype="multipart/form-data">
                         <div class="mb-4">
                             <label for="receipts" class="form-label">
-                                <i class="fas fa-images"></i> Sélectionner des reçus (jusqu'à 10)
+                                <i class="fas fa-images"></i> Select receipts (up to 10)
                             </label>
-                            <input type="file"
-                                   class="form-control"
-                                   id="receipts"
-                                   name="receipts"
-                                   multiple
-                                   required
-                                   accept="image/*,.pdf">
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <input type="file"
+                                       class="d-none"
+                                       id="receipts"
+                                       name="receipts"
+                                       multiple
+                                       required
+                                       accept="image/*,.pdf">
+                                <button type="button" class="btn btn-outline-secondary" onclick="document.getElementById('receipts').click()">
+                                    <i class="fas fa-folder-open"></i> Browse...
+                                </button>
+                                <span id="file-count-display" class="text-muted flex-grow-1">No files selected</span>
+                            </div>
                             <small class="text-muted">
-                                Formats acceptés : JPG, PNG, PDF. Maximum 5 Mo par fichier.
+                                Accepted formats: JPG, PNG, PDF. Maximum 5 MB per file.
                             </small>
                         </div>
 
                         <div class="alert alert-info">
                             <i class="fas fa-info-circle"></i>
-                            <strong>Comment ça marche ?</strong><br>
-                            1. Sélectionnez vos photos/scans de reçus CB<br>
-                            2. Le système va extraire automatiquement les données (date, montant, commerçant)<br>
-                            3. Vous pourrez vérifier et corriger les données avant validation<br>
-                            4. Les achats seront ajoutés dans votre balance
+                            <strong>How does it work?</strong><br>
+                            1. Select your photos/scans of card receipts<br>
+                            2. The system will automatically extract data (date, amount, merchant)<br>
+                            3. You can review and correct the data before validation<br>
+                            4. Purchases will be added to your balance
                         </div>
 
                         <div id="preview" class="mb-3"></div>
 
                         <button type="submit" class="btn btn-primary" id="submitBtn" disabled>
-                            <i class="fas fa-robot"></i> Traiter avec OCR
+                            <i class="fas fa-robot"></i> Process with OCR
                         </button>
                         <div id="loadingIndicator" class="mt-3" style="display: none;">
                             <div class="alert alert-info">
                                 <div class="d-flex align-items-center">
                                     <div class="spinner-border spinner-border-sm me-2" role="status"></div>
-                                    <strong>Traitement OCR en cours...</strong>
+                                    <strong>OCR processing in progress...</strong>
                                 </div>
-                                <small>Cela peut prendre quelques secondes par fichier. Veuillez patienter.</small>
+                                <small>This may take a few seconds per file. Please wait.</small>
                             </div>
                         </div>
                     </form>
@@ -81,6 +87,7 @@
 document.getElementById('receipts').addEventListener('change', function() {
     const preview = document.getElementById('preview');
     const submitBtn = document.getElementById('submitBtn');
+    const fileCountDisplay = document.getElementById('file-count-display');
     const files = this.files;
 
     preview.innerHTML = '';
@@ -88,21 +95,29 @@ document.getElementById('receipts').addEventListener('change', function() {
     if (files.length > 0) {
         submitBtn.disabled = false;
 
+        // Update file count display
+        fileCountDisplay.textContent = `${files.length} file(s) selected`;
+        fileCountDisplay.classList.remove('text-muted');
+        fileCountDisplay.classList.add('text-success', 'fw-bold');
+
         const badge = document.createElement('div');
         badge.className = 'alert alert-success';
-        badge.innerHTML = `<i class="fas fa-check-circle"></i> ${files.length} fichier(s) sélectionné(s)`;
+        badge.innerHTML = `<i class="fas fa-check-circle"></i> ${files.length} file(s) selected`;
         preview.appendChild(badge);
 
         if (files.length > 10) {
             badge.className = 'alert alert-warning';
-            badge.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Maximum 10 fichiers. Seuls les 10 premiers seront traités.';
+            badge.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Maximum 10 files. Only the first 10 will be processed.';
         }
     } else {
         submitBtn.disabled = true;
+        fileCountDisplay.textContent = 'No files selected';
+        fileCountDisplay.classList.remove('text-success', 'fw-bold');
+        fileCountDisplay.classList.add('text-muted');
     }
 });
 
-// Afficher l'indicateur de chargement lors de la soumission
+// Show loading indicator on submission
 document.querySelector('form').addEventListener('submit', function() {
     document.getElementById('submitBtn').disabled = true;
     document.getElementById('loadingIndicator').style.display = 'block';

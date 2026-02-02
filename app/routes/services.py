@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_required, current_user
+from flask_babel import gettext as _
 from app import db
 from app.models import Service, ServicePlan, Category
 from werkzeug.utils import secure_filename
@@ -57,10 +58,10 @@ def add():
     # Vérifier que l'utilisateur peut créer un service
     if not current_user.can_create_custom_service():
         if current_user.is_premium():
-            flash('Vous avez atteint la limite de services personnalisés.', 'warning')
+            flash(_('Vous avez atteint la limite de services personnalisés.'), 'warning')
         else:
             count = current_user.get_custom_services_count()
-            flash(f'Vous avez atteint la limite de 5 services personnalisés pour le plan gratuit ({count}/5). Passez au plan Premium pour créer un nombre illimité de services.', 'warning')
+            flash(_('Vous avez atteint la limite de 5 services personnalisés pour le plan gratuit (%(count)s/5). Passez au plan Premium pour créer un nombre illimité de services.', count=count), 'warning')
         return redirect(url_for('services.list'))
 
     if request.method == 'POST':
@@ -100,7 +101,7 @@ def add():
         db.session.add(service)
         db.session.commit()
 
-        flash(f'Le service "{name}" a été créé avec succès !', 'success')
+        flash(_('Le service "%(name)s" a été créé avec succès !', name=name), 'success')
         return redirect(url_for('services.list'))
 
     categories = Category.query.filter_by(is_active=True).order_by(Category.name).all()
@@ -114,7 +115,7 @@ def edit(service_id):
 
     # Vérifier que l'utilisateur peut modifier ce service
     if service.user_id != current_user.id:
-        flash('Vous n\'avez pas accès à ce service.', 'danger')
+        flash(_('Vous n\'avez pas accès à ce service.'), 'danger')
         return redirect(url_for('services.list'))
 
     if request.method == 'POST':
@@ -141,7 +142,7 @@ def edit(service_id):
 
         db.session.commit()
 
-        flash(f'Le service "{service.name}" a été mis à jour.', 'success')
+        flash(_('Le service "%(name)s" a été mis à jour.', name=service.name), 'success')
         return redirect(url_for('services.list'))
 
     categories = Category.query.filter_by(is_active=True).order_by(Category.name).all()
@@ -157,14 +158,14 @@ def delete(service_id):
 
     # Vérifier que l'utilisateur peut supprimer ce service
     if service.user_id != current_user.id:
-        flash('Vous n\'avez pas accès à ce service.', 'danger')
+        flash(_('Vous n\'avez pas accès à ce service.'), 'danger')
         return redirect(url_for('services.list'))
 
     service_name = service.name
     db.session.delete(service)
     db.session.commit()
 
-    flash(f'Le service "{service_name}" a été supprimé.', 'success')
+    flash(_('Le service "%(name)s" a été supprimé.', name=service_name), 'success')
     return redirect(url_for('services.list'))
 
 
@@ -175,7 +176,7 @@ def plans(service_id):
 
     # Vérifier les permissions
     if service.is_custom() and service.user_id != current_user.id:
-        flash('Vous n\'avez pas accès à ce service.', 'danger')
+        flash(_('Vous n\'avez pas accès à ce service.'), 'danger')
         return redirect(url_for('services.list'))
 
     # Séparer les plans globaux et les plans personnalisés
@@ -195,16 +196,16 @@ def add_plan(service_id):
 
     # Vérifier les permissions pour les services personnalisés
     if service.is_custom() and service.user_id != current_user.id:
-        flash('Vous n\'avez pas accès à ce service.', 'danger')
+        flash(_('Vous n\'avez pas accès à ce service.'), 'danger')
         return redirect(url_for('services.list'))
 
     # Vérifier que l'utilisateur peut créer un plan personnalisé
     if not current_user.can_create_custom_plan():
         if current_user.is_premium():
-            flash('Vous avez atteint la limite de plans personnalisés.', 'warning')
+            flash(_('Vous avez atteint la limite de plans personnalisés.'), 'warning')
         else:
             count = current_user.get_custom_plans_count()
-            flash(f'Vous avez atteint la limite de 10 plans personnalisés pour le plan gratuit ({count}/10). Passez au plan Premium pour créer un nombre illimité de plans.', 'warning')
+            flash(_('Vous avez atteint la limite de 10 plans personnalisés pour le plan gratuit (%(count)s/10). Passez au plan Premium pour créer un nombre illimité de plans.', count=count), 'warning')
         return redirect(url_for('services.plans', service_id=service.id))
 
     if request.method == 'POST':
@@ -235,7 +236,7 @@ def add_plan(service_id):
         db.session.add(plan)
         db.session.commit()
 
-        flash(f'La formule "{name}" a été ajoutée au service "{service.name}".', 'success')
+        flash(_('La formule "%(plan_name)s" a été ajoutée au service "%(service_name)s".', plan_name=name, service_name=service.name), 'success')
         return redirect(url_for('services.plans', service_id=service.id))
 
     return render_template('services/add_plan.html', service=service)
@@ -259,7 +260,7 @@ def edit_plan(plan_id):
         can_edit = True
 
     if not can_edit:
-        flash('Vous n\'avez pas l\'autorisation de modifier cette formule.', 'danger')
+        flash(_('Vous n\'avez pas l\'autorisation de modifier cette formule.'), 'danger')
         return redirect(url_for('services.plans', service_id=service.id))
 
     if request.method == 'POST':
@@ -271,7 +272,7 @@ def edit_plan(plan_id):
 
         db.session.commit()
 
-        flash(f'La formule "{plan.name}" a été mise à jour.', 'success')
+        flash(_('La formule "%(name)s" a été mise à jour.', name=plan.name), 'success')
         return redirect(url_for('services.plans', service_id=service.id))
 
     return render_template('services/edit_plan.html', plan=plan, service=service)
@@ -295,7 +296,7 @@ def delete_plan(plan_id):
         can_delete = True
 
     if not can_delete:
-        flash('Vous n\'avez pas l\'autorisation de supprimer cette formule.', 'danger')
+        flash(_('Vous n\'avez pas l\'autorisation de supprimer cette formule.'), 'danger')
         return redirect(url_for('services.plans', service_id=service.id))
 
     plan_name = plan.name
@@ -303,7 +304,7 @@ def delete_plan(plan_id):
     db.session.delete(plan)
     db.session.commit()
 
-    flash(f'La formule "{plan_name}" a été supprimée.', 'success')
+    flash(_('La formule "%(name)s" a été supprimée.', name=plan_name), 'success')
     return redirect(url_for('services.plans', service_id=service_id))
 
 
@@ -313,7 +314,7 @@ def customize(service_id):
     """Dupliquer un service global pour le personnaliser"""
     # Vérifier que l'utilisateur est Premium
     if not current_user.is_premium():
-        flash('La personnalisation des services est réservée aux utilisateurs Premium.', 'warning')
+        flash(_('La personnalisation des services est réservée aux utilisateurs Premium.'), 'warning')
         return redirect(url_for('main.pricing'))
 
     # Récupérer le service global
@@ -321,13 +322,13 @@ def customize(service_id):
 
     # Vérifier que c'est bien un service global
     if not global_service.is_global():
-        flash('Seuls les services par défaut peuvent être personnalisés.', 'danger')
+        flash(_('Seuls les services par défaut peuvent être personnalisés.'), 'danger')
         return redirect(url_for('services.list'))
 
     # Vérifier si l'utilisateur a déjà un service avec ce nom
     existing = Service.query.filter_by(user_id=current_user.id, name=global_service.name).first()
     if existing:
-        flash(f'Vous avez déjà un service nommé "{global_service.name}". Modifiez-le directement.', 'warning')
+        flash(_('Vous avez déjà un service nommé "%(name)s". Modifiez-le directement.', name=global_service.name), 'warning')
         return redirect(url_for('services.edit', service_id=existing.id))
 
     # Créer une copie personnalisée du service
@@ -361,7 +362,7 @@ def customize(service_id):
 
     db.session.commit()
 
-    flash(f'Le service "{global_service.name}" et ses formules ont été dupliqués. Vous pouvez maintenant les personnaliser.', 'success')
+    flash(_('Le service "%(name)s" et ses formules ont été dupliqués. Vous pouvez maintenant les personnaliser.', name=global_service.name), 'success')
     return redirect(url_for('services.edit', service_id=custom_service.id))
 
 
@@ -371,7 +372,7 @@ def hide(service_id):
     """Masquer un service global"""
     # Vérifier que l'utilisateur est Premium
     if not current_user.is_premium():
-        flash('Le masquage des services est réservé aux utilisateurs Premium.', 'warning')
+        flash(_('Le masquage des services est réservé aux utilisateurs Premium.'), 'warning')
         return redirect(url_for('main.pricing'))
 
     # Récupérer le service
@@ -379,16 +380,16 @@ def hide(service_id):
 
     # Vérifier que c'est bien un service global
     if not service.is_global():
-        flash('Seuls les services par défaut peuvent être masqués.', 'danger')
+        flash(_('Seuls les services par défaut peuvent être masqués.'), 'danger')
         return redirect(url_for('services.list'))
 
     # Ajouter à la liste des services masqués
     if service not in current_user.hidden_services_list:
         current_user.hidden_services_list.append(service)
         db.session.commit()
-        flash(f'Le service "{service.name}" a été masqué.', 'success')
+        flash(_('Le service "%(name)s" a été masqué.', name=service.name), 'success')
     else:
-        flash(f'Le service "{service.name}" est déjà masqué.', 'info')
+        flash(_('Le service "%(name)s" est déjà masqué.', name=service.name), 'info')
 
     return redirect(url_for('services.list'))
 
@@ -399,7 +400,7 @@ def unhide(service_id):
     """Afficher un service global masqué"""
     # Vérifier que l'utilisateur est Premium
     if not current_user.is_premium():
-        flash('La gestion des services masqués est réservée aux utilisateurs Premium.', 'warning')
+        flash(_('La gestion des services masqués est réservée aux utilisateurs Premium.'), 'warning')
         return redirect(url_for('main.pricing'))
 
     # Récupérer le service
@@ -409,8 +410,8 @@ def unhide(service_id):
     if service in current_user.hidden_services_list:
         current_user.hidden_services_list.remove(service)
         db.session.commit()
-        flash(f'Le service "{service.name}" est de nouveau visible.', 'success')
+        flash(_('Le service "%(name)s" est de nouveau visible.', name=service.name), 'success')
     else:
-        flash(f'Le service "{service.name}" n\'était pas masqué.', 'info')
+        flash(_('Le service "%(name)s" n\'était pas masqué.', name=service.name), 'info')
 
     return redirect(url_for('services.list'))

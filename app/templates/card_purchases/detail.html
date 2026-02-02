@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Détail de l'achat CB{% endblock %}
+{% block title %}Card Purchase Details{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -62,9 +62,9 @@
     <div class="row">
         <div class="col-lg-8 mx-auto">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2><i class="fas fa-credit-card"></i> Détail de l'achat</h2>
+                <h2><i class="fas fa-credit-card"></i> Purchase Details</h2>
                 <a href="{{ url_for('card_purchases.list_purchases') }}" class="btn btn-outline-secondary">
-                    <i class="fas fa-arrow-left"></i> Retour
+                    <i class="fas fa-arrow-left"></i> Back
                 </a>
             </div>
 
@@ -72,37 +72,37 @@
                 <div class="card-body">
                     <div class="row mb-3">
                         <div class="col-md-4">
-                            <strong>Date :</strong>
+                            <strong>Date:</strong>
                         </div>
                         <div class="col-md-8">
-                            {{ purchase.purchase_date.strftime('%d/%m/%Y à %H:%M') }}
+                            {{ purchase.purchase_date.strftime('%m/%d/%Y at %H:%M') }}
                         </div>
                     </div>
 
                     <div class="row mb-3">
                         <div class="col-md-4">
-                            <strong>Commerçant :</strong>
+                            <strong>Merchant:</strong>
                         </div>
                         <div class="col-md-8">
                             {{ purchase.merchant_name }}
                             {% if purchase.entry_method == 'manual' %}
-                                <span class="badge bg-secondary ms-2" title="Saisie manuelle">
-                                    <i class="fas fa-keyboard"></i> Manuel
+                                <span class="badge bg-secondary ms-2" title="Manual entry">
+                                    <i class="fas fa-keyboard"></i> Manual
                                 </span>
                             {% elif purchase.entry_method == 'ocr' %}
-                                <span class="badge bg-info ms-2" title="Saisie par OCR">
+                                <span class="badge bg-info ms-2" title="OCR entry">
                                     <i class="fas fa-robot"></i> OCR
                                 </span>
                             {% endif %}
                             {% if purchase.was_manually_edited and purchase.entry_method == 'ocr' %}
-                                <i class="fas fa-user-edit text-warning ms-1" title="Modifié après OCR"></i>
+                                <i class="fas fa-user-edit text-warning ms-1" title="Edited after OCR"></i>
                             {% endif %}
                         </div>
                     </div>
 
                     <div class="row mb-3">
                         <div class="col-md-4">
-                            <strong>Montant :</strong>
+                            <strong>Amount:</strong>
                         </div>
                         <div class="col-md-8">
                             <span class="text-danger fs-4">
@@ -113,11 +113,11 @@
 
                     <div class="row mb-3">
                         <div class="col-md-4">
-                            <strong>Catégorie :</strong>
+                            <strong>Category:</strong>
                         </div>
                         <div class="col-md-8">
                             <span class="badge bg-secondary">
-                                {{ purchase.category_name or 'Non catégorisé' }}
+                                {{ purchase.category_name or 'Uncategorized' }}
                             </span>
                         </div>
                     </div>
@@ -125,7 +125,7 @@
                     {% if purchase.description %}
                     <div class="row mb-3">
                         <div class="col-md-4">
-                            <strong>Description :</strong>
+                            <strong>Description:</strong>
                         </div>
                         <div class="col-md-8">
                             {{ purchase.description }}
@@ -136,7 +136,7 @@
                     {% if purchase.notes %}
                     <div class="row mb-3">
                         <div class="col-md-4">
-                            <strong>Notes :</strong>
+                            <strong>Notes:</strong>
                         </div>
                         <div class="col-md-8">
                             {{ purchase.notes }}
@@ -146,7 +146,7 @@
 
                     <div class="row mb-3">
                         <div class="col-md-4">
-                            <strong>Confiance OCR :</strong>
+                            <strong>OCR Confidence:</strong>
                         </div>
                         <div class="col-md-8">
                             {% if purchase.ocr_confidence >= 80 %}
@@ -162,20 +162,20 @@
                     {% if purchase.receipt_image_data %}
                     <div class="row mb-3">
                         <div class="col-md-4">
-                            <strong>Reçu :</strong>
+                            <strong>Receipt:</strong>
                         </div>
                         <div class="col-md-8">
                             <div class="btn-group">
                                 <button type="button"
                                    class="btn btn-outline-primary"
                                    onclick="openPreviewModal('{{ url_for('card_purchases.view_receipt', purchase_id=purchase.id) }}', '{{ purchase.receipt_image_name | e }}', '{{ purchase.receipt_image_mime_type }}')"
-                                   title="Visualiser">
-                                    <i class="fas fa-eye"></i> Voir
+                                   title="View">
+                                    <i class="fas fa-eye"></i> View
                                 </button>
                                 <a href="{{ url_for('card_purchases.download_receipt', purchase_id=purchase.id) }}"
                                    class="btn btn-outline-success"
-                                   title="Télécharger">
-                                    <i class="fas fa-download"></i> Télécharger
+                                   title="Download">
+                                    <i class="fas fa-download"></i> Download
                                 </a>
                             </div>
                         </div>
@@ -187,13 +187,13 @@
                     <div class="d-flex justify-content-between">
                         <a href="{{ url_for('card_purchases.edit', purchase_id=purchase.id) }}"
                            class="btn btn-warning">
-                            <i class="fas fa-edit"></i> Modifier
+                            <i class="fas fa-edit"></i> Edit
                         </a>
                         <form method="post"
                               action="{{ url_for('card_purchases.delete', purchase_id=purchase.id) }}"
-                              onsubmit="return confirm('Confirmer la suppression ?');">
+                              onsubmit="return confirm('Confirm deletion?');">
                             <button type="submit" class="btn btn-danger">
-                                <i class="fas fa-trash"></i> Supprimer
+                                <i class="fas fa-trash"></i> Delete
                             </button>
                         </form>
                     </div>
@@ -210,9 +210,9 @@
             <div class="modal-header">
                 <h5 class="modal-title" id="documentPreviewModalLabel">
                     <i class="fas fa-receipt me-2"></i>
-                    <span id="previewDocName">Reçu</span>
+                    <span id="previewDocName">Receipt</span>
                 </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" id="documentPreviewContent">
                 <!-- Le contenu sera inséré dynamiquement -->
@@ -229,16 +229,16 @@
         const previewContent = document.getElementById('documentPreviewContent');
         const previewDocName = document.getElementById('previewDocName');
 
-        // Mettre à jour le titre
-        previewDocName.textContent = docName || 'Reçu';
+        // Update title
+        previewDocName.textContent = docName || 'Receipt';
 
-        // Déterminer le type de contenu
+        // Determine content type
         if (docType && docType.startsWith('application/pdf')) {
             previewContent.innerHTML = '<embed src="' + docUrl + '" type="application/pdf" />';
         } else if (docType && docType.startsWith('image/')) {
-            previewContent.innerHTML = '<div class="preview-image-container"><img src="' + docUrl + '" alt="' + (docName || 'Reçu') + '" /></div>';
+            previewContent.innerHTML = '<div class="preview-image-container"><img src="' + docUrl + '" alt="' + (docName || 'Receipt') + '" /></div>';
         } else {
-            previewContent.innerHTML = '<div class="text-center p-5"><i class="fas fa-file fa-4x text-muted mb-3"></i><p>Aperçu non disponible pour ce type de fichier</p><a href="' + docUrl + '" target="_blank" class="btn btn-primary">Ouvrir dans un nouvel onglet</a></div>';
+            previewContent.innerHTML = '<div class="text-center p-5"><i class="fas fa-file fa-4x text-muted mb-3"></i><p>Preview not available for this file type</p><a href="' + docUrl + '" target="_blank" class="btn btn-primary">Open in new tab</a></div>';
         }
 
         // Utiliser l'API Bootstrap standard
@@ -246,12 +246,12 @@
         modal.show();
     }
 
-    // Nettoyage quand la modal est fermée
+    // Cleanup when modal is closed
     document.getElementById('documentPreviewModal').addEventListener('hidden.bs.modal', function() {
-        // Vider le contenu
+        // Clear content
         document.getElementById('documentPreviewContent').innerHTML = '';
 
-        // Nettoyage forcé après un court délai
+        // Force cleanup after a short delay
         setTimeout(function() {
             document.body.classList.remove('modal-open');
             document.body.style.overflow = '';

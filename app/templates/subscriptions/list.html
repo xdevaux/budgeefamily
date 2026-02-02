@@ -1,32 +1,32 @@
 {% extends "base.html" %}
 
-{% block title %}Mes abonnements - Budgee Family{% endblock %}
+{% block title %}{{ _('Mes abonnements') }} - Budgee Family{% endblock %}
 
 {% block content %}
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2><i class="fas fa-list"></i> Mes abonnements</h2>
+        <h2><i class="fas fa-list"></i> {{ _('Mes abonnements') }}</h2>
         <div class="d-flex gap-2">
             {% if current_user.is_premium() %}
                 <div class="btn-group">
-                    <a href="{{ url_for('exports.export_subscriptions', format='excel') }}" class="btn btn-outline-success" title="Exporter en Excel">
+                    <a href="{{ url_for('exports.export_subscriptions', format='excel') }}" class="btn btn-outline-success" title="{{ _('Exporter en Excel') }}">
                         <i class="fas fa-file-excel"></i>
                     </a>
-                    <a href="{{ url_for('exports.export_subscriptions', format='pdf') }}" class="btn btn-outline-danger" title="Exporter en PDF">
+                    <a href="{{ url_for('exports.export_subscriptions', format='pdf') }}" class="btn btn-outline-danger" title="{{ _('Exporter en PDF') }}">
                         <i class="fas fa-file-pdf"></i>
                     </a>
                 </div>
             {% endif %}
             {% if current_user.can_add_subscription() %}
                 <a href="{{ url_for('subscriptions.add') }}" class="btn btn-primary">
-                    <i class="fas fa-plus"></i> Ajouter un abonnement
+                    <i class="fas fa-plus"></i> {{ _('Ajouter un abonnement') }}
                 </a>
             {% else %}
-                <button class="btn btn-secondary" disabled title="Limite atteinte pour le plan gratuit">
-                    <i class="fas fa-lock"></i> Limite atteinte (5/5)
+                <button class="btn btn-secondary" disabled title="{{ _('Limite atteinte pour le plan gratuit') }}">
+                    <i class="fas fa-lock"></i> {{ _('Limite atteinte (5/5)') }}
                 </button>
                 <a href="{{ url_for('main.pricing') }}" class="btn btn-warning">
-                    <i class="fas fa-crown"></i> Passer Premium
+                    <i class="fas fa-crown"></i> {{ _('Passer Premium') }}
                 </a>
             {% endif %}
         </div>
@@ -37,17 +37,17 @@
         <div class="card-body">
             <form method="GET" class="row g-3">
                 <div class="col-md-4">
-                    <label class="form-label">Statut</label>
+                    <label class="form-label">{{ _('Statut') }}</label>
                     <select name="status" class="form-select" onchange="this.form.submit()">
-                        <option value="all" {% if filter_status == 'all' %}selected{% endif %}>Tous</option>
-                        <option value="active" {% if filter_status == 'active' %}selected{% endif %}>Actifs</option>
-                        <option value="inactive" {% if filter_status == 'inactive' %}selected{% endif %}>Inactifs</option>
+                        <option value="all" {% if filter_status == 'all' %}selected{% endif %}>{{ _('Tous') }}</option>
+                        <option value="active" {% if filter_status == 'active' %}selected{% endif %}>{{ _('Actifs') }}</option>
+                        <option value="inactive" {% if filter_status == 'inactive' %}selected{% endif %}>{{ _('Inactifs') }}</option>
                     </select>
                 </div>
                 <div class="col-md-4">
-                    <label class="form-label">Catégorie</label>
+                    <label class="form-label">{{ _('Catégorie') }}</label>
                     <select name="category" class="form-select" onchange="this.form.submit()">
-                        <option value="">Toutes</option>
+                        <option value="">{{ _('Toutes') }}</option>
                         {% for category in categories %}
                             <option value="{{ category.id }}" {% if filter_category == category.id %}selected{% endif %}>
                                 {{ category.name }}
@@ -58,7 +58,7 @@
                 <div class="col-md-4">
                     <label class="form-label">&nbsp;</label>
                     <a href="{{ url_for('subscriptions.list') }}" class="btn btn-secondary w-100">
-                        <i class="fas fa-redo"></i> Réinitialiser
+                        <i class="fas fa-redo"></i> {{ _('Réinitialiser') }}
                     </a>
                 </div>
             </form>
@@ -73,15 +73,15 @@
                     <table class="table table-hover mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th>Nom</th>
-                                <th>Formule</th>
-                                <th>Catégorie</th>
-                                <th class="text-end">Mensuel</th>
-                                <th class="text-end">Annuel</th>
-                                <th>Périodicité</th>
-                                <th>Prochain</th>
-                                <th>Statut</th>
-                                <th class="text-end">Actions</th>
+                                <th>{{ _('Nom') }}</th>
+                                <th>{{ _('Formule') }}</th>
+                                <th>{{ _('Catégorie') }}</th>
+                                <th class="text-end">{{ _('Mensuel') }}</th>
+                                <th class="text-end">{{ _('Annuel') }}</th>
+                                <th>{{ _('Périodicité') }}</th>
+                                <th>{{ _('Prochain') }}</th>
+                                <th>{{ _('Statut') }}</th>
+                                <th class="text-end">{{ _('Actions') }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -149,29 +149,29 @@
                                     <td>{{ sub.get_display_date().strftime('%d/%m/%Y') }}</td>
                                     <td>
                                         {% if sub.is_active %}
-                                            <span class="badge bg-success">Actif</span>
+                                            <span class="badge bg-success">{{ _('Actif') }}</span>
                                         {% else %}
-                                            <span class="badge bg-danger">Inactif</span>
+                                            <span class="badge bg-danger">{{ _('Inactif') }}</span>
                                         {% endif %}
                                     </td>
                                     <td class="text-end">
                                         <div class="btn-group">
                                             <a href="{{ url_for('subscriptions.detail', subscription_id=sub.id) }}"
-                                               class="btn btn-sm btn-outline-primary" title="Voir">
+                                               class="btn btn-sm btn-outline-primary" title="{{ _('Voir') }}">
                                                 <i class="fas fa-eye"></i>
                                             </a>
                                             <a href="{{ url_for('subscriptions.edit', subscription_id=sub.id) }}"
-                                               class="btn btn-sm btn-outline-warning" title="Modifier">
+                                               class="btn btn-sm btn-outline-warning" title="{{ _('Modifier') }}">
                                                 <i class="fas fa-edit"></i>
                                             </a>
                                             <form method="POST" action="{{ url_for('subscriptions.toggle', subscription_id=sub.id) }}" class="d-inline">
-                                                <button type="submit" class="btn btn-sm btn-outline-info" title="Activer/Désactiver">
+                                                <button type="submit" class="btn btn-sm btn-outline-info" title="{{ _('Activer/Désactiver') }}">
                                                     <i class="fas fa-toggle-{% if sub.is_active %}on{% else %}off{% endif %}"></i>
                                                 </button>
                                             </form>
                                             <form method="POST" action="{{ url_for('subscriptions.delete', subscription_id=sub.id) }}"
-                                                  onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet abonnement ?')" class="d-inline">
-                                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Supprimer">
+                                                  onsubmit="return confirm('{{ _('Êtes-vous sûr de vouloir supprimer cet abonnement ?') }}')" class="d-inline">
+                                                <button type="submit" class="btn btn-sm btn-outline-danger" title="{{ _('Supprimer') }}">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </form>
@@ -182,7 +182,7 @@
                         </tbody>
                         <tfoot class="table-light">
                             <tr>
-                                <td colspan="3" class="text-end"><strong>Total :</strong></td>
+                                <td colspan="3" class="text-end"><strong>{{ _('Total :') }}</strong></td>
                                 <td class="text-end">
                                     <strong>
                                         {% set total_monthly_eur = namespace(value=0) %}
@@ -279,7 +279,7 @@
             <ul class="pagination justify-content-center">
                 {% if subscriptions.has_prev %}
                     <li class="page-item">
-                        <a class="page-link" href="{{ url_for('subscriptions.list', page=subscriptions.prev_num) }}">Précédent</a>
+                        <a class="page-link" href="{{ url_for('subscriptions.list', page=subscriptions.prev_num) }}">{{ _('Précédent') }}</a>
                     </li>
                 {% endif %}
 
@@ -295,7 +295,7 @@
 
                 {% if subscriptions.has_next %}
                     <li class="page-item">
-                        <a class="page-link" href="{{ url_for('subscriptions.list', page=subscriptions.next_num) }}">Suivant</a>
+                        <a class="page-link" href="{{ url_for('subscriptions.list', page=subscriptions.next_num) }}">{{ _('Suivant') }}</a>
                     </li>
                 {% endif %}
             </ul>
@@ -306,19 +306,19 @@
         {% if current_user.is_premium() %}
         <div class="card mt-4" id="chartsSection">
             <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #e5e7eb;">
-                <h5 class="mb-0"><i class="fas fa-chart-pie text-secondary"></i> Répartition des abonnements actifs</h5>
-                <button class="btn btn-sm btn-outline-danger" onclick="exportChartsToPDF()" title="Exporter en PDF">
+                <h5 class="mb-0"><i class="fas fa-chart-pie text-secondary"></i> {{ _('Répartition des abonnements actifs') }}</h5>
+                <button class="btn btn-sm btn-outline-danger" onclick="exportChartsToPDF()" title="{{ _('Exporter en PDF') }}">
                     <i class="fas fa-file-pdf"></i>
                 </button>
             </div>
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <h6 class="text-center mb-3">Par Service</h6>
+                        <h6 class="text-center mb-3">{{ _('Par Service') }}</h6>
                         <canvas id="servicesChart" style="max-height: 350px;"></canvas>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <h6 class="text-center mb-3">Par Catégorie</h6>
+                        <h6 class="text-center mb-3">{{ _('Par Catégorie') }}</h6>
                         <canvas id="categoriesChart" style="max-height: 350px;"></canvas>
                     </div>
                 </div>
@@ -329,10 +329,10 @@
         <div class="card">
             <div class="card-body text-center py-5">
                 <i class="fas fa-inbox fa-4x text-muted mb-3"></i>
-                <h4>Aucun abonnement</h4>
-                <p class="text-muted">Commencez par ajouter votre premier abonnement</p>
+                <h4>{{ _('Aucun abonnement') }}</h4>
+                <p class="text-muted">{{ _('Commencez par ajouter votre premier abonnement') }}</p>
                 <a href="{{ url_for('subscriptions.add') }}" class="btn btn-primary">
-                    <i class="fas fa-plus"></i> Ajouter un abonnement
+                    <i class="fas fa-plus"></i> {{ _('Ajouter un abonnement') }}
                 </a>
             </div>
         </div>
@@ -480,12 +480,12 @@ function exportChartsToPDF() {
 
         // Ajouter le titre
         pdf.setFontSize(16);
-        pdf.text('Répartition des abonnements actifs', 105, 15, { align: 'center' });
+        pdf.text("{{ _('Répartition des abonnements actifs') }}", 105, 15, { align: 'center' });
 
         // Ajouter la date
         pdf.setFontSize(10);
         const today = new Date().toLocaleDateString('fr-FR');
-        pdf.text('Généré le ' + today, 105, 22, { align: 'center' });
+        pdf.text("{{ _('Généré le') }} " + today, 105, 22, { align: 'center' });
 
         // Ajouter l'image
         pdf.addImage(imgData, 'PNG', 0, 30, imgWidth, imgHeight);
@@ -498,7 +498,7 @@ function exportChartsToPDF() {
         btn.disabled = false;
     }).catch(error => {
         console.error('Erreur lors de la génération du PDF:', error);
-        alert('Erreur lors de la génération du PDF');
+        alert("{{ _('Erreur lors de la génération du PDF') }}");
         btn.innerHTML = originalHTML;
         btn.disabled = false;
     });

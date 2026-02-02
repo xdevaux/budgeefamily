@@ -1,22 +1,22 @@
 {% extends "base.html" %}
 
-{% block title %}Ajouter une formule - {{ service.name }} - Budgee Family{% endblock %}
+{% block title %}{{ _('Add a plan') }} - {{ service.name }} - Budgee Family{% endblock %}
 
 {% block content %}
 <div class="container py-4">
     <div class="row">
         <div class="col-lg-8 mx-auto">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2>Ajouter une formule personnalisée à {{ service.name }}</h2>
+                <h2>{{ _('Add custom plan to %(name)s', name=service.name) }}</h2>
                 <a href="{{ url_for('services.plans', service_id=service.id) }}" class="btn btn-outline-secondary">
-                    <i class="fas fa-arrow-left"></i> Retour
+                    <i class="fas fa-arrow-left"></i> {{ _('Back') }}
                 </a>
             </div>
 
             {% if not service.is_custom() %}
             <div class="alert alert-info">
                 <i class="fas fa-info-circle"></i>
-                <strong>Info :</strong> Vous créez une formule personnalisée pour ce service. Elle sera visible uniquement par vous et pourra être utilisée lors de la création de vos abonnements.
+                <strong>{{ _('Info:') }}</strong> {{ _('You are creating a custom plan for this service. It will be visible only to you and can be used when creating your subscriptions.') }}
             </div>
             {% endif %}
 
@@ -24,18 +24,18 @@
                 <div class="card-body">
                     <form method="POST">
                         <div class="mb-3">
-                            <label for="name" class="form-label">Nom de la formule *</label>
-                            <input type="text" class="form-control" id="name" name="name" required placeholder="Ex: Standard, Premium, Famille">
+                            <label for="name" class="form-label">{{ _('Plan name') }} *</label>
+                            <input type="text" class="form-control" id="name" name="name" required placeholder="{{ _('E.g.: Standard, Premium, Family') }}">
                         </div>
 
                         <div class="mb-3">
-                            <label for="description" class="form-label">Description</label>
-                            <textarea class="form-control" id="description" name="description" rows="2" placeholder="Caractéristiques de cette formule"></textarea>
+                            <label for="description" class="form-label">{{ _('Description') }}</label>
+                            <textarea class="form-control" id="description" name="description" rows="2" placeholder="{{ _('Features of this plan') }}"></textarea>
                         </div>
 
                         <div class="row mb-3">
                             <div class="col-md-6">
-                                <label for="amount" class="form-label">Montant *</label>
+                                <label for="amount" class="form-label">{{ _('Amount') }} *</label>
                                 <div class="input-group">
                                     <input type="number" class="form-control text-end" id="amount" name="amount"
                                            step="0.01" min="0" required placeholder="9.99">
@@ -48,19 +48,19 @@
                             </div>
 
                             <div class="col-md-6">
-                                <label for="billing_cycle" class="form-label">Périodicité *</label>
+                                <label for="billing_cycle" class="form-label">{{ _('Frequency') }} *</label>
                                 <select class="form-select" id="billing_cycle" name="billing_cycle" required>
-                                    <option value="weekly">Hebdomadaire</option>
-                                    <option value="monthly" selected>Mensuel</option>
-                                    <option value="quarterly">Trimestriel</option>
-                                    <option value="yearly">Annuel</option>
+                                    <option value="weekly">{{ _('Weekly') }}</option>
+                                    <option value="monthly" selected>{{ _('Monthly') }}</option>
+                                    <option value="quarterly">{{ _('Quarterly') }}</option>
+                                    <option value="yearly">{{ _('Yearly') }}</option>
                                 </select>
                             </div>
                         </div>
 
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save"></i> Ajouter la formule
+                                <i class="fas fa-save"></i> {{ _('Add plan') }}
                             </button>
                         </div>
                     </form>

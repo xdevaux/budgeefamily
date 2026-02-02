@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_required, current_user
+from flask_babel import gettext as _
 from app import db
 from app.models import Subscription, Category, Notification, Service
 from app.utils.transactions import generate_future_transactions, update_future_transactions, cancel_future_transactions, calculate_next_future_date, delete_all_transactions
@@ -95,7 +96,7 @@ def list():
 @login_required
 def add():
     if not current_user.can_add_subscription():
-        flash('Vous avez atteint la limite d\'abonnements pour le plan gratuit (5/5). Passez au plan Premium pour ajouter des abonnements illimités.', 'warning')
+        flash(_('Vous avez atteint la limite d\'abonnements pour le plan gratuit (5/5). Passez au plan Premium pour ajouter des abonnements illimités.'), 'warning')
         return redirect(url_for('subscriptions.list'))
 
     if request.method == 'POST':
@@ -141,8 +142,8 @@ def add():
             subscription_id=subscription.id,
             created_by_user_id=current_user.id,
             type='subscription_added',
-            title='Nouvel abonnement ajouté',
-            message=f'Votre abonnement "{name}" a été ajouté avec succès.'
+            title=_('Nouvel abonnement ajouté'),
+            message=_('Votre abonnement "%(name)s" a été ajouté avec succès.', name=name)
         )
         db.session.add(notification)
         db.session.commit()
@@ -151,7 +152,7 @@ def add():
         from app.utils.email import send_notification_email
         send_notification_email(current_user, notification)
 
-        flash(f'L\'abonnement "{name}" a été ajouté avec succès !', 'success')
+        flash(_('L\'abonnement "%(name)s" a été ajouté avec succès !', name=name), 'success')
         return redirect(url_for('subscriptions.list'))
 
     categories = get_user_categories()
@@ -165,7 +166,7 @@ def edit(subscription_id):
     subscription = Subscription.query.get_or_404(subscription_id)
 
     if subscription.user_id != current_user.id:
-        flash('Vous n\'avez pas accès à cet abonnement.', 'danger')
+        flash(_('Vous n\'avez pas accès à cet abonnement.'), 'danger')
         return redirect(url_for('subscriptions.list'))
 
     if request.method == 'POST':
@@ -187,7 +188,7 @@ def edit(subscription_id):
         update_future_transactions(subscription, 'subscription')
         db.session.commit()
 
-        flash(f'L\'abonnement "{subscription.name}" a été mis à jour.', 'success')
+        flash(_('L\'abonnement "%(name)s" a été mis à jour.', name=subscription.name), 'success')
         return redirect(url_for('subscriptions.list'))
 
     categories = get_user_categories()
@@ -204,7 +205,7 @@ def delete(subscription_id):
     subscription = Subscription.query.get_or_404(subscription_id)
 
     if subscription.user_id != current_user.id:
-        flash('Vous n\'avez pas accès à cet abonnement.', 'danger')
+        flash(_('Vous n\'avez pas accès à cet abonnement.'), 'danger')
         return redirect(url_for('subscriptions.list'))
 
     subscription_name = subscription.name
@@ -215,7 +216,7 @@ def delete(subscription_id):
     db.session.delete(subscription)
     db.session.commit()
 
-    flash(f'L\'abonnement "{subscription_name}" et toutes ses transactions ont été supprimés.', 'success')
+    flash(_('L\'abonnement "%(name)s" et toutes ses transactions ont été supprimés.', name=subscription_name), 'success')
 
     # Rediriger vers la page balance si le paramètre est présent
     redirect_to = request.args.get('redirect_to', 'subscriptions.list')
@@ -230,7 +231,7 @@ def toggle(subscription_id):
     subscription = Subscription.query.get_or_404(subscription_id)
 
     if subscription.user_id != current_user.id:
-        flash('Vous n\'avez pas accès à cet abonnement.', 'danger')
+        flash(_('Vous n\'avez pas accès à cet abonnement.'), 'danger')
         return redirect(url_for('subscriptions.list'))
 
     subscription.is_active = not subscription.is_active
@@ -245,8 +246,8 @@ def toggle(subscription_id):
 
     db.session.commit()
 
-    status = 'activé' if subscription.is_active else 'désactivé'
-    flash(f'L\'abonnement "{subscription.name}" a été {status}.', 'success')
+    status = _('activé') if subscription.is_active else _('désactivé')
+    flash(_('L\'abonnement "%(name)s" a été %(status)s.', name=subscription.name, status=status), 'success')
     return redirect(url_for('subscriptions.list'))
 
 
@@ -256,7 +257,7 @@ def detail(subscription_id):
     subscription = Subscription.query.get_or_404(subscription_id)
 
     if subscription.user_id != current_user.id:
-        flash('Vous n\'avez pas accès à cet abonnement.', 'danger')
+        flash(_('Vous n\'avez pas accès à cet abonnement.'), 'danger')
         return redirect(url_for('subscriptions.list'))
 
     return render_template('subscriptions/detail.html', subscription=subscription)

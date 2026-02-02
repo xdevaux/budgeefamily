@@ -1,15 +1,15 @@
 {% extends "base.html" %}
 
-{% block title %}Modifier {{ category.name }} - Budgee Family{% endblock %}
+{% block title %}{{ _('Modifier') }} {{ category.name }} - Budgee Family{% endblock %}
 
 {% block content %}
 <div class="container py-4">
     <div class="row justify-content-center">
         <div class="col-lg-8">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2><i class="fas fa-edit"></i> Modifier la catégorie</h2>
+                <h2><i class="fas fa-edit"></i> {{ _('Modifier la catégorie') }}</h2>
                 <a href="{{ url_for('categories.list') }}" class="btn btn-outline-secondary">
-                    <i class="fas fa-arrow-left"></i> Retour
+                    <i class="fas fa-arrow-left"></i> {{ _('Retour') }}
                 </a>
             </div>
 
@@ -17,22 +17,22 @@
                 <div class="card-body p-4">
                     <form method="POST" enctype="multipart/form-data">
                         <div class="mb-3">
-                            <label for="name" class="form-label">Nom de la catégorie *</label>
+                            <label for="name" class="form-label">{{ _('Nom de la catégorie') }} *</label>
                             <input type="text" class="form-control" id="name" name="name" required
                                    value="{{ category.name }}">
                         </div>
 
                         <div class="mb-3">
-                            <label for="description" class="form-label">Description</label>
+                            <label for="description" class="form-label">{{ _('Description') }}</label>
                             <textarea class="form-control" id="description" name="description" rows="3">{{ category.description or '' }}</textarea>
                         </div>
 
                         <div class="row mb-3">
                             <div class="col-md-6">
-                                <label for="color" class="form-label">Couleur</label>
+                                <label for="color" class="form-label">{{ _('Couleur') }}</label>
                                 <div class="input-group">
                                     <input type="color" class="form-control form-control-color" id="color"
-                                           name="color" value="{{ category.color }}" title="Choisir une couleur">
+                                           name="color" value="{{ category.color }}" title="{{ _('Choisir une couleur') }}">
                                     <input type="text" class="form-control" id="color-text" value="{{ category.color }}"
                                            placeholder="#6c757d" maxlength="7">
                                 </div>
@@ -40,7 +40,7 @@
 
                             <div class="col-md-6">
                                 <label for="icon" class="form-label">
-                                    Icône
+                                    {{ _('Icône') }}
                                 </label>
                                 <input type="hidden" id="icon" name="icon" value="{{ category.icon or '' }}">
                                 <button type="button" class="btn btn-outline-secondary w-100" data-bs-toggle="modal" data-bs-target="#iconPickerModal">
@@ -49,34 +49,34 @@
                                         <span id="selected-icon-text">{{ category.icon }}</span>
                                     {% else %}
                                         <i class="fas fa-tag" id="selected-icon"></i>
-                                        <span id="selected-icon-text">Choisir une icône</span>
+                                        <span id="selected-icon-text">{{ _('Choisir une icône') }}</span>
                                     {% endif %}
                                 </button>
-                                <small class="text-muted">Cliquez pour sélectionner une icône</small>
+                                <small class="text-muted">{{ _('Cliquez pour sélectionner une icône') }}</small>
                             </div>
                         </div>
 
                         <div class="mb-3">
                             <label for="logo" class="form-label">
-                                Logo
+                                {{ _('Logo') }}
                                 {% if category.logo_data %}
-                                    <span class="badge bg-success">Actuellement défini</span>
+                                    <span class="badge bg-success">{{ _('Actuellement défini') }}</span>
                                 {% endif %}
                             </label>
                             {% if category.logo_data %}
                             <div class="mb-2">
-                                <img src="{{ url_for('api.serve_logo', entity_type='category', entity_id=category.id) }}?v={{ category.updated_at.timestamp() if category.updated_at else category.created_at.timestamp() }}" alt="Logo actuel"
+                                <img src="{{ url_for('api.serve_logo', entity_type='category', entity_id=category.id) }}?v={{ category.updated_at.timestamp() if category.updated_at else category.created_at.timestamp() }}" alt="{{ _('Logo actuel') }}"
                                      style="max-width: 100px; max-height: 100px; object-fit: contain;"
                                      class="border rounded p-2">
                             </div>
                             {% endif %}
                             <input type="file" class="form-control" id="logo" name="logo"
                                    accept="image/png,image/jpeg,image/jpg,image/gif,image/svg+xml,image/webp">
-                            <small class="text-muted">Laisser vide pour conserver le logo actuel</small>
+                            <small class="text-muted">{{ _('Laisser vide pour conserver le logo actuel') }}</small>
                         </div>
 
                         <div class="mb-3">
-                            <label for="website_url" class="form-label">Site web (optionnel)</label>
+                            <label for="website_url" class="form-label">{{ _('Site web') }} ({{ _('optionnel') }})</label>
                             <input type="url" class="form-control" id="website_url" name="website_url"
                                    value="{{ category.website_url or '' }}" placeholder="https://example.com">
                         </div>
@@ -84,7 +84,7 @@
                         <!-- Prévisualisation -->
                         <div class="card bg-light mb-3">
                             <div class="card-body">
-                                <h6 class="mb-3">Prévisualisation</h6>
+                                <h6 class="mb-3">{{ _('Prévisualisation') }}</h6>
                                 <div class="d-flex align-items-center">
                                     <div class="rounded-circle p-3 me-3" id="preview-icon-container"
                                          style="background-color: {{ category.color }}20; border: 2px solid {{ category.color }}">
@@ -96,7 +96,7 @@
                                     </div>
                                     <div>
                                         <h5 class="mb-0" id="preview-name">{{ category.name }}</h5>
-                                        <small class="text-muted">Catégorie personnalisée</small>
+                                        <small class="text-muted">{{ _('Catégorie personnalisée') }}</small>
                                     </div>
                                 </div>
                             </div>
@@ -104,10 +104,10 @@
 
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                             <a href="{{ url_for('categories.list') }}" class="btn btn-outline-secondary">
-                                Annuler
+                                {{ _('Annuler') }}
                             </a>
                             <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save"></i> Enregistrer les modifications
+                                <i class="fas fa-save"></i> {{ _('Enregistrer les modifications') }}
                             </button>
                         </div>
                     </form>
@@ -122,11 +122,11 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="iconPickerModalLabel">Choisir une icône</h5>
+                <h5 class="modal-title" id="iconPickerModalLabel">{{ _('Choisir une icône') }}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <input type="text" class="form-control mb-3" id="icon-search" placeholder="Rechercher une icône...">
+                <input type="text" class="form-control mb-3" id="icon-search" placeholder="{{ _('Rechercher une icône...') }}">
                 <div class="row g-2" id="icon-grid">
                     <!-- Les icônes seront générées par JavaScript -->
                 </div>
@@ -250,7 +250,7 @@ const previewIcon = document.getElementById('preview-icon');
 const previewIconContainer = document.getElementById('preview-icon-container');
 
 nameInput.addEventListener('input', () => {
-    previewName.textContent = nameInput.value || 'Nom de la catégorie';
+    previewName.textContent = nameInput.value || "{{ _('Nom de la catégorie') }}";
 });
 
 colorInput.addEventListener('input', () => {

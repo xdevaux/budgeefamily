@@ -533,12 +533,12 @@ def subscriptions_distribution():
         else:
             monthly_amount = sub.amount
 
-        # Grouper par catégorie
+        # Group by category
         if sub.category:
             category_name = sub.category.name
             category_color = sub.category.color if sub.category.color else '#6c757d'
         else:
-            category_name = 'Sans catégorie'
+            category_name = 'Uncategorized'
             category_color = '#6c757d'
 
         if category_name in categories_data:
@@ -590,12 +590,12 @@ def credits_distribution():
         else:
             monthly_amount = credit.amount
 
-        # Grouper par type de crédit
+        # Group by credit type
         if credit.credit_type_obj:
             type_name = credit.credit_type_obj.name
             type_color = credit.credit_type_obj.color if credit.credit_type_obj.color else '#6c757d'
         else:
-            type_name = 'Sans type'
+            type_name = 'No type'
             type_color = '#6c757d'
 
         if type_name in types_data:
@@ -621,23 +621,23 @@ def credits_distribution():
 @bp.route('/card-purchases/distribution')
 @login_required
 def card_purchases_distribution():
-    """API endpoint pour récupérer la répartition des achats CB actifs"""
+    """API endpoint to retrieve active card purchases distribution"""
     from app.models import CardPurchase
 
-    # Récupérer tous les achats CB actifs de l'utilisateur
+    # Get all active card purchases for the user
     active_purchases = current_user.card_purchases.filter_by(is_active=True).all()
 
-    # Répartition par commerçant
+    # Distribution by merchant
     merchants_data = {}
     for purchase in active_purchases:
-        merchant_name = purchase.merchant_name if purchase.merchant_name else 'Autre'
+        merchant_name = purchase.merchant_name if purchase.merchant_name else 'Other'
 
         if merchant_name in merchants_data:
             merchants_data[merchant_name] += purchase.amount
         else:
             merchants_data[merchant_name] = purchase.amount
 
-    # Répartition par catégorie avec couleurs
+    # Distribution by category with colors
     categories_data = {}
     categories_colors = {}
     for purchase in active_purchases:
@@ -645,7 +645,7 @@ def card_purchases_distribution():
             category_name = purchase.category.name
             category_color = purchase.category.color if purchase.category.color else '#6c757d'
         else:
-            category_name = 'Sans catégorie'
+            category_name = 'Uncategorized'
             category_color = '#6c757d'
 
         if category_name in categories_data:

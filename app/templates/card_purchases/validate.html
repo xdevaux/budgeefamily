@@ -1,16 +1,16 @@
 {% extends "base.html" %}
 
-{% block title %}Validation des achats CB{% endblock %}
+{% block title %}Validate Card Purchases{% endblock %}
 
 {% block content %}
 <div class="container-fluid mt-4">
     <h2 class="mb-4">
-        <i class="fas fa-check-double"></i> Vérifier et valider les achats
+        <i class="fas fa-check-double"></i> Review and Validate Purchases
     </h2>
 
     <div class="alert alert-info">
         <i class="fas fa-info-circle"></i>
-        Vérifiez les données extraites automatiquement. Vous pouvez les modifier avant d'enregistrer.
+        Review the automatically extracted data. You can modify it before saving.
     </div>
 
     <form method="post" action="{{ url_for('card_purchases.validate_purchases') }}">
@@ -24,11 +24,11 @@
                                     <input type="checkbox" id="selectAll" checked>
                                 </th>
                                 <th>Date</th>
-                                <th>Heure</th>
-                                <th>Commerçant</th>
-                                <th>Montant</th>
-                                <th>Catégorie</th>
-                                <th>Confiance OCR</th>
+                                <th>Time</th>
+                                <th>Merchant</th>
+                                <th>Amount</th>
+                                <th>Category</th>
+                                <th>OCR Confidence</th>
                                 <th style="width: 200px;">Notes</th>
                             </tr>
                         </thead>
@@ -73,7 +73,7 @@
                                 <td>
                                     <select class="form-select form-select-sm"
                                             name="category_{{ loop.index0 }}">
-                                        <option value="">-- Aucune --</option>
+                                        <option value="">-- None --</option>
                                         {% for category in categories %}
                                             <option value="{{ category.id }}"
                                                     {% if category.name == receipt.category_name %}selected{% endif %}>
@@ -96,7 +96,7 @@
                                            class="form-control form-control-sm"
                                            name="description_{{ loop.index0 }}"
                                            placeholder="Notes...">
-                                    <!-- Hidden fields pour les données du fichier -->
+                                    <!-- Hidden fields for file data -->
                                     <input type="hidden" name="file_data_{{ loop.index0 }}" value="{{ receipt.file_data_base64 }}">
                                     <input type="hidden" name="file_name_{{ loop.index0 }}" value="{{ receipt.file_name }}">
                                     <input type="hidden" name="file_mime_type_{{ loop.index0 }}" value="{{ receipt.file_mime_type }}">
@@ -114,14 +114,14 @@
 
         <div class="mt-4 d-flex justify-content-between align-items-center">
             <a href="{{ url_for('card_purchases.upload_receipts') }}" class="btn btn-outline-secondary">
-                <i class="fas fa-arrow-left"></i> Annuler
+                <i class="fas fa-arrow-left"></i> Cancel
             </a>
             <div>
                 <span id="selectedCount" class="me-3">
-                    <strong>{{ receipts|length }}</strong> achat(s) sélectionné(s)
+                    <strong>{{ receipts|length }}</strong> purchase(s) selected
                 </span>
                 <button type="submit" class="btn btn-success btn-lg">
-                    <i class="fas fa-save"></i> Enregistrer les achats
+                    <i class="fas fa-save"></i> Save Purchases
                 </button>
             </div>
         </div>
@@ -131,24 +131,24 @@
 </div>
 
 <script>
-// Sélection/désélection globale
+// Global select/deselect
 document.getElementById('selectAll').addEventListener('change', function() {
     const checkboxes = document.querySelectorAll('.purchase-checkbox');
     checkboxes.forEach(cb => cb.checked = this.checked);
     updateSelectedCount();
 });
 
-// Mise à jour du compteur
+// Update counter
 document.querySelectorAll('.purchase-checkbox').forEach(cb => {
     cb.addEventListener('change', updateSelectedCount);
 });
 
 function updateSelectedCount() {
     const checked = document.querySelectorAll('.purchase-checkbox:checked').length;
-    document.getElementById('selectedCount').innerHTML = `<strong>${checked}</strong> achat(s) sélectionné(s)`;
+    document.getElementById('selectedCount').innerHTML = `<strong>${checked}</strong> purchase(s) selected`;
 }
 
-// Soumettre le formulaire
+// Submit form
 document.querySelector('form').addEventListener('submit', function(e) {
     e.preventDefault();
 

@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Formules - {{ service.name }} - Budgee Family{% endblock %}
+{% block title %}{{ _('Plans') }} - {{ service.name }} - Budgee Family{% endblock %}
 
 {% block content %}
 <div class="container py-4">
@@ -14,29 +14,29 @@
                 <br>
                 <small class="text-muted">
                     <i class="fas fa-info-circle"></i>
-                    {{ current_user.get_custom_plans_count() }}/10 plans personnalisés utilisés
+                    {{ _('%(count)s/10 custom plans used', count=current_user.get_custom_plans_count()) }}
                 </small>
             {% endif %}
         </div>
         <div class="d-flex gap-2">
             <div class="btn-group" role="group">
                 <button type="button" class="btn btn-outline-secondary" id="gridView" onclick="switchView('grid')">
-                    <i class="fas fa-th"></i> Grille
+                    <i class="fas fa-th"></i> {{ _('Grid') }}
                 </button>
                 <button type="button" class="btn btn-outline-secondary" id="listView" onclick="switchView('list')">
-                    <i class="fas fa-list"></i> Liste
+                    <i class="fas fa-list"></i> {{ _('List') }}
                 </button>
             </div>
             <a href="{{ url_for('services.list') }}" class="btn btn-outline-secondary">
-                <i class="fas fa-arrow-left"></i> Retour
+                <i class="fas fa-arrow-left"></i> {{ _('Back') }}
             </a>
             {% if current_user.can_create_custom_plan() %}
                 <a href="{{ url_for('services.add_plan', service_id=service.id) }}" class="btn btn-primary">
-                    <i class="fas fa-plus"></i> Ajouter une formule personnalisée
+                    <i class="fas fa-plus"></i> {{ _('Add custom plan') }}
                 </a>
             {% else %}
-                <button class="btn btn-secondary" disabled title="Limite atteinte (10/10)">
-                    <i class="fas fa-lock"></i> Limite atteinte
+                <button class="btn btn-secondary" disabled title="{{ _('Limit reached (10/10)') }}">
+                    <i class="fas fa-lock"></i> {{ _('Limit reached') }}
                 </button>
             {% endif %}
         </div>
@@ -47,14 +47,14 @@
     <div class="alert alert-warning border-0 shadow-sm mb-4">
         <div class="row align-items-center">
             <div class="col-md-8">
-                <h5 class="alert-heading"><i class="fas fa-exclamation-triangle"></i> Limite atteinte</h5>
+                <h5 class="alert-heading"><i class="fas fa-exclamation-triangle"></i> {{ _('Limit reached') }}</h5>
                 <p class="mb-0">
-                    Vous avez atteint la limite de 10 plans personnalisés pour le plan gratuit. Passez au plan Premium pour créer un nombre illimité de plans.
+                    {{ _('You have reached the limit of 10 custom plans for the free plan. Upgrade to Premium to create unlimited plans.') }}
                 </p>
             </div>
             <div class="col-md-4 text-end">
                 <a href="{{ url_for('main.pricing') }}" class="btn btn-warning">
-                    <i class="fas fa-crown"></i> Passer à Premium
+                    <i class="fas fa-crown"></i> {{ _('Upgrade to Premium') }}
                 </a>
             </div>
         </div>
@@ -71,7 +71,7 @@
     {% if global_plans %}
     <div class="card mb-4">
         <div class="card-header" style="background-color: #e5e7eb;">
-            <h5 class="mb-0"><i class="fas fa-globe text-secondary"></i> Formules officielles</h5>
+            <h5 class="mb-0"><i class="fas fa-globe text-secondary"></i> {{ _('Official plans') }}</h5>
         </div>
         <div class="card-body">
             <!-- Vue grille -->
@@ -93,7 +93,7 @@
                                     </div>
                                     {% if service.website_url %}
                                         <a href="{{ service.website_url }}" target="_blank" class="btn btn-outline-primary w-100">
-                                            <i class="fas fa-external-link-alt"></i> Voir sur le site
+                                            <i class="fas fa-external-link-alt"></i> {{ _('View on website') }}
                                         </a>
                                     {% endif %}
                                 </div>
@@ -109,10 +109,10 @@
                     <table class="table table-hover mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th>Formule</th>
-                                <th>Description</th>
-                                <th class="text-end">Montant</th>
-                                <th>Périodicité</th>
+                                <th>{{ _('Plan') }}</th>
+                                <th>{{ _('Description') }}</th>
+                                <th class="text-end">{{ _('Amount') }}</th>
+                                <th>{{ _('Frequency') }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -145,7 +145,7 @@
     <!-- Plans personnalisés -->
     <div class="card">
         <div class="card-header" style="background-color: #e5e7eb;">
-            <h5 class="mb-0"><i class="fas fa-user text-secondary"></i> Mes formules personnalisées</h5>
+            <h5 class="mb-0"><i class="fas fa-user text-secondary"></i> {{ _('My custom plans') }}</h5>
         </div>
         <div class="card-body">
             {% if custom_plans %}
@@ -168,12 +168,12 @@
                                         </div>
                                         <div class="btn-group w-100" role="group">
                                             <a href="{{ url_for('services.edit_plan', plan_id=plan.id) }}" class="btn btn-outline-primary">
-                                                <i class="fas fa-edit"></i> Modifier
+                                                <i class="fas fa-edit"></i> {{ _('Edit') }}
                                             </a>
                                             <form method="POST" action="{{ url_for('services.delete_plan', plan_id=plan.id) }}"
-                                                  onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette formule ?')" class="flex-fill">
+                                                  onsubmit="return confirm('{{ _('Are you sure you want to delete this plan?') }}')" class="flex-fill">
                                                 <button type="submit" class="btn btn-outline-danger w-100">
-                                                    <i class="fas fa-trash"></i> Supprimer
+                                                    <i class="fas fa-trash"></i> {{ _('Delete') }}
                                                 </button>
                                             </form>
                                         </div>
@@ -190,11 +190,11 @@
                         <table class="table table-hover mb-0">
                             <thead class="table-light">
                                 <tr>
-                                    <th>Formule</th>
-                                    <th>Description</th>
-                                    <th class="text-end">Montant</th>
-                                    <th>Périodicité</th>
-                                    <th class="text-end">Actions</th>
+                                    <th>{{ _('Plan') }}</th>
+                                    <th>{{ _('Description') }}</th>
+                                    <th class="text-end">{{ _('Amount') }}</th>
+                                    <th>{{ _('Frequency') }}</th>
+                                    <th class="text-end">{{ _('Actions') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -217,12 +217,12 @@
                                         <td class="text-end">
                                             <div class="btn-group" role="group">
                                                 <a href="{{ url_for('services.edit_plan', plan_id=plan.id) }}" class="btn btn-sm btn-outline-primary">
-                                                    <i class="fas fa-edit"></i> Modifier
+                                                    <i class="fas fa-edit"></i> {{ _('Edit') }}
                                                 </a>
                                                 <form method="POST" action="{{ url_for('services.delete_plan', plan_id=plan.id) }}"
-                                                      onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette formule ?')" class="d-inline">
+                                                      onsubmit="return confirm('{{ _('Are you sure you want to delete this plan?') }}')" class="d-inline">
                                                     <button type="submit" class="btn btn-sm btn-outline-danger">
-                                                        <i class="fas fa-trash"></i> Supprimer
+                                                        <i class="fas fa-trash"></i> {{ _('Delete') }}
                                                     </button>
                                                 </form>
                                             </div>
@@ -235,10 +235,10 @@
                 </div>
             {% else %}
                 <p class="text-muted text-center py-4">
-                    Vous n'avez pas encore créé de formule personnalisée pour ce service.
+                    {{ _('You have not yet created a custom plan for this service.') }}
                     <br>
                     <a href="{{ url_for('services.add_plan', service_id=service.id) }}" class="btn btn-sm btn-primary mt-2">
-                        <i class="fas fa-plus"></i> Créer ma première formule personnalisée
+                        <i class="fas fa-plus"></i> {{ _('Create my first custom plan') }}
                     </a>
                 </p>
             {% endif %}

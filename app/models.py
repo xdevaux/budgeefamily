@@ -307,6 +307,7 @@ class Category(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)  # NULL = catégorie globale
     name = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text, nullable=True)
+    description_en = db.Column(db.Text, nullable=True)  # Description en anglais
     logo_url = db.Column(db.String(500), nullable=True)  # Deprecated - kept for backward compatibility
     logo_data = db.Column(db.Text, nullable=True)  # Logo stocké en base64
     logo_mime_type = db.Column(db.String(50), nullable=True)  # Type MIME du logo (image/png, image/jpeg, etc.)
@@ -330,6 +331,12 @@ class Category(db.Model):
         """Vérifie si c'est une catégorie personnalisée"""
         return self.user_id is not None
 
+    def get_description(self, locale='fr'):
+        """Retourne la description dans la langue demandée"""
+        if locale == 'en' and self.description_en:
+            return self.description_en
+        return self.description
+
     def __repr__(self):
         return f'<Category {self.name}>'
 
@@ -343,6 +350,7 @@ class Service(db.Model):
 
     name = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text, nullable=True)
+    description_en = db.Column(db.Text, nullable=True)  # Description en anglais
     logo_url = db.Column(db.String(500), nullable=True)  # Deprecated - kept for backward compatibility
     logo_data = db.Column(db.Text, nullable=True)  # Logo stocké en base64
     logo_mime_type = db.Column(db.String(50), nullable=True)  # Type MIME du logo (image/png, image/jpeg, etc.)
@@ -365,6 +373,12 @@ class Service(db.Model):
     def is_custom(self):
         """Vérifie si c'est un service personnalisé"""
         return self.user_id is not None
+
+    def get_description(self, locale='fr'):
+        """Retourne la description dans la langue demandée"""
+        if locale == 'en' and self.description_en:
+            return self.description_en
+        return self.description
 
     def __repr__(self):
         return f'<Service {self.name}>'

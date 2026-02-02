@@ -70,8 +70,14 @@
 
                         <div class="mb-4">
                             <label for="file" class="form-label">{{ _('Fichier *') }}</label>
-                            <input type="file" class="form-control" id="file" name="file" required
-                                   accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png">
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <input type="file" class="d-none" id="file" name="file" required
+                                       accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png">
+                                <button type="button" class="btn btn-outline-secondary" onclick="document.getElementById('file').click()">
+                                    <i class="fas fa-folder-open"></i> Browse...
+                                </button>
+                                <span id="file-name-display" class="text-muted flex-grow-1">No file selected</span>
+                            </div>
                             <small class="text-muted">{{ _('Formats acceptés : PDF, Word, Excel, Images (taille max : 16 Mo)') }}</small>
                         </div>
 
@@ -165,7 +171,18 @@
 
     // Activer/désactiver le bouton submit selon la sélection du fichier
     fileInput.addEventListener('change', function() {
+        const fileNameDisplay = document.getElementById('file-name-display');
         submitBtn.disabled = !this.files || this.files.length === 0;
+
+        if (this.files && this.files.length > 0) {
+            fileNameDisplay.textContent = this.files[0].name;
+            fileNameDisplay.classList.remove('text-muted');
+            fileNameDisplay.classList.add('text-success', 'fw-bold');
+        } else {
+            fileNameDisplay.textContent = 'No file selected';
+            fileNameDisplay.classList.remove('text-success', 'fw-bold');
+            fileNameDisplay.classList.add('text-muted');
+        }
     });
 </script>
 {% endblock %}

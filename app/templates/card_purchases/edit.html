@@ -1,15 +1,15 @@
 {% extends "base.html" %}
 
-{% block title %}Modifier l'achat CB{% endblock %}
+{% block title %}Edit Card Purchase{% endblock %}
 
 {% block content %}
 <div class="container mt-4">
     <div class="row">
         <div class="col-lg-8 mx-auto">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2><i class="fas fa-edit"></i> Modifier l'achat</h2>
+                <h2><i class="fas fa-edit"></i> Edit Purchase</h2>
                 <a href="{{ url_for('card_purchases.detail', purchase_id=purchase.id) }}" class="btn btn-outline-secondary">
-                    <i class="fas fa-arrow-left"></i> Retour
+                    <i class="fas fa-arrow-left"></i> Back
                 </a>
             </div>
 
@@ -17,7 +17,7 @@
                 <div class="card-body">
                     <form method="post" enctype="multipart/form-data">
                         <div class="mb-3">
-                            <label for="merchant_name" class="form-label">Commerçant</label>
+                            <label for="merchant_name" class="form-label">Merchant</label>
                             <input type="text"
                                    class="form-control"
                                    id="merchant_name"
@@ -37,7 +37,7 @@
                                        required>
                             </div>
                             <div class="col-md-6">
-                                <label for="purchase_time" class="form-label">Heure</label>
+                                <label for="purchase_time" class="form-label">Time</label>
                                 <input type="time"
                                        class="form-control"
                                        id="purchase_time"
@@ -47,7 +47,7 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="amount" class="form-label">Montant (€)</label>
+                            <label for="amount" class="form-label">Amount (€)</label>
                             <input type="number"
                                    class="form-control"
                                    id="amount"
@@ -59,9 +59,9 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="category_id" class="form-label">Catégorie</label>
+                            <label for="category_id" class="form-label">Category</label>
                             <select class="form-select" id="category_id" name="category_id">
-                                <option value="">-- Aucune --</option>
+                                <option value="">-- None --</option>
                                 {% for category in categories %}
                                     <option value="{{ category.id }}"
                                             {% if purchase.category_id == category.id %}selected{% endif %}>
@@ -89,35 +89,42 @@
 
                         <div class="mb-3">
                             <label class="form-label">
-                                <i class="fas fa-receipt"></i> Reçu / Ticket
+                                <i class="fas fa-receipt"></i> Receipt / Ticket
                             </label>
 
                             {% if purchase.receipt_image_data %}
                             <div class="alert alert-info">
-                                <i class="fas fa-check-circle"></i> Un reçu est déjà attaché :
+                                <i class="fas fa-check-circle"></i> A receipt is already attached:
                                 <strong>{{ purchase.receipt_image_name }}</strong>
                                 <a href="{{ url_for('card_purchases.view_receipt', purchase_id=purchase.id) }}"
                                    target="_blank"
                                    class="btn btn-sm btn-outline-primary ms-2">
-                                    <i class="fas fa-eye"></i> Voir
+                                    <i class="fas fa-eye"></i> View
                                 </a>
                             </div>
                             {% else %}
                             <div class="alert alert-secondary">
-                                <i class="fas fa-info-circle"></i> Aucun reçu attaché
+                                <i class="fas fa-info-circle"></i> No receipt attached
                             </div>
                             {% endif %}
 
-                            <input type="file"
-                                   class="form-control"
-                                   id="receipt_file"
-                                   name="receipt_file"
-                                   accept="image/jpeg,image/png,image/jpg,application/pdf">
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <input type="file"
+                                       class="d-none"
+                                       id="receipt_file"
+                                       name="receipt_file"
+                                       accept="image/jpeg,image/png,image/jpg,application/pdf"
+                                       onchange="updateFileName(this)">
+                                <button type="button" class="btn btn-outline-secondary" onclick="document.getElementById('receipt_file').click()">
+                                    <i class="fas fa-folder-open"></i> Browse...
+                                </button>
+                                <span id="file-name-display" class="text-muted flex-grow-1">No file selected</span>
+                            </div>
                             <small class="text-muted">
                                 {% if purchase.receipt_image_data %}
-                                Choisir un nouveau fichier remplacera le reçu actuel.
+                                Choosing a new file will replace the current receipt.
                                 {% else %}
-                                Formats acceptés : JPG, PNG, PDF (max 5 Mo)
+                                Accepted formats: JPG, PNG, PDF (max 5 MB)
                                 {% endif %}
                             </small>
                         </div>
@@ -125,10 +132,10 @@
                         <div class="d-flex justify-content-between">
                             <a href="{{ url_for('card_purchases.detail', purchase_id=purchase.id) }}"
                                class="btn btn-secondary">
-                                Annuler
+                                Cancel
                             </a>
                             <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save"></i> Enregistrer les modifications
+                                <i class="fas fa-save"></i> Save Changes
                             </button>
                         </div>
                     </form>
@@ -137,4 +144,19 @@
         </div>
     </div>
 </div>
+
+<script>
+function updateFileName(input) {
+    const display = document.getElementById('file-name-display');
+    if (input.files && input.files.length > 0) {
+        display.textContent = input.files[0].name;
+        display.classList.remove('text-muted');
+        display.classList.add('text-success', 'fw-bold');
+    } else {
+        display.textContent = 'No file selected';
+        display.classList.remove('text-success', 'fw-bold');
+        display.classList.add('text-muted');
+    }
+}
+</script>
 {% endblock %}
