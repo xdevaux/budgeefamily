@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_required, current_user
+from flask_babel import gettext as _
 from app import db
 from app.models import InstallmentPayment, Category, CreditType, Notification
 from app.utils.transactions import generate_future_transactions, update_future_transactions, cancel_future_transactions, calculate_next_future_date, delete_all_transactions
@@ -39,7 +40,7 @@ def add():
     if request.method == 'POST':
         # Vérifier si l'utilisateur peut ajouter un paiement en plusieurs fois
         if not current_user.can_add_installment_payment():
-            flash('Vous avez atteint la limite de paiements en plusieurs fois pour le plan gratuit. Passez au plan Premium pour ajouter des paiements illimités.', 'warning')
+            flash(_('Vous avez atteint la limite de paiements en plusieurs fois pour le plan gratuit. Passez au plan Premium pour ajouter des paiements illimités.'), 'warning')
             return redirect(url_for('installments.list'))
 
         name = request.form.get('name')
@@ -105,8 +106,8 @@ def add():
             installment_payment_id=payment.id,
             created_by_user_id=current_user.id,
             type='installment_added',
-            title='Nouveau paiement en plusieurs fois ajouté',
-            message=f'Votre paiement en plusieurs fois "{name}" a été ajouté avec succès. Montant: {installment_amount:.2f}€/mois sur {number_of_installments} mois.'
+            title=_('Nouveau paiement en plusieurs fois ajouté'),
+            message=_('Votre paiement en plusieurs fois "%(name)s" a été ajouté avec succès. Montant: %(amount).2f€/mois sur %(installments)d mois.', name=name, amount=installment_amount, installments=number_of_installments)
         )
         db.session.add(notification)
         db.session.commit()
@@ -115,7 +116,7 @@ def add():
         from app.utils.email import send_notification_email
         send_notification_email(current_user, notification)
 
-        flash(f'Le paiement en plusieurs fois "{name}" a été ajouté avec succès.', 'success')
+        flash(_('Le paiement en plusieurs fois "%(name)s" a été ajouté avec succès.', name=name), 'success')
         return redirect(url_for('installments.list'))
 
     # GET - Afficher le formulaire
@@ -135,7 +136,7 @@ def detail(payment_id):
     payment = InstallmentPayment.query.get_or_404(payment_id)
 
     if payment.user_id != current_user.id:
-        flash('Vous n\'avez pas accès à ce paiement.', 'danger')
+        flash(_('Vous n\'avez pas accès à ce paiement.'), 'danger')
         return redirect(url_for('installments.list'))
 
     return render_template('installments/detail.html', payment=payment)
@@ -148,7 +149,7 @@ def edit(payment_id):
     payment = InstallmentPayment.query.get_or_404(payment_id)
 
     if payment.user_id != current_user.id:
-        flash('Vous n\'avez pas accès à ce paiement.', 'danger')
+        flash(_('Vous n\'avez pas accès à ce paiement.'), 'danger')
         return redirect(url_for('installments.list'))
 
     if request.method == 'POST':
@@ -168,7 +169,7 @@ def edit(payment_id):
         update_future_transactions(payment, 'installment')
         db.session.commit()
 
-        flash('Le paiement a été mis à jour avec succès.', 'success')
+        flash(_('Le paiement a été mis à jour avec succès.'), 'success')
         return redirect(url_for('installments.detail', payment_id=payment.id))
 
     credit_types = CreditType.query.filter(
@@ -187,7 +188,7 @@ def delete(payment_id):
     payment = InstallmentPayment.query.get_or_404(payment_id)
 
     if payment.user_id != current_user.id:
-        flash('Vous n\'avez pas accès à ce paiement.', 'danger')
+        flash(_('Vous n\'avez pas accès à ce paiement.'), 'danger')
         return redirect(url_for('installments.list'))
 
     name = payment.name
@@ -198,7 +199,7 @@ def delete(payment_id):
     db.session.delete(payment)
     db.session.commit()
 
-    flash(f'Le paiement "{name}" et toutes ses transactions ont été supprimés avec succès.', 'success')
+    flash(_('Le paiement "%(name)s" et toutes ses transactions ont été supprimés avec succès.', name=name), 'success')
 
     # Rediriger vers la page balance si le paramètre est présent
     redirect_to = request.args.get('redirect_to', 'installments.list')
@@ -214,12 +215,12 @@ def process(payment_id):
     payment = InstallmentPayment.query.get_or_404(payment_id)
 
     if payment.user_id != current_user.id:
-        flash('Vous n\'avez pas accès à ce paiement.', 'danger')
+        flash(_('Vous n\'avez pas accès à ce paiement.'), 'danger')
         return redirect(url_for('installments.list'))
 
     if payment.process_payment():
-        flash('Paiement traité avec succès !', 'success')
+        flash(_('Paiement traité avec succès !'), 'success')
     else:
-        flash('Ce paiement est déjà terminé.', 'warning')
+        flash(_('Ce paiement est déjà terminé.'), 'warning')
 
     return redirect(url_for('installments.detail', payment_id=payment.id))

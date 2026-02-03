@@ -194,7 +194,7 @@
                                                 <i class="fas fa-tag fa-lg" style="color: {{ category.color }}"></i>
                                             {% endif %}
                                         </div>
-                                        <strong>{{ category.name }}</strong>
+                                        <strong>{{ category | get_translated_name }}</strong>
                                     </div>
                                 </td>
                                 <td>
@@ -344,7 +344,7 @@
                                                 <i class="fas fa-tag fa-lg" style="color: {{ category.color }}"></i>
                                             {% endif %}
                                         </div>
-                                        <strong>{{ category.name }}</strong>
+                                        <strong>{{ category | get_translated_name }}</strong>
                                     </div>
                                 </td>
                                 <td>

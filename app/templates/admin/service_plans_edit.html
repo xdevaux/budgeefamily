@@ -20,7 +20,7 @@
                                 {% for service in services %}
                                 <option value="{{ service.id }}" {% if plan.service_id == service.id %}selected{% endif %}>
                                     {{ service.name }}
-                                    {% if service.category %} - {{ service.category.name }}{% endif %}
+                                    {% if service.category %} - {{ service.category | get_translated_name }}{% endif %}
                                 </option>
                                 {% endfor %}
                             </select>

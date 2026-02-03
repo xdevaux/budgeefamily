@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 
-{% block title %}Modifier {{ payment.name }} - Budgee Family{% endblock %}
+{% block title %}{{ _('Modifier') }} {{ payment.name }} - Budgee Family{% endblock %}
 
 {% block content %}
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2><i class="fas fa-edit"></i> Modifier {{ payment.name }}</h2>
+        <h2><i class="fas fa-edit"></i> {{ _('Modifier') }} {{ payment.name }}</h2>
     </div>
 
     <div class="row">
@@ -13,71 +13,78 @@
             <div class="card">
                 <div class="card-body">
                     <form method="POST">
-                        <h5 class="mb-3"><i class="fas fa-shopping-cart text-secondary"></i> Informations du produit/service</h5>
+                        <h5 class="mb-3"><i class="fas fa-shopping-cart text-secondary"></i> {{ _('Informations du produit/service') }}</h5>
 
                         <div class="mb-3">
-                            <label for="name" class="form-label">Nom de l'article <span class="text-danger">*</span></label>
+                            <label for="name" class="form-label">{{ _('Nom de l\'article') }} <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" id="name" name="name" required
                                    value="{{ payment.name }}">
                         </div>
 
                         <div class="mb-3">
-                            <label for="description" class="form-label">Description</label>
+                            <label for="description" class="form-label">{{ _('Description') }}</label>
                             <textarea class="form-control" id="description" name="description" rows="2">{{ payment.description or '' }}</textarea>
                         </div>
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label for="merchant" class="form-label">Marchand</label>
+                                <label for="merchant" class="form-label">{{ _('Marchand') }}</label>
                                 <input type="text" class="form-control" id="merchant" name="merchant"
                                        value="{{ payment.merchant or '' }}">
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="provider" class="form-label">Fournisseur de paiement</label>
-                                <select class="form-select" id="provider" name="provider">
-                                    <option value="">Sélectionner...</option>
+                                <label for="provider" class="form-label">{{ _('Fournisseur de paiement') }}</label>
+                                {% set known_providers = ['ALMA', 'Amazon', 'Cetelem', 'Klarna', 'Oney', 'PayPal'] %}
+                                {% set is_custom = payment.provider and payment.provider not in known_providers and payment.provider != '' %}
+                                <select class="form-select" id="provider_select" onchange="toggleCustomProvider()">
+                                    <option value="">{{ _('Sélectionner...') }}</option>
                                     <option value="ALMA" {% if payment.provider == 'ALMA' %}selected{% endif %}>ALMA</option>
                                     <option value="Amazon" {% if payment.provider == 'Amazon' %}selected{% endif %}>Amazon</option>
                                     <option value="Cetelem" {% if payment.provider == 'Cetelem' %}selected{% endif %}>Cetelem</option>
                                     <option value="Klarna" {% if payment.provider == 'Klarna' %}selected{% endif %}>Klarna</option>
                                     <option value="Oney" {% if payment.provider == 'Oney' %}selected{% endif %}>Oney</option>
                                     <option value="PayPal" {% if payment.provider == 'PayPal' %}selected{% endif %}>PayPal</option>
-                                    <option value="Autre" {% if payment.provider == 'Autre' %}selected{% endif %}>Autre</option>
+                                    <option value="custom" {% if is_custom %}selected{% endif %}>{{ _('Autre') }}</option>
                                 </select>
+                                <input type="hidden" id="provider" name="provider" value="{{ payment.provider or '' }}">
+                                <input type="text" class="form-control mt-2" id="custom_provider"
+                                       placeholder="{{ _('Saisir le nom du fournisseur') }}"
+                                       value="{% if is_custom %}{{ payment.provider }}{% endif %}"
+                                       style="display: {% if is_custom %}block{% else %}none{% endif %};">
                             </div>
                         </div>
 
                         <hr class="my-4">
 
-                        <h5 class="mb-3"><i class="fas fa-tags text-secondary"></i> Catégorisation</h5>
+                        <h5 class="mb-3"><i class="fas fa-tags text-secondary"></i> {{ _('Catégorisation') }}</h5>
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label for="product_category" class="form-label">Catégorie de produit</label>
+                                <label for="product_category" class="form-label">{{ _('Catégorie de produit') }}</label>
                                 <select class="form-select" id="product_category" name="product_category">
-                                    <option value="">Sélectionner...</option>
-                                    <option value="Alimentation" {% if payment.product_category == 'Alimentation' %}selected{% endif %}>Alimentation</option>
-                                    <option value="Autre" {% if payment.product_category == 'Autre' %}selected{% endif %}>Autre</option>
-                                    <option value="Automobile" {% if payment.product_category == 'Automobile' %}selected{% endif %}>Automobile</option>
-                                    <option value="Beauté & Santé" {% if payment.product_category == 'Beauté & Santé' %}selected{% endif %}>Beauté & Santé</option>
-                                    <option value="Électroménager" {% if payment.product_category == 'Électroménager' %}selected{% endif %}>Électroménager</option>
-                                    <option value="Équipement de la maison" {% if payment.product_category == 'Équipement de la maison' %}selected{% endif %}>Équipement de la maison</option>
-                                    <option value="Études" {% if payment.product_category == 'Études' %}selected{% endif %}>Études</option>
-                                    <option value="Gaming" {% if payment.product_category == 'Gaming' %}selected{% endif %}>Gaming</option>
-                                    <option value="Informatique" {% if payment.product_category == 'Informatique' %}selected{% endif %}>Informatique</option>
-                                    <option value="Mobile" {% if payment.product_category == 'Mobile' %}selected{% endif %}>Mobile</option>
-                                    <option value="Mode" {% if payment.product_category == 'Mode' %}selected{% endif %}>Mode</option>
-                                    <option value="Sport" {% if payment.product_category == 'Sport' %}selected{% endif %}>Sport</option>
-                                    <option value="TV Son Hifi" {% if payment.product_category == 'TV Son Hifi' %}selected{% endif %}>TV Son Hifi</option>
+                                    <option value="">{{ _('Sélectionner...') }}</option>
+                                    <option value="Alimentation" {% if payment.product_category == 'Alimentation' %}selected{% endif %}>{{ _('Alimentation') }}</option>
+                                    <option value="Autre" {% if payment.product_category == 'Autre' %}selected{% endif %}>{{ _('Autre') }}</option>
+                                    <option value="Automobile" {% if payment.product_category == 'Automobile' %}selected{% endif %}>{{ _('Automobile') }}</option>
+                                    <option value="Beauté & Santé" {% if payment.product_category == 'Beauté & Santé' %}selected{% endif %}>{{ _('Beauté & Santé') }}</option>
+                                    <option value="Électroménager" {% if payment.product_category == 'Électroménager' %}selected{% endif %}>{{ _('Électroménager') }}</option>
+                                    <option value="Équipement de la maison" {% if payment.product_category == 'Équipement de la maison' %}selected{% endif %}>{{ _('Équipement de la maison') }}</option>
+                                    <option value="Études" {% if payment.product_category == 'Études' %}selected{% endif %}>{{ _('Études') }}</option>
+                                    <option value="Gaming" {% if payment.product_category == 'Gaming' %}selected{% endif %}>{{ _('Gaming') }}</option>
+                                    <option value="Informatique" {% if payment.product_category == 'Informatique' %}selected{% endif %}>{{ _('Informatique') }}</option>
+                                    <option value="Mobile" {% if payment.product_category == 'Mobile' %}selected{% endif %}>{{ _('Mobile') }}</option>
+                                    <option value="Mode" {% if payment.product_category == 'Mode' %}selected{% endif %}>{{ _('Mode') }}</option>
+                                    <option value="Sport" {% if payment.product_category == 'Sport' %}selected{% endif %}>{{ _('Sport') }}</option>
+                                    <option value="TV Son Hifi" {% if payment.product_category == 'TV Son Hifi' %}selected{% endif %}>{{ _('TV Son Hifi') }}</option>
                                 </select>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="credit_type_id" class="form-label">Type de crédit</label>
+                                <label for="credit_type_id" class="form-label">{{ _('Type de crédit') }}</label>
                                 <select class="form-select" id="credit_type_id" name="credit_type_id">
-                                    <option value="">Aucun</option>
+                                    <option value="">{{ _('Aucun') }}</option>
                                     {% for type in credit_types %}
                                         <option value="{{ type.id }}" {% if payment.credit_type_id == type.id %}selected{% endif %}>
-                                            {{ type.name }}
+                                            {{ type.get_name(current_user.language or 'fr') }}
                                         </option>
                                     {% endfor %}
                                 </select>
@@ -86,15 +93,15 @@
 
                         <div class="alert alert-warning">
                             <i class="fas fa-info-circle"></i>
-                            <strong>Note :</strong> Les montants et les dates ne peuvent pas être modifiés après création.
+                            <strong>{{ _('Note :') }}</strong> {{ _('Les montants et les dates ne peuvent pas être modifiés après création.') }}
                         </div>
 
                         <div class="d-flex gap-2 justify-content-end mt-4">
                             <a href="{{ url_for('installments.detail', payment_id=payment.id) }}" class="btn btn-secondary">
-                                <i class="fas fa-times"></i> Annuler
+                                <i class="fas fa-times"></i> {{ _('Annuler') }}
                             </a>
                             <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save"></i> Enregistrer
+                                <i class="fas fa-save"></i> {{ _('Enregistrer') }}
                             </button>
                         </div>
                     </form>
@@ -105,31 +112,62 @@
         <div class="col-md-4">
             <div class="card">
                 <div class="card-header bg-warning text-dark">
-                    <h5 class="mb-0"><i class="fas fa-euro-sign"></i> Informations (non modifiables)</h5>
+                    <h5 class="mb-0"><i class="fas fa-euro-sign"></i> {{ _('Informations (non modifiables)') }}</h5>
                 </div>
                 <div class="card-body">
                     <div class="mb-3">
-                        <small class="text-muted">Montant total</small><br>
+                        <small class="text-muted">{{ _('Montant total') }}</small><br>
                         <strong class="h5">{{ payment.total_amount | format_amount }} {{ payment.currency | currency_symbol }}</strong>
                     </div>
 
                     <div class="mb-3">
-                        <small class="text-muted">Mensualité</small><br>
+                        <small class="text-muted">{{ _('Mensualité') }}</small><br>
                         <strong class="h5 text-warning">{{ payment.installment_amount | format_amount }} {{ payment.currency | currency_symbol }}</strong>
                     </div>
 
                     <div class="mb-3">
-                        <small class="text-muted">Nombre de mensualités</small><br>
-                        <strong>{{ payment.number_of_installments }} fois</strong>
+                        <small class="text-muted">{{ _('Nombre de mensualités') }}</small><br>
+                        <strong>{{ payment.number_of_installments }} {{ _('fois') }}</strong>
                     </div>
 
                     <div class="mb-3">
-                        <small class="text-muted">Progression</small><br>
-                        <strong>{{ payment.installments_paid }} / {{ payment.number_of_installments }} payées</strong>
+                        <small class="text-muted">{{ _('Progression') }}</small><br>
+                        <strong>{{ payment.installments_paid }} / {{ payment.number_of_installments }} {{ _('payées') }}</strong>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    function toggleCustomProvider() {
+        const select = document.getElementById('provider_select');
+        const customInput = document.getElementById('custom_provider');
+        const hiddenInput = document.getElementById('provider');
+
+        if (select.value === 'custom') {
+            customInput.style.display = 'block';
+            customInput.required = true;
+            hiddenInput.value = customInput.value;
+        } else {
+            customInput.style.display = 'none';
+            customInput.required = false;
+            customInput.value = '';
+            hiddenInput.value = select.value;
+        }
+    }
+
+    // Update hidden field when custom provider is typed
+    document.addEventListener('DOMContentLoaded', function() {
+        const customInput = document.getElementById('custom_provider');
+        const hiddenInput = document.getElementById('provider');
+
+        if (customInput) {
+            customInput.addEventListener('input', function() {
+                hiddenInput.value = this.value;
+            });
+        }
+    });
+</script>
 {% endblock %}

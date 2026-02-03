@@ -1,15 +1,15 @@
 {% extends "base.html" %}
 
-{% block title %}Add Card Purchase{% endblock %}
+{% block title %}{{ _('Ajouter un achat CB') }}{% endblock %}
 
 {% block content %}
 <div class="container mt-4">
     <div class="row">
         <div class="col-lg-8 mx-auto">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2><i class="fas fa-credit-card"></i> Add Card Purchase</h2>
+                <h2><i class="fas fa-credit-card"></i> {{ _('Ajouter un achat CB') }}</h2>
                 <a href="{{ url_for('card_purchases.list_purchases') }}" class="btn btn-outline-secondary">
-                    <i class="fas fa-arrow-left"></i> Back
+                    <i class="fas fa-arrow-left"></i> {{ _('Retour') }}
                 </a>
             </div>
 
@@ -17,14 +17,14 @@
             <div class="alert alert-light border">
                 <div class="d-flex gap-2">
                     <a href="{{ url_for('card_purchases.add_manual') }}" class="btn btn-primary">
-                        <i class="fas fa-keyboard"></i> Manual Entry
+                        <i class="fas fa-keyboard"></i> {{ _('Saisie manuelle') }}
                     </a>
                     <a href="{{ url_for('card_purchases.upload_receipts') }}" class="btn btn-outline-primary">
-                        <i class="fas fa-robot"></i> Scan with OCR
+                        <i class="fas fa-robot"></i> {{ _('Scanner avec OCR') }}
                     </a>
                 </div>
                 <small class="text-muted d-block mt-2">
-                    <i class="fas fa-info-circle"></i> You can enter manually or use OCR to scan your receipts
+                    <i class="fas fa-info-circle"></i> {{ _('Vous pouvez saisir manuellement ou utiliser l\'OCR pour scanner vos tickets') }}
                 </small>
             </div>
 
@@ -34,19 +34,19 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="merchant_name" class="form-label">
-                                    <i class="fas fa-store"></i> Merchant <span class="text-danger">*</span>
+                                    <i class="fas fa-store"></i> {{ _('Marchand') }} <span class="text-danger">*</span>
                                 </label>
                                 <input type="text"
                                        class="form-control"
                                        id="merchant_name"
                                        name="merchant_name"
                                        required
-                                       placeholder="e.g., Walmart, McDonald's...">
+                                       placeholder="{{ _('ex : Walmart, McDonald\'s...') }}">
                             </div>
 
                             <div class="col-md-6 mb-3">
                                 <label for="amount" class="form-label">
-                                    <i class="fas fa-euro-sign"></i> Amount <span class="text-danger">*</span>
+                                    <i class="fas fa-euro-sign"></i> {{ _('Montant') }} <span class="text-danger">*</span>
                                 </label>
                                 <input type="number"
                                        class="form-control"
@@ -62,7 +62,7 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="purchase_date" class="form-label">
-                                    <i class="fas fa-calendar"></i> Date <span class="text-danger">*</span>
+                                    <i class="fas fa-calendar"></i> {{ _('Date') }} <span class="text-danger">*</span>
                                 </label>
                                 <input type="date"
                                        class="form-control"
@@ -74,7 +74,7 @@
 
                             <div class="col-md-6 mb-3">
                                 <label for="purchase_time" class="form-label">
-                                    <i class="fas fa-clock"></i> Time
+                                    <i class="fas fa-clock"></i> {{ _('Heure') }}
                                 </label>
                                 <input type="time"
                                        class="form-control"
@@ -86,33 +86,33 @@
 
                         <div class="mb-3">
                             <label for="category_id" class="form-label">
-                                <i class="fas fa-tag"></i> Category
+                                <i class="fas fa-tag"></i> {{ _('Catégorie') }}
                             </label>
                             <select class="form-select" id="category_id" name="category_id">
-                                <option value="">-- Choose a category --</option>
+                                <option value="">{{ _('-- Choisir une catégorie --') }}</option>
                                 {% for category in categories %}
                                 <option value="{{ category.id }}">
-                                    {{ category.name }}
+                                    {{ category | get_translated_name }}
                                 </option>
                                 {% endfor %}
                             </select>
-                            <small class="text-muted">Optional - Helps classify your expenses</small>
+                            <small class="text-muted">{{ _('Optionnel - Permet de classer vos dépenses') }}</small>
                         </div>
 
                         <div class="mb-3">
                             <label for="description" class="form-label">
-                                <i class="fas fa-comment"></i> Description / Notes
+                                <i class="fas fa-comment"></i> {{ _('Description / Notes') }}
                             </label>
                             <textarea class="form-control"
                                       id="description"
                                       name="description"
                                       rows="3"
-                                      placeholder="Additional notes (optional)"></textarea>
+                                      placeholder="{{ _('Notes supplémentaires (optionnel)') }}"></textarea>
                         </div>
 
                         <div class="mb-3">
                             <label for="receipt_file" class="form-label">
-                                <i class="fas fa-receipt"></i> Receipt / Ticket
+                                <i class="fas fa-receipt"></i> {{ _('Ticket de caisse / Reçu') }}
                             </label>
                             <div class="d-flex align-items-center gap-2">
                                 <input type="file"
@@ -122,21 +122,21 @@
                                        accept="image/jpeg,image/png,image/jpg,application/pdf"
                                        onchange="updateFileName(this)">
                                 <button type="button" class="btn btn-outline-secondary" onclick="document.getElementById('receipt_file').click()">
-                                    <i class="fas fa-folder-open"></i> Browse...
+                                    <i class="fas fa-folder-open"></i> {{ _('Parcourir...') }}
                                 </button>
-                                <span id="file-name-display" class="text-muted flex-grow-1">No file selected</span>
+                                <span id="file-name-display" class="text-muted flex-grow-1">{{ _('Aucun fichier sélectionné') }}</span>
                             </div>
                             <small class="text-muted">
-                                Optional - Accepted formats: JPG, PNG, PDF (max 5 MB)
+                                {{ _('Optionnel - Formats acceptés : JPG, PNG, PDF (max 5 Mo)') }}
                             </small>
                         </div>
 
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-primary btn-lg">
-                                <i class="fas fa-save"></i> Save Purchase
+                                <i class="fas fa-save"></i> {{ _('Enregistrer l\'achat') }}
                             </button>
                             <a href="{{ url_for('card_purchases.list_purchases') }}" class="btn btn-outline-secondary">
-                                <i class="fas fa-times"></i> Cancel
+                                <i class="fas fa-times"></i> {{ _('Annuler') }}
                             </a>
                         </div>
                     </form>
@@ -147,6 +147,10 @@
 </div>
 
 <script>
+const i18n = {
+    noFileSelected: "{{ _('Aucun fichier sélectionné') }}"
+};
+
 function updateFileName(input) {
     const display = document.getElementById('file-name-display');
     if (input.files && input.files.length > 0) {
@@ -154,7 +158,7 @@ function updateFileName(input) {
         display.classList.remove('text-muted');
         display.classList.add('text-success', 'fw-bold');
     } else {
-        display.textContent = 'No file selected';
+        display.textContent = i18n.noFileSelected;
         display.classList.remove('text-success', 'fw-bold');
         display.classList.add('text-muted');
     }

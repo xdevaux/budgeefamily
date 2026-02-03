@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Card Purchase Details{% endblock %}
+{% block title %}{{ _('Détails de l\'achat CB') }}{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -62,9 +62,9 @@
     <div class="row">
         <div class="col-lg-8 mx-auto">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2><i class="fas fa-credit-card"></i> Purchase Details</h2>
+                <h2><i class="fas fa-credit-card"></i> {{ _('Détails de l\'achat') }}</h2>
                 <a href="{{ url_for('card_purchases.list_purchases') }}" class="btn btn-outline-secondary">
-                    <i class="fas fa-arrow-left"></i> Back
+                    <i class="fas fa-arrow-left"></i> {{ _('Retour') }}
                 </a>
             </div>
 
@@ -72,37 +72,37 @@
                 <div class="card-body">
                     <div class="row mb-3">
                         <div class="col-md-4">
-                            <strong>Date:</strong>
+                            <strong>{{ _('Date :') }}</strong>
                         </div>
                         <div class="col-md-8">
-                            {{ purchase.purchase_date.strftime('%m/%d/%Y at %H:%M') }}
+                            {{ purchase.purchase_date.strftime('%d/%m/%Y à %H:%M') }}
                         </div>
                     </div>
 
                     <div class="row mb-3">
                         <div class="col-md-4">
-                            <strong>Merchant:</strong>
+                            <strong>{{ _('Marchand :') }}</strong>
                         </div>
                         <div class="col-md-8">
                             {{ purchase.merchant_name }}
                             {% if purchase.entry_method == 'manual' %}
-                                <span class="badge bg-secondary ms-2" title="Manual entry">
-                                    <i class="fas fa-keyboard"></i> Manual
+                                <span class="badge bg-secondary ms-2" title="{{ _('Saisie manuelle') }}">
+                                    <i class="fas fa-keyboard"></i> {{ _('Manuel') }}
                                 </span>
                             {% elif purchase.entry_method == 'ocr' %}
-                                <span class="badge bg-info ms-2" title="OCR entry">
+                                <span class="badge bg-info ms-2" title="{{ _('Saisie OCR') }}">
                                     <i class="fas fa-robot"></i> OCR
                                 </span>
                             {% endif %}
                             {% if purchase.was_manually_edited and purchase.entry_method == 'ocr' %}
-                                <i class="fas fa-user-edit text-warning ms-1" title="Edited after OCR"></i>
+                                <i class="fas fa-user-edit text-warning ms-1" title="{{ _('Modifié après OCR') }}"></i>
                             {% endif %}
                         </div>
                     </div>
 
                     <div class="row mb-3">
                         <div class="col-md-4">
-                            <strong>Amount:</strong>
+                            <strong>{{ _('Montant :') }}</strong>
                         </div>
                         <div class="col-md-8">
                             <span class="text-danger fs-4">
@@ -113,11 +113,11 @@
 
                     <div class="row mb-3">
                         <div class="col-md-4">
-                            <strong>Category:</strong>
+                            <strong>{{ _('Catégorie :') }}</strong>
                         </div>
                         <div class="col-md-8">
                             <span class="badge bg-secondary">
-                                {{ purchase.category_name or 'Uncategorized' }}
+                                {{ purchase.category_name or _('Non catégorisé') }}
                             </span>
                         </div>
                     </div>
@@ -125,7 +125,7 @@
                     {% if purchase.description %}
                     <div class="row mb-3">
                         <div class="col-md-4">
-                            <strong>Description:</strong>
+                            <strong>{{ _('Description :') }}</strong>
                         </div>
                         <div class="col-md-8">
                             {{ purchase.description }}
@@ -136,7 +136,7 @@
                     {% if purchase.notes %}
                     <div class="row mb-3">
                         <div class="col-md-4">
-                            <strong>Notes:</strong>
+                            <strong>{{ _('Notes :') }}</strong>
                         </div>
                         <div class="col-md-8">
                             {{ purchase.notes }}
@@ -146,7 +146,7 @@
 
                     <div class="row mb-3">
                         <div class="col-md-4">
-                            <strong>OCR Confidence:</strong>
+                            <strong>{{ _('Confiance OCR :') }}</strong>
                         </div>
                         <div class="col-md-8">
                             {% if purchase.ocr_confidence >= 80 %}
@@ -162,20 +162,20 @@
                     {% if purchase.receipt_image_data %}
                     <div class="row mb-3">
                         <div class="col-md-4">
-                            <strong>Receipt:</strong>
+                            <strong>{{ _('Reçu :') }}</strong>
                         </div>
                         <div class="col-md-8">
                             <div class="btn-group">
                                 <button type="button"
                                    class="btn btn-outline-primary"
                                    onclick="openPreviewModal('{{ url_for('card_purchases.view_receipt', purchase_id=purchase.id) }}', '{{ purchase.receipt_image_name | e }}', '{{ purchase.receipt_image_mime_type }}')"
-                                   title="View">
-                                    <i class="fas fa-eye"></i> View
+                                   title="{{ _('Voir') }}">
+                                    <i class="fas fa-eye"></i> {{ _('Voir') }}
                                 </button>
                                 <a href="{{ url_for('card_purchases.download_receipt', purchase_id=purchase.id) }}"
                                    class="btn btn-outline-success"
-                                   title="Download">
-                                    <i class="fas fa-download"></i> Download
+                                   title="{{ _('Télécharger') }}">
+                                    <i class="fas fa-download"></i> {{ _('Télécharger') }}
                                 </a>
                             </div>
                         </div>
@@ -187,13 +187,13 @@
                     <div class="d-flex justify-content-between">
                         <a href="{{ url_for('card_purchases.edit', purchase_id=purchase.id) }}"
                            class="btn btn-warning">
-                            <i class="fas fa-edit"></i> Edit
+                            <i class="fas fa-edit"></i> {{ _('Modifier') }}
                         </a>
                         <form method="post"
                               action="{{ url_for('card_purchases.delete', purchase_id=purchase.id) }}"
-                              onsubmit="return confirm('Confirm deletion?');">
+                              onsubmit="return confirm('{{ _('Confirmer la suppression ?') }}');">
                             <button type="submit" class="btn btn-danger">
-                                <i class="fas fa-trash"></i> Delete
+                                <i class="fas fa-trash"></i> {{ _('Supprimer') }}
                             </button>
                         </form>
                     </div>
@@ -210,7 +210,7 @@
             <div class="modal-header">
                 <h5 class="modal-title" id="documentPreviewModalLabel">
                     <i class="fas fa-receipt me-2"></i>
-                    <span id="previewDocName">Receipt</span>
+                    <span id="previewDocName">{{ _('Reçu') }}</span>
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -224,21 +224,28 @@
 
 {% block extra_js %}
 <script>
+    // Translations
+    const i18n = {
+        receipt: "{{ _('Reçu') }}",
+        previewNotAvailable: "{{ _('Aperçu non disponible pour ce type de fichier') }}",
+        openInNewTab: "{{ _('Ouvrir dans un nouvel onglet') }}"
+    };
+
     function openPreviewModal(docUrl, docName, docType) {
         const modalElement = document.getElementById('documentPreviewModal');
         const previewContent = document.getElementById('documentPreviewContent');
         const previewDocName = document.getElementById('previewDocName');
 
         // Update title
-        previewDocName.textContent = docName || 'Receipt';
+        previewDocName.textContent = docName || i18n.receipt;
 
         // Determine content type
         if (docType && docType.startsWith('application/pdf')) {
             previewContent.innerHTML = '<embed src="' + docUrl + '" type="application/pdf" />';
         } else if (docType && docType.startsWith('image/')) {
-            previewContent.innerHTML = '<div class="preview-image-container"><img src="' + docUrl + '" alt="' + (docName || 'Receipt') + '" /></div>';
+            previewContent.innerHTML = '<div class="preview-image-container"><img src="' + docUrl + '" alt="' + (docName || i18n.receipt) + '" /></div>';
         } else {
-            previewContent.innerHTML = '<div class="text-center p-5"><i class="fas fa-file fa-4x text-muted mb-3"></i><p>Preview not available for this file type</p><a href="' + docUrl + '" target="_blank" class="btn btn-primary">Open in new tab</a></div>';
+            previewContent.innerHTML = '<div class="text-center p-5"><i class="fas fa-file fa-4x text-muted mb-3"></i><p>' + i18n.previewNotAvailable + '</p><a href="' + docUrl + '" target="_blank" class="btn btn-primary">' + i18n.openInNewTab + '</a></div>';
         }
 
         // Utiliser l'API Bootstrap standard

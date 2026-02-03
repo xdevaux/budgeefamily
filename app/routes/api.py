@@ -104,11 +104,15 @@ def checkout_success():
                 current_user.stripe_subscription_id = session.subscription
 
                 # Créer une notification
+                if not was_premium:
+                    title = _('Bienvenue sur le plan %(plan)s !', plan=premium_plan.name)
+                else:
+                    title = _('Abonnement %(plan)s renouvelé', plan=premium_plan.name)
                 notification = Notification(
                     user_id=current_user.id,
                     type='upgrade',
-                    title=f'Bienvenue sur le plan {premium_plan.name} !' if not was_premium else f'Abonnement {premium_plan.name} renouvelé',
-                    message=f'Votre abonnement {premium_plan.name} a été activé. Vous pouvez maintenant ajouter un nombre illimité d\'abonnements.'
+                    title=title,
+                    message=_('Votre abonnement %(plan)s a été activé. Vous pouvez maintenant ajouter un nombre illimité d\'abonnements.', plan=premium_plan.name)
                 )
                 db.session.add(notification)
                 db.session.commit()
@@ -230,8 +234,8 @@ def handle_subscription_updated(stripe_subscription):
                 notification = Notification(
                     user_id=user.id,
                     type='upgrade',
-                    title=f'Bienvenue sur le plan {premium_plan.name} !',
-                    message=f'Votre abonnement {premium_plan.name} a été activé. Vous pouvez maintenant ajouter un nombre illimité d\'abonnements.'
+                    title=_('Bienvenue sur le plan %(plan)s !', plan=premium_plan.name),
+                    message=_('Votre abonnement %(plan)s a été activé. Vous pouvez maintenant ajouter un nombre illimité d\'abonnements.', plan=premium_plan.name)
                 )
                 db.session.add(notification)
 
@@ -262,8 +266,8 @@ def handle_subscription_deleted(stripe_subscription):
         notification = Notification(
             user_id=user.id,
             type='downgrade',
-            title='Abonnement Premium annulé',
-            message='Votre abonnement Premium a été annulé. Vous êtes maintenant sur le plan gratuit.'
+            title=_('Abonnement Premium annulé'),
+            message=_('Votre abonnement Premium a été annulé. Vous êtes maintenant sur le plan gratuit.')
         )
         db.session.add(notification)
         db.session.commit()
@@ -283,8 +287,8 @@ def handle_payment_failed(invoice):
         notification = Notification(
             user_id=user.id,
             type='payment_failed',
-            title='Échec de paiement',
-            message='Le paiement de votre abonnement Premium a échoué. Veuillez mettre à jour vos informations de paiement.'
+            title=_('Échec de paiement'),
+            message=_('Le paiement de votre abonnement Premium a échoué. Veuillez mettre à jour vos informations de paiement.')
         )
         db.session.add(notification)
         db.session.commit()
@@ -592,7 +596,7 @@ def credits_distribution():
 
         # Group by credit type
         if credit.credit_type_obj:
-            type_name = credit.credit_type_obj.name
+            type_name = credit.credit_type_obj.get_name(current_user.language or 'fr')
             type_color = credit.credit_type_obj.color if credit.credit_type_obj.color else '#6c757d'
         else:
             type_name = 'No type'

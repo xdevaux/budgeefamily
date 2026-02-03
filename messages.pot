@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-02-03 07:29+0100\n"
+"POT-Creation-Date: 2026-02-03 14:39+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -64,7 +64,8 @@ msgstr ""
 msgid "Fév."
 msgstr ""
 
-#: app/__init__.py:161 app/routes/banks.py:30 app/routes/employers.py:39
+#: app/__init__.py:161 app/routes/banks.py:30 app/routes/credits.py:29
+#: app/routes/employers.py:39
 msgid "Mars"
 msgstr ""
 
@@ -72,11 +73,13 @@ msgstr ""
 msgid "Avr."
 msgstr ""
 
-#: app/__init__.py:163 app/routes/banks.py:31 app/routes/employers.py:40
+#: app/__init__.py:163 app/routes/banks.py:31 app/routes/credits.py:30
+#: app/routes/employers.py:40
 msgid "Mai"
 msgstr ""
 
-#: app/__init__.py:164 app/routes/banks.py:31 app/routes/employers.py:40
+#: app/__init__.py:164 app/routes/banks.py:31 app/routes/credits.py:30
+#: app/routes/employers.py:40
 msgid "Juin"
 msgstr ""
 
@@ -84,7 +87,8 @@ msgstr ""
 msgid "Juil."
 msgstr ""
 
-#: app/__init__.py:166 app/routes/banks.py:31 app/routes/employers.py:40
+#: app/__init__.py:166 app/routes/banks.py:31 app/routes/credits.py:30
+#: app/routes/employers.py:40
 msgid "Août"
 msgstr ""
 
@@ -164,9 +168,9 @@ msgstr ""
 msgid "Animaux"
 msgstr ""
 
-#: app/__init__.py:202 app/routes/banks.py:75 app/routes/employers.py:22
-#: app/routes/employers.py:50 app/routes/revenues.py:25
-#: app/routes/revenues.py:34
+#: app/__init__.py:202 app/routes/banks.py:75 app/routes/credits.py:40
+#: app/routes/employers.py:22 app/routes/employers.py:50
+#: app/routes/revenues.py:25 app/routes/revenues.py:34
 msgid "Autre"
 msgstr ""
 
@@ -242,47 +246,47 @@ msgstr ""
 msgid "Contrat"
 msgstr ""
 
-#: app/routes/banks.py:21
+#: app/routes/banks.py:21 app/routes/credits.py:18
 msgid "Relevé"
 msgstr ""
 
-#: app/routes/banks.py:22
+#: app/routes/banks.py:22 app/routes/credits.py:21
 msgid "Courrier"
 msgstr ""
 
-#: app/routes/banks.py:23 app/routes/employers.py:33
+#: app/routes/banks.py:23 app/routes/credits.py:22 app/routes/employers.py:33
 msgid "Autre document"
 msgstr ""
 
-#: app/routes/banks.py:30 app/routes/employers.py:39
+#: app/routes/banks.py:30 app/routes/credits.py:29 app/routes/employers.py:39
 msgid "Janvier"
 msgstr ""
 
-#: app/routes/banks.py:30 app/routes/employers.py:39
+#: app/routes/banks.py:30 app/routes/credits.py:29 app/routes/employers.py:39
 msgid "Février"
 msgstr ""
 
-#: app/routes/banks.py:30 app/routes/employers.py:39
+#: app/routes/banks.py:30 app/routes/credits.py:29 app/routes/employers.py:39
 msgid "Avril"
 msgstr ""
 
-#: app/routes/banks.py:31 app/routes/employers.py:40
+#: app/routes/banks.py:31 app/routes/credits.py:30 app/routes/employers.py:40
 msgid "Juillet"
 msgstr ""
 
-#: app/routes/banks.py:32 app/routes/employers.py:41
+#: app/routes/banks.py:32 app/routes/credits.py:31 app/routes/employers.py:41
 msgid "Septembre"
 msgstr ""
 
-#: app/routes/banks.py:32 app/routes/employers.py:41
+#: app/routes/banks.py:32 app/routes/credits.py:31 app/routes/employers.py:41
 msgid "Octobre"
 msgstr ""
 
-#: app/routes/banks.py:32 app/routes/employers.py:41
+#: app/routes/banks.py:32 app/routes/credits.py:31 app/routes/employers.py:41
 msgid "Novembre"
 msgstr ""
 
-#: app/routes/banks.py:32 app/routes/employers.py:41
+#: app/routes/banks.py:32 app/routes/credits.py:31 app/routes/employers.py:41
 msgid "Décembre"
 msgstr ""
 
@@ -322,29 +326,34 @@ msgstr ""
 msgid "Banque supprimée avec succès !"
 msgstr ""
 
-#: app/routes/banks.py:349 app/routes/employers.py:314
+#: app/routes/banks.py:349 app/routes/credits.py:396
+#: app/routes/employers.py:314
 #, python-format
 msgid "Le document \"%(name)s\" a été ajouté avec succès !"
 msgstr ""
 
 #: app/routes/banks.py:368 app/routes/banks.py:388 app/routes/banks.py:409
-#: app/routes/banks.py:460 app/routes/employers.py:333
-#: app/routes/employers.py:353 app/routes/employers.py:373
-#: app/routes/employers.py:422
+#: app/routes/banks.py:460 app/routes/credits.py:415 app/routes/credits.py:435
+#: app/routes/credits.py:455 app/routes/credits.py:504
+#: app/routes/employers.py:333 app/routes/employers.py:353
+#: app/routes/employers.py:373 app/routes/employers.py:422
 msgid "Vous n'avez pas accès à ce document."
 msgstr ""
 
-#: app/routes/banks.py:372 app/routes/banks.py:392 app/routes/employers.py:337
+#: app/routes/banks.py:372 app/routes/banks.py:392 app/routes/credits.py:419
+#: app/routes/credits.py:439 app/routes/employers.py:337
 #: app/routes/employers.py:357
 msgid "Ce document n'a pas de fichier attaché."
 msgstr ""
 
-#: app/routes/banks.py:440 app/routes/employers.py:402
+#: app/routes/banks.py:440 app/routes/credits.py:484
+#: app/routes/employers.py:402
 #, python-format
 msgid "Le document \"%(name)s\" a été mis à jour."
 msgstr ""
 
-#: app/routes/banks.py:468 app/routes/employers.py:430
+#: app/routes/banks.py:468 app/routes/credits.py:512
+#: app/routes/employers.py:430
 #, python-format
 msgid "Le document \"%(name)s\" a été supprimé."
 msgstr ""
@@ -399,13 +408,14 @@ msgstr ""
 msgid "Chéquier modifié avec succès !"
 msgstr ""
 
-#: app/routes/checkbooks.py:168 app/routes/revenues.py:217
+#: app/routes/checkbooks.py:168 app/routes/credit_types.py:132
+#: app/routes/credits.py:280 app/routes/revenues.py:217
 #: app/routes/subscriptions.py:249
 msgid "activé"
 msgstr ""
 
-#: app/routes/checkbooks.py:168 app/routes/revenues.py:217
-#: app/routes/subscriptions.py:249
+#: app/routes/checkbooks.py:168 app/routes/credit_types.py:132
+#: app/routes/revenues.py:217 app/routes/subscriptions.py:249
 msgid "désactivé"
 msgstr ""
 
@@ -461,6 +471,103 @@ msgstr ""
 msgid "Chèque #%(number)s supprimé avec succès !"
 msgstr ""
 
+#: app/routes/credit_types.py:38
+#, python-format
+msgid "Un type de crédit \"%(name)s\" existe déjà dans vos types personnalisés."
+msgstr ""
+
+#: app/routes/credit_types.py:52
+#, python-format
+msgid "Le type de crédit \"%(name)s\" a été créé avec succès !"
+msgstr ""
+
+#: app/routes/credit_types.py:66 app/routes/credit_types.py:126
+msgid "Vous ne pouvez modifier que vos propres types de crédits."
+msgstr ""
+
+#: app/routes/credit_types.py:88
+#, python-format
+msgid "Le type de crédit \"%(name)s\" a été mis à jour avec succès !"
+msgstr ""
+
+#: app/routes/credit_types.py:102
+msgid "Vous ne pouvez supprimer que vos propres types de crédits."
+msgstr ""
+
+#: app/routes/credit_types.py:107
+#, python-format
+msgid ""
+"Impossible de supprimer le type \"%(name)s\" car il est utilisé par "
+"%(count)s crédit(s)."
+msgstr ""
+
+#: app/routes/credit_types.py:114
+#, python-format
+msgid "Le type de crédit \"%(name)s\" a été supprimé avec succès !"
+msgstr ""
+
+#: app/routes/credit_types.py:133
+#, python-format
+msgid "Le type de crédit \"%(name)s\" a été %(status)s."
+msgstr ""
+
+#: app/routes/credits.py:17
+msgid "Contrat de crédit"
+msgstr ""
+
+#: app/routes/credits.py:19
+msgid "Assurance"
+msgstr ""
+
+#: app/routes/credits.py:20 app/routes/employers.py:32
+msgid "Avenant"
+msgstr ""
+
+#: app/routes/credits.py:110
+msgid ""
+"Vous avez atteint la limite de crédits pour le plan gratuit. Passez au "
+"plan Premium pour ajouter des crédits illimités."
+msgstr ""
+
+#: app/routes/credits.py:164
+msgid "Nouveau crédit ajouté"
+msgstr ""
+
+#: app/routes/credits.py:165
+#, python-format
+msgid "Votre crédit \"%(name)s\" a été ajouté avec succès."
+msgstr ""
+
+#: app/routes/credits.py:174
+#, python-format
+msgid "Le crédit \"%(name)s\" a été ajouté avec succès !"
+msgstr ""
+
+#: app/routes/credits.py:190 app/routes/credits.py:239
+#: app/routes/credits.py:265 app/routes/credits.py:291
+#: app/routes/credits.py:347
+msgid "Vous n'avez pas accès à ce crédit."
+msgstr ""
+
+#: app/routes/credits.py:219
+#, python-format
+msgid "Le crédit \"%(name)s\" a été mis à jour."
+msgstr ""
+
+#: app/routes/credits.py:250
+#, python-format
+msgid "Le crédit \"%(name)s\" et toutes ses transactions ont été supprimés."
+msgstr ""
+
+#: app/routes/credits.py:280
+msgid "clôturé"
+msgstr ""
+
+#: app/routes/credits.py:281
+#, python-format
+msgid "Le crédit \"%(name)s\" a été %(status)s."
+msgstr ""
+
 #: app/routes/employers.py:16
 msgid "CDI"
 msgstr ""
@@ -499,10 +606,6 @@ msgstr ""
 
 #: app/routes/employers.py:31
 msgid "Attestation"
-msgstr ""
-
-#: app/routes/employers.py:32
-msgid "Avenant"
 msgstr ""
 
 #: app/routes/employers.py:127

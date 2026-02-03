@@ -83,6 +83,15 @@
                         </div>
 
                         <div class="mb-3">
+                            <label for="language" class="form-label">{{ _('Langue') }} <span class="text-danger">*</span></label>
+                            <select class="form-select" id="language" name="language" required>
+                                <option value="fr" selected>{{ _('Français') }}</option>
+                                <option value="en">{{ _('English') }}</option>
+                            </select>
+                            <small class="text-muted">{{ _('Langue d\'affichage de l\'application') }}</small>
+                        </div>
+
+                        <div class="mb-3">
                             <label for="default_currency" class="form-label">{{ _('Devise par défaut') }}</label>
                             <select class="form-select" id="default_currency" name="default_currency" required>
                                 <option value="EUR" selected>EUR (€) - {{ _('Euro') }}</option>

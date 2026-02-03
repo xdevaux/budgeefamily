@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request, Response
 from flask_login import login_required, current_user
+from flask_babel import gettext as _
 from app import db, limiter
 from app.models import Credit, Category, CreditType, CreditDocument, Bank, Notification
 from app.utils.transactions import generate_future_transactions, update_future_transactions, cancel_future_transactions, calculate_next_future_date, delete_all_transactions
@@ -10,29 +11,33 @@ from dateutil.relativedelta import relativedelta
 bp = Blueprint('credits', __name__, url_prefix='/credits')
 
 # Types de documents disponibles pour les crédits
-DOCUMENT_TYPES = [
-    ('contract', 'Contrat de crédit', 'fa-file-signature', '#6366f1'),
-    ('statement', 'Relevé', 'fa-file-invoice', '#10b981'),
-    ('insurance', 'Assurance', 'fa-shield-alt', '#f59e0b'),
-    ('amendment', 'Avenant', 'fa-file-contract', '#8b5cf6'),
-    ('correspondence', 'Courrier', 'fa-envelope', '#06b6d4'),
-    ('other', 'Autre document', 'fa-file', '#6c757d'),
-]
+def get_document_types():
+    """Retourne les types de documents avec traduction"""
+    return [
+        ('contract', _('Contrat de crédit'), 'fa-file-signature', '#6366f1'),
+        ('statement', _('Relevé'), 'fa-file-invoice', '#10b981'),
+        ('insurance', _('Assurance'), 'fa-shield-alt', '#f59e0b'),
+        ('amendment', _('Avenant'), 'fa-file-contract', '#8b5cf6'),
+        ('correspondence', _('Courrier'), 'fa-envelope', '#06b6d4'),
+        ('other', _('Autre document'), 'fa-file', '#6c757d'),
+    ]
 
-# Mois en français
-MONTHS_FR = [
-    (1, 'Janvier'), (2, 'Février'), (3, 'Mars'), (4, 'Avril'),
-    (5, 'Mai'), (6, 'Juin'), (7, 'Juillet'), (8, 'Août'),
-    (9, 'Septembre'), (10, 'Octobre'), (11, 'Novembre'), (12, 'Décembre')
-]
+# Mois
+def get_months():
+    """Retourne les mois avec traduction"""
+    return [
+        (1, _('Janvier')), (2, _('Février')), (3, _('Mars')), (4, _('Avril')),
+        (5, _('Mai')), (6, _('Juin')), (7, _('Juillet')), (8, _('Août')),
+        (9, _('Septembre')), (10, _('Octobre')), (11, _('Novembre')), (12, _('Décembre'))
+    ]
 
 
 def get_document_type_info(type_code):
     """Retourne les informations d'un type de document"""
-    for code, name, icon, color in DOCUMENT_TYPES:
+    for code, name, icon, color in get_document_types():
         if code == type_code:
             return {'code': code, 'name': name, 'icon': icon, 'color': color}
-    return {'code': 'other', 'name': 'Autre', 'icon': 'fa-file', 'color': '#6c757d'}
+    return {'code': 'other', 'name': _('Autre'), 'icon': 'fa-file', 'color': '#6c757d'}
 
 
 def get_user_categories():
@@ -102,7 +107,7 @@ def add():
     if request.method == 'POST':
         # Vérifier si l'utilisateur peut ajouter un crédit
         if not current_user.can_add_credit():
-            flash('Vous avez atteint la limite de crédits pour le plan gratuit. Passez au plan Premium pour ajouter des crédits illimités.', 'warning')
+            flash(_('Vous avez atteint la limite de crédits pour le plan gratuit. Passez au plan Premium pour ajouter des crédits illimités.'), 'warning')
             return redirect(url_for('credits.list_credits'))
 
         name = request.form.get('name')
@@ -156,8 +161,8 @@ def add():
             credit_id=credit.id,
             created_by_user_id=current_user.id,
             type='credit_added',
-            title='Nouveau crédit ajouté',
-            message=f'Votre crédit "{name}" a été ajouté avec succès.'
+            title=_('Nouveau crédit ajouté'),
+            message=_('Votre crédit "%(name)s" a été ajouté avec succès.', name=name)
         )
         db.session.add(notification)
         db.session.commit()
@@ -166,7 +171,7 @@ def add():
         from app.utils.email import send_notification_email
         send_notification_email(current_user, notification)
 
-        flash(f'Le crédit "{name}" a été ajouté avec succès !', 'success')
+        flash(_('Le crédit "%(name)s" a été ajouté avec succès !', name=name), 'success')
         return redirect(url_for('credits.list_credits'))
 
     from app.models import Bank
@@ -182,7 +187,7 @@ def edit(credit_id):
     credit = Credit.query.get_or_404(credit_id)
 
     if credit.user_id != current_user.id:
-        flash('Vous n\'avez pas accès à ce crédit.', 'danger')
+        flash(_('Vous n\'avez pas accès à ce crédit.'), 'danger')
         return redirect(url_for('credits.list_credits'))
 
     if request.method == 'POST':
@@ -211,7 +216,7 @@ def edit(credit_id):
         update_future_transactions(credit, 'credit')
         db.session.commit()
 
-        flash(f'Le crédit "{credit.name}" a été mis à jour.', 'success')
+        flash(_('Le crédit "%(name)s" a été mis à jour.', name=credit.name), 'success')
         return redirect(url_for('credits.list_credits'))
 
     from app.models import Bank
@@ -231,7 +236,7 @@ def delete(credit_id):
     credit = Credit.query.get_or_404(credit_id)
 
     if credit.user_id != current_user.id:
-        flash('Vous n\'avez pas accès à ce crédit.', 'danger')
+        flash(_('Vous n\'avez pas accès à ce crédit.'), 'danger')
         return redirect(url_for('credits.list_credits'))
 
     credit_name = credit.name
@@ -242,7 +247,7 @@ def delete(credit_id):
     db.session.delete(credit)
     db.session.commit()
 
-    flash(f'Le crédit "{credit_name}" et toutes ses transactions ont été supprimés.', 'success')
+    flash(_('Le crédit "%(name)s" et toutes ses transactions ont été supprimés.', name=credit_name), 'success')
 
     # Rediriger vers la page balance si le paramètre est présent
     redirect_to = request.args.get('redirect_to', 'credits.list_credits')
@@ -257,7 +262,7 @@ def toggle(credit_id):
     credit = Credit.query.get_or_404(credit_id)
 
     if credit.user_id != current_user.id:
-        flash('Vous n\'avez pas accès à ce crédit.', 'danger')
+        flash(_('Vous n\'avez pas accès à ce crédit.'), 'danger')
         return redirect(url_for('credits.list_credits'))
 
     credit.is_active = not credit.is_active
@@ -272,8 +277,8 @@ def toggle(credit_id):
 
     db.session.commit()
 
-    status = 'activé' if credit.is_active else 'clôturé'
-    flash(f'Le crédit "{credit.name}" a été {status}.', 'success')
+    status = _('activé') if credit.is_active else _('clôturé')
+    flash(_('Le crédit "%(name)s" a été %(status)s.', name=credit.name, status=status), 'success')
     return redirect(url_for('credits.list_credits'))
 
 
@@ -283,7 +288,7 @@ def detail(credit_id):
     credit = Credit.query.get_or_404(credit_id)
 
     if credit.user_id != current_user.id:
-        flash('Vous n\'avez pas accès à ce crédit.', 'danger')
+        flash(_('Vous n\'avez pas accès à ce crédit.'), 'danger')
         return redirect(url_for('credits.list_credits'))
 
     # Récupérer les documents avec filtres
@@ -311,7 +316,7 @@ def detail(credit_id):
 
     # Compter les documents par type
     doc_counts = {}
-    for doc_type, _, _, _ in DOCUMENT_TYPES:
+    for doc_type, _, _, _ in get_document_types():
         doc_counts[doc_type] = credit.documents.filter_by(document_type=doc_type).count()
 
     # Calculer la taille totale des documents
@@ -322,7 +327,7 @@ def detail(credit_id):
     return render_template('credits/detail.html',
                          credit=credit,
                          documents=documents,
-                         document_types=DOCUMENT_TYPES,
+                         document_types=get_document_types(),
                          years=years,
                          filter_type=filter_type,
                          filter_year=filter_year,
@@ -339,7 +344,7 @@ def add_document(credit_id):
     credit = Credit.query.get_or_404(credit_id)
 
     if credit.user_id != current_user.id:
-        flash('Vous n\'avez pas accès à ce crédit.', 'danger')
+        flash(_('Vous n\'avez pas accès à ce crédit.'), 'danger')
         return redirect(url_for('credits.list_credits'))
 
     if request.method == 'POST':
@@ -388,7 +393,7 @@ def add_document(credit_id):
         db.session.add(document)
         db.session.commit()
 
-        flash(f'Le document "{name}" a été ajouté avec succès !', 'success')
+        flash(_('Le document "%(name)s" a été ajouté avec succès !', name=name), 'success')
         return redirect(url_for('credits.detail', credit_id=credit_id))
 
     current_year = datetime.now().year
@@ -396,8 +401,8 @@ def add_document(credit_id):
 
     return render_template('credits/add_document.html',
                          credit=credit,
-                         document_types=DOCUMENT_TYPES,
-                         months=MONTHS_FR,
+                         document_types=get_document_types(),
+                         months=get_months(),
                          years=years)
 
 
@@ -407,11 +412,11 @@ def download_document(document_id):
     document = CreditDocument.query.get_or_404(document_id)
 
     if document.user_id != current_user.id:
-        flash('Vous n\'avez pas accès à ce document.', 'danger')
+        flash(_('Vous n\'avez pas accès à ce document.'), 'danger')
         return redirect(url_for('credits.list_credits'))
 
     if not document.file_data:
-        flash('Ce document n\'a pas de fichier attaché.', 'warning')
+        flash(_('Ce document n\'a pas de fichier attaché.'), 'warning')
         return redirect(url_for('credits.detail', credit_id=document.credit_id))
 
     return Response(
@@ -427,11 +432,11 @@ def view_document(document_id):
     document = CreditDocument.query.get_or_404(document_id)
 
     if document.user_id != current_user.id:
-        flash('Vous n\'avez pas accès à ce document.', 'danger')
+        flash(_('Vous n\'avez pas accès à ce document.'), 'danger')
         return redirect(url_for('credits.list_credits'))
 
     if not document.file_data:
-        flash('Ce document n\'a pas de fichier attaché.', 'warning')
+        flash(_('Ce document n\'a pas de fichier attaché.'), 'warning')
         return redirect(url_for('credits.detail', credit_id=document.credit_id))
 
     return Response(
@@ -447,7 +452,7 @@ def edit_document(document_id):
     document = CreditDocument.query.get_or_404(document_id)
 
     if document.user_id != current_user.id:
-        flash('Vous n\'avez pas accès à ce document.', 'danger')
+        flash(_('Vous n\'avez pas accès à ce document.'), 'danger')
         return redirect(url_for('credits.list_credits'))
 
     if request.method == 'POST':
@@ -476,7 +481,7 @@ def edit_document(document_id):
 
         db.session.commit()
 
-        flash(f'Le document "{document.name}" a été mis à jour.', 'success')
+        flash(_('Le document "%(name)s" a été mis à jour.', name=document.name), 'success')
         return redirect(url_for('credits.detail', credit_id=document.credit_id))
 
     current_year = datetime.now().year
@@ -485,8 +490,8 @@ def edit_document(document_id):
     return render_template('credits/edit_document.html',
                          document=document,
                          credit=document.credit,
-                         document_types=DOCUMENT_TYPES,
-                         months=MONTHS_FR,
+                         document_types=get_document_types(),
+                         months=get_months(),
                          years=years)
 
 
@@ -496,7 +501,7 @@ def delete_document(document_id):
     document = CreditDocument.query.get_or_404(document_id)
 
     if document.user_id != current_user.id:
-        flash('Vous n\'avez pas accès à ce document.', 'danger')
+        flash(_('Vous n\'avez pas accès à ce document.'), 'danger')
         return redirect(url_for('credits.list_credits'))
 
     credit_id = document.credit_id
@@ -504,5 +509,5 @@ def delete_document(document_id):
     db.session.delete(document)
     db.session.commit()
 
-    flash(f'Le document "{document_name}" a été supprimé.', 'success')
+    flash(_('Le document "%(name)s" a été supprimé.', name=document_name), 'success')
     return redirect(url_for('credits.detail', credit_id=credit_id))

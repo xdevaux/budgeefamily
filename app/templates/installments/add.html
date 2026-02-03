@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 
-{% block title %}Ajouter un paiement en plusieurs fois - Budgee Family{% endblock %}
+{% block title %}{{ _('Ajouter un paiement en plusieurs fois') }} - Budgee Family{% endblock %}
 
 {% block content %}
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2><i class="fas fa-calendar-alt"></i> Ajouter un paiement en plusieurs fois</h2>
+        <h2><i class="fas fa-calendar-alt"></i> {{ _('Ajouter un paiement en plusieurs fois') }}</h2>
     </div>
 
     <div class="row">
@@ -14,49 +14,52 @@
                 <div class="card-body">
                     <form method="POST">
                         <!-- Informations du produit -->
-                        <h5 class="mb-3"><i class="fas fa-shopping-cart"></i> Informations du produit/service</h5>
+                        <h5 class="mb-3"><i class="fas fa-shopping-cart"></i> {{ _('Informations du produit/service') }}</h5>
 
                         <div class="mb-3">
-                            <label for="name" class="form-label">Nom de l'article <span class="text-danger">*</span></label>
+                            <label for="name" class="form-label">{{ _('Nom de l\'article') }} <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" id="name" name="name" required
-                                   placeholder="Ex: Four Darty">
+                                   placeholder="{{ _('Ex: Four Darty') }}">
                         </div>
 
                         <div class="mb-3">
-                            <label for="description" class="form-label">Description</label>
+                            <label for="description" class="form-label">{{ _('Description') }}</label>
                             <textarea class="form-control" id="description" name="description" rows="2"
-                                      placeholder="Description optionnelle"></textarea>
+                                      placeholder="{{ _('Description optionnelle') }}"></textarea>
                         </div>
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label for="merchant" class="form-label">Marchand</label>
+                                <label for="merchant" class="form-label">{{ _('Marchand') }}</label>
                                 <input type="text" class="form-control" id="merchant" name="merchant"
-                                       placeholder="Ex: Darty, Fnac, Amazon...">
+                                       placeholder="{{ _('Ex: Darty, Fnac, Amazon...') }}">
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="provider" class="form-label">Fournisseur de paiement</label>
-                                <select class="form-select" id="provider" name="provider">
-                                    <option value="">Sélectionner...</option>
+                                <label for="provider" class="form-label">{{ _('Fournisseur de paiement') }}</label>
+                                <select class="form-select" id="provider_select" onchange="toggleCustomProvider()">
+                                    <option value="">{{ _('Sélectionner...') }}</option>
                                     <option value="ALMA">ALMA</option>
                                     <option value="Amazon">Amazon</option>
                                     <option value="Cetelem">Cetelem</option>
                                     <option value="Klarna">Klarna</option>
                                     <option value="Oney">Oney</option>
                                     <option value="PayPal">PayPal</option>
-                                    <option value="Autre">Autre</option>
+                                    <option value="custom">{{ _('Autre') }}</option>
                                 </select>
+                                <input type="hidden" id="provider" name="provider">
+                                <input type="text" class="form-control mt-2" id="custom_provider"
+                                       placeholder="{{ _('Saisir le nom du fournisseur') }}" style="display: none;">
                             </div>
                         </div>
 
                         <hr class="my-4">
 
                         <!-- Informations du paiement -->
-                        <h5 class="mb-3"><i class="fas fa-money-bill-wave"></i> Informations du paiement</h5>
+                        <h5 class="mb-3"><i class="fas fa-money-bill-wave"></i> {{ _('Informations du paiement') }}</h5>
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label for="total_amount" class="form-label">Montant total <span class="text-danger">*</span></label>
+                                <label for="total_amount" class="form-label">{{ _('Montant total') }} <span class="text-danger">*</span></label>
                                 <div class="input-group">
                                     <input type="number" class="form-control" id="total_amount" name="total_amount"
                                            step="0.01" min="0" required oninput="calculateInstallment()">
@@ -68,18 +71,18 @@
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="number_of_installments" class="form-label">Nombre de mensualités <span class="text-danger">*</span></label>
+                                <label for="number_of_installments" class="form-label">{{ _('Nombre de mensualités') }} <span class="text-danger">*</span></label>
                                 <select class="form-select" id="number_of_installments" name="number_of_installments"
                                         required onchange="calculateInstallment()">
-                                    <option value="">Sélectionner...</option>
-                                    <option value="2">2 fois</option>
-                                    <option value="3">3 fois</option>
-                                    <option value="4">4 fois</option>
-                                    <option value="6">6 fois</option>
-                                    <option value="10">10 fois</option>
-                                    <option value="12">12 fois</option>
-                                    <option value="24">24 fois</option>
-                                    <option value="36">36 fois</option>
+                                    <option value="">{{ _('Sélectionner...') }}</option>
+                                    <option value="2">{{ _('2 fois') }}</option>
+                                    <option value="3">{{ _('3 fois') }}</option>
+                                    <option value="4">{{ _('4 fois') }}</option>
+                                    <option value="6">{{ _('6 fois') }}</option>
+                                    <option value="10">{{ _('10 fois') }}</option>
+                                    <option value="12">{{ _('12 fois') }}</option>
+                                    <option value="24">{{ _('24 fois') }}</option>
+                                    <option value="36">{{ _('36 fois') }}</option>
                                 </select>
                             </div>
                         </div>
@@ -89,56 +92,56 @@
                                 <input class="form-check-input" type="checkbox" id="has_fees" name="has_fees"
                                        onchange="toggleFees()">
                                 <label class="form-check-label" for="has_fees">
-                                    Avec frais
+                                    {{ _('Avec frais') }}
                                 </label>
                             </div>
                         </div>
 
                         <div class="mb-3" id="fees_section" style="display: none;">
-                            <label for="fees_amount" class="form-label">Montant des frais</label>
+                            <label for="fees_amount" class="form-label">{{ _('Montant des frais') }}</label>
                             <div class="input-group">
                                 <input type="number" class="form-control" id="fees_amount" name="fees_amount"
                                        step="0.01" min="0" value="0" oninput="calculateInstallment()">
                                 <span class="input-group-text">€</span>
                             </div>
-                            <small class="text-muted">Frais appliqués sur le montant total</small>
+                            <small class="text-muted">{{ _('Frais appliqués sur le montant total') }}</small>
                         </div>
 
                         <div class="alert alert-info" id="installment_preview" style="display: none;">
-                            <strong>Montant de chaque mensualité :</strong> <span id="installment_amount">0,00 €</span>
+                            <strong>{{ _('Montant de chaque mensualité :') }}</strong> <span id="installment_amount">0,00 €</span>
                         </div>
 
                         <hr class="my-4">
 
                         <!-- Catégorisation -->
-                        <h5 class="mb-3"><i class="fas fa-tags"></i> Catégorisation (optionnel)</h5>
+                        <h5 class="mb-3"><i class="fas fa-tags"></i> {{ _('Catégorisation (optionnel)') }}</h5>
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label for="product_category" class="form-label">Catégorie de produit</label>
+                                <label for="product_category" class="form-label">{{ _('Catégorie de produit') }}</label>
                                 <select class="form-select" id="product_category" name="product_category">
-                                    <option value="">Sélectionner...</option>
-                                    <option value="Alimentation">Alimentation</option>
-                                    <option value="Autre">Autre</option>
-                                    <option value="Automobile">Automobile</option>
-                                    <option value="Beauté & Santé">Beauté & Santé</option>
-                                    <option value="Électroménager">Électroménager</option>
-                                    <option value="Équipement de la maison">Équipement de la maison</option>
-                                    <option value="Études">Études</option>
-                                    <option value="Gaming">Gaming</option>
-                                    <option value="Informatique">Informatique</option>
-                                    <option value="Mobile">Mobile</option>
-                                    <option value="Mode">Mode</option>
-                                    <option value="Sport">Sport</option>
-                                    <option value="TV Son Hifi">TV Son Hifi</option>
+                                    <option value="">{{ _('Sélectionner...') }}</option>
+                                    <option value="Alimentation">{{ _('Alimentation') }}</option>
+                                    <option value="Autre">{{ _('Autre') }}</option>
+                                    <option value="Automobile">{{ _('Automobile') }}</option>
+                                    <option value="Beauté & Santé">{{ _('Beauté & Santé') }}</option>
+                                    <option value="Électroménager">{{ _('Électroménager') }}</option>
+                                    <option value="Équipement de la maison">{{ _('Équipement de la maison') }}</option>
+                                    <option value="Études">{{ _('Études') }}</option>
+                                    <option value="Gaming">{{ _('Gaming') }}</option>
+                                    <option value="Informatique">{{ _('Informatique') }}</option>
+                                    <option value="Mobile">{{ _('Mobile') }}</option>
+                                    <option value="Mode">{{ _('Mode') }}</option>
+                                    <option value="Sport">{{ _('Sport') }}</option>
+                                    <option value="TV Son Hifi">{{ _('TV Son Hifi') }}</option>
                                 </select>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="credit_type_id" class="form-label">Type de crédit</label>
+                                <label for="credit_type_id" class="form-label">{{ _('Type de crédit') }}</label>
                                 <select class="form-select" id="credit_type_id" name="credit_type_id">
-                                    <option value="">Aucun</option>
+                                    <option value="">{{ _('Aucun') }}</option>
                                     {% for type in credit_types %}
-                                        <option value="{{ type.id }}">{{ type.name }}</option>
+                                        <option value="{{ type.id }}">{{ type.get_name(current_user.language or 'fr') }}</option>
                                     {% endfor %}
                                 </select>
                             </div>
@@ -147,20 +150,20 @@
                         <hr class="my-4">
 
                         <!-- Dates -->
-                        <h5 class="mb-3"><i class="fas fa-calendar"></i> Dates</h5>
+                        <h5 class="mb-3"><i class="fas fa-calendar"></i> {{ _('Dates') }}</h5>
 
                         <div class="mb-3">
-                            <label for="start_date" class="form-label">Date du premier paiement <span class="text-danger">*</span></label>
+                            <label for="start_date" class="form-label">{{ _('Date du premier paiement') }} <span class="text-danger">*</span></label>
                             <input type="date" class="form-control" id="start_date" name="start_date" required
                                    value="{{ now.strftime('%Y-%m-%d') }}">
                         </div>
 
                         <div class="d-flex gap-2 justify-content-end mt-4">
                             <a href="{{ url_for('installments.list') }}" class="btn btn-secondary">
-                                <i class="fas fa-times"></i> Annuler
+                                <i class="fas fa-times"></i> {{ _('Annuler') }}
                             </a>
                             <button type="submit" class="btn btn-primary" id="submitBtn">
-                                <i class="fas fa-save"></i> Enregistrer
+                                <i class="fas fa-save"></i> {{ _('Enregistrer') }}
                             </button>
                         </div>
                     </form>
@@ -171,18 +174,18 @@
         <div class="col-md-4">
             <div class="card bg-light">
                 <div class="card-body">
-                    <h5 class="card-title"><i class="fas fa-info-circle"></i> Aide</h5>
+                    <h5 class="card-title"><i class="fas fa-info-circle"></i> {{ _('Aide') }}</h5>
                     <p class="card-text">
-                        <strong>Qu'est-ce qu'un paiement en plusieurs fois ?</strong><br>
-                        Il s'agit d'un achat que vous payez en plusieurs mensualités (ALMA, Klarna, PayPal...).
+                        <strong>{{ _('Qu\'est-ce qu\'un paiement en plusieurs fois ?') }}</strong><br>
+                        {{ _('Il s\'agit d\'un achat que vous payez en plusieurs mensualités (ALMA, Klarna, PayPal...).') }}
                     </p>
                     <p class="card-text">
-                        <strong>Comment ça marche ?</strong><br>
-                        Les mensualités seront automatiquement traitées chaque mois et vous recevrez une notification.
+                        <strong>{{ _('Comment ça marche ?') }}</strong><br>
+                        {{ _('Les mensualités seront automatiquement traitées chaque mois et vous recevrez une notification.') }}
                     </p>
                     <p class="card-text">
-                        <strong>Avec ou sans frais ?</strong><br>
-                        Certains paiements fractionnés incluent des frais. Cochez l'option si c'est votre cas.
+                        <strong>{{ _('Avec ou sans frais ?') }}</strong><br>
+                        {{ _('Certains paiements fractionnés incluent des frais. Cochez l\'option si c\'est votre cas.') }}
                     </p>
                 </div>
             </div>
@@ -191,6 +194,35 @@
 </div>
 
 <script>
+    function toggleCustomProvider() {
+        const select = document.getElementById('provider_select');
+        const customInput = document.getElementById('custom_provider');
+        const hiddenInput = document.getElementById('provider');
+
+        if (select.value === 'custom') {
+            customInput.style.display = 'block';
+            customInput.required = true;
+            hiddenInput.value = '';
+        } else {
+            customInput.style.display = 'none';
+            customInput.required = false;
+            customInput.value = '';
+            hiddenInput.value = select.value;
+        }
+    }
+
+    // Update hidden field when custom provider is typed
+    document.addEventListener('DOMContentLoaded', function() {
+        const customInput = document.getElementById('custom_provider');
+        const hiddenInput = document.getElementById('provider');
+
+        if (customInput) {
+            customInput.addEventListener('input', function() {
+                hiddenInput.value = this.value;
+            });
+        }
+    });
+
     function toggleFees() {
         const hasFees = document.getElementById('has_fees').checked;
         document.getElementById('fees_section').style.display = hasFees ? 'block' : 'none';
@@ -226,7 +258,7 @@
             return false;
         }
         submitBtn.disabled = true;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enregistrement en cours...';
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> {{ _("Enregistrement en cours...") }}';
     });
 </script>
 {% endblock %}

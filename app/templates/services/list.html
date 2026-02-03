@@ -127,7 +127,7 @@
                         {% if service.category %}
                         <div class="mb-3">
                             <span class="badge" style="background-color: {{ service.category.color }}">
-                                {{ service.category.name }}
+                                {{ service.category | get_translated_name }}
                             </span>
                         </div>
                         {% endif %}
@@ -198,7 +198,7 @@
                                 <td>
                                     {% if service.category %}
                                     <span class="badge" style="background-color: {{ service.category.color }}">
-                                        {{ service.category.name }}
+                                        {{ service.category | get_translated_name }}
                                     </span>
                                     {% else %}
                                     <span class="text-muted">-</span>
@@ -288,7 +288,7 @@
                         {% if service.category %}
                         <div class="mb-3">
                             <span class="badge" style="background-color: {{ service.category.color }}">
-                                {{ service.category.name }}
+                                {{ service.category | get_translated_name }}
                             </span>
                         </div>
                         {% endif %}
@@ -357,7 +357,7 @@
                                 <td>
                                     {% if service.category %}
                                     <span class="badge" style="background-color: {{ service.category.color }}">
-                                        {{ service.category.name }}
+                                        {{ service.category | get_translated_name }}
                                     </span>
                                     {% else %}
                                     <span class="text-muted">-</span>

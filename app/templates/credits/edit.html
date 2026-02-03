@@ -30,7 +30,7 @@
                                     <option value="">-- {{ _('Aucun type') }} --</option>
                                     {% for type in credit_types %}
                                         <option value="{{ type.id }}" {% if credit.credit_type_id == type.id %}selected{% endif %}>
-                                            {{ type.name }}
+                                            {{ type.get_name(current_user.language or 'fr') }}
                                             {% if type.is_custom() %}({{ _('Personnalisé') }}){% endif %}
                                         </option>
                                     {% endfor %}

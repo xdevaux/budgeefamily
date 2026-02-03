@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 
-{% block title %}Tableau de bord - Budgee Family{% endblock %}
+{% block title %}{{ _('Tableau de bord') }} - Budgee Family{% endblock %}
 
 {% block content %}
 <div class="container py-4">
     <div class="mb-4">
-        <h2><i class="fas fa-chart-line"></i> Tableau de bord de <span class="text-success">{{ current_user.first_name }}</span></h2>
+        <h2><i class="fas fa-chart-line"></i> {{ _('Tableau de bord de') }} <span class="text-success">{{ current_user.first_name }}</span></h2>
     </div>
 
     <!-- Stats Cards -->
@@ -16,7 +16,7 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <h6 class="text-uppercase mb-1 opacity-75">Solde</h6>
+                                <h6 class="text-uppercase mb-1 opacity-75">{{ _('Solde') }}</h6>
                                 <h2 class="mb-0">{{ solde | format_amount }} €</h2>
                             </div>
                             <div>
@@ -34,7 +34,7 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <h6 class="text-uppercase mb-1 opacity-75">Revenus actuels</h6>
+                                <h6 class="text-uppercase mb-1 opacity-75">{{ _('Revenus actuels') }}</h6>
                                 <h2 class="mb-0">{{ total_revenues | format_amount }} €</h2>
                             </div>
                             <div>
@@ -52,7 +52,7 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <h6 class="text-uppercase mb-1 opacity-75">Abonnements actifs</h6>
+                                <h6 class="text-uppercase mb-1 opacity-75">{{ _('Abonnements actifs') }}</h6>
                                 <h2 class="mb-0">{{ total_subscriptions_cost | format_amount }} €</h2>
                             </div>
                             <div>
@@ -70,7 +70,7 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <h6 class="text-uppercase mb-1 opacity-75">Crédits en cours</h6>
+                                <h6 class="text-uppercase mb-1 opacity-75">{{ _('Crédits en cours') }}</h6>
                                 <h2 class="mb-0">{{ total_credits | format_amount }} €</h2>
                             </div>
                             <div>
@@ -89,17 +89,17 @@
             <!-- Revenus : Prochains versements -->
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #e5e7eb;">
-                    <h5 class="mb-0"><i class="fas fa-hand-holding-usd text-secondary"></i> Revenus : Prochains versements</h5>
+                    <h5 class="mb-0"><i class="fas fa-hand-holding-usd text-secondary"></i> {{ _('Revenus : Prochains versements') }}</h5>
                     <div class="d-flex align-items-center gap-2">
                         {% if upcoming_revenues %}
                             <span class="badge text-white" style="background-color: #10b981;">{{ upcoming_revenues|length }}</span>
                         {% endif %}
                         {% if current_user.is_premium() %}
                             <div class="btn-group btn-group-sm">
-                                <a href="{{ url_for('exports.export_upcoming_revenues', format='excel') }}" class="btn btn-outline-success" title="Exporter en Excel">
+                                <a href="{{ url_for('exports.export_upcoming_revenues', format='excel') }}" class="btn btn-outline-success" title="{{ _('Exporter en Excel') }}">
                                     <i class="fas fa-file-excel"></i>
                                 </a>
-                                <a href="{{ url_for('exports.export_upcoming_revenues', format='pdf') }}" class="btn btn-outline-danger" title="Exporter en PDF">
+                                <a href="{{ url_for('exports.export_upcoming_revenues', format='pdf') }}" class="btn btn-outline-danger" title="{{ _('Exporter en PDF') }}">
                                     <i class="fas fa-file-pdf"></i>
                                 </a>
                             </div>
@@ -133,17 +133,17 @@
                         </div>
                         <div class="card-footer bg-white text-center">
                             <a href="{{ url_for('revenues.list') }}" class="btn btn-sm text-white" style="border: 1px solid #10b981; background-color: transparent; color: #10b981 !important;" onmouseover="this.style.backgroundColor='#10b981'; this.style.color='#fff !important';" onmouseout="this.style.backgroundColor='transparent'; this.style.color='#10b981 !important';">
-                                <i class="fas fa-hand-holding-usd"></i> Voir tous
+                                <i class="fas fa-hand-holding-usd"></i> {{ _('Voir tous') }}
                             </a>
                             <a href="{{ url_for('revenues.add') }}" class="btn btn-sm text-white ms-2" style="border: 1px solid #10b981; background-color: transparent; color: #10b981 !important;" onmouseover="this.style.backgroundColor='#10b981'; this.style.color='#fff !important';" onmouseout="this.style.backgroundColor='transparent'; this.style.color='#10b981 !important';">
-                                <i class="fas fa-plus"></i> Ajouter
+                                <i class="fas fa-plus"></i> {{ _('Ajouter') }}
                             </a>
                         </div>
                     {% else %}
                         <div class="card-body">
                             <p class="text-muted text-center py-4 mb-0">
                                 <i class="fas fa-inbox fa-3x d-block mb-2"></i>
-                                Aucun revenu actif
+                                {{ _('Aucun revenu actif') }}
                             </p>
                         </div>
                     {% endif %}
@@ -153,17 +153,17 @@
             <!-- Abonnements : Prochains renouvellements -->
             <div class="card mt-4">
                 <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #e5e7eb;">
-                    <h5 class="mb-0"><i class="fas fa-list text-secondary"></i> Abonnements : Prochains renouvellements</h5>
+                    <h5 class="mb-0"><i class="fas fa-list text-secondary"></i> {{ _('Abonnements : Prochains renouvellements') }}</h5>
                     <div class="d-flex align-items-center gap-2">
                         {% if upcoming_renewals %}
                             <span class="badge bg-primary">{{ upcoming_renewals|length }}</span>
                         {% endif %}
                         {% if current_user.is_premium() %}
                             <div class="btn-group btn-group-sm">
-                                <a href="{{ url_for('exports.export_upcoming_renewals', format='excel') }}" class="btn btn-outline-success" title="Exporter en Excel">
+                                <a href="{{ url_for('exports.export_upcoming_renewals', format='excel') }}" class="btn btn-outline-success" title="{{ _('Exporter en Excel') }}">
                                     <i class="fas fa-file-excel"></i>
                                 </a>
-                                <a href="{{ url_for('exports.export_upcoming_renewals', format='pdf') }}" class="btn btn-outline-danger" title="Exporter en PDF">
+                                <a href="{{ url_for('exports.export_upcoming_renewals', format='pdf') }}" class="btn btn-outline-danger" title="{{ _('Exporter en PDF') }}">
                                     <i class="fas fa-file-pdf"></i>
                                 </a>
                             </div>
@@ -194,17 +194,17 @@
                         </div>
                         <div class="card-footer bg-white text-center">
                             <a href="{{ url_for('subscriptions.list') }}" class="btn btn-sm btn-outline-primary">
-                                <i class="fas fa-list"></i> Voir tous
+                                <i class="fas fa-list"></i> {{ _('Voir tous') }}
                             </a>
                             <a href="{{ url_for('subscriptions.add') }}" class="btn btn-sm btn-outline-primary ms-2">
-                                <i class="fas fa-plus"></i> Ajouter
+                                <i class="fas fa-plus"></i> {{ _('Ajouter') }}
                             </a>
                         </div>
                     {% else %}
                         <div class="card-body">
                             <p class="text-muted text-center py-4 mb-0">
                                 <i class="fas fa-inbox fa-3x d-block mb-2"></i>
-                                Aucun abonnement actif
+                                {{ _('Aucun abonnement actif') }}
                             </p>
                         </div>
                     {% endif %}
@@ -214,17 +214,17 @@
             <!-- Crédits : Prochains prélèvements -->
             <div class="card mt-4">
                 <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #e5e7eb;">
-                    <h5 class="mb-0"><i class="fas fa-money-bill-wave text-secondary"></i> Crédits : Prochains prélèvements</h5>
+                    <h5 class="mb-0"><i class="fas fa-money-bill-wave text-secondary"></i> {{ _('Crédits : Prochains prélèvements') }}</h5>
                     <div class="d-flex align-items-center gap-2">
                         {% if upcoming_credits or upcoming_installments %}
                             <span class="badge bg-warning">{{ (upcoming_credits|length) + (upcoming_installments|length) }}</span>
                         {% endif %}
                         {% if current_user.is_premium() %}
                             <div class="btn-group btn-group-sm">
-                                <a href="{{ url_for('exports.export_upcoming_credits', format='excel') }}" class="btn btn-outline-success" title="Exporter en Excel">
+                                <a href="{{ url_for('exports.export_upcoming_credits', format='excel') }}" class="btn btn-outline-success" title="{{ _('Exporter en Excel') }}">
                                     <i class="fas fa-file-excel"></i>
                                 </a>
-                                <a href="{{ url_for('exports.export_upcoming_credits', format='pdf') }}" class="btn btn-outline-danger" title="Exporter en PDF">
+                                <a href="{{ url_for('exports.export_upcoming_credits', format='pdf') }}" class="btn btn-outline-danger" title="{{ _('Exporter en PDF') }}">
                                     <i class="fas fa-file-pdf"></i>
                                 </a>
                             </div>
@@ -245,7 +245,7 @@
                                         <div class="flex-grow-1 text-start d-flex align-items-center" style="min-width: 0; gap: 0.5rem;">
                                             <strong class="text-truncate item-label" style="max-width: 70%;" title="{{ credit.name }}">{{ credit.name }}</strong>
                                             {% if credit.remaining_amount %}
-                                                <span class="badge bg-warning text-dark badge-hide-mobile" style="padding: 0.15rem 0.4rem; font-size: 0.7rem;">Restant: {{ credit.remaining_amount | format_amount }} {{ credit.currency | currency_symbol }}</span>
+                                                <span class="badge bg-warning text-dark badge-hide-mobile" style="padding: 0.15rem 0.4rem; font-size: 0.7rem;">{{ _('Restant') }}: {{ credit.remaining_amount | format_amount }} {{ credit.currency | currency_symbol }}</span>
                                             {% endif %}
                                         </div>
                                         <div class="flex-shrink-0 text-end d-flex align-items-center justify-content-end" style="width: 200px;">
@@ -272,7 +272,7 @@
                                         </div>
                                         <div class="flex-shrink-0 text-end d-flex align-items-center justify-content-end" style="width: 200px;">
                                             <strong class="me-1">{{ installment.installment_amount | format_amount }} {{ installment.currency | currency_symbol }}</strong>
-                                            <span class="badge bg-secondary badge-hide-mobile">Mensuel</span>
+                                            <span class="badge bg-secondary badge-hide-mobile">{{ _('Mensuel') }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -280,20 +280,20 @@
                         </div>
                         <div class="card-footer bg-white text-center">
                             <a href="{{ url_for('credits.list_credits') }}" class="btn btn-sm btn-outline-warning">
-                                <i class="fas fa-money-bill-wave"></i> Voir tous
+                                <i class="fas fa-money-bill-wave"></i> {{ _('Voir tous') }}
                             </a>
                             <a href="{{ url_for('credits.add') }}" class="btn btn-sm btn-outline-warning ms-2">
-                                <i class="fas fa-plus"></i> Ajouter
+                                <i class="fas fa-plus"></i> {{ _('Ajouter') }}
                             </a>
                             <a href="{{ url_for('installments.list') }}" class="btn btn-sm btn-outline-warning ms-2">
-                                <i class="fas fa-calendar-alt"></i> Mes paiements en plusieurs fois
+                                <i class="fas fa-calendar-alt"></i> {{ _('Mes paiements en plusieurs fois') }}
                             </a>
                         </div>
                     {% else %}
                         <div class="card-body">
                             <p class="text-muted text-center py-4 mb-0">
                                 <i class="fas fa-inbox fa-3x d-block mb-2"></i>
-                                Aucun crédit actif
+                                {{ _('Aucun crédit actif') }}
                             </p>
                         </div>
                     {% endif %}
@@ -303,17 +303,17 @@
             <!-- Chèques : Non débités -->
             <div class="card mt-4">
                 <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #e5e7eb;">
-                    <h5 class="mb-0"><i class="fas fa-money-check text-secondary"></i> Chèques : Non débités</h5>
+                    <h5 class="mb-0"><i class="fas fa-money-check text-secondary"></i> {{ _('Chèques : Non débités') }}</h5>
                     <div class="d-flex align-items-center gap-2">
                         {% if unpointed_checks %}
                             <span class="badge bg-danger">{{ unpointed_checks|length }}</span>
                         {% endif %}
                         {% if current_user.is_premium() %}
                             <div class="btn-group btn-group-sm">
-                                <a href="{{ url_for('exports.export_unpointed_checks', format='excel') }}" class="btn btn-outline-success" title="Exporter en Excel">
+                                <a href="{{ url_for('exports.export_unpointed_checks', format='excel') }}" class="btn btn-outline-success" title="{{ _('Exporter en Excel') }}">
                                     <i class="fas fa-file-excel"></i>
                                 </a>
-                                <a href="{{ url_for('exports.export_unpointed_checks', format='pdf') }}" class="btn btn-outline-danger" title="Exporter en PDF">
+                                <a href="{{ url_for('exports.export_unpointed_checks', format='pdf') }}" class="btn btn-outline-danger" title="{{ _('Exporter en PDF') }}">
                                     <i class="fas fa-file-pdf"></i>
                                 </a>
                             </div>
@@ -329,7 +329,7 @@
                                         <div class="flex-shrink-0 d-flex align-items-center" style="width: 30px;">
                                             <form method="post" action="{{ url_for('main.toggle_point', transaction_id=check.id) }}" style="display: inline; margin: 0;">
                                                 <input type="hidden" name="redirect_to" value="dashboard">
-                                                <button type="submit" class="btn btn-sm btn-link p-0" title="Pointer ce chèque" style="line-height: 1;">
+                                                <button type="submit" class="btn btn-sm btn-link p-0" title="{{ _('Pointer ce chèque') }}" style="line-height: 1;">
                                                     <i class="far fa-circle text-muted" style="font-size: 1.2rem;"></i>
                                                 </button>
                                             </form>
@@ -341,7 +341,7 @@
                                         </div>
                                         <div class="flex-grow-1 text-start d-flex align-items-center" style="min-width: 0; gap: 0.5rem;">
                                             <strong class="text-truncate item-label" style="max-width: 70%;" title="{{ check.name }}">{{ check.name }}</strong>
-                                            <span class="badge bg-danger text-white badge-hide-mobile" style="padding: 0.15rem 0.4rem; font-size: 0.7rem;">Chèque</span>
+                                            <span class="badge bg-danger text-white badge-hide-mobile" style="padding: 0.15rem 0.4rem; font-size: 0.7rem;">{{ _('Chèque') }}</span>
                                         </div>
                                         <div class="flex-shrink-0 text-end d-flex align-items-center justify-content-end" style="width: 150px;">
                                             <strong class="me-1">{{ check.amount | format_amount }} {{ check.currency | currency_symbol }}</strong>
@@ -352,17 +352,17 @@
                         </div>
                         <div class="card-footer bg-white text-center">
                             <a href="{{ url_for('checkbooks.list_checkbooks') }}" class="btn btn-sm btn-outline-danger">
-                                <i class="fas fa-check"></i> Voir les chéquiers
+                                <i class="fas fa-check"></i> {{ _('Voir les chéquiers') }}
                             </a>
                             <a href="{{ url_for('checkbooks.list_checkbooks') }}" class="btn btn-sm btn-outline-danger ms-2">
-                                <i class="fas fa-plus"></i> Ajouter
+                                <i class="fas fa-plus"></i> {{ _('Ajouter') }}
                             </a>
                         </div>
                     {% else %}
                         <div class="card-body">
                             <p class="text-muted text-center py-4 mb-0">
                                 <i class="fas fa-inbox fa-3x d-block mb-2"></i>
-                                Tous les chèques sont débités
+                                {{ _('Tous les chèques sont débités') }}
                             </p>
                         </div>
                     {% endif %}
@@ -377,7 +377,7 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #e5e7eb;">
                     <h5 class="mb-0">
-                        <i class="fas fa-bell text-secondary"></i> Mes rappels
+                        <i class="fas fa-bell text-secondary"></i> {{ _('Mes rappels') }}
                     </h5>
                     <div class="d-flex align-items-center gap-2">
                         {% if upcoming_reminders %}
@@ -408,11 +408,11 @@
                                         <div class="flex-shrink-0">
                                             {% if reminder.appointment_booked %}
                                                 <span class="badge bg-success">
-                                                    <i class="fas fa-check"></i> RDV pris le {% if reminder.appointment_date %}{{ reminder.appointment_date.strftime('%d/%m/%Y') }}{% endif %}
+                                                    <i class="fas fa-check"></i> {{ _('RDV pris le') }} {% if reminder.appointment_date %}{{ reminder.appointment_date.strftime('%d/%m/%Y') }}{% endif %}
                                                 </span>
                                             {% else %}
                                                 <span class="badge bg-warning text-dark">
-                                                    <i class="fas fa-clock"></i> À planifier
+                                                    <i class="fas fa-clock"></i> {{ _('À planifier') }}
                                                 </span>
                                             {% endif %}
                                         </div>
@@ -422,17 +422,17 @@
                         </div>
                         <div class="card-footer bg-white text-center">
                             <a href="{{ url_for('reminders.list') }}" class="btn btn-sm btn-outline-secondary">
-                                <i class="fas fa-bell"></i> Voir tous
+                                <i class="fas fa-bell"></i> {{ _('Voir tous') }}
                             </a>
                             <a href="{{ url_for('reminders.add') }}" class="btn btn-sm btn-outline-secondary ms-2">
-                                <i class="fas fa-plus"></i> Ajouter
+                                <i class="fas fa-plus"></i> {{ _('Ajouter') }}
                             </a>
                         </div>
                     {% else %}
                         <div class="card-body">
                             <p class="text-muted text-center py-4 mb-0">
                                 <i class="fas fa-inbox fa-3x d-block mb-2 text-secondary"></i>
-                                Aucun rappel
+                                {{ _('Aucun rappel') }}
                             </p>
                         </div>
                     {% endif %}
@@ -442,13 +442,13 @@
             <!-- Graphique existant : Répartition des abonnements & crédits -->
             <div class="card mt-4">
                 <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #e5e7eb;">
-                    <h5 class="mb-0"><i class="fas fa-chart-pie text-secondary"></i> Répartition des Abonnements & Crédits</h5>
+                    <h5 class="mb-0"><i class="fas fa-chart-pie text-secondary"></i> {{ _('Répartition des Abonnements & Crédits') }}</h5>
                     {% if current_user.is_premium() %}
                         <div class="btn-group btn-group-sm">
-                            <a href="{{ url_for('exports.export_category_distribution', format='excel') }}" class="btn btn-outline-success" title="Exporter en Excel">
+                            <a href="{{ url_for('exports.export_category_distribution', format='excel') }}" class="btn btn-outline-success" title="{{ _('Exporter en Excel') }}">
                                 <i class="fas fa-file-excel"></i>
                             </a>
-                            <a href="{{ url_for('exports.export_category_distribution', format='pdf') }}" class="btn btn-outline-danger" title="Exporter en PDF">
+                            <a href="{{ url_for('exports.export_category_distribution', format='pdf') }}" class="btn btn-outline-danger" title="{{ _('Exporter en PDF') }}">
                                 <i class="fas fa-file-pdf"></i>
                             </a>
                         </div>
@@ -458,7 +458,7 @@
                     {% if category_stats %}
                         <canvas id="categoryChart" height="200"></canvas>
                     {% else %}
-                        <p class="text-muted text-center py-4">Aucune donnée disponible</p>
+                        <p class="text-muted text-center py-4">{{ _('Aucune donnée disponible') }}</p>
                     {% endif %}
                 </div>
             </div>
@@ -466,13 +466,13 @@
             <!-- Répartition des versements (Revenus) -->
             <div class="card mt-4">
                 <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #e5e7eb;">
-                    <h5 class="mb-0"><i class="fas fa-chart-pie text-secondary"></i> Répartition des versements</h5>
+                    <h5 class="mb-0"><i class="fas fa-chart-pie text-secondary"></i> {{ _('Répartition des versements') }}</h5>
                     {% if current_user.is_premium() %}
                         <div class="btn-group btn-group-sm">
-                            <a href="{{ url_for('exports.export_revenue_distribution', format='excel') }}" class="btn btn-outline-success" title="Exporter en Excel">
+                            <a href="{{ url_for('exports.export_revenue_distribution', format='excel') }}" class="btn btn-outline-success" title="{{ _('Exporter en Excel') }}">
                                 <i class="fas fa-file-excel"></i>
                             </a>
-                            <a href="{{ url_for('exports.export_revenue_distribution', format='pdf') }}" class="btn btn-outline-danger" title="Exporter en PDF">
+                            <a href="{{ url_for('exports.export_revenue_distribution', format='pdf') }}" class="btn btn-outline-danger" title="{{ _('Exporter en PDF') }}">
                                 <i class="fas fa-file-pdf"></i>
                             </a>
                         </div>
@@ -482,7 +482,7 @@
                     {% if revenue_stats %}
                         <canvas id="revenueChart" height="200"></canvas>
                     {% else %}
-                        <p class="text-muted text-center py-4">Aucune donnée disponible</p>
+                        <p class="text-muted text-center py-4">{{ _('Aucune donnée disponible') }}</p>
                     {% endif %}
                 </div>
             </div>
@@ -494,13 +494,13 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #e5e7eb;">
-                    <h5 class="mb-0"><i class="fas fa-chart-line text-secondary"></i> Évolution des revenus et des dépenses mensuelles</h5>
+                    <h5 class="mb-0"><i class="fas fa-chart-line text-secondary"></i> {{ _('Évolution des revenus et des dépenses mensuelles') }}</h5>
                     {% if current_user.is_premium() %}
                         <div class="btn-group btn-group-sm">
-                            <a href="{{ url_for('exports.export_monthly_evolution', format='excel') }}" class="btn btn-outline-success" title="Exporter en Excel">
+                            <a href="{{ url_for('exports.export_monthly_evolution', format='excel') }}" class="btn btn-outline-success" title="{{ _('Exporter en Excel') }}">
                                 <i class="fas fa-file-excel"></i>
                             </a>
-                            <a href="{{ url_for('exports.export_monthly_evolution', format='pdf') }}" class="btn btn-outline-danger" title="Exporter en PDF">
+                            <a href="{{ url_for('exports.export_monthly_evolution', format='pdf') }}" class="btn btn-outline-danger" title="{{ _('Exporter en PDF') }}">
                                 <i class="fas fa-file-pdf"></i>
                             </a>
                         </div>
@@ -534,7 +534,7 @@ let categoryColors = {{ category_stats|map(attribute='color')|list|tojson }};
 
 // Ajouter la catégorie "Crédits" si elle a un montant
 {% if total_credits and total_credits > 0 %}
-categoryLabels.push('Crédits');
+categoryLabels.push('{{ _("Crédits") }}');
 categoryData.push({{ total_credits }});
 categoryColors.push('#ffc107'); // Jaune (Bootstrap warning)
 {% endif %}
@@ -625,7 +625,7 @@ fetch('/api/stats')
                 labels: data.monthly_spending.map(item => item.month),
                 datasets: [
                     {
-                        label: 'Abonnements (€)',
+                        label: '{{ _("Abonnements (€)") }}',
                         data: data.monthly_spending.map(item => item.total),
                         borderColor: '#0d6efd',
                         backgroundColor: 'rgba(13, 110, 253, 0.1)',
@@ -633,7 +633,7 @@ fetch('/api/stats')
                         fill: true
                     },
                     {
-                        label: 'Crédits (€)',
+                        label: '{{ _("Crédits (€)") }}',
                         data: data.monthly_credits.map(item => item.total),
                         borderColor: '#ffc107',
                         backgroundColor: 'rgba(255, 193, 7, 0.1)',
@@ -641,7 +641,7 @@ fetch('/api/stats')
                         fill: true
                     },
                     {
-                        label: 'Dépenses (€)',
+                        label: '{{ _("Dépenses (€)") }}',
                         data: data.monthly_expenses.map(item => item.total),
                         borderColor: '#dc3545',
                         backgroundColor: 'rgba(220, 53, 69, 0.1)',
@@ -649,7 +649,7 @@ fetch('/api/stats')
                         fill: true
                     },
                     {
-                        label: 'Revenus (€)',
+                        label: '{{ _("Revenus (€)") }}',
                         data: data.monthly_revenues.map(item => item.total),
                         borderColor: '#10b981',
                         backgroundColor: 'rgba(16, 185, 129, 0.1)',

@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 
-{% block title %}Solde - Budgee Family{% endblock %}
+{% block title %}{{ _('Solde') }} - Budgee Family{% endblock %}
 
 {% block content %}
 <div class="container py-4">
     <div class="mb-4">
-        <h2><i class="fas fa-balance-scale"></i> Solde et Mouvements</h2>
-        <p class="text-muted">Consultez l'ensemble de vos mouvements financiers et pointez-les au fur et à mesure</p>
+        <h2><i class="fas fa-balance-scale"></i> {{ _('Solde et Mouvements') }}</h2>
+        <p class="text-muted">{{ _('Consultez l\'ensemble de vos mouvements financiers et pointez-les au fur et à mesure') }}</p>
     </div>
 
     <!-- Filtre par mois/année/statut -->
@@ -14,25 +14,25 @@
         <div class="card-body">
             <form method="get" action="{{ url_for('main.balance') }}" id="filterForm" class="row g-3">
                 <div class="col-md-4">
-                    <label class="form-label">Navigation / Mois</label>
+                    <label class="form-label">{{ _('Navigation / Mois') }}</label>
                     <div class="input-group">
-                        <button type="button" class="btn btn-outline-primary" onclick="navigateMonth(-1)" title="Mois précédent">
+                        <button type="button" class="btn btn-outline-primary" onclick="navigateMonth(-1)" title="{{ _('Mois précédent') }}">
                             <i class="fas fa-chevron-left"></i>
                         </button>
                         <select name="month" id="month" class="form-select" onchange="document.getElementById('filterForm').submit()">
                             {% for m in range(1, 13) %}
                                 <option value="{{ m }}" {% if m == selected_month %}selected{% endif %}>
-                                    {{ ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'][m-1] }}
+                                    {{ [_('Janvier'), _('Février'), _('Mars'), _('Avril'), _('Mai'), _('Juin'), _('Juillet'), _('Août'), _('Septembre'), _('Octobre'), _('Novembre'), _('Décembre')][m-1] }}
                                 </option>
                             {% endfor %}
                         </select>
-                        <button type="button" class="btn btn-outline-primary" onclick="navigateMonth(1)" title="Mois suivant">
+                        <button type="button" class="btn btn-outline-primary" onclick="navigateMonth(1)" title="{{ _('Mois suivant') }}">
                             <i class="fas fa-chevron-right"></i>
                         </button>
                     </div>
                 </div>
                 <div class="col-md-2">
-                    <label for="year" class="form-label">Année</label>
+                    <label for="year" class="form-label">{{ _('Année') }}</label>
                     <select name="year" id="year" class="form-select" onchange="document.getElementById('filterForm').submit()">
                         {% for y in range(now.year - 5, now.year + 2) %}
                             <option value="{{ y }}" {% if y == selected_year %}selected{% endif %}>{{ y }}</option>
@@ -40,16 +40,16 @@
                     </select>
                 </div>
                 <div class="col-md-3">
-                    <label for="status" class="form-label">État</label>
+                    <label for="status" class="form-label">{{ _('État') }}</label>
                     <select name="status" id="status" class="form-select" onchange="document.getElementById('filterForm').submit()">
-                        <option value="all" {% if selected_status == 'all' %}selected{% endif %}>Tous</option>
-                        <option value="pending" {% if selected_status == 'pending' %}selected{% endif %}>En attente</option>
-                        <option value="completed" {% if selected_status == 'completed' %}selected{% endif %}>Complétés</option>
+                        <option value="all" {% if selected_status == 'all' %}selected{% endif %}>{{ _('Tous') }}</option>
+                        <option value="pending" {% if selected_status == 'pending' %}selected{% endif %}>{{ _('En attente') }}</option>
+                        <option value="completed" {% if selected_status == 'completed' %}selected{% endif %}>{{ _('Complétés') }}</option>
                     </select>
                 </div>
                 <div class="col-md-3 d-flex align-items-end">
                     <button type="button" class="btn btn-outline-secondary w-100" onclick="resetFilters()">
-                        <i class="fas fa-redo"></i> Réinitialiser
+                        <i class="fas fa-redo"></i> {{ _('Réinitialiser') }}
                     </button>
                 </div>
             </form>
@@ -63,7 +63,7 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h6 class="text-uppercase mb-1 opacity-75">Total Revenus</h6>
+                            <h6 class="text-uppercase mb-1 opacity-75">{{ _('Total Revenus') }}</h6>
                             <h2 class="mb-0">{{ total_revenues | format_amount }} €</h2>
                         </div>
                         <div>
@@ -78,7 +78,7 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h6 class="text-uppercase mb-1 opacity-75">Total Dépenses</h6>
+                            <h6 class="text-uppercase mb-1 opacity-75">{{ _('Total Dépenses') }}</h6>
                             <h2 class="mb-0">{{ total_expenses | format_amount }} €</h2>
                         </div>
                         <div>
@@ -93,7 +93,7 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h6 class="text-uppercase mb-1 opacity-75">Solde</h6>
+                            <h6 class="text-uppercase mb-1 opacity-75">{{ _('Solde') }}</h6>
                             <h2 class="mb-0">{{ final_balance | format_amount }} €</h2>
                         </div>
                         <div>
@@ -109,7 +109,7 @@
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #e5e7eb;">
             <h5 class="mb-0">
-                <i class="fas fa-list text-secondary"></i> Mouvements de <span class="text-success">{{ ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'][selected_month-1] }} {{ selected_year }}</span>
+                <i class="fas fa-list text-secondary"></i> {{ _('Mouvements de') }} <span class="text-success">{{ [_('Janvier'), _('Février'), _('Mars'), _('Avril'), _('Mai'), _('Juin'), _('Juillet'), _('Août'), _('Septembre'), _('Octobre'), _('Novembre'), _('Décembre')][selected_month-1] }} {{ selected_year }}</span>
             </h5>
             {% if movements %}
             <div class="d-flex align-items-center gap-2">
@@ -119,7 +119,7 @@
                         <input type="hidden" name="year" value="{{ selected_year }}">
                         <input type="hidden" name="status" value="{{ selected_status }}">
                         <input type="hidden" name="action" value="point">
-                        <button type="submit" class="btn btn-outline-success" title="Tout pointer">
+                        <button type="submit" class="btn btn-outline-success" title="{{ _('Tout pointer') }}">
                             <i class="fas fa-check-circle"></i>
                         </button>
                     </form>
@@ -128,7 +128,7 @@
                         <input type="hidden" name="year" value="{{ selected_year }}">
                         <input type="hidden" name="status" value="{{ selected_status }}">
                         <input type="hidden" name="action" value="unpoint">
-                        <button type="submit" class="btn btn-outline-warning" title="Tout dépointer">
+                        <button type="submit" class="btn btn-outline-warning" title="{{ _('Tout dépointer') }}">
                             <i class="fas fa-times-circle"></i>
                         </button>
                     </form>
@@ -143,14 +143,14 @@
                         <thead class="table-light">
                             <tr>
                                 <th style="width: 50px;">
-                                    <i class="fas fa-check-circle" title="Pointer"></i>
+                                    <i class="fas fa-check-circle" title="{{ _('Pointer') }}"></i>
                                 </th>
-                                <th style="width: 120px;">Date</th>
-                                <th>Description</th>
-                                <th>Catégorie</th>
-                                <th style="width: 150px;" class="text-end">Montant</th>
-                                <th style="width: 150px;" class="text-end">Solde</th>
-                                <th style="width: 120px;" class="text-end">Actions</th>
+                                <th style="width: 120px;">{{ _('Date') }}</th>
+                                <th>{{ _('Description') }}</th>
+                                <th>{{ _('Catégorie') }}</th>
+                                <th style="width: 150px;" class="text-end">{{ _('Montant') }}</th>
+                                <th style="width: 150px;" class="text-end">{{ _('Solde') }}</th>
+                                <th style="width: 120px;" class="text-end">{{ _('Actions') }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -159,7 +159,7 @@
                                     <td class="text-center">
                                         <div class="d-flex align-items-center justify-content-center gap-2">
                                             <form method="post" action="{{ url_for('main.toggle_point', transaction_id=movement.id, month=selected_month, year=selected_year) }}" style="display: inline;">
-                                                <button type="submit" class="btn btn-sm btn-link p-0" title="{% if movement.is_pointed %}Dépointer{% else %}Pointer{% endif %}">
+                                                <button type="submit" class="btn btn-sm btn-link p-0" title="{% if movement.is_pointed %}{{ _('Dépointer') }}{% else %}{{ _('Pointer') }}{% endif %}">
                                                     {% if movement.is_pointed %}
                                                         <i class="fas fa-check-circle text-success" style="font-size: 1.2rem;"></i>
                                                     {% else %}
@@ -169,18 +169,18 @@
                                             </form>
                                             {% if movement.status == 'pending' %}
                                                 <form method="post" action="{{ url_for('main.mark_as_completed', transaction_id=movement.id, month=selected_month, year=selected_year) }}" style="display: inline;">
-                                                    <button type="submit" class="btn btn-sm btn-link p-0" title="Marquer comme complété">
+                                                    <button type="submit" class="btn btn-sm btn-link p-0" title="{{ _('Marquer comme complété') }}">
                                                         <i class="fas fa-clock text-warning" style="font-size: 0.9rem; cursor: pointer;"></i>
                                                     </button>
                                                 </form>
                                             {% elif movement.status == 'completed' %}
                                                 <form method="post" action="{{ url_for('main.mark_as_pending', transaction_id=movement.id, month=selected_month, year=selected_year) }}" style="display: inline;">
-                                                    <button type="submit" class="btn btn-sm btn-link p-0" title="Repasser en attente">
+                                                    <button type="submit" class="btn btn-sm btn-link p-0" title="{{ _('Repasser en attente') }}">
                                                         <i class="fas fa-check-double text-success" style="font-size: 0.9rem; cursor: pointer;"></i>
                                                     </button>
                                                 </form>
                                             {% elif movement.status == 'cancelled' %}
-                                                <i class="fas fa-ban text-danger" title="Annulé" style="font-size: 0.9rem;"></i>
+                                                <i class="fas fa-ban text-danger" title="{{ _('Annulé') }}" style="font-size: 0.9rem;"></i>
                                             {% endif %}
                                         </div>
                                     </td>
@@ -191,17 +191,17 @@
                                         <div>
                                             <strong>{{ movement.name }}</strong>
                                             {% if movement.type == 'revenue' %}
-                                                <span class="badge text-white ms-1" style="background-color: #10b981; font-size: 0.7rem;">Revenu</span>
+                                                <span class="badge text-white ms-1" style="background-color: #10b981; font-size: 0.7rem;">{{ _('Revenu') }}</span>
                                             {% elif movement.type == 'subscription' %}
-                                                <span class="badge bg-primary ms-1" style="font-size: 0.7rem;">Abonnement</span>
+                                                <span class="badge bg-primary ms-1" style="font-size: 0.7rem;">{{ _('Abonnement') }}</span>
                                             {% elif movement.type == 'credit' %}
-                                                <span class="badge bg-warning text-dark ms-1" style="font-size: 0.7rem;">Crédit</span>
+                                                <span class="badge bg-warning text-dark ms-1" style="font-size: 0.7rem;">{{ _('Crédit') }}</span>
                                             {% elif movement.type == 'installment' %}
-                                                <span class="badge bg-warning text-dark ms-1" style="font-size: 0.7rem;">Paiement en plusieurs fois</span>
+                                                <span class="badge bg-warning text-dark ms-1" style="font-size: 0.7rem;">{{ _('Paiement en plusieurs fois') }}</span>
                                             {% elif movement.type == 'check' %}
-                                                <span class="badge bg-danger ms-1" style="font-size: 0.7rem;">Chèque</span>
+                                                <span class="badge bg-danger ms-1" style="font-size: 0.7rem;">{{ _('Chèque') }}</span>
                                             {% elif movement.type == 'card_purchase' %}
-                                                <span class="badge bg-info ms-1" style="font-size: 0.7rem;">Achat CB</span>
+                                                <span class="badge bg-info ms-1" style="font-size: 0.7rem;">{{ _('Achat CB') }}</span>
                                             {% endif %}
                                         </div>
                                         {% if movement.description %}
@@ -226,23 +226,23 @@
                                     <td class="text-end">
                                         <div class="btn-group btn-group-sm">
                                             {% if movement.source_type == 'revenue' %}
-                                                <a href="{{ url_for('revenues.detail', revenue_id=movement.source_id) }}" class="btn btn-outline-primary" title="Voir le revenu">
+                                                <a href="{{ url_for('revenues.detail', revenue_id=movement.source_id) }}" class="btn btn-outline-primary" title="{{ _('Voir le revenu') }}">
                                                     <i class="fas fa-eye"></i>
                                                 </a>
                                             {% elif movement.source_type == 'subscription' %}
-                                                <a href="{{ url_for('subscriptions.detail', subscription_id=movement.source_id) }}" class="btn btn-outline-primary" title="Voir l'abonnement">
+                                                <a href="{{ url_for('subscriptions.detail', subscription_id=movement.source_id) }}" class="btn btn-outline-primary" title="{{ _('Voir l\'abonnement') }}">
                                                     <i class="fas fa-eye"></i>
                                                 </a>
                                             {% elif movement.source_type == 'credit' %}
-                                                <a href="{{ url_for('credits.detail', credit_id=movement.source_id) }}" class="btn btn-outline-primary" title="Voir le crédit">
+                                                <a href="{{ url_for('credits.detail', credit_id=movement.source_id) }}" class="btn btn-outline-primary" title="{{ _('Voir le crédit') }}">
                                                     <i class="fas fa-eye"></i>
                                                 </a>
                                             {% elif movement.source_type == 'installment' %}
-                                                <a href="{{ url_for('installments.detail', payment_id=movement.source_id) }}" class="btn btn-outline-primary" title="Voir le paiement">
+                                                <a href="{{ url_for('installments.detail', payment_id=movement.source_id) }}" class="btn btn-outline-primary" title="{{ _('Voir le paiement') }}">
                                                     <i class="fas fa-eye"></i>
                                                 </a>
                                             {% elif movement.source_type == 'check' %}
-                                                <a href="{{ url_for('checkbooks.edit_check', check_id=movement.source_id) }}" class="btn btn-outline-primary" title="Voir le chèque">
+                                                <a href="{{ url_for('checkbooks.edit_check', check_id=movement.source_id) }}" class="btn btn-outline-primary" title="{{ _('Voir le chèque') }}">
                                                     <i class="fas fa-eye"></i>
                                                 </a>
                                             {% elif movement.source_type == 'card_purchase' %}
@@ -250,11 +250,11 @@
                                                     <button type="button"
                                                        class="btn btn-outline-info"
                                                        onclick="openPreviewModal('{{ url_for('card_purchases.view_receipt', purchase_id=movement.source_id) }}', '{{ movement.receipt_name | e }}', '{{ movement.receipt_mime_type }}')"
-                                                       title="Voir le reçu">
+                                                       title="{{ _('Voir le reçu') }}">
                                                         <i class="fas fa-receipt"></i>
                                                     </button>
                                                 {% endif %}
-                                                <a href="{{ url_for('card_purchases.detail', purchase_id=movement.source_id) }}" class="btn btn-outline-primary" title="Voir l'achat CB">
+                                                <a href="{{ url_for('card_purchases.detail', purchase_id=movement.source_id) }}" class="btn btn-outline-primary" title="{{ _('Voir l\'achat CB') }}">
                                                     <i class="fas fa-eye"></i>
                                                 </a>
                                             {% endif %}
@@ -263,7 +263,7 @@
                                                     data-transaction-name="{{ movement.name }}"
                                                     data-transaction-date="{{ movement.date.strftime('%d/%m/%Y') }}"
                                                     data-transaction-amount="{{ movement.amount | format_amount }} {{ movement.currency | currency_symbol }}"
-                                                    title="Supprimer">
+                                                    title="{{ _('Supprimer') }}">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </div>
@@ -276,7 +276,7 @@
             {% else %}
                 <div class="card-body text-center py-5">
                     <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
-                    <p class="text-muted mb-0">Aucun mouvement pour cette période</p>
+                    <p class="text-muted mb-0">{{ _('Aucun mouvement pour cette période') }}</p>
                 </div>
             {% endif %}
         </div>
@@ -285,7 +285,7 @@
     <!-- Bouton retour -->
     <div class="mt-4">
         <a href="{{ url_for('main.dashboard') }}" class="btn btn-secondary">
-            <i class="fas fa-arrow-left"></i> Retour au tableau de bord
+            <i class="fas fa-arrow-left"></i> {{ _('Retour au tableau de bord') }}
         </a>
     </div>
 </div>
@@ -297,9 +297,9 @@
             <div class="modal-header">
                 <h5 class="modal-title" id="documentPreviewModalLabel">
                     <i class="fas fa-receipt me-2"></i>
-                    <span id="previewDocName">Reçu</span>
+                    <span id="previewDocName">{{ _('Reçu') }}</span>
                 </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ _('Fermer') }}"></button>
             </div>
             <div class="modal-body" id="documentPreviewContent">
                 <!-- Le contenu sera inséré dynamiquement -->
@@ -314,37 +314,37 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="deleteModalLabel">
-                    <i class="fas fa-trash text-danger"></i> Options de suppression
+                    <i class="fas fa-trash text-danger"></i> {{ _('Options de suppression') }}
                 </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ _('Fermer') }}"></button>
             </div>
             <div class="modal-body">
                 <p class="mb-3" id="transactionInfo">
-                    <strong>Transaction :</strong> <span id="transactionName"></span><br>
-                    <strong>Date :</strong> <span id="transactionDate"></span><br>
-                    <strong>Montant :</strong> <span id="transactionAmount"></span>
+                    <strong>{{ _('Transaction :') }}</strong> <span id="transactionName"></span><br>
+                    <strong>{{ _('Date :') }}</strong> <span id="transactionDate"></span><br>
+                    <strong>{{ _('Montant :') }}</strong> <span id="transactionAmount"></span>
                 </p>
-                <p class="text-muted small">Que souhaitez-vous faire ?</p>
+                <p class="text-muted small">{{ _('Que souhaitez-vous faire ?') }}</p>
             </div>
             <div class="modal-footer flex-column align-items-stretch">
                 <form method="POST" id="formSingle" class="w-100">
                     <button type="submit" class="btn btn-outline-warning w-100 mb-2">
-                        <i class="fas fa-file"></i> Supprimer uniquement cette transaction
+                        <i class="fas fa-file"></i> {{ _('Supprimer uniquement cette transaction') }}
                     </button>
                 </form>
                 <form method="POST" id="formPast" class="w-100">
                     <button type="submit" class="btn btn-outline-primary w-100 mb-2">
-                        <i class="fas fa-history"></i> Supprimer les transactions passées (inclus celle-ci)
+                        <i class="fas fa-history"></i> {{ _('Supprimer les transactions passées (inclus celle-ci)') }}
                     </button>
                 </form>
                 <form method="POST" id="formFuture" class="w-100">
                     <button type="submit" class="btn btn-outline-info w-100 mb-2">
-                        <i class="fas fa-forward"></i> Supprimer les transactions futures (inclus celle-ci)
+                        <i class="fas fa-forward"></i> {{ _('Supprimer les transactions futures (inclus celle-ci)') }}
                     </button>
                 </form>
                 <form method="POST" id="formAll" class="w-100">
                     <button type="submit" class="btn btn-outline-danger w-100">
-                        <i class="fas fa-trash-alt"></i> Supprimer toutes les transactions liées
+                        <i class="fas fa-trash-alt"></i> {{ _('Supprimer toutes les transactions liées') }}
                     </button>
                 </form>
             </div>
@@ -446,15 +446,15 @@
         const previewDocName = document.getElementById('previewDocName');
 
         // Mettre à jour le titre
-        previewDocName.textContent = docName || 'Reçu';
+        previewDocName.textContent = docName || '{{ _("Reçu") }}';
 
         // Déterminer le type de contenu
         if (docType && docType.startsWith('application/pdf')) {
             previewContent.innerHTML = '<embed src="' + docUrl + '" type="application/pdf" />';
         } else if (docType && docType.startsWith('image/')) {
-            previewContent.innerHTML = '<div class="preview-image-container"><img src="' + docUrl + '" alt="' + (docName || 'Reçu') + '" /></div>';
+            previewContent.innerHTML = '<div class="preview-image-container"><img src="' + docUrl + '" alt="' + (docName || '{{ _("Reçu") }}') + '" /></div>';
         } else {
-            previewContent.innerHTML = '<div class="text-center p-5"><i class="fas fa-file fa-4x text-muted mb-3"></i><p>Aperçu non disponible pour ce type de fichier</p><a href="' + docUrl + '" target="_blank" class="btn btn-primary">Ouvrir dans un nouvel onglet</a></div>';
+            previewContent.innerHTML = '<div class="text-center p-5"><i class="fas fa-file fa-4x text-muted mb-3"></i><p>{{ _("Aperçu non disponible pour ce type de fichier") }}</p><a href="' + docUrl + '" target="_blank" class="btn btn-primary">{{ _("Ouvrir dans un nouvel onglet") }}</a></div>';
         }
 
         // Utiliser l'API Bootstrap standard

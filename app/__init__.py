@@ -178,6 +178,13 @@ def create_app(config_class=Config):
             return obj.get_description(locale=get_locale())
         return obj.description if obj and hasattr(obj, 'description') else ''
 
+    @app.template_filter('get_translated_name')
+    def get_translated_name(obj):
+        """Retourne le nom traduit pour un objet Category"""
+        if obj and hasattr(obj, 'get_name'):
+            return obj.get_name(locale=get_locale())
+        return obj.name if obj and hasattr(obj, 'name') else ''
+
     @app.template_filter('translate_category')
     def translate_category(category_name):
         """Traduit les noms et descriptions des catégories par défaut"""

@@ -24,7 +24,7 @@
                                 <option value="">Aucune catégorie</option>
                                 {% for category in categories %}
                                 <option value="{{ category.id }}" {% if service.category_id == category.id %}selected{% endif %}>
-                                    {{ category.name }}
+                                    {{ category | get_translated_name }}
                                 </option>
                                 {% endfor %}
                             </select>

@@ -437,6 +437,25 @@
                             <option value="IT">{{ _('Italie') }}</option>
                         </select>
                     </div>
+                    <div class="mb-3">
+                        <label for="signup_language" class="form-label">{{ _('Langue') }}</label>
+                        <select class="form-select" id="signup_language" required>
+                            <option value="fr" selected>{{ _('Français') }}</option>
+                            <option value="en">{{ _('English') }}</option>
+                        </select>
+                        <div class="form-text">{{ _('Langue d\'affichage de l\'application') }}</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="signup_currency" class="form-label">{{ _('Devise par défaut') }}</label>
+                        <select class="form-select" id="signup_currency" required>
+                            <option value="EUR" selected>EUR (€) - {{ _('Euro') }}</option>
+                            <option value="USD">USD ($) - {{ _('Dollar américain') }}</option>
+                            <option value="GBP">GBP (£) - {{ _('Livre sterling') }}</option>
+                            <option value="CHF">CHF (CHF) - {{ _('Franc suisse') }}</option>
+                            <option value="CAD">CAD ($) - {{ _('Dollar canadien') }}</option>
+                        </select>
+                        <div class="form-text">{{ _('Cette devise sera utilisée pour vos abonnements et factures') }}</div>
+                    </div>
 
                     <div id="signup-error" class="alert alert-danger d-none mb-3"></div>
 
@@ -544,6 +563,8 @@ document.getElementById('signupForm').addEventListener('submit', async function(
                 last_name: document.getElementById('signup_last_name').value,
                 date_of_birth: document.getElementById('signup_date_of_birth').value,
                 country: document.getElementById('signup_country').value,
+                language: document.getElementById('signup_language').value,
+                default_currency: document.getElementById('signup_currency').value,
                 plan_type: selectedPlanType
             })
         });

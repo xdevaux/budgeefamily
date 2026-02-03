@@ -1,8 +1,9 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request, session, jsonify, current_app
 from flask_login import login_user, logout_user, current_user, login_required
+from flask_babel import gettext as _
 from urllib.parse import urlparse
 from app import db
-from app.models import User, Plan
+from app.models import User, Plan, Notification
 from datetime import datetime
 import os
 
@@ -35,6 +36,10 @@ def login():
         user.last_login = datetime.utcnow()
         db.session.commit()
 
+        # Appliquer la langue de l'utilisateur
+        if user.language:
+            session['language'] = user.language
+
         # Vérifier s'il y a un plan premium en attente (après inscription)
         if 'pending_premium_plan' in session:
             pending_plan = session.pop('pending_premium_plan')
@@ -64,6 +69,7 @@ def register():
         last_name = request.form.get('last_name')
         date_of_birth_str = request.form.get('date_of_birth')
         default_currency = request.form.get('default_currency', 'EUR')
+        language = request.form.get('language', 'fr')
         country = request.form.get('country', 'FR')
 
         # Vérifier si l'utilisateur s'inscrit pour un plan Premium
@@ -107,6 +113,7 @@ def register():
             last_name=last_name,
             date_of_birth=date_of_birth,
             default_currency=default_currency,
+            language=language,
             plan=free_plan
         )
         user.set_password(password)
@@ -154,6 +161,8 @@ def api_register():
         last_name = data.get('last_name')
         date_of_birth_str = data.get('date_of_birth')
         country = data.get('country', 'FR')
+        language = data.get('language', 'fr')
+        default_currency = data.get('default_currency', 'EUR')
         plan_type = data.get('plan_type', '')  # 'monthly' ou 'yearly'
 
         # Validation
@@ -193,7 +202,8 @@ def api_register():
             first_name=first_name,
             last_name=last_name,
             date_of_birth=date_of_birth,
-            default_currency='EUR',
+            default_currency=default_currency,
+            language=language,
             plan=free_plan
         )
         user.set_password(password)
@@ -256,8 +266,10 @@ def profile():
 
         # Mettre à jour la langue
         language = request.form.get('language')
-        if language and language in ['fr', 'en', 'es', 'it', 'de', 'pt']:
+        if language and language in ['fr', 'en']:
             current_user.language = language
+            # Mettre à jour la session pour appliquer le changement immédiatement
+            session['language'] = language
 
         # Mettre à jour les préférences de notification par email (réservé aux utilisateurs Premium)
         if current_user.plan.name != 'Free':
@@ -356,12 +368,11 @@ def downgrade_to_free():
     current_user.email_notifications = False
 
     # Créer une notification
-    from app.models import Notification
     notification = Notification(
         user_id=current_user.id,
         type='downgrade',
-        title='Rétrogradation confirmée',
-        message=f'Vous avez été rétrogradé du plan {old_plan_name} vers le plan gratuit.'
+        title=_('Rétrogradation confirmée'),
+        message=_('Vous avez été rétrogradé du plan %(old_plan)s vers le plan gratuit.', old_plan=old_plan_name)
     )
     db.session.add(notification)
     db.session.commit()

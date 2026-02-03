@@ -1,22 +1,22 @@
 {% extends "base.html" %}
 
-{% block title %}Mes paiements en plusieurs fois - Budgee Family{% endblock %}
+{% block title %}{{ _('Mes paiements en plusieurs fois') }} - Budgee Family{% endblock %}
 
 {% block content %}
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2><i class="fas fa-calendar-alt"></i> Mes paiements en plusieurs fois</h2>
+        <h2><i class="fas fa-calendar-alt"></i> {{ _('Mes paiements en plusieurs fois') }}</h2>
         <div class="d-flex gap-2">
             {% if current_user.can_add_installment_payment() %}
                 <a href="{{ url_for('installments.add') }}" class="btn btn-primary">
-                    <i class="fas fa-plus"></i> Ajouter un paiement
+                    <i class="fas fa-plus"></i> {{ _('Ajouter un paiement') }}
                 </a>
             {% else %}
-                <button class="btn btn-secondary" disabled title="Limite atteinte pour le plan gratuit">
-                    <i class="fas fa-lock"></i> Limite atteinte (1/1)
+                <button class="btn btn-secondary" disabled title="{{ _('Limite atteinte pour le plan gratuit') }}">
+                    <i class="fas fa-lock"></i> {{ _('Limite atteinte (1/1)') }}
                 </button>
                 <a href="{{ url_for('main.pricing') }}" class="btn btn-warning">
-                    <i class="fas fa-crown"></i> Passer Premium
+                    <i class="fas fa-crown"></i> {{ _('Passer Premium') }}
                 </a>
             {% endif %}
         </div>
@@ -30,7 +30,7 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h6 class="text-muted mb-1">Mensualités totales</h6>
+                            <h6 class="text-muted mb-1">{{ _('Mensualités totales') }}</h6>
                             <h3 class="mb-0">{{ total_monthly | format_amount }} €</h3>
                         </div>
                         <div class="text-warning">
@@ -45,7 +45,7 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h6 class="text-muted mb-1">Restant à payer</h6>
+                            <h6 class="text-muted mb-1">{{ _('Restant à payer') }}</h6>
                             <h3 class="mb-0">{{ total_remaining | format_amount }} €</h3>
                         </div>
                         <div class="text-danger">
@@ -59,7 +59,7 @@
     {% endif %}
 
     <!-- Paiements en cours -->
-    <h4 class="mb-3"><i class="fas fa-hourglass-half text-warning"></i> En cours</h4>
+    <h4 class="mb-3"><i class="fas fa-hourglass-half text-warning"></i> {{ _('En cours') }}</h4>
     {% if active_payments %}
         <div class="card mb-4">
             <div class="card-body p-0">
@@ -67,13 +67,13 @@
                     <table class="table table-hover mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th>Article</th>
-                                <th>Marchand</th>
-                                <th>Fournisseur</th>
-                                <th class="text-end">Mensualité</th>
-                                <th class="text-center">Progression</th>
-                                <th>Prochain paiement</th>
-                                <th class="text-end">Actions</th>
+                                <th>{{ _('Article') }}</th>
+                                <th>{{ _('Marchand') }}</th>
+                                <th>{{ _('Fournisseur') }}</th>
+                                <th class="text-end">{{ _('Mensualité') }}</th>
+                                <th class="text-center">{{ _('Progression') }}</th>
+                                <th>{{ _('Prochain paiement') }}</th>
+                                <th class="text-end">{{ _('Actions') }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -122,16 +122,16 @@
                                     <td class="text-end">
                                         <div class="btn-group btn-group-sm">
                                             <a href="{{ url_for('installments.detail', payment_id=payment.id) }}"
-                                               class="btn btn-outline-primary" title="Détails">
+                                               class="btn btn-outline-primary" title="{{ _('Détails') }}">
                                                 <i class="fas fa-eye"></i>
                                             </a>
                                             <a href="{{ url_for('installments.edit', payment_id=payment.id) }}"
-                                               class="btn btn-outline-secondary" title="Modifier">
+                                               class="btn btn-outline-secondary" title="{{ _('Modifier') }}">
                                                 <i class="fas fa-edit"></i>
                                             </a>
                                             <form method="POST" action="{{ url_for('installments.delete', payment_id=payment.id) }}"
-                                                  onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce paiement en plusieurs fois ?')" class="d-inline">
-                                                <button type="submit" class="btn btn-outline-danger" title="Supprimer">
+                                                  onsubmit="return confirm('{{ _('Êtes-vous sûr de vouloir supprimer ce paiement en plusieurs fois ?') }}')" class="d-inline">
+                                                <button type="submit" class="btn btn-outline-danger" title="{{ _('Supprimer') }}">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </form>
@@ -148,10 +148,10 @@
         <div class="card mb-4">
             <div class="card-body text-center py-5">
                 <i class="fas fa-calendar-alt fa-4x text-muted mb-3"></i>
-                <h4>Aucun paiement en cours</h4>
-                <p class="text-muted">Vous n'avez aucun paiement en plusieurs fois en cours.</p>
+                <h4>{{ _('Aucun paiement en cours') }}</h4>
+                <p class="text-muted">{{ _('Vous n\'avez aucun paiement en plusieurs fois en cours.') }}</p>
                 <a href="{{ url_for('installments.add') }}" class="btn btn-primary">
-                    <i class="fas fa-plus"></i> Ajouter un paiement
+                    <i class="fas fa-plus"></i> {{ _('Ajouter un paiement') }}
                 </a>
             </div>
         </div>
@@ -159,18 +159,18 @@
 
     <!-- Paiements terminés -->
     {% if completed_payments %}
-    <h4 class="mb-3 mt-5"><i class="fas fa-check-circle text-success"></i> Terminés</h4>
+    <h4 class="mb-3 mt-5"><i class="fas fa-check-circle text-success"></i> {{ _('Terminés') }}</h4>
     <div class="card">
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>Article</th>
-                            <th>Marchand</th>
-                            <th class="text-end">Montant total</th>
-                            <th>Terminé le</th>
-                            <th class="text-end">Actions</th>
+                            <th>{{ _('Article') }}</th>
+                            <th>{{ _('Marchand') }}</th>
+                            <th class="text-end">{{ _('Montant total') }}</th>
+                            <th>{{ _('Terminé le') }}</th>
+                            <th class="text-end">{{ _('Actions') }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -202,12 +202,12 @@
                                 <td class="text-end">
                                     <div class="btn-group btn-group-sm">
                                         <a href="{{ url_for('installments.detail', payment_id=payment.id) }}"
-                                           class="btn btn-outline-primary" title="Détails">
+                                           class="btn btn-outline-primary" title="{{ _('Détails') }}">
                                             <i class="fas fa-eye"></i>
                                         </a>
                                         <form method="POST" action="{{ url_for('installments.delete', payment_id=payment.id) }}"
-                                              onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce paiement en plusieurs fois ?')" class="d-inline">
-                                            <button type="submit" class="btn btn-outline-danger" title="Supprimer">
+                                              onsubmit="return confirm('{{ _('Êtes-vous sûr de vouloir supprimer ce paiement en plusieurs fois ?') }}')" class="d-inline">
+                                            <button type="submit" class="btn btn-outline-danger" title="{{ _('Supprimer') }}">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </form>

@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_required, current_user
+from flask_babel import gettext as _
 from app import db
 from app.models import CreditType
 
@@ -34,7 +35,7 @@ def add():
         # Vérifier qu'un type avec ce nom n'existe pas déjà pour cet utilisateur
         existing = CreditType.query.filter_by(user_id=current_user.id, name=name).first()
         if existing:
-            flash(f'Un type de crédit "{name}" existe déjà dans vos types personnalisés.', 'warning')
+            flash(_('Un type de crédit "%(name)s" existe déjà dans vos types personnalisés.', name=name), 'warning')
             return redirect(url_for('credit_types.add'))
 
         credit_type = CreditType(
@@ -48,7 +49,7 @@ def add():
         db.session.add(credit_type)
         db.session.commit()
 
-        flash(f'Le type de crédit "{name}" a été créé avec succès !', 'success')
+        flash(_('Le type de crédit "%(name)s" a été créé avec succès !', name=name), 'success')
         return redirect(url_for('credit_types.list'))
 
     return render_template('credit_types/add.html')
@@ -62,7 +63,7 @@ def edit(type_id):
 
     # Vérifier que c'est bien un type de l'utilisateur
     if credit_type.user_id != current_user.id:
-        flash('Vous ne pouvez modifier que vos propres types de crédits.', 'danger')
+        flash(_('Vous ne pouvez modifier que vos propres types de crédits.'), 'danger')
         return redirect(url_for('credit_types.list'))
 
     if request.method == 'POST':
@@ -84,7 +85,7 @@ def edit(type_id):
 
         db.session.commit()
 
-        flash(f'Le type de crédit "{name}" a été mis à jour avec succès !', 'success')
+        flash(_('Le type de crédit "%(name)s" a été mis à jour avec succès !', name=name), 'success')
         return redirect(url_for('credit_types.list'))
 
     return render_template('credit_types/edit.html', credit_type=credit_type)
@@ -98,19 +99,19 @@ def delete(type_id):
 
     # Vérifier que c'est bien un type de l'utilisateur
     if credit_type.user_id != current_user.id:
-        flash('Vous ne pouvez supprimer que vos propres types de crédits.', 'danger')
+        flash(_('Vous ne pouvez supprimer que vos propres types de crédits.'), 'danger')
         return redirect(url_for('credit_types.list'))
 
     # Vérifier qu'aucun crédit n'utilise ce type
     if credit_type.credits.count() > 0:
-        flash(f'Impossible de supprimer le type "{credit_type.name}" car il est utilisé par {credit_type.credits.count()} crédit(s).', 'danger')
+        flash(_('Impossible de supprimer le type "%(name)s" car il est utilisé par %(count)s crédit(s).', name=credit_type.name, count=credit_type.credits.count()), 'danger')
         return redirect(url_for('credit_types.list'))
 
     type_name = credit_type.name
     db.session.delete(credit_type)
     db.session.commit()
 
-    flash(f'Le type de crédit "{type_name}" a été supprimé avec succès !', 'success')
+    flash(_('Le type de crédit "%(name)s" a été supprimé avec succès !', name=type_name), 'success')
     return redirect(url_for('credit_types.list'))
 
 
@@ -122,12 +123,12 @@ def toggle(type_id):
 
     # Vérifier que c'est bien un type de l'utilisateur
     if credit_type.user_id != current_user.id:
-        flash('Vous ne pouvez modifier que vos propres types de crédits.', 'danger')
+        flash(_('Vous ne pouvez modifier que vos propres types de crédits.'), 'danger')
         return redirect(url_for('credit_types.list'))
 
     credit_type.is_active = not credit_type.is_active
     db.session.commit()
 
-    status = 'activé' if credit_type.is_active else 'désactivé'
-    flash(f'Le type de crédit "{credit_type.name}" a été {status}.', 'success')
+    status = _('activé') if credit_type.is_active else _('désactivé')
+    flash(_('Le type de crédit "%(name)s" a été %(status)s.', name=credit_type.name, status=status), 'success')
     return redirect(url_for('credit_types.list'))

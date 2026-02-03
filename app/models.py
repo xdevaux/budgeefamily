@@ -305,7 +305,8 @@ class Category(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)  # NULL = catégorie globale
-    name = db.Column(db.String(100), nullable=False)
+    name = db.Column(db.String(100), nullable=False)  # Nom en français par défaut
+    name_en = db.Column(db.String(100), nullable=True)  # Nom en anglais
     description = db.Column(db.Text, nullable=True)
     description_en = db.Column(db.Text, nullable=True)  # Description en anglais
     logo_url = db.Column(db.String(500), nullable=True)  # Deprecated - kept for backward compatibility
@@ -330,6 +331,12 @@ class Category(db.Model):
     def is_custom(self):
         """Vérifie si c'est une catégorie personnalisée"""
         return self.user_id is not None
+
+    def get_name(self, locale='fr'):
+        """Retourne le nom dans la langue demandée"""
+        if locale == 'en' and self.name_en:
+            return self.name_en
+        return self.name
 
     def get_description(self, locale='fr'):
         """Retourne la description dans la langue demandée"""
@@ -550,7 +557,9 @@ class CreditType(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)  # NULL = type global
 
     name = db.Column(db.String(100), nullable=False)
+    name_en = db.Column(db.String(100), nullable=True)  # Nom en anglais
     description = db.Column(db.Text, nullable=True)
+    description_en = db.Column(db.Text, nullable=True)  # Description en anglais
     icon = db.Column(db.String(50), nullable=True)  # Font Awesome icon class
     color = db.Column(db.String(7), default='#6c757d')  # Couleur en hex
 
@@ -569,6 +578,18 @@ class CreditType(db.Model):
     def is_custom(self):
         """Vérifie si c'est un type personnalisé"""
         return self.user_id is not None
+
+    def get_name(self, locale='fr'):
+        """Retourne le nom dans la langue demandée"""
+        if locale == 'en' and self.name_en:
+            return self.name_en
+        return self.name
+
+    def get_description(self, locale='fr'):
+        """Retourne la description dans la langue demandée"""
+        if locale == 'en' and self.description_en:
+            return self.description_en
+        return self.description
 
     def __repr__(self):
         return f'<CreditType {self.name}>'

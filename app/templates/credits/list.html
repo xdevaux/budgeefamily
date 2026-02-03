@@ -87,7 +87,7 @@
                                         {% if credit.credit_type_obj %}
                                             <span class="badge" style="background-color: {{ credit.credit_type_obj.color }};">
                                                 <i class="fas {{ credit.credit_type_obj.icon or 'fa-circle' }}"></i>
-                                                {{ credit.credit_type_obj.name }}
+                                                {{ credit.credit_type_obj.get_name(current_user.language or 'fr') }}
                                             </span>
                                         {% else %}
                                             <span class="text-muted">-</span>
@@ -353,7 +353,7 @@ function exportCreditsChartToPDF() {
 
         // Ajouter le titre
         pdf.setFontSize(16);
-        pdf.text('Répartition des crédits actifs par type', 105, 15, { align: 'center' });
+        pdf.text('{{ _("Répartition des crédits actifs par type") }}', 105, 15, { align: 'center' });
 
         // Ajouter la date
         pdf.setFontSize(10);

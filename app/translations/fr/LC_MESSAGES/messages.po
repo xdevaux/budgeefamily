@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-02-03 07:29+0100\n"
+"POT-Creation-Date: 2026-02-03 17:13+0100\n"
 "PO-Revision-Date: 2026-01-31 15:29+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -16,7 +16,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.10.3\n"
 
 #: app/__init__.py:137 app/templates/credits/add.html:81
 #: app/templates/credits/edit.html:82 app/templates/index.html:177
@@ -65,7 +65,8 @@ msgstr ""
 msgid "Fév."
 msgstr ""
 
-#: app/__init__.py:161 app/routes/banks.py:30 app/routes/employers.py:39
+#: app/__init__.py:161 app/routes/banks.py:30 app/routes/credits.py:29
+#: app/routes/employers.py:39
 msgid "Mars"
 msgstr ""
 
@@ -73,12 +74,14 @@ msgstr ""
 msgid "Avr."
 msgstr ""
 
-#: app/__init__.py:163 app/routes/banks.py:31 app/routes/employers.py:40
+#: app/__init__.py:163 app/routes/banks.py:31 app/routes/credits.py:30
+#: app/routes/employers.py:40
 #, fuzzy
 msgid "Mai"
 msgstr "Email :"
 
-#: app/__init__.py:164 app/routes/banks.py:31 app/routes/employers.py:40
+#: app/__init__.py:164 app/routes/banks.py:31 app/routes/credits.py:30
+#: app/routes/employers.py:40
 msgid "Juin"
 msgstr ""
 
@@ -86,7 +89,8 @@ msgstr ""
 msgid "Juil."
 msgstr ""
 
-#: app/__init__.py:166 app/routes/banks.py:31 app/routes/employers.py:40
+#: app/__init__.py:166 app/routes/banks.py:31 app/routes/credits.py:30
+#: app/routes/employers.py:40
 msgid "Août"
 msgstr ""
 
@@ -106,7 +110,8 @@ msgstr ""
 msgid "Déc."
 msgstr ""
 
-#: app/__init__.py:187
+#: app/__init__.py:187 app/templates/installments/add.html:124
+#: app/templates/installments/edit.html:66
 msgid "Alimentation"
 msgstr ""
 
@@ -167,9 +172,13 @@ msgstr ""
 msgid "Animaux"
 msgstr ""
 
-#: app/__init__.py:202 app/routes/banks.py:75 app/routes/employers.py:22
-#: app/routes/employers.py:50 app/routes/revenues.py:25
-#: app/routes/revenues.py:34
+#: app/__init__.py:202 app/routes/banks.py:75 app/routes/credits.py:40
+#: app/routes/employers.py:22 app/routes/employers.py:50
+#: app/routes/revenues.py:25 app/routes/revenues.py:34
+#: app/templates/installments/add.html:47
+#: app/templates/installments/add.html:125
+#: app/templates/installments/edit.html:47
+#: app/templates/installments/edit.html:67
 msgid "Autre"
 msgstr ""
 
@@ -237,6 +246,52 @@ msgstr ""
 msgid "Dépenses diverses non catégorisées"
 msgstr ""
 
+#: app/routes/api.py:108 app/routes/api.py:237
+#, python-format
+msgid "Bienvenue sur le plan %(plan)s !"
+msgstr ""
+
+#: app/routes/api.py:110
+#, python-format
+msgid "Abonnement %(plan)s renouvelé"
+msgstr ""
+
+#: app/routes/api.py:115 app/routes/api.py:238
+#, python-format
+msgid ""
+"Votre abonnement %(plan)s a été activé. Vous pouvez maintenant ajouter un"
+" nombre illimité d'abonnements."
+msgstr ""
+
+#: app/routes/api.py:269
+msgid "Abonnement Premium annulé"
+msgstr ""
+
+#: app/routes/api.py:270
+msgid ""
+"Votre abonnement Premium a été annulé. Vous êtes maintenant sur le plan "
+"gratuit."
+msgstr ""
+
+#: app/routes/api.py:290
+msgid "Échec de paiement"
+msgstr ""
+
+#: app/routes/api.py:291
+msgid ""
+"Le paiement de votre abonnement Premium a échoué. Veuillez mettre à jour "
+"vos informations de paiement."
+msgstr ""
+
+#: app/routes/auth.py:363
+msgid "Rétrogradation confirmée"
+msgstr ""
+
+#: app/routes/auth.py:364
+#, python-format
+msgid "Vous avez été rétrogradé du plan %(old_plan)s vers le plan gratuit."
+msgstr ""
+
 #: app/routes/banks.py:19
 msgid "RIB"
 msgstr ""
@@ -246,47 +301,47 @@ msgstr ""
 msgid "Contrat"
 msgstr "Contact"
 
-#: app/routes/banks.py:21
+#: app/routes/banks.py:21 app/routes/credits.py:18
 msgid "Relevé"
 msgstr ""
 
-#: app/routes/banks.py:22
+#: app/routes/banks.py:22 app/routes/credits.py:21
 msgid "Courrier"
 msgstr ""
 
-#: app/routes/banks.py:23 app/routes/employers.py:33
+#: app/routes/banks.py:23 app/routes/credits.py:22 app/routes/employers.py:33
 msgid "Autre document"
 msgstr ""
 
-#: app/routes/banks.py:30 app/routes/employers.py:39
+#: app/routes/banks.py:30 app/routes/credits.py:29 app/routes/employers.py:39
 msgid "Janvier"
 msgstr ""
 
-#: app/routes/banks.py:30 app/routes/employers.py:39
+#: app/routes/banks.py:30 app/routes/credits.py:29 app/routes/employers.py:39
 msgid "Février"
 msgstr ""
 
-#: app/routes/banks.py:30 app/routes/employers.py:39
+#: app/routes/banks.py:30 app/routes/credits.py:29 app/routes/employers.py:39
 msgid "Avril"
 msgstr ""
 
-#: app/routes/banks.py:31 app/routes/employers.py:40
+#: app/routes/banks.py:31 app/routes/credits.py:30 app/routes/employers.py:40
 msgid "Juillet"
 msgstr ""
 
-#: app/routes/banks.py:32 app/routes/employers.py:41
+#: app/routes/banks.py:32 app/routes/credits.py:31 app/routes/employers.py:41
 msgid "Septembre"
 msgstr ""
 
-#: app/routes/banks.py:32 app/routes/employers.py:41
+#: app/routes/banks.py:32 app/routes/credits.py:31 app/routes/employers.py:41
 msgid "Octobre"
 msgstr ""
 
-#: app/routes/banks.py:32 app/routes/employers.py:41
+#: app/routes/banks.py:32 app/routes/credits.py:31 app/routes/employers.py:41
 msgid "Novembre"
 msgstr ""
 
-#: app/routes/banks.py:32 app/routes/employers.py:41
+#: app/routes/banks.py:32 app/routes/credits.py:31 app/routes/employers.py:41
 msgid "Décembre"
 msgstr ""
 
@@ -326,29 +381,34 @@ msgstr ""
 msgid "Banque supprimée avec succès !"
 msgstr ""
 
-#: app/routes/banks.py:349 app/routes/employers.py:314
+#: app/routes/banks.py:349 app/routes/credits.py:396
+#: app/routes/employers.py:314
 #, python-format
 msgid "Le document \"%(name)s\" a été ajouté avec succès !"
 msgstr ""
 
 #: app/routes/banks.py:368 app/routes/banks.py:388 app/routes/banks.py:409
-#: app/routes/banks.py:460 app/routes/employers.py:333
-#: app/routes/employers.py:353 app/routes/employers.py:373
-#: app/routes/employers.py:422
+#: app/routes/banks.py:460 app/routes/credits.py:415 app/routes/credits.py:435
+#: app/routes/credits.py:455 app/routes/credits.py:504
+#: app/routes/employers.py:333 app/routes/employers.py:353
+#: app/routes/employers.py:373 app/routes/employers.py:422
 msgid "Vous n'avez pas accès à ce document."
 msgstr ""
 
-#: app/routes/banks.py:372 app/routes/banks.py:392 app/routes/employers.py:337
+#: app/routes/banks.py:372 app/routes/banks.py:392 app/routes/credits.py:419
+#: app/routes/credits.py:439 app/routes/employers.py:337
 #: app/routes/employers.py:357
 msgid "Ce document n'a pas de fichier attaché."
 msgstr ""
 
-#: app/routes/banks.py:440 app/routes/employers.py:402
+#: app/routes/banks.py:440 app/routes/credits.py:484
+#: app/routes/employers.py:402
 #, python-format
 msgid "Le document \"%(name)s\" a été mis à jour."
 msgstr ""
 
-#: app/routes/banks.py:468 app/routes/employers.py:430
+#: app/routes/banks.py:468 app/routes/credits.py:512
+#: app/routes/employers.py:430
 #, python-format
 msgid "Le document \"%(name)s\" a été supprimé."
 msgstr ""
@@ -403,13 +463,14 @@ msgstr ""
 msgid "Chéquier modifié avec succès !"
 msgstr ""
 
-#: app/routes/checkbooks.py:168 app/routes/revenues.py:217
+#: app/routes/checkbooks.py:168 app/routes/credit_types.py:132
+#: app/routes/credits.py:280 app/routes/revenues.py:217
 #: app/routes/subscriptions.py:249
 msgid "activé"
 msgstr ""
 
-#: app/routes/checkbooks.py:168 app/routes/revenues.py:217
-#: app/routes/subscriptions.py:249
+#: app/routes/checkbooks.py:168 app/routes/credit_types.py:132
+#: app/routes/revenues.py:217 app/routes/subscriptions.py:249
 msgid "désactivé"
 msgstr ""
 
@@ -465,6 +526,103 @@ msgstr ""
 msgid "Chèque #%(number)s supprimé avec succès !"
 msgstr ""
 
+#: app/routes/credit_types.py:38
+#, python-format
+msgid "Un type de crédit \"%(name)s\" existe déjà dans vos types personnalisés."
+msgstr ""
+
+#: app/routes/credit_types.py:52
+#, python-format
+msgid "Le type de crédit \"%(name)s\" a été créé avec succès !"
+msgstr ""
+
+#: app/routes/credit_types.py:66 app/routes/credit_types.py:126
+msgid "Vous ne pouvez modifier que vos propres types de crédits."
+msgstr ""
+
+#: app/routes/credit_types.py:88
+#, python-format
+msgid "Le type de crédit \"%(name)s\" a été mis à jour avec succès !"
+msgstr ""
+
+#: app/routes/credit_types.py:102
+msgid "Vous ne pouvez supprimer que vos propres types de crédits."
+msgstr ""
+
+#: app/routes/credit_types.py:107
+#, python-format
+msgid ""
+"Impossible de supprimer le type \"%(name)s\" car il est utilisé par "
+"%(count)s crédit(s)."
+msgstr ""
+
+#: app/routes/credit_types.py:114
+#, python-format
+msgid "Le type de crédit \"%(name)s\" a été supprimé avec succès !"
+msgstr ""
+
+#: app/routes/credit_types.py:133
+#, python-format
+msgid "Le type de crédit \"%(name)s\" a été %(status)s."
+msgstr ""
+
+#: app/routes/credits.py:17
+msgid "Contrat de crédit"
+msgstr ""
+
+#: app/routes/credits.py:19
+msgid "Assurance"
+msgstr ""
+
+#: app/routes/credits.py:20 app/routes/employers.py:32
+msgid "Avenant"
+msgstr ""
+
+#: app/routes/credits.py:110
+msgid ""
+"Vous avez atteint la limite de crédits pour le plan gratuit. Passez au "
+"plan Premium pour ajouter des crédits illimités."
+msgstr ""
+
+#: app/routes/credits.py:164
+msgid "Nouveau crédit ajouté"
+msgstr ""
+
+#: app/routes/credits.py:165
+#, python-format
+msgid "Votre crédit \"%(name)s\" a été ajouté avec succès."
+msgstr ""
+
+#: app/routes/credits.py:174
+#, python-format
+msgid "Le crédit \"%(name)s\" a été ajouté avec succès !"
+msgstr ""
+
+#: app/routes/credits.py:190 app/routes/credits.py:239
+#: app/routes/credits.py:265 app/routes/credits.py:291
+#: app/routes/credits.py:347
+msgid "Vous n'avez pas accès à ce crédit."
+msgstr ""
+
+#: app/routes/credits.py:219
+#, python-format
+msgid "Le crédit \"%(name)s\" a été mis à jour."
+msgstr ""
+
+#: app/routes/credits.py:250
+#, python-format
+msgid "Le crédit \"%(name)s\" et toutes ses transactions ont été supprimés."
+msgstr ""
+
+#: app/routes/credits.py:280
+msgid "clôturé"
+msgstr ""
+
+#: app/routes/credits.py:281
+#, python-format
+msgid "Le crédit \"%(name)s\" a été %(status)s."
+msgstr ""
+
 #: app/routes/employers.py:16
 msgid "CDI"
 msgstr ""
@@ -505,10 +663,6 @@ msgstr ""
 msgid "Attestation"
 msgstr ""
 
-#: app/routes/employers.py:32
-msgid "Avenant"
-msgstr ""
-
 #: app/routes/employers.py:127
 #, python-format
 msgid "L'employeur \"%(name)s\" a été ajouté avec succès !"
@@ -527,6 +681,52 @@ msgstr ""
 #: app/routes/employers.py:253
 #, python-format
 msgid "L'employeur \"%(name)s\" a été supprimé."
+msgstr ""
+
+#: app/routes/installments.py:43
+msgid ""
+"Vous avez atteint la limite de paiements en plusieurs fois pour le plan "
+"gratuit. Passez au plan Premium pour ajouter des paiements illimités."
+msgstr ""
+
+#: app/routes/installments.py:109
+msgid "Nouveau paiement en plusieurs fois ajouté"
+msgstr ""
+
+#: app/routes/installments.py:110
+#, python-format
+msgid ""
+"Votre paiement en plusieurs fois \"%(name)s\" a été ajouté avec succès. "
+"Montant: %(amount).2f€/mois sur %(installments)d mois."
+msgstr ""
+
+#: app/routes/installments.py:119
+#, python-format
+msgid "Le paiement en plusieurs fois \"%(name)s\" a été ajouté avec succès."
+msgstr ""
+
+#: app/routes/installments.py:139 app/routes/installments.py:152
+#: app/routes/installments.py:191 app/routes/installments.py:218
+msgid "Vous n'avez pas accès à ce paiement."
+msgstr ""
+
+#: app/routes/installments.py:172
+msgid "Le paiement a été mis à jour avec succès."
+msgstr ""
+
+#: app/routes/installments.py:202
+#, python-format
+msgid ""
+"Le paiement \"%(name)s\" et toutes ses transactions ont été supprimés "
+"avec succès."
+msgstr ""
+
+#: app/routes/installments.py:222
+msgid "Paiement traité avec succès !"
+msgstr ""
+
+#: app/routes/installments.py:224
+msgid "Ce paiement est déjà terminé."
 msgstr ""
 
 #: app/routes/providers.py:56
@@ -855,6 +1055,8 @@ msgid "Mes crédits"
 msgstr ""
 
 #: app/templates/base.html:938 app/templates/index.html:373
+#: app/templates/installments/list.html:3
+#: app/templates/installments/list.html:8
 msgid "Mes paiements en plusieurs fois"
 msgstr ""
 
@@ -1278,7 +1480,9 @@ msgstr ""
 
 #: app/templates/credits/add.html:64 app/templates/credits/detail.html:106
 #: app/templates/credits/edit.html:65 app/templates/credits/list.html:68
-#: app/templates/index.html:405
+#: app/templates/index.html:405 app/templates/installments/detail.html:140
+#: app/templates/installments/edit.html:124
+#: app/templates/installments/list.html:73
 msgid "Mensualité"
 msgstr ""
 
@@ -1768,6 +1972,9 @@ msgstr ""
 #: app/templates/credit_types/list.html:197
 #: app/templates/credits/detail.html:300 app/templates/credits/detail.html:430
 #: app/templates/credits/list.html:150 app/templates/employers/list.html:207
+#: app/templates/installments/detail.html:22
+#: app/templates/installments/list.html:134
+#: app/templates/installments/list.html:210
 #: app/templates/notifications.html:130 app/templates/providers/list.html:89
 #: app/templates/revenues/detail.html:121 app/templates/revenues/list.html:124
 #: app/templates/subscriptions/detail.html:134
@@ -2495,9 +2702,10 @@ msgstr ""
 #: app/templates/employers/add_document.html:89
 #: app/templates/employers/edit.html:170
 #: app/templates/employers/edit_document.html:90
-#: app/templates/providers/add.html:56 app/templates/providers/edit.html:56
-#: app/templates/revenues/add.html:92 app/templates/revenues/edit.html:90
-#: app/templates/subscriptions/add.html:110
+#: app/templates/installments/add.html:163
+#: app/templates/installments/edit.html:101 app/templates/providers/add.html:56
+#: app/templates/providers/edit.html:56 app/templates/revenues/add.html:92
+#: app/templates/revenues/edit.html:90 app/templates/subscriptions/add.html:110
 #: app/templates/subscriptions/edit.html:100
 msgid "Annuler"
 msgstr ""
@@ -2771,10 +2979,11 @@ msgstr ""
 #: app/templates/credits/edit_document.html:39
 #: app/templates/employers/add_document.html:39
 #: app/templates/employers/edit_document.html:39
-#: app/templates/revenues/add.html:49 app/templates/revenues/detail.html:44
-#: app/templates/revenues/edit.html:50 app/templates/services/add.html:25
-#: app/templates/services/add_plan.html:32 app/templates/services/edit.html:25
-#: app/templates/services/edit_plan.html:26
+#: app/templates/installments/add.html:26
+#: app/templates/installments/edit.html:25 app/templates/revenues/add.html:49
+#: app/templates/revenues/detail.html:44 app/templates/revenues/edit.html:50
+#: app/templates/services/add.html:25 app/templates/services/add_plan.html:32
+#: app/templates/services/edit.html:25 app/templates/services/edit_plan.html:26
 #: app/templates/services/list.html:171 app/templates/services/list.html:331
 #: app/templates/services/plans.html:113 app/templates/services/plans.html:194
 #: app/templates/subscriptions/add.html:53
@@ -2880,6 +3089,10 @@ msgstr ""
 #: app/templates/employers/edit_document.html:3
 #: app/templates/employers/edit_document.html:11
 #: app/templates/employers/list.html:111 app/templates/employers/list.html:202
+#: app/templates/installments/detail.html:12
+#: app/templates/installments/edit.html:3
+#: app/templates/installments/edit.html:8
+#: app/templates/installments/list.html:129
 #: app/templates/providers/list.html:84 app/templates/revenues/detail.html:13
 #: app/templates/revenues/edit.html:3 app/templates/revenues/edit.html:10
 #: app/templates/revenues/list.html:114
@@ -2889,6 +3102,7 @@ msgid "Modifier"
 msgstr ""
 
 #: app/templates/banks/detail.html:140
+#: app/templates/installments/detail.html:33
 #, fuzzy
 msgid "Informations"
 msgstr "Informations personnelles"
@@ -3077,8 +3291,10 @@ msgstr ""
 #: app/templates/checkbooks/list.html:53
 #: app/templates/credit_types/list.html:157
 #: app/templates/credits/detail.html:283 app/templates/credits/list.html:74
-#: app/templates/employers/list.html:133 app/templates/providers/list.html:49
-#: app/templates/revenues/detail.html:106
+#: app/templates/employers/list.html:133
+#: app/templates/installments/list.html:76
+#: app/templates/installments/list.html:173
+#: app/templates/providers/list.html:49 app/templates/revenues/detail.html:106
 #: app/templates/revenues/detail.html:109 app/templates/revenues/list.html:72
 #: app/templates/services/list.html:175 app/templates/services/list.html:334
 #: app/templates/services/plans.html:197
@@ -3087,6 +3303,8 @@ msgid "Actions"
 msgstr ""
 
 #: app/templates/banks/list.html:109 app/templates/credits/detail.html:181
+#: app/templates/installments/list.html:125
+#: app/templates/installments/list.html:205
 msgid "Détails"
 msgstr ""
 
@@ -3428,7 +3646,9 @@ msgstr ""
 
 #: app/templates/checkbooks/add.html:55 app/templates/checkbooks/edit.html:47
 #: app/templates/checkbooks/edit_check.html:72
-#: app/templates/providers/add.html:53 app/templates/providers/edit.html:53
+#: app/templates/installments/add.html:166
+#: app/templates/installments/edit.html:104 app/templates/providers/add.html:53
+#: app/templates/providers/edit.html:53
 msgid "Enregistrer"
 msgstr ""
 
@@ -3576,6 +3796,7 @@ msgid "Actifs"
 msgstr ""
 
 #: app/templates/checkbooks/list.html:31
+#: app/templates/installments/list.html:162
 msgid "Terminés"
 msgstr ""
 
@@ -3593,6 +3814,7 @@ msgid "Numéros"
 msgstr ""
 
 #: app/templates/checkbooks/list.html:80
+#: app/templates/installments/detail.html:70
 msgid "Terminé"
 msgstr ""
 
@@ -3712,6 +3934,7 @@ msgstr "Informations personnelles"
 
 #: app/templates/credit_types/list.html:121
 #: app/templates/credit_types/list.html:181
+#: app/templates/installments/detail.html:74
 #: app/templates/revenues/detail.html:65 app/templates/revenues/list.html:34
 #: app/templates/revenues/list.html:104
 #: app/templates/subscriptions/detail.html:69
@@ -3751,7 +3974,9 @@ msgid "ex: Prêt immobilier, Crédit auto..."
 msgstr ""
 
 #: app/templates/credits/add.html:27 app/templates/credits/edit.html:28
-#: app/templates/credits/list.html:38
+#: app/templates/credits/list.html:38 app/templates/installments/add.html:140
+#: app/templates/installments/detail.html:199
+#: app/templates/installments/edit.html:82
 msgid "Type de crédit"
 msgstr ""
 
@@ -3804,12 +4029,15 @@ msgstr ""
 msgid "Taux d'intérêt annuel"
 msgstr ""
 
-#: app/templates/credits/add.html:120 app/templates/revenues/detail.html:85
-#: app/templates/revenues/edit.html:80 app/templates/subscriptions/add.html:97
+#: app/templates/credits/add.html:120
+#: app/templates/installments/detail.html:157
+#: app/templates/revenues/detail.html:85 app/templates/revenues/edit.html:80
+#: app/templates/subscriptions/add.html:97
 msgid "Date de début"
 msgstr ""
 
 #: app/templates/credits/add.html:127 app/templates/credits/edit.html:121
+#: app/templates/installments/detail.html:170
 msgid "Date de fin prévue"
 msgstr ""
 
@@ -3825,8 +4053,8 @@ msgstr ""
 msgid "Veuillez entrer une mensualité valide"
 msgstr ""
 
-#: app/templates/credits/add.html:250 app/templates/revenues/add.html:177
-#: app/templates/subscriptions/add.html:343
+#: app/templates/credits/add.html:250 app/templates/installments/add.html:261
+#: app/templates/revenues/add.html:177 app/templates/subscriptions/add.html:343
 msgid "Enregistrement en cours..."
 msgstr ""
 
@@ -3844,6 +4072,10 @@ msgid "Pour les relevés mensuels"
 msgstr ""
 
 #: app/templates/credits/detail.html:116 app/templates/credits/list.html:69
+#: app/templates/installments/add.html:62
+#: app/templates/installments/detail.html:126
+#: app/templates/installments/edit.html:119
+#: app/templates/installments/list.html:171
 #, fuzzy
 msgid "Montant total"
 msgstr "Contact"
@@ -3853,6 +4085,7 @@ msgid "Emprunté au départ"
 msgstr ""
 
 #: app/templates/credits/detail.html:132
+#: app/templates/installments/detail.html:109
 #, fuzzy
 msgid "Montant restant"
 msgstr "Contact"
@@ -3887,6 +4120,7 @@ msgid "Non renseignée"
 msgstr ""
 
 #: app/templates/credits/detail.html:211
+#: app/templates/installments/detail.html:68
 #: app/templates/subscriptions/detail.html:64
 msgid "Statut :"
 msgstr ""
@@ -3896,6 +4130,7 @@ msgid "Clôturé"
 msgstr ""
 
 #: app/templates/credits/detail.html:221
+#: app/templates/installments/detail.html:53
 msgid "Description :"
 msgstr ""
 
@@ -3904,6 +4139,8 @@ msgid "Taux d'intérêt :"
 msgstr ""
 
 #: app/templates/credits/detail.html:231
+#: app/templates/installments/detail.html:46
+#: app/templates/installments/detail.html:64
 msgid "Non renseigné"
 msgstr ""
 
@@ -3950,17 +4187,18 @@ msgstr "1. Éditeur du site"
 msgid "Fichier actuel :"
 msgstr ""
 
-#: app/templates/credits/list.html:15 app/templates/revenues/list.html:15
-#: app/templates/subscriptions/list.html:25
+#: app/templates/credits/list.html:15 app/templates/installments/list.html:15
+#: app/templates/revenues/list.html:15 app/templates/subscriptions/list.html:25
 msgid "Limite atteinte pour le plan gratuit"
 msgstr ""
 
-#: app/templates/credits/list.html:16 app/templates/revenues/list.html:16
+#: app/templates/credits/list.html:16 app/templates/installments/list.html:16
+#: app/templates/revenues/list.html:16
 msgid "Limite atteinte (1/1)"
 msgstr ""
 
-#: app/templates/credits/list.html:19 app/templates/revenues/list.html:19
-#: app/templates/subscriptions/list.html:29
+#: app/templates/credits/list.html:19 app/templates/installments/list.html:19
+#: app/templates/revenues/list.html:19 app/templates/subscriptions/list.html:29
 msgid "Passer Premium"
 msgstr ""
 
@@ -3968,7 +4206,9 @@ msgstr ""
 msgid "Clôturés"
 msgstr ""
 
-#: app/templates/credits/list.html:71
+#: app/templates/credits/list.html:71 app/templates/installments/detail.html:84
+#: app/templates/installments/edit.html:134
+#: app/templates/installments/list.html:74
 msgid "Progression"
 msgstr ""
 
@@ -3980,7 +4220,7 @@ msgstr ""
 msgid "Total mensuel :"
 msgstr ""
 
-#: app/templates/credits/list.html:235
+#: app/templates/credits/list.html:235 app/templates/credits/list.html:356
 msgid "Répartition des crédits actifs par type"
 msgstr ""
 
@@ -4240,6 +4480,353 @@ msgstr ""
 msgid "Commencez par ajouter votre premier employeur"
 msgstr ""
 
+#: app/templates/installments/add.html:3 app/templates/installments/add.html:8
+msgid "Ajouter un paiement en plusieurs fois"
+msgstr ""
+
+#: app/templates/installments/add.html:17
+#: app/templates/installments/edit.html:16
+msgid "Informations du produit/service"
+msgstr ""
+
+#: app/templates/installments/add.html:20
+#: app/templates/installments/edit.html:19
+msgid "Nom de l'article"
+msgstr ""
+
+#: app/templates/installments/add.html:22
+msgid "Ex: Four Darty"
+msgstr ""
+
+#: app/templates/installments/add.html:28
+msgid "Description optionnelle"
+msgstr ""
+
+#: app/templates/installments/add.html:33
+#: app/templates/installments/edit.html:31
+#: app/templates/installments/list.html:71
+#: app/templates/installments/list.html:170
+msgid "Marchand"
+msgstr ""
+
+#: app/templates/installments/add.html:35
+msgid "Ex: Darty, Fnac, Amazon..."
+msgstr ""
+
+#: app/templates/installments/add.html:38
+#: app/templates/installments/edit.html:36
+msgid "Fournisseur de paiement"
+msgstr ""
+
+#: app/templates/installments/add.html:40
+#: app/templates/installments/add.html:77
+#: app/templates/installments/add.html:123
+#: app/templates/installments/edit.html:40
+#: app/templates/installments/edit.html:65
+msgid "Sélectionner..."
+msgstr ""
+
+#: app/templates/installments/add.html:51
+#: app/templates/installments/edit.html:51
+msgid "Saisir le nom du fournisseur"
+msgstr ""
+
+#: app/templates/installments/add.html:58
+#, fuzzy
+msgid "Informations du paiement"
+msgstr "Informations personnelles"
+
+#: app/templates/installments/add.html:74
+#: app/templates/installments/detail.html:145
+#: app/templates/installments/edit.html:129
+msgid "Nombre de mensualités"
+msgstr ""
+
+#: app/templates/installments/add.html:78
+msgid "2 fois"
+msgstr ""
+
+#: app/templates/installments/add.html:79
+msgid "3 fois"
+msgstr ""
+
+#: app/templates/installments/add.html:80
+msgid "4 fois"
+msgstr ""
+
+#: app/templates/installments/add.html:81
+#, fuzzy
+msgid "6 fois"
+msgstr "6. Cookies"
+
+#: app/templates/installments/add.html:82
+msgid "10 fois"
+msgstr ""
+
+#: app/templates/installments/add.html:83
+msgid "12 fois"
+msgstr ""
+
+#: app/templates/installments/add.html:84
+msgid "24 fois"
+msgstr ""
+
+#: app/templates/installments/add.html:85
+msgid "36 fois"
+msgstr ""
+
+#: app/templates/installments/add.html:95
+msgid "Avec frais"
+msgstr ""
+
+#: app/templates/installments/add.html:101
+#, fuzzy
+msgid "Montant des frais"
+msgstr "Contact"
+
+#: app/templates/installments/add.html:107
+msgid "Frais appliqués sur le montant total"
+msgstr ""
+
+#: app/templates/installments/add.html:111
+msgid "Montant de chaque mensualité :"
+msgstr ""
+
+#: app/templates/installments/add.html:117
+msgid "Catégorisation (optionnel)"
+msgstr ""
+
+#: app/templates/installments/add.html:121
+#: app/templates/installments/detail.html:192
+#: app/templates/installments/edit.html:63
+msgid "Catégorie de produit"
+msgstr ""
+
+#: app/templates/installments/add.html:126
+#: app/templates/installments/edit.html:68
+msgid "Automobile"
+msgstr ""
+
+#: app/templates/installments/add.html:127
+#: app/templates/installments/edit.html:69
+msgid "Beauté & Santé"
+msgstr ""
+
+#: app/templates/installments/add.html:128
+#: app/templates/installments/edit.html:70
+msgid "Électroménager"
+msgstr ""
+
+#: app/templates/installments/add.html:129
+#: app/templates/installments/edit.html:71
+msgid "Équipement de la maison"
+msgstr ""
+
+#: app/templates/installments/add.html:130
+#: app/templates/installments/edit.html:72
+msgid "Études"
+msgstr ""
+
+#: app/templates/installments/add.html:131
+#: app/templates/installments/edit.html:73
+msgid "Gaming"
+msgstr ""
+
+#: app/templates/installments/add.html:132
+#: app/templates/installments/edit.html:74
+#, fuzzy
+msgid "Informatique"
+msgstr "Informations personnelles"
+
+#: app/templates/installments/add.html:133
+#: app/templates/installments/edit.html:75
+msgid "Mobile"
+msgstr ""
+
+#: app/templates/installments/add.html:134
+#: app/templates/installments/edit.html:76
+msgid "Mode"
+msgstr ""
+
+#: app/templates/installments/add.html:135
+#: app/templates/installments/edit.html:77
+msgid "Sport"
+msgstr ""
+
+#: app/templates/installments/add.html:136
+#: app/templates/installments/edit.html:78
+msgid "TV Son Hifi"
+msgstr ""
+
+#: app/templates/installments/add.html:142
+#: app/templates/installments/edit.html:84
+msgid "Aucun"
+msgstr ""
+
+#: app/templates/installments/add.html:153
+#: app/templates/installments/detail.html:153
+msgid "Dates"
+msgstr ""
+
+#: app/templates/installments/add.html:156
+msgid "Date du premier paiement"
+msgstr ""
+
+#: app/templates/installments/add.html:177
+msgid "Aide"
+msgstr ""
+
+#: app/templates/installments/add.html:179
+msgid "Qu'est-ce qu'un paiement en plusieurs fois ?"
+msgstr ""
+
+#: app/templates/installments/add.html:180
+msgid ""
+"Il s'agit d'un achat que vous payez en plusieurs mensualités (ALMA, "
+"Klarna, PayPal...)."
+msgstr ""
+
+#: app/templates/installments/add.html:183
+msgid "Comment ça marche ?"
+msgstr ""
+
+#: app/templates/installments/add.html:184
+msgid ""
+"Les mensualités seront automatiquement traitées chaque mois et vous "
+"recevrez une notification."
+msgstr ""
+
+#: app/templates/installments/add.html:187
+msgid "Avec ou sans frais ?"
+msgstr ""
+
+#: app/templates/installments/add.html:188
+msgid ""
+"Certains paiements fractionnés incluent des frais. Cochez l'option si "
+"c'est votre cas."
+msgstr ""
+
+#: app/templates/installments/detail.html:15
+msgid "Traiter le paiement de ce mois ?"
+msgstr ""
+
+#: app/templates/installments/detail.html:16
+msgid "Traiter le paiement"
+msgstr ""
+
+#: app/templates/installments/detail.html:21
+msgid "Êtes-vous sûr de vouloir supprimer ce paiement ?"
+msgstr ""
+
+#: app/templates/installments/detail.html:38
+#, fuzzy
+msgid "Article :"
+msgstr "Email :"
+
+#: app/templates/installments/detail.html:42
+msgid "Marchand :"
+msgstr ""
+
+#: app/templates/installments/detail.html:60
+msgid "Fournisseur de paiement :"
+msgstr ""
+
+#: app/templates/installments/detail.html:72
+#: app/templates/installments/list.html:62
+msgid "En cours"
+msgstr ""
+
+#: app/templates/installments/detail.html:88
+msgid "mensualités payées"
+msgstr ""
+
+#: app/templates/installments/detail.html:103
+#, fuzzy
+msgid "Montant payé"
+msgstr "Contact"
+
+#: app/templates/installments/detail.html:122
+#: app/templates/revenues/detail.html:71
+#: app/templates/subscriptions/detail.html:87
+msgid "Détails financiers"
+msgstr ""
+
+#: app/templates/installments/detail.html:132
+msgid "Frais"
+msgstr ""
+
+#: app/templates/installments/detail.html:146
+#: app/templates/installments/edit.html:130
+msgid "fois"
+msgstr ""
+
+#: app/templates/installments/detail.html:163
+#: app/templates/installments/list.html:75
+msgid "Prochain paiement"
+msgstr ""
+
+#: app/templates/installments/detail.html:177
+#: app/templates/installments/list.html:172
+msgid "Terminé le"
+msgstr ""
+
+#: app/templates/installments/detail.html:187
+#: app/templates/installments/edit.html:59
+msgid "Catégorisation"
+msgstr ""
+
+#: app/templates/installments/edit.html:96
+msgid "Note :"
+msgstr ""
+
+#: app/templates/installments/edit.html:96
+msgid "Les montants et les dates ne peuvent pas être modifiés après création."
+msgstr ""
+
+#: app/templates/installments/edit.html:115
+#, fuzzy
+msgid "Informations (non modifiables)"
+msgstr "Informations personnelles"
+
+#: app/templates/installments/edit.html:135
+msgid "payées"
+msgstr ""
+
+#: app/templates/installments/list.html:12
+#: app/templates/installments/list.html:154
+msgid "Ajouter un paiement"
+msgstr ""
+
+#: app/templates/installments/list.html:33
+msgid "Mensualités totales"
+msgstr ""
+
+#: app/templates/installments/list.html:48
+msgid "Restant à payer"
+msgstr ""
+
+#: app/templates/installments/list.html:70
+#: app/templates/installments/list.html:169
+msgid "Article"
+msgstr ""
+
+#: app/templates/installments/list.html:72
+msgid "Fournisseur"
+msgstr ""
+
+#: app/templates/installments/list.html:133
+#: app/templates/installments/list.html:209
+msgid "Êtes-vous sûr de vouloir supprimer ce paiement en plusieurs fois ?"
+msgstr ""
+
+#: app/templates/installments/list.html:151
+msgid "Aucun paiement en cours"
+msgstr ""
+
+#: app/templates/installments/list.html:152
+msgid "Vous n'avez aucun paiement en plusieurs fois en cours."
+msgstr ""
+
 #: app/templates/providers/add.html:3 app/templates/providers/add.html:15
 #: app/templates/providers/list.html:10 app/templates/providers/list.html:137
 msgid "Ajouter un prestataire"
@@ -4349,11 +4936,6 @@ msgstr "Informations personnelles"
 
 #: app/templates/revenues/detail.html:38
 msgid "Société :"
-msgstr ""
-
-#: app/templates/revenues/detail.html:71
-#: app/templates/subscriptions/detail.html:87
-msgid "Détails financiers"
 msgstr ""
 
 #: app/templates/revenues/detail.html:81
@@ -4880,5 +5462,826 @@ msgstr ""
 
 #: app/templates/subscriptions/list.html:501
 msgid "Erreur lors de la génération du PDF"
+msgstr ""
+
+# Dashboard translations
+#: app/templates/dashboard.html:8
+msgid "Tableau de bord de"
+msgstr ""
+
+#: app/templates/dashboard.html:19
+msgid "Solde"
+msgstr ""
+
+#: app/templates/dashboard.html:37
+msgid "Revenus actuels"
+msgstr ""
+
+#: app/templates/dashboard.html:55
+msgid "Abonnements actifs"
+msgstr ""
+
+#: app/templates/dashboard.html:73
+msgid "Crédits en cours"
+msgstr ""
+
+#: app/templates/dashboard.html:92
+msgid "Revenus : Prochains versements"
+msgstr ""
+
+#: app/templates/dashboard.html:100
+msgid "Exporter en Excel"
+msgstr ""
+
+#: app/templates/dashboard.html:103
+msgid "Exporter en PDF"
+msgstr ""
+
+#: app/templates/dashboard.html:136
+msgid "Voir tous"
+msgstr ""
+
+#: app/templates/dashboard.html:139
+msgid "Ajouter"
+msgstr ""
+
+#: app/templates/dashboard.html:146
+msgid "Aucun revenu actif"
+msgstr ""
+
+#: app/templates/dashboard.html:156
+msgid "Abonnements : Prochains renouvellements"
+msgstr ""
+
+#: app/templates/dashboard.html:207
+msgid "Aucun abonnement actif"
+msgstr ""
+
+#: app/templates/dashboard.html:217
+msgid "Crédits : Prochains prélèvements"
+msgstr ""
+
+#: app/templates/dashboard.html:248
+msgid "Restant"
+msgstr ""
+
+#: app/templates/dashboard.html:289
+msgid "Mes paiements en plusieurs fois"
+msgstr ""
+
+#: app/templates/dashboard.html:296
+msgid "Aucun crédit actif"
+msgstr ""
+
+#: app/templates/dashboard.html:306
+msgid "Chèques : Non débités"
+msgstr ""
+
+#: app/templates/dashboard.html:332
+msgid "Pointer ce chèque"
+msgstr ""
+
+#: app/templates/dashboard.html:344
+msgid "Chèque"
+msgstr ""
+
+#: app/templates/dashboard.html:355
+msgid "Voir les chéquiers"
+msgstr ""
+
+#: app/templates/dashboard.html:365
+msgid "Tous les chèques sont débités"
+msgstr ""
+
+#: app/templates/dashboard.html:411
+msgid "RDV pris le"
+msgstr ""
+
+#: app/templates/dashboard.html:415
+msgid "À planifier"
+msgstr ""
+
+#: app/templates/dashboard.html:435
+msgid "Aucun rappel"
+msgstr ""
+
+#: app/templates/dashboard.html:445
+msgid "Répartition des Abonnements & Crédits"
+msgstr ""
+
+#: app/templates/dashboard.html:461
+msgid "Aucune donnée disponible"
+msgstr ""
+
+#: app/templates/dashboard.html:469
+msgid "Répartition des versements"
+msgstr ""
+
+#: app/templates/dashboard.html:497
+msgid "Évolution des revenus et des dépenses mensuelles"
+msgstr ""
+
+#: app/templates/dashboard.html:628
+msgid "Abonnements (€)"
+msgstr ""
+
+#: app/templates/dashboard.html:636
+msgid "Crédits (€)"
+msgstr ""
+
+#: app/templates/dashboard.html:644
+msgid "Dépenses (€)"
+msgstr ""
+
+#: app/templates/dashboard.html:652
+msgid "Revenus (€)"
+msgstr ""
+
+#: app/templates/dashboard.html:537
+msgid "Crédits"
+msgstr ""
+
+# Balance page translations
+#: app/templates/balance.html:8
+msgid "Solde et Mouvements"
+msgstr ""
+
+#: app/templates/balance.html:9
+msgid "Consultez l'ensemble de vos mouvements financiers et pointez-les au fur et à mesure"
+msgstr ""
+
+#: app/templates/balance.html:17
+msgid "Navigation / Mois"
+msgstr ""
+
+#: app/templates/balance.html:19
+msgid "Mois précédent"
+msgstr ""
+
+#: app/templates/balance.html:25
+msgid "Janvier"
+msgstr ""
+
+#: app/templates/balance.html:25
+msgid "Février"
+msgstr ""
+
+#: app/templates/balance.html:25
+msgid "Avril"
+msgstr ""
+
+#: app/templates/balance.html:25
+msgid "Juillet"
+msgstr ""
+
+#: app/templates/balance.html:25
+msgid "Septembre"
+msgstr ""
+
+#: app/templates/balance.html:25
+msgid "Octobre"
+msgstr ""
+
+#: app/templates/balance.html:25
+msgid "Novembre"
+msgstr ""
+
+#: app/templates/balance.html:25
+msgid "Décembre"
+msgstr ""
+
+#: app/templates/balance.html:29
+msgid "Mois suivant"
+msgstr ""
+
+#: app/templates/balance.html:35
+msgid "Année"
+msgstr ""
+
+#: app/templates/balance.html:43
+msgid "État"
+msgstr ""
+
+#: app/templates/balance.html:45
+msgid "Tous"
+msgstr ""
+
+#: app/templates/balance.html:46
+msgid "En attente"
+msgstr ""
+
+#: app/templates/balance.html:47
+msgid "Complétés"
+msgstr ""
+
+#: app/templates/balance.html:52
+msgid "Réinitialiser"
+msgstr ""
+
+#: app/templates/balance.html:66
+msgid "Total Revenus"
+msgstr ""
+
+#: app/templates/balance.html:81
+msgid "Total Dépenses"
+msgstr ""
+
+#: app/templates/balance.html:112
+msgid "Mouvements de"
+msgstr ""
+
+#: app/templates/balance.html:122
+msgid "Tout pointer"
+msgstr ""
+
+#: app/templates/balance.html:131
+msgid "Tout dépointer"
+msgstr ""
+
+#: app/templates/balance.html:146
+msgid "Pointer"
+msgstr ""
+
+#: app/templates/balance.html:148
+msgid "Date"
+msgstr ""
+
+#: app/templates/balance.html:149
+msgid "Description"
+msgstr ""
+
+#: app/templates/balance.html:150
+msgid "Catégorie"
+msgstr ""
+
+#: app/templates/balance.html:151
+msgid "Montant"
+msgstr ""
+
+#: app/templates/balance.html:153
+msgid "Actions"
+msgstr ""
+
+#: app/templates/balance.html:162
+msgid "Dépointer"
+msgstr ""
+
+#: app/templates/balance.html:172
+msgid "Marquer comme complété"
+msgstr ""
+
+#: app/templates/balance.html:178
+msgid "Repasser en attente"
+msgstr ""
+
+#: app/templates/balance.html:183
+msgid "Annulé"
+msgstr ""
+
+#: app/templates/balance.html:194
+msgid "Revenu"
+msgstr ""
+
+#: app/templates/balance.html:196
+msgid "Abonnement"
+msgstr ""
+
+#: app/templates/balance.html:198
+msgid "Crédit"
+msgstr ""
+
+#: app/templates/balance.html:200
+msgid "Paiement en plusieurs fois"
+msgstr ""
+
+#: app/templates/balance.html:204
+msgid "Achat CB"
+msgstr ""
+
+#: app/templates/balance.html:229
+msgid "Voir le revenu"
+msgstr ""
+
+#: app/templates/balance.html:233
+msgid "Voir l'abonnement"
+msgstr ""
+
+#: app/templates/balance.html:237
+msgid "Voir le crédit"
+msgstr ""
+
+#: app/templates/balance.html:241
+msgid "Voir le paiement"
+msgstr ""
+
+#: app/templates/balance.html:245
+msgid "Voir le chèque"
+msgstr ""
+
+#: app/templates/balance.html:253
+msgid "Voir le reçu"
+msgstr ""
+
+#: app/templates/balance.html:257
+msgid "Voir l'achat CB"
+msgstr ""
+
+#: app/templates/balance.html:266
+msgid "Supprimer"
+msgstr ""
+
+#: app/templates/balance.html:279
+msgid "Aucun mouvement pour cette période"
+msgstr ""
+
+#: app/templates/balance.html:288
+msgid "Retour au tableau de bord"
+msgstr ""
+
+#: app/templates/balance.html:300
+msgid "Reçu"
+msgstr ""
+
+#: app/templates/balance.html:302
+msgid "Fermer"
+msgstr ""
+
+#: app/templates/balance.html:317
+msgid "Options de suppression"
+msgstr ""
+
+#: app/templates/balance.html:323
+msgid "Transaction :"
+msgstr ""
+
+#: app/templates/balance.html:324
+msgid "Date :"
+msgstr ""
+
+#: app/templates/balance.html:325
+msgid "Montant :"
+msgstr ""
+
+#: app/templates/balance.html:327
+msgid "Que souhaitez-vous faire ?"
+msgstr ""
+
+#: app/templates/balance.html:332
+msgid "Supprimer uniquement cette transaction"
+msgstr ""
+
+#: app/templates/balance.html:337
+msgid "Supprimer les transactions passées (inclus celle-ci)"
+msgstr ""
+
+#: app/templates/balance.html:342
+msgid "Supprimer les transactions futures (inclus celle-ci)"
+msgstr ""
+
+#: app/templates/balance.html:347
+msgid "Supprimer toutes les transactions liées"
+msgstr ""
+
+#: app/templates/balance.html:457
+msgid "Aperçu non disponible pour ce type de fichier"
+msgstr ""
+
+#: app/templates/balance.html:457
+msgid "Ouvrir dans un nouvel onglet"
+msgstr ""
+
+# Registration form - Language field
+#: app/templates/auth/register.html:86
+msgid "Langue"
+msgstr ""
+
+#: app/templates/auth/register.html:88
+msgid "Français"
+msgstr ""
+
+#: app/templates/auth/register.html:89
+msgid "English"
+msgstr ""
+
+#: app/templates/auth/register.html:91
+msgid "Langue d'affichage de l'application"
+msgstr ""
+
+# Card Purchases List translations
+#: app/templates/card_purchases/list.html:3
+#: app/templates/card_purchases/list.html:64
+msgid "Mes achats CB"
+msgstr ""
+
+#: app/templates/card_purchases/list.html:72
+msgid "Basculer le menu"
+msgstr ""
+
+#: app/templates/card_purchases/list.html:69
+msgid "Ajouter un achat"
+msgstr ""
+
+#: app/templates/card_purchases/list.html:77
+msgid "Saisie manuelle"
+msgstr ""
+
+#: app/templates/card_purchases/list.html:82
+msgid "Scanner avec OCR"
+msgstr ""
+
+#: app/templates/card_purchases/list.html:95
+msgid "Catégorie"
+msgstr ""
+
+#: app/templates/card_purchases/list.html:97
+msgid "Toutes les catégories"
+msgstr ""
+
+#: app/templates/card_purchases/list.html:107
+msgid "Mois"
+msgstr ""
+
+#: app/templates/card_purchases/list.html:109
+msgid "Tous"
+msgstr ""
+
+#: app/templates/card_purchases/list.html:119
+msgid "Année"
+msgstr ""
+
+#: app/templates/card_purchases/list.html:121
+msgid "Toutes"
+msgstr ""
+
+#: app/templates/card_purchases/list.html:131
+msgid "Filtrer"
+msgstr ""
+
+#: app/templates/card_purchases/list.html:146
+msgid "Marchand"
+msgstr ""
+
+#: app/templates/card_purchases/list.html:162
+msgid "Modifié manuellement"
+msgstr ""
+
+#: app/templates/card_purchases/list.html:172
+msgid "Non catégorisé"
+msgstr ""
+
+#: app/templates/card_purchases/list.html:184
+msgid "Voir le reçu"
+msgstr ""
+
+#: app/templates/card_purchases/list.html:194
+msgid "Détails"
+msgstr ""
+
+#: app/templates/card_purchases/list.html:199
+msgid "Modifier"
+msgstr ""
+
+#: app/templates/card_purchases/list.html:205
+msgid "Confirmer la suppression ?"
+msgstr ""
+
+#: app/templates/card_purchases/list.html:218
+msgid "Aucun achat enregistré."
+msgstr ""
+
+#: app/templates/card_purchases/list.html:225
+msgid "Total :"
+msgstr ""
+
+#: app/templates/card_purchases/list.html:249
+msgid "Précédent"
+msgstr ""
+
+#: app/templates/card_purchases/list.html:261
+msgid "Suivant"
+msgstr ""
+
+#: app/templates/card_purchases/list.html:272
+msgid "Répartition des achats CB actifs"
+msgstr ""
+
+#: app/templates/card_purchases/list.html:273
+msgid "Exporter en PDF"
+msgstr ""
+
+#: app/templates/card_purchases/list.html:280
+msgid "Par marchand"
+msgstr ""
+
+#: app/templates/card_purchases/list.html:284
+msgid "Par catégorie"
+msgstr ""
+
+#: app/templates/card_purchases/list.html:496
+msgid "Généré le"
+msgstr ""
+
+# Card Purchases Detail translations
+#: app/templates/card_purchases/detail.html:3
+msgid "Détails de l'achat CB"
+msgstr ""
+
+#: app/templates/card_purchases/detail.html:65
+msgid "Détails de l'achat"
+msgstr ""
+
+#: app/templates/card_purchases/detail.html:67
+msgid "Retour"
+msgstr ""
+
+#: app/templates/card_purchases/detail.html:75
+msgid "Date :"
+msgstr ""
+
+#: app/templates/card_purchases/detail.html:82
+msgid "Marchand :"
+msgstr ""
+
+#: app/templates/card_purchases/detail.html:87
+msgid "Saisie manuelle"
+msgstr ""
+
+#: app/templates/card_purchases/detail.html:88
+msgid "Manuel"
+msgstr ""
+
+#: app/templates/card_purchases/detail.html:91
+msgid "Saisie OCR"
+msgstr ""
+
+#: app/templates/card_purchases/detail.html:96
+msgid "Modifié après OCR"
+msgstr ""
+
+#: app/templates/card_purchases/detail.html:103
+msgid "Montant :"
+msgstr ""
+
+#: app/templates/card_purchases/detail.html:113
+msgid "Catégorie :"
+msgstr ""
+
+#: app/templates/card_purchases/detail.html:125
+msgid "Description :"
+msgstr ""
+
+#: app/templates/card_purchases/detail.html:135
+msgid "Notes :"
+msgstr ""
+
+#: app/templates/card_purchases/detail.html:146
+msgid "Confiance OCR :"
+msgstr ""
+
+#: app/templates/card_purchases/detail.html:163
+msgid "Reçu :"
+msgstr ""
+
+#: app/templates/card_purchases/detail.html:170
+msgid "Voir"
+msgstr ""
+
+#: app/templates/card_purchases/detail.html:175
+msgid "Télécharger"
+msgstr ""
+
+
+#: app/templates/card_purchases/add_manual.html:3
+msgid "Ajouter un achat CB"
+msgstr ""
+
+#: app/templates/card_purchases/add_manual.html:20
+msgid "Saisie manuelle"
+msgstr ""
+
+#: app/templates/card_purchases/add_manual.html:23
+#: app/templates/card_purchases/upload.html:23
+msgid "Scanner avec OCR"
+msgstr ""
+
+#: app/templates/card_purchases/add_manual.html:27
+#: app/templates/card_purchases/upload.html:27
+msgid "Vous pouvez saisir manuellement ou utiliser l'OCR pour scanner vos tickets"
+msgstr ""
+
+#: app/templates/card_purchases/add_manual.html:37
+msgid "Marchand"
+msgstr ""
+
+#: app/templates/card_purchases/add_manual.html:44
+msgid "ex : Walmart, McDonald's..."
+msgstr ""
+
+#: app/templates/card_purchases/add_manual.html:49
+msgid "Montant"
+msgstr ""
+
+#: app/templates/card_purchases/add_manual.html:65
+msgid "Date"
+msgstr ""
+
+#: app/templates/card_purchases/add_manual.html:77
+msgid "Heure"
+msgstr ""
+
+#: app/templates/card_purchases/add_manual.html:88
+msgid "Catégorie"
+msgstr ""
+
+#: app/templates/card_purchases/add_manual.html:92
+msgid "-- Choisir une catégorie --"
+msgstr ""
+
+#: app/templates/card_purchases/add_manual.html:100
+msgid "Optionnel - Permet de classer vos dépenses"
+msgstr ""
+
+#: app/templates/card_purchases/add_manual.html:104
+msgid "Description / Notes"
+msgstr ""
+
+#: app/templates/card_purchases/add_manual.html:110
+msgid "Notes supplémentaires (optionnel)"
+msgstr ""
+
+#: app/templates/card_purchases/add_manual.html:115
+#: app/templates/card_purchases/edit.html:92
+msgid "Ticket de caisse / Reçu"
+msgstr ""
+
+#: app/templates/card_purchases/add_manual.html:125
+#: app/templates/card_purchases/edit.html:119
+#: app/templates/card_purchases/upload.html:47
+msgid "Parcourir..."
+msgstr ""
+
+#: app/templates/card_purchases/add_manual.html:127
+#: app/templates/card_purchases/edit.html:121
+msgid "Aucun fichier sélectionné"
+msgstr ""
+
+#: app/templates/card_purchases/add_manual.html:130
+msgid "Optionnel - Formats acceptés : JPG, PNG, PDF (max 5 Mo)"
+msgstr ""
+
+#: app/templates/card_purchases/add_manual.html:136
+msgid "Enregistrer l'achat"
+msgstr ""
+
+#: app/templates/card_purchases/add_manual.html:139
+#: app/templates/card_purchases/validate.html:117
+msgid "Annuler"
+msgstr ""
+
+#: app/templates/card_purchases/add_manual.html:12
+#: app/templates/card_purchases/detail.html:67
+#: app/templates/card_purchases/edit.html:12
+#: app/templates/card_purchases/upload.html:12
+msgid "Retour"
+msgstr ""
+
+#: app/templates/card_purchases/edit.html:3
+msgid "Modifier l'achat CB"
+msgstr ""
+
+#: app/templates/card_purchases/edit.html:10
+msgid "Modifier l'achat"
+msgstr ""
+
+#: app/templates/card_purchases/edit.html:50
+msgid "Montant (€)"
+msgstr ""
+
+#: app/templates/card_purchases/edit.html:64
+msgid "-- Aucune --"
+msgstr ""
+
+#: app/templates/card_purchases/edit.html:75
+msgid "Description"
+msgstr ""
+
+#: app/templates/card_purchases/edit.html:83
+msgid "Notes"
+msgstr ""
+
+#: app/templates/card_purchases/edit.html:97
+msgid "Un ticket est déjà attaché :"
+msgstr ""
+
+#: app/templates/card_purchases/edit.html:103
+msgid "Voir"
+msgstr ""
+
+#: app/templates/card_purchases/edit.html:108
+msgid "Aucun ticket attaché"
+msgstr ""
+
+#: app/templates/card_purchases/edit.html:125
+msgid "Le choix d'un nouveau fichier remplacera le ticket actuel."
+msgstr ""
+
+#: app/templates/card_purchases/edit.html:127
+msgid "Formats acceptés : JPG, PNG, PDF (max 5 Mo)"
+msgstr ""
+
+#: app/templates/card_purchases/edit.html:138
+msgid "Enregistrer les modifications"
+msgstr ""
+
+#: app/templates/card_purchases/upload.html:3
+msgid "Télécharger des tickets CB"
+msgstr ""
+
+#: app/templates/card_purchases/upload.html:10
+msgid "Scanner des tickets avec OCR"
+msgstr ""
+
+#: app/templates/card_purchases/upload.html:20
+msgid "Saisie manuelle"
+msgstr ""
+
+#: app/templates/card_purchases/upload.html:36
+msgid "Sélectionner des tickets (jusqu'à 10)"
+msgstr ""
+
+#: app/templates/card_purchases/upload.html:49
+msgid "Aucun fichier sélectionné"
+msgstr ""
+
+#: app/templates/card_purchases/upload.html:52
+msgid "Formats acceptés : JPG, PNG, PDF. Maximum 5 Mo par fichier."
+msgstr ""
+
+#: app/templates/card_purchases/upload.html:58
+msgid "Comment ça fonctionne ?"
+msgstr ""
+
+#: app/templates/card_purchases/upload.html:59
+msgid "1. Sélectionnez vos photos/scans de tickets de caisse"
+msgstr ""
+
+#: app/templates/card_purchases/upload.html:60
+msgid "2. Le système extraira automatiquement les données (date, montant, marchand)"
+msgstr ""
+
+#: app/templates/card_purchases/upload.html:61
+msgid "3. Vous pourrez vérifier et corriger les données avant validation"
+msgstr ""
+
+#: app/templates/card_purchases/upload.html:62
+msgid "4. Les achats seront ajoutés à votre solde"
+msgstr ""
+
+#: app/templates/card_purchases/upload.html:68
+msgid "Traiter avec OCR"
+msgstr ""
+
+#: app/templates/card_purchases/upload.html:73
+msgid "Traitement OCR en cours..."
+msgstr ""
+
+#: app/templates/card_purchases/upload.html:75
+msgid "Cela peut prendre quelques secondes par fichier. Veuillez patienter."
+msgstr ""
+
+#: app/templates/card_purchases/upload.html:81
+msgid "fichier(s) sélectionné(s)"
+msgstr ""
+
+#: app/templates/card_purchases/upload.html:82
+msgid "Maximum 10 fichiers. Seuls les 10 premiers seront traités."
+msgstr ""
+
+#: app/templates/card_purchases/validate.html:3
+msgid "Valider les achats CB"
+msgstr ""
+
+#: app/templates/card_purchases/validate.html:8
+msgid "Vérifier et valider les achats"
+msgstr ""
+
+#: app/templates/card_purchases/validate.html:13
+msgid "Vérifiez les données extraites automatiquement. Vous pouvez les modifier avant d'enregistrer."
+msgstr ""
+
+#: app/templates/card_purchases/validate.html:27
+msgid "Confiance OCR"
+msgstr ""
+
+#: app/templates/card_purchases/validate.html:122
+msgid "achat(s) sélectionné(s)"
+msgstr ""
+
+#: app/templates/card_purchases/validate.html:125
+msgid "Enregistrer les achats"
+msgstr ""
+
+#: app/templates/card_purchases/validate.html:98
+msgid "Notes..."
 msgstr ""
 

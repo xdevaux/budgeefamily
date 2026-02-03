@@ -1,5 +1,6 @@
 from flask import url_for, render_template_string
 from flask_mail import Message, Mail
+from flask_babel import gettext as _
 from app import mail
 import os
 import stripe
@@ -8,8 +9,34 @@ from datetime import datetime
 def send_verification_email(user):
     """Envoie un email de vérification à l'utilisateur"""
     token = user.generate_verification_token()
-
     verification_url = url_for('auth.verify_email', token=token, _external=True)
+    lang = user.language or 'fr'
+
+    # Contenu selon la langue
+    if lang == 'en':
+        subject = 'Welcome to Budgee Family - Confirm your email'
+        greeting = user.first_name or 'dear user'
+        title = 'Welcome to Budgee Family!'
+        intro = f'Hello {greeting},'
+        thank_you = 'Thank you for signing up for <strong>Budgee Family</strong>, your intelligent subscription manager!'
+        instruction = 'To start using all our features, please confirm your email address by clicking the button below:'
+        button_text = 'Confirm my email address'
+        ignore_text = 'If you did not create an account on Budgee Family, you can ignore this email.'
+        closing = 'See you soon,<br>The Budgee Family team'
+        footer_text = 'This email was sent by Budgee Family'
+        link_text = 'If the button doesn\'t work, copy this link into your browser:'
+    else:
+        subject = 'Bienvenue sur Budgee Family - Confirmez votre email'
+        greeting = user.first_name or 'cher utilisateur'
+        title = 'Bienvenue sur Budgee Family !'
+        intro = f'Bonjour {greeting},'
+        thank_you = 'Merci de vous être inscrit sur <strong>Budgee Family</strong>, votre gestionnaire d\'abonnements intelligent !'
+        instruction = 'Pour commencer à utiliser toutes nos fonctionnalités, veuillez confirmer votre adresse email en cliquant sur le bouton ci-dessous :'
+        button_text = 'Confirmer mon adresse email'
+        ignore_text = 'Si vous n\'avez pas créé de compte sur Budgee Family, vous pouvez ignorer cet email.'
+        closing = 'À bientôt,<br>L\'équipe Budgee Family'
+        footer_text = 'Cet email a été envoyé par Budgee Family'
+        link_text = 'Si le bouton ne fonctionne pas, copiez ce lien dans votre navigateur :'
 
     html_body = f"""
     <!DOCTYPE html>
@@ -59,27 +86,21 @@ def send_verification_email(user):
         <div class="container">
             <div class="header">
                 <img src="{url_for('static', filename='uploads/logos/budgee_family_logo_trsp.png', _external=True)}" alt="Budgee Family" width="120" style="display: block; margin: 0 auto 20px auto;">
-                <h1>Bienvenue sur Budgee Family !</h1>
+                <h1>{title}</h1>
             </div>
             <div class="content">
-                <p>Bonjour {user.first_name or 'cher utilisateur'},</p>
-
-                <p>Merci de vous être inscrit sur <strong>Budgee Family</strong>, votre gestionnaire d'abonnements intelligent !</p>
-
-                <p>Pour commencer à utiliser toutes nos fonctionnalités, veuillez confirmer votre adresse email en cliquant sur le bouton ci-dessous :</p>
-
+                <p>{intro}</p>
+                <p>{thank_you}</p>
+                <p>{instruction}</p>
                 <div style="text-align: center;">
-                    <a href="{verification_url}" class="button">Confirmer mon adresse email</a>
+                    <a href="{verification_url}" class="button">{button_text}</a>
                 </div>
-
-                <p>Si vous n'avez pas créé de compte sur Budgee Family, vous pouvez ignorer cet email.</p>
-
-                <p>À bientôt,<br>L'équipe Budgee Family</p>
+                <p>{ignore_text}</p>
+                <p>{closing}</p>
             </div>
             <div class="footer">
-                <p>Cet email a été envoyé par Budgee Family</p>
-                <p>Si le bouton ne fonctionne pas, copiez ce lien dans votre navigateur :<br>
-                {verification_url}</p>
+                <p>{footer_text}</p>
+                <p>{link_text}<br>{verification_url}</p>
             </div>
         </div>
     </body>
@@ -87,23 +108,22 @@ def send_verification_email(user):
     """
 
     text_body = f"""
-    Bienvenue sur Budgee Family !
+    {title}
 
-    Bonjour {user.first_name or 'cher utilisateur'},
+    {intro}
 
-    Merci de vous être inscrit sur Budgee Family, votre gestionnaire d'abonnements intelligent !
+    {thank_you.replace('<strong>', '').replace('</strong>', '')}
 
-    Pour commencer à utiliser toutes nos fonctionnalités, veuillez confirmer votre adresse email en cliquant sur ce lien :
+    {instruction}
     {verification_url}
 
-    Si vous n'avez pas créé de compte sur Budgee Family, vous pouvez ignorer cet email.
+    {ignore_text}
 
-    À bientôt,
-    L'équipe Budgee Family
+    {closing.replace('<br>', '')}
     """
 
     msg = Message(
-        subject='Bienvenue sur Budgee Family - Confirmez votre email',
+        subject=subject,
         sender=os.getenv('MAIL_DEFAULT_SENDER', 'noreply@budgeefamily.com'),
         recipients=[user.email],
         body=text_body,
@@ -125,6 +145,53 @@ def send_resend_verification_email(user):
 
 def send_plan_downgrade_email(user, old_plan_name):
     """Envoie un email de confirmation de rétrogradation vers le plan gratuit"""
+    lang = user.language or 'fr'
+
+    if lang == 'en':
+        subject = 'Downgrade confirmed - Budgee Family'
+        title = 'Downgrade confirmed'
+        greeting = f'Hello {user.first_name or user.email},'
+        confirmation = f'We confirm that your account has been downgraded from <strong>{old_plan_name}</strong> plan to the <strong>free plan</strong>.'
+        free_plan_title = 'Your free plan includes:'
+        features = [
+            'Up to 5 subscriptions',
+            'Up to 5 custom categories',
+            'Up to 5 custom services',
+            'Up to 10 custom service plans',
+            'Basic statistics',
+            'Due date notifications'
+        ]
+        data_kept = 'All your data has been kept. If you exceed the free plan limits, you simply won\'t be able to create new items until you delete some or upgrade to Premium.'
+        can_upgrade = '<strong>You can upgrade to Premium at any time!</strong>'
+        button_text = 'View Premium plans'
+        hope_return = 'We hope to see you again soon among our Premium users.'
+        closing = 'Best regards,<br>The Budgee Family team'
+        footer_note = 'This email was sent by Budgee Family'
+        contact_note = 'If you did not perform this action, please contact us immediately.'
+    else:
+        subject = 'Confirmation de rétrogradation - Budgee Family'
+        title = 'Rétrogradation confirmée'
+        greeting = f'Bonjour {user.first_name or user.email},'
+        confirmation = f'Nous vous confirmons que votre compte a été rétrogradé du plan <strong>{old_plan_name}</strong> vers le <strong>plan gratuit</strong>.'
+        free_plan_title = 'Votre plan gratuit comprend :'
+        features = [
+            'Jusqu\'à 5 abonnements',
+            'Jusqu\'à 5 catégories personnalisées',
+            'Jusqu\'à 5 services personnalisés',
+            'Jusqu\'à 10 plans de services personnalisés',
+            'Statistiques de base',
+            'Notifications d\'échéance'
+        ]
+        data_kept = 'Toutes vos données ont été conservées. Si vous dépassez les limites du plan gratuit, vous ne pourrez simplement pas créer de nouveaux éléments jusqu\'à ce que vous en supprimiez ou que vous repassiez à Premium.'
+        can_upgrade = '<strong>Vous pouvez repasser à Premium à tout moment !</strong>'
+        button_text = 'Voir les plans Premium'
+        hope_return = 'Nous espérons vous revoir bientôt parmi nos utilisateurs Premium.'
+        closing = 'Cordialement,<br>L\'équipe Budgee Family'
+        footer_note = 'Cet email a été envoyé par Budgee Family'
+        contact_note = 'Si vous n\'avez pas effectué cette action, veuillez nous contacter immédiatement.'
+
+    features_html = ''.join([f'<li>{f}</li>' for f in features])
+    features_text = '\n    '.join([f'- {f}' for f in features])
 
     html_body = f"""
     <!DOCTYPE html>
@@ -180,40 +247,28 @@ def send_plan_downgrade_email(user, old_plan_name):
         <div class="container">
             <div class="header">
                 <img src="{url_for('static', filename='uploads/logos/budgee_family_logo_trsp.png', _external=True)}" alt="Budgee Family" width="120" style="display: block; margin: 0 auto 20px auto;">
-                <h1>Rétrogradation confirmée</h1>
+                <h1>{title}</h1>
             </div>
             <div class="content">
-                <p>Bonjour {user.first_name or user.email},</p>
-
-                <p>Nous vous confirmons que votre compte a été rétrogradé du plan <strong>{old_plan_name}</strong> vers le <strong>plan gratuit</strong>.</p>
-
+                <p>{greeting}</p>
+                <p>{confirmation}</p>
                 <div class="info-box">
-                    <h3>Votre plan gratuit comprend :</h3>
+                    <h3>{free_plan_title}</h3>
                     <ul>
-                        <li>Jusqu'à 5 abonnements</li>
-                        <li>Jusqu'à 5 catégories personnalisées</li>
-                        <li>Jusqu'à 5 services personnalisés</li>
-                        <li>Jusqu'à 10 plans de services personnalisés</li>
-                        <li>Statistiques de base</li>
-                        <li>Notifications d'échéance</li>
+                        {features_html}
                     </ul>
                 </div>
-
-                <p>Toutes vos données ont été conservées. Si vous dépassez les limites du plan gratuit, vous ne pourrez simplement pas créer de nouveaux éléments jusqu'à ce que vous en supprimiez ou que vous repassiez à Premium.</p>
-
-                <p><strong>Vous pouvez repasser à Premium à tout moment !</strong></p>
-
+                <p>{data_kept}</p>
+                <p>{can_upgrade}</p>
                 <div style="text-align: center;">
-                    <a href="{url_for('main.pricing', _external=True)}" class="button">Voir les plans Premium</a>
+                    <a href="{url_for('main.pricing', _external=True)}" class="button">{button_text}</a>
                 </div>
-
-                <p>Nous espérons vous revoir bientôt parmi nos utilisateurs Premium.</p>
-
-                <p>Cordialement,<br>L'équipe Budgee Family</p>
+                <p>{hope_return}</p>
+                <p>{closing}</p>
             </div>
             <div class="footer">
-                <p>Cet email a été envoyé par Budgee Family</p>
-                <p>Si vous n'avez pas effectué cette action, veuillez nous contacter immédiatement.</p>
+                <p>{footer_note}</p>
+                <p>{contact_note}</p>
             </div>
         </div>
     </body>
@@ -221,33 +276,27 @@ def send_plan_downgrade_email(user, old_plan_name):
     """
 
     text_body = f"""
-    Rétrogradation confirmée
+    {title}
 
-    Bonjour {user.first_name or user.email},
+    {greeting}
 
-    Nous vous confirmons que votre compte a été rétrogradé du plan {old_plan_name} vers le plan gratuit.
+    {confirmation.replace('<strong>', '').replace('</strong>', '')}
 
-    Votre plan gratuit comprend :
-    - Jusqu'à 5 abonnements
-    - Jusqu'à 5 catégories personnalisées
-    - Jusqu'à 5 services personnalisés
-    - Jusqu'à 10 plans de services personnalisés
-    - Statistiques de base
-    - Notifications d'échéance
+    {free_plan_title}
+    {features_text}
 
-    Toutes vos données ont été conservées. Si vous dépassez les limites du plan gratuit, vous ne pourrez simplement pas créer de nouveaux éléments jusqu'à ce que vous en supprimiez ou que vous repassiez à Premium.
+    {data_kept}
 
-    Vous pouvez repasser à Premium à tout moment !
-    Voir les plans : {url_for('main.pricing', _external=True)}
+    {can_upgrade.replace('<strong>', '').replace('</strong>', '')}
+    {url_for('main.pricing', _external=True)}
 
-    Nous espérons vous revoir bientôt parmi nos utilisateurs Premium.
+    {hope_return}
 
-    Cordialement,
-    L'équipe Budgee Family
+    {closing.replace('<br>', '')}
     """
 
     msg = Message(
-        subject='Confirmation de rétrogradation - Budgee Family',
+        subject=subject,
         sender=os.getenv('MAIL_DEFAULT_SENDER', 'noreply@budgeefamily.com'),
         recipients=[user.email],
         body=text_body,
@@ -267,6 +316,7 @@ def send_plan_upgrade_email(user, new_plan_name):
 
     # Récupérer les informations du plan
     plan = user.plan
+    lang = user.language or 'fr'
 
     # Symbole de devise
     currency_symbols = {
@@ -277,15 +327,78 @@ def send_plan_upgrade_email(user, new_plan_name):
     currency_symbol = currency_symbols.get(plan.currency, plan.currency) if plan else '€'
 
     # Traduction de la période de facturation
-    billing_period_fr = {
-        'monthly': 'mensuel',
-        'yearly': 'annuel',
-        'lifetime': 'à vie'
-    }
-    period_text = billing_period_fr.get(plan.billing_period, plan.billing_period) if plan else 'mensuel'
+    if lang == 'en':
+        billing_period_map = {
+            'monthly': 'monthly',
+            'yearly': 'annual',
+            'lifetime': 'lifetime'
+        }
+    else:
+        billing_period_map = {
+            'monthly': 'mensuel',
+            'yearly': 'annuel',
+            'lifetime': 'à vie'
+        }
+    period_text = billing_period_map.get(plan.billing_period, plan.billing_period) if plan else ('monthly' if lang == 'en' else 'mensuel')
 
     # Prix formaté
     price_text = f"{plan.price:.2f} {currency_symbol}" if plan else "N/A"
+
+    # Contenu selon la langue
+    if lang == 'en':
+        subject = f'✓ Welcome to {new_plan_name} - Budgee Family'
+        title = '🎉 Welcome to Premium!'
+        subtitle = 'Your subscription has been successfully activated'
+        greeting = f'Hello {user.first_name or user.email},'
+        congrats = f'Congratulations and welcome to the <strong>Budgee Family Premium</strong> family!'
+        payment_success = 'We are delighted to have you among our Premium members. Your payment has been processed successfully and your subscription is now active.'
+        summary_title = '📋 Your subscription summary'
+        summary_plan = 'Subscribed plan'
+        summary_period = 'Billing period'
+        summary_amount = 'Amount'
+        summary_date = 'Activation date'
+        benefits_title = f'With your Premium plan, you benefit from:'
+        feature_unlimited_subs = '<strong>Unlimited subscriptions</strong> - Add as many subscriptions as you want'
+        feature_unlimited_cats = '<strong>Unlimited custom categories</strong> - Organize your subscriptions your way'
+        feature_unlimited_svcs = '<strong>Unlimited custom services</strong> - Create your own services'
+        feature_unlimited_plans = '<strong>Unlimited service plans</strong> - Manage all your pricing plans'
+        feature_advanced_stats = '<strong>Advanced statistics</strong> - Analyze your expenses in detail'
+        feature_export = '<strong>Data export</strong> - Download your data whenever you want'
+        feature_support = '<strong>Priority support</strong> - Fast and personalized assistance'
+        button_dashboard = '🚀 Access my dashboard'
+        invoice_note = 'You will also receive your invoice in a separate email. You can find it anytime in your customer area.'
+        thanks_note = 'Thank you for your trust! We are here to support you in managing your subscriptions.'
+        footer_title = 'Budgee Family - Smart subscription manager'
+        footer_website = 'Website'
+        footer_contact = 'Contact'
+        footer_legal = 'Legal notice'
+    else:
+        subject = f'✓ Bienvenue sur {new_plan_name} - Budgee Family'
+        title = '🎉 Bienvenue chez Premium !'
+        subtitle = 'Votre abonnement a été activé avec succès'
+        greeting = f'Bonjour {user.first_name or user.email},'
+        congrats = f'Félicitations et bienvenue dans la famille <strong>Budgee Family Premium</strong> !'
+        payment_success = 'Nous sommes ravis de vous compter parmi nos membres Premium. Votre paiement a été traité avec succès et votre abonnement est désormais actif.'
+        summary_title = '📋 Récapitulatif de votre abonnement'
+        summary_plan = 'Plan souscrit'
+        summary_period = 'Période de facturation'
+        summary_amount = 'Montant'
+        summary_date = 'Date d\'activation'
+        benefits_title = f'Avec votre plan Premium, vous bénéficiez de :'
+        feature_unlimited_subs = '<strong>Abonnements illimités</strong> - Ajoutez autant d\'abonnements que vous le souhaitez'
+        feature_unlimited_cats = '<strong>Catégories personnalisées illimitées</strong> - Organisez vos abonnements à votre façon'
+        feature_unlimited_svcs = '<strong>Services personnalisés illimités</strong> - Créez vos propres services'
+        feature_unlimited_plans = '<strong>Plans de services illimités</strong> - Gérez tous vos plans tarifaires'
+        feature_advanced_stats = '<strong>Statistiques avancées</strong> - Analysez vos dépenses en détail'
+        feature_export = '<strong>Export de données</strong> - Téléchargez vos données quand vous voulez'
+        feature_support = '<strong>Support prioritaire</strong> - Une assistance rapide et personnalisée'
+        button_dashboard = '🚀 Accéder à mon tableau de bord'
+        invoice_note = 'Vous recevrez également votre facture dans un email séparé. Vous pourrez la retrouver à tout moment dans votre espace client.'
+        thanks_note = 'Merci de votre confiance ! Nous sommes là pour vous accompagner dans la gestion de vos abonnements.'
+        footer_title = 'Budgee Family - Gestionnaire d\'abonnements intelligent'
+        footer_website = 'Site web'
+        footer_contact = 'Contact'
+        footer_legal = 'Mentions légales'
 
     html_body = f"""
     <!DOCTYPE html>
@@ -421,92 +534,92 @@ def send_plan_upgrade_email(user, new_plan_name):
                 <div class="logo-container">
                     <img src="{url_for('static', filename='uploads/logos/budgee_family_logo_trsp.png', _external=True)}" alt="Budgee Family" width="120" style="display: block; margin: 0 auto;">
                 </div>
-                <h1>🎉 Bienvenue chez Premium !</h1>
-                <p>Votre abonnement a été activé avec succès</p>
+                <h1>{title}</h1>
+                <p>{subtitle}</p>
             </div>
 
             <div class="content">
-                <h2>Bonjour {user.first_name or user.email},</h2>
+                <h2>{greeting}</h2>
 
-                <p>Félicitations et bienvenue dans la famille <strong>Budgee Family Premium</strong> !</p>
+                <p>{congrats}</p>
 
-                <p>Nous sommes ravis de vous compter parmi nos membres Premium. Votre paiement a été traité avec succès et votre abonnement est désormais actif.</p>
+                <p>{payment_success}</p>
 
                 <div class="subscription-summary">
-                    <h3>📋 Récapitulatif de votre abonnement</h3>
+                    <h3>{summary_title}</h3>
                     <div class="summary-item">
-                        <span class="summary-label">Plan souscrit</span>
+                        <span class="summary-label">{summary_plan}</span>
                         <span class="summary-value">{new_plan_name}</span>
                     </div>
                     <div class="summary-item">
-                        <span class="summary-label">Période de facturation</span>
+                        <span class="summary-label">{summary_period}</span>
                         <span class="summary-value">{period_text.capitalize()}</span>
                     </div>
                     <div class="summary-item">
-                        <span class="summary-label">Montant</span>
+                        <span class="summary-label">{summary_amount}</span>
                         <span class="summary-value">{price_text}</span>
                     </div>
                     <div class="summary-item">
-                        <span class="summary-label">Date d'activation</span>
+                        <span class="summary-label">{summary_date}</span>
                         <span class="summary-value">{datetime.now().strftime('%d/%m/%Y')}</span>
                     </div>
                 </div>
 
-                <p><strong>Avec votre plan Premium, vous bénéficiez de :</strong></p>
+                <p><strong>{benefits_title}</strong></p>
 
                 <div class="feature-list">
                     <div class="feature-item">
                         <span class="feature-icon">✓</span>
-                        <strong>Abonnements illimités</strong> - Ajoutez autant d'abonnements que vous le souhaitez
+                        {feature_unlimited_subs}
                     </div>
                     <div class="feature-item">
                         <span class="feature-icon">✓</span>
-                        <strong>Catégories personnalisées illimitées</strong> - Organisez vos abonnements à votre façon
+                        {feature_unlimited_cats}
                     </div>
                     <div class="feature-item">
                         <span class="feature-icon">✓</span>
-                        <strong>Services personnalisés illimités</strong> - Créez vos propres services
+                        {feature_unlimited_svcs}
                     </div>
                     <div class="feature-item">
                         <span class="feature-icon">✓</span>
-                        <strong>Plans de services illimités</strong> - Gérez tous vos plans tarifaires
+                        {feature_unlimited_plans}
                     </div>
                     <div class="feature-item">
                         <span class="feature-icon">✓</span>
-                        <strong>Statistiques avancées</strong> - Analysez vos dépenses en détail
+                        {feature_advanced_stats}
                     </div>
                     <div class="feature-item">
                         <span class="feature-icon">✓</span>
-                        <strong>Export de données</strong> - Téléchargez vos données quand vous voulez
+                        {feature_export}
                     </div>
                     <div class="feature-item">
                         <span class="feature-icon">✓</span>
-                        <strong>Support prioritaire</strong> - Une assistance rapide et personnalisée
+                        {feature_support}
                     </div>
                 </div>
 
                 <div style="text-align: center; margin: 30px 0;">
                     <a href="{url_for('main.dashboard', _external=True)}" class="button" style="color: white;">
-                        🚀 Accéder à mon tableau de bord
+                        {button_dashboard}
                     </a>
                 </div>
 
-                <p>Vous recevrez également votre facture dans un email séparé. Vous pourrez la retrouver à tout moment dans votre espace client.</p>
+                <p>{invoice_note}</p>
 
                 <p style="color: #6b7280; font-size: 14px; margin-top: 30px;">
-                    <em>Merci de votre confiance ! Nous sommes là pour vous accompagner dans la gestion de vos abonnements.</em>
+                    <em>{thanks_note}</em>
                 </p>
             </div>
 
             <div class="footer">
-                <p><strong>Budgee Family</strong> - Gestionnaire d'abonnements intelligent</p>
+                <p><strong>Budgee Family</strong> - {footer_title.split(' - ')[1]}</p>
                 <p style="margin-top: 8px;">
-                    <a href="https://budgeefamily.com">Site web</a> •
-                    <a href="https://budgeefamily.com/contact">Contact</a> •
-                    <a href="https://budgeefamily.com/mentions-legales">Mentions légales</a>
+                    <a href="https://budgeefamily.com">{footer_website}</a> •
+                    <a href="https://budgeefamily.com/contact">{footer_contact}</a> •
+                    <a href="https://budgeefamily.com/mentions-legales">{footer_legal}</a>
                 </p>
                 <p style="margin-top: 15px; font-size: 12px; color: #9ca3af;">
-                    © {datetime.now().year} Budgee Family. Tous droits réservés.
+                    © {datetime.now().year} Budgee Family. {'All rights reserved.' if lang == 'en' else 'Tous droits réservés.'}
                 </p>
             </div>
         </div>
@@ -514,48 +627,54 @@ def send_plan_upgrade_email(user, new_plan_name):
     </html>
     """
 
+    # Formater les features pour le texte
+    feature_texts = [
+        feature_unlimited_subs.replace('<strong>', '').replace('</strong>', ''),
+        feature_unlimited_cats.replace('<strong>', '').replace('</strong>', ''),
+        feature_unlimited_svcs.replace('<strong>', '').replace('</strong>', ''),
+        feature_unlimited_plans.replace('<strong>', '').replace('</strong>', ''),
+        feature_advanced_stats.replace('<strong>', '').replace('</strong>', ''),
+        feature_export.replace('<strong>', '').replace('</strong>', ''),
+        feature_support.replace('<strong>', '').replace('</strong>', '')
+    ]
+    features_text = '\n    ✓ '.join(feature_texts)
+
     text_body = f"""
-    🎉 Bienvenue chez Premium !
+    {title}
 
-    Bonjour {user.first_name or user.email},
+    {greeting}
 
-    Félicitations et bienvenue dans la famille Budgee Family Premium !
+    {congrats.replace('<strong>', '').replace('</strong>', '')}
 
-    Nous sommes ravis de vous compter parmi nos membres Premium. Votre paiement a été traité avec succès et votre abonnement est désormais actif.
+    {payment_success}
 
-    📋 RÉCAPITULATIF DE VOTRE ABONNEMENT
+    {summary_title.upper()}
 
-    Plan souscrit : {new_plan_name}
-    Période de facturation : {period_text.capitalize()}
-    Montant : {price_text}
-    Date d'activation : {datetime.now().strftime('%d/%m/%Y')}
+    {summary_plan} : {new_plan_name}
+    {summary_period} : {period_text.capitalize()}
+    {summary_amount} : {price_text}
+    {summary_date} : {datetime.now().strftime('%d/%m/%Y')}
 
-    AVEC VOTRE PLAN PREMIUM, VOUS BÉNÉFICIEZ DE :
+    {benefits_title.upper().replace('<STRONG>', '').replace('</STRONG>', '')}
 
-    ✓ Abonnements illimités - Ajoutez autant d'abonnements que vous le souhaitez
-    ✓ Catégories personnalisées illimitées - Organisez vos abonnements à votre façon
-    ✓ Services personnalisés illimités - Créez vos propres services
-    ✓ Plans de services illimités - Gérez tous vos plans tarifaires
-    ✓ Statistiques avancées - Analysez vos dépenses en détail
-    ✓ Export de données - Téléchargez vos données quand vous voulez
-    ✓ Support prioritaire - Une assistance rapide et personnalisée
+    ✓ {features_text}
 
-    🚀 Accéder à mon tableau de bord : {url_for('main.dashboard', _external=True)}
+    {button_dashboard} : {url_for('main.dashboard', _external=True)}
 
-    Vous recevrez également votre facture dans un email séparé. Vous pourrez la retrouver à tout moment dans votre espace client.
+    {invoice_note}
 
-    Merci de votre confiance ! Nous sommes là pour vous accompagner dans la gestion de vos abonnements.
+    {thanks_note}
 
     ---
-    Budgee Family - Gestionnaire d'abonnements intelligent
-    Site web : https://budgeefamily.com
-    Contact : https://budgeefamily.com/contact
+    Budgee Family - {footer_title.split(' - ')[1]}
+    {footer_website} : https://budgeefamily.com
+    {footer_contact} : https://budgeefamily.com/contact
 
-    © {datetime.now().year} Budgee Family. Tous droits réservés.
+    © {datetime.now().year} Budgee Family. {'All rights reserved.' if lang == 'en' else 'Tous droits réservés.'}
     """
 
     msg = Message(
-        subject=f'✓ Bienvenue sur {new_plan_name} - Budgee Family',
+        subject=subject,
         sender=os.getenv('MAIL_DEFAULT_SENDER', 'noreply@budgeefamily.com'),
         recipients=[user.email],
         body=text_body,
@@ -570,8 +689,50 @@ def send_plan_upgrade_email(user, new_plan_name):
         return False
 
 
-def send_contact_confirmation_email(name, email):
+def send_contact_confirmation_email(name, email, language='fr'):
     """Envoie un email de confirmation après l'envoi d'un message via le formulaire de contact"""
+
+    lang = language or 'fr'
+
+    # Contenu selon la langue
+    if lang == 'en':
+        subject = '✓ Message received - Budgee Family'
+        title = 'Message received!'
+        subtitle = 'Thank you for contacting us'
+        greeting = f'Hello {name},'
+        received_msg = 'We have received your message and thank you for your interest in <strong>Budgee Family</strong>.'
+        request_registered = '✓ Your request has been registered'
+        response_time = 'Our team will get back to you within <strong>24 to 48 hours</strong>.'
+        meanwhile = 'In the meantime, did you know that Budgee Family allows you to:'
+        feature_manage = '<strong>Manage all your subscriptions</strong> in one place'
+        feature_notifications = '<strong>Receive notifications</strong> before each renewal'
+        feature_visualize = '<strong>Visualize your monthly expenses</strong> in real time'
+        feature_organize = '<strong>Organize by categories</strong> with custom logos'
+        button_discover = '🚀 Discover Budgee Family'
+        no_action = 'This email confirms the receipt of your message. You have no action to take.'
+        footer_title = 'Smart subscription manager'
+        footer_website = 'Website'
+        footer_contact = 'Contact'
+        footer_legal = 'Legal notice'
+    else:
+        subject = '✓ Message reçu - Budgee Family'
+        title = 'Message bien reçu !'
+        subtitle = 'Merci de nous avoir contactés'
+        greeting = f'Bonjour {name},'
+        received_msg = 'Nous avons bien reçu votre message et nous vous remercions de l\'intérêt que vous portez à <strong>Budgee Family</strong>.'
+        request_registered = '✓ Votre demande a été enregistrée'
+        response_time = 'Notre équipe reviendra vers vous dans les <strong>24 à 48 heures</strong>.'
+        meanwhile = 'En attendant notre réponse, saviez-vous que Budgee Family vous permet de :'
+        feature_manage = '<strong>Gérer tous vos abonnements</strong> en un seul endroit'
+        feature_notifications = '<strong>Recevoir des notifications</strong> avant chaque renouvellement'
+        feature_visualize = '<strong>Visualiser vos dépenses</strong> mensuelles en temps réel'
+        feature_organize = '<strong>Organiser par catégories</strong> avec logos personnalisés'
+        button_discover = '🚀 Découvrir Budgee Family'
+        no_action = 'Cet email confirme la réception de votre message. Vous n\'avez aucune action à effectuer.'
+        footer_title = 'Gestionnaire d\'abonnements intelligent'
+        footer_website = 'Site web'
+        footer_contact = 'Contact'
+        footer_legal = 'Mentions légales'
 
     html_body = f"""
     <!DOCTYPE html>
@@ -690,57 +851,57 @@ def send_contact_confirmation_email(name, email):
                 <div class="logo-container">
                     <img src="{url_for('static', filename='uploads/logos/budgee_family_logo_trsp.png', _external=True)}" alt="Budgee Family" width="120" style="display: block; margin: 0 auto;">
                 </div>
-                <h1>Message bien reçu !</h1>
-                <p>Merci de nous avoir contactés</p>
+                <h1>{title}</h1>
+                <p>{subtitle}</p>
             </div>
 
             <div class="content">
-                <h2>Bonjour {name},</h2>
+                <h2>{greeting}</h2>
 
-                <p>Nous avons bien reçu votre message et nous vous remercions de l'intérêt que vous portez à <strong>Budgee Family</strong>.</p>
+                <p>{received_msg}</p>
 
                 <div class="info-box">
-                    <p><strong>✓ Votre demande a été enregistrée</strong></p>
-                    <p style="margin-top: 10px;">Notre équipe reviendra vers vous dans les <strong>24 à 48 heures</strong>.</p>
+                    <p><strong>{request_registered}</strong></p>
+                    <p style="margin-top: 10px;">{response_time}</p>
                 </div>
 
-                <p>En attendant notre réponse, saviez-vous que Budgee Family vous permet de :</p>
+                <p>{meanwhile}</p>
 
                 <div class="feature-list">
                     <div class="feature-item">
-                        ✓ <strong>Gérer tous vos abonnements</strong> en un seul endroit
+                        ✓ {feature_manage}
                     </div>
                     <div class="feature-item">
-                        ✓ <strong>Recevoir des notifications</strong> avant chaque renouvellement
+                        ✓ {feature_notifications}
                     </div>
                     <div class="feature-item">
-                        ✓ <strong>Visualiser vos dépenses</strong> mensuelles en temps réel
+                        ✓ {feature_visualize}
                     </div>
                     <div class="feature-item">
-                        ✓ <strong>Organiser par catégories</strong> avec logos personnalisés
+                        ✓ {feature_organize}
                     </div>
                 </div>
 
                 <div style="text-align: center; margin: 30px 0;">
                     <a href="https://budgeefamily.com" class="button" style="color: white;">
-                        🚀 Découvrir Budgee Family
+                        {button_discover}
                     </a>
                 </div>
 
                 <p style="color: #6b7280; font-size: 14px; margin-top: 30px;">
-                    <em>Cet email confirme la réception de votre message. Vous n'avez aucune action à effectuer.</em>
+                    <em>{no_action}</em>
                 </p>
             </div>
 
             <div class="footer">
-                <p><strong>Budgee Family</strong> - Gestionnaire d'abonnements intelligent</p>
+                <p><strong>Budgee Family</strong> - {footer_title}</p>
                 <p style="margin-top: 8px;">
-                    <a href="https://budgeefamily.com">Site web</a> •
-                    <a href="https://budgeefamily.com/contact">Contact</a> •
-                    <a href="https://budgeefamily.com/mentions-legales">Mentions légales</a>
+                    <a href="https://budgeefamily.com">{footer_website}</a> •
+                    <a href="https://budgeefamily.com/contact">{footer_contact}</a> •
+                    <a href="https://budgeefamily.com/mentions-legales">{footer_legal}</a>
                 </p>
                 <p style="margin-top: 15px; font-size: 12px; color: #9ca3af;">
-                    © {datetime.now().year} Budgee Family. Tous droits réservés.
+                    © {datetime.now().year} Budgee Family. {'All rights reserved.' if lang == 'en' else 'Tous droits réservés.'}
                 </p>
             </div>
         </div>
@@ -749,35 +910,35 @@ def send_contact_confirmation_email(name, email):
     """
 
     text_body = f"""
-    Message bien reçu !
+    {title}
 
-    Bonjour {name},
+    {greeting}
 
-    Nous avons bien reçu votre message et nous vous remercions de l'intérêt que vous portez à Budgee Family.
+    {received_msg.replace('<strong>', '').replace('</strong>', '')}
 
-    ✓ Votre demande a été enregistrée
-    Notre équipe reviendra vers vous dans les 24 à 48 heures.
+    {request_registered}
+    {response_time.replace('<strong>', '').replace('</strong>', '')}
 
-    En attendant notre réponse, saviez-vous que Budgee Family vous permet de :
-    ✓ Gérer tous vos abonnements en un seul endroit
-    ✓ Recevoir des notifications avant chaque renouvellement
-    ✓ Visualiser vos dépenses mensuelles en temps réel
-    ✓ Organiser par catégories avec logos personnalisés
+    {meanwhile}
+    ✓ {feature_manage.replace('<strong>', '').replace('</strong>', '')}
+    ✓ {feature_notifications.replace('<strong>', '').replace('</strong>', '')}
+    ✓ {feature_visualize.replace('<strong>', '').replace('</strong>', '')}
+    ✓ {feature_organize.replace('<strong>', '').replace('</strong>', '')}
 
-    Découvrir Budgee Family : https://budgeefamily.com
+    {button_discover} : https://budgeefamily.com
 
-    Cet email confirme la réception de votre message. Vous n'avez aucune action à effectuer.
+    {no_action}
 
     ---
-    Budgee Family - Gestionnaire d'abonnements intelligent
-    Site web : https://budgeefamily.com
-    Contact : https://budgeefamily.com/contact
+    Budgee Family - {footer_title}
+    {footer_website} : https://budgeefamily.com
+    {footer_contact} : https://budgeefamily.com/contact
 
-    © {datetime.now().year} Budgee Family. Tous droits réservés.
+    © {datetime.now().year} Budgee Family. {'All rights reserved.' if lang == 'en' else 'Tous droits réservés.'}
     """
 
     msg = Message(
-        subject='✓ Message reçu - Budgee Family',
+        subject=subject,
         sender=os.getenv('MAIL_DEFAULT_SENDER', 'noreply@budgeefamily.com'),
         recipients=[email],
         body=text_body,
@@ -797,6 +958,7 @@ def send_welcome_email(user):
 
     # Récupérer les informations du plan
     plan = user.plan
+    lang = user.language or 'fr'
 
     # Déterminer si c'est un plan gratuit ou premium
     is_free_plan = not (plan and plan.is_premium())
@@ -810,22 +972,118 @@ def send_welcome_email(user):
     currency_symbol = currency_symbols.get(plan.currency, plan.currency) if plan else '€'
 
     # Traduction de la période de facturation
-    billing_period_fr = {
-        'monthly': 'mensuel',
-        'yearly': 'annuel',
-        'lifetime': 'à vie'
-    }
-    period_text = billing_period_fr.get(plan.billing_period, plan.billing_period) if plan else 'gratuit'
-
-    # Prix formaté
-    price_text = f"{plan.price:.2f} {currency_symbol}" if plan and plan.price > 0 else "Gratuit"
+    if lang == 'en':
+        billing_period_map = {
+            'monthly': 'monthly',
+            'yearly': 'annual',
+            'lifetime': 'lifetime'
+        }
+        period_text = billing_period_map.get(plan.billing_period, plan.billing_period) if plan else 'free'
+        price_text = f"{plan.price:.2f} {currency_symbol}" if plan and plan.price > 0 else "Free"
+    else:
+        billing_period_map = {
+            'monthly': 'mensuel',
+            'yearly': 'annuel',
+            'lifetime': 'à vie'
+        }
+        period_text = billing_period_map.get(plan.billing_period, plan.billing_period) if plan else 'gratuit'
+        price_text = f"{plan.price:.2f} {currency_symbol}" if plan and plan.price > 0 else "Gratuit"
 
     # Nom du plan
     plan_name = plan.name if plan else "Free"
 
+    # Contenu selon la langue
+    if lang == 'en':
+        subject = f'✓ Welcome to Budgee Family - {plan_name} Plan'
+        title = '🎉 Welcome to Budgee Family!'
+        subtitle = 'Your account has been successfully created'
+        greeting = f'Hello {user.first_name or user.email},'
+        thanks_signup = 'Thank you for signing up to <strong>Budgee Family</strong>, your smart subscription manager!'
+        welcome_msg = 'We are delighted to welcome you and wish you a warm welcome to our community.'
+        summary_title = '📋 Your subscription summary'
+        summary_plan = 'Subscribed plan'
+        summary_type = 'Subscription type'
+        summary_price = 'Price'
+        summary_date = 'Registration date'
+        benefits_title = f'With your {plan_name} plan, you benefit from:'
+        button_dashboard = '🚀 Access my dashboard'
+        thanks_note = 'Thank you for your trust! We are here to support you in managing your subscriptions.'
+        footer_title = 'Smart subscription manager'
+        footer_website = 'Website'
+        footer_contact = 'Contact'
+        footer_legal = 'Legal notice'
+    else:
+        subject = f'✓ Bienvenue sur Budgee Family - Plan {plan_name}'
+        title = '🎉 Bienvenue sur Budgee Family !'
+        subtitle = 'Votre compte a été créé avec succès'
+        greeting = f'Bonjour {user.first_name or user.email},'
+        thanks_signup = 'Merci de vous être inscrit sur <strong>Budgee Family</strong>, votre gestionnaire d\'abonnements intelligent !'
+        welcome_msg = 'Nous sommes ravis de vous accueillir et vous souhaitons la bienvenue dans notre communauté.'
+        summary_title = '📋 Récapitulatif de votre abonnement'
+        summary_plan = 'Plan souscrit'
+        summary_type = 'Type d\'abonnement'
+        summary_price = 'Tarif'
+        summary_date = 'Date d\'inscription'
+        benefits_title = f'Avec votre plan {plan_name}, vous bénéficiez de :'
+        button_dashboard = '🚀 Accéder à mon tableau de bord'
+        thanks_note = 'Merci de votre confiance ! Nous sommes là pour vous accompagner dans la gestion de vos abonnements.'
+        footer_title = 'Gestionnaire d\'abonnements intelligent'
+        footer_website = 'Site web'
+        footer_contact = 'Contact'
+        footer_legal = 'Mentions légales'
+
     # Contenu spécifique selon le type de plan
     if is_free_plan:
-        features_html = """
+        if lang == 'en':
+            features_html = """
+                    <div class="feature-item">
+                        <span class="feature-icon">✓</span>
+                        <strong>Up to 5 subscriptions</strong> - Manage your main subscriptions
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">✓</span>
+                        <strong>Up to 5 custom categories</strong> - Organize as you wish
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">✓</span>
+                        <strong>Up to 5 custom services</strong> - Create your own services
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">✓</span>
+                        <strong>Up to 10 service plans</strong> - Manage your pricing plans
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">✓</span>
+                        <strong>Basic statistics</strong> - Track your expenses
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">✓</span>
+                        <strong>Due date notifications</strong> - Don't miss any renewal
+                    </div>"""
+
+            features_text = """✓ Up to 5 subscriptions - Manage your main subscriptions
+    ✓ Up to 5 custom categories - Organize as you wish
+    ✓ Up to 5 custom services - Create your own services
+    ✓ Up to 10 service plans - Manage your pricing plans
+    ✓ Basic statistics - Track your expenses
+    ✓ Due date notifications - Don't miss any renewal"""
+
+            upgrade_section_html = """
+                <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-left: 4px solid #f59e0b; padding: 20px; margin: 25px 0; border-radius: 8px;">
+                    <p style="margin: 0; color: #92400e; font-weight: 600;">💡 Want more?</p>
+                    <p style="margin: 10px 0 0 0; color: #92400e;">Upgrade to Premium to unlock unlimited subscriptions, advanced statistics and much more!</p>
+                    <div style="text-align: center; margin-top: 15px;">
+                        <a href="{url_for('main.pricing', _external=True)}" style="display: inline-block; padding: 10px 24px; background: #f59e0b; color: white; text-decoration: none; border-radius: 6px; font-weight: 600;">Discover Premium</a>
+                    </div>
+                </div>"""
+
+            upgrade_section_text = """
+    💡 WANT MORE?
+
+    Upgrade to Premium to unlock unlimited subscriptions, advanced statistics and much more!
+    Discover Premium : {url_for('main.pricing', _external=True)}"""
+        else:
+            features_html = """
                     <div class="feature-item">
                         <span class="feature-icon">✓</span>
                         <strong>Jusqu'à 5 abonnements</strong> - Gérez vos principaux abonnements
@@ -851,14 +1109,14 @@ def send_welcome_email(user):
                         <strong>Notifications d'échéance</strong> - Ne ratez aucun renouvellement
                     </div>"""
 
-        features_text = """✓ Jusqu'à 5 abonnements - Gérez vos principaux abonnements
+            features_text = """✓ Jusqu'à 5 abonnements - Gérez vos principaux abonnements
     ✓ Jusqu'à 5 catégories personnalisées - Organisez comme vous voulez
     ✓ Jusqu'à 5 services personnalisés - Créez vos propres services
     ✓ Jusqu'à 10 plans de services - Gérez vos plans tarifaires
     ✓ Statistiques de base - Suivez vos dépenses
     ✓ Notifications d'échéance - Ne ratez aucun renouvellement"""
 
-        upgrade_section_html = """
+            upgrade_section_html = """
                 <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-left: 4px solid #f59e0b; padding: 20px; margin: 25px 0; border-radius: 8px;">
                     <p style="margin: 0; color: #92400e; font-weight: 600;">💡 Envie de plus ?</p>
                     <p style="margin: 10px 0 0 0; color: #92400e;">Passez à Premium pour débloquer des abonnements illimités, des statistiques avancées et bien plus encore !</p>
@@ -867,14 +1125,53 @@ def send_welcome_email(user):
                     </div>
                 </div>"""
 
-        upgrade_section_text = """
+            upgrade_section_text = """
     💡 ENVIE DE PLUS ?
 
     Passez à Premium pour débloquer des abonnements illimités, des statistiques avancées et bien plus encore !
     Découvrir Premium : {url_for('main.pricing', _external=True)}"""
 
     else:
-        features_html = """
+        if lang == 'en':
+            features_html = """
+                    <div class="feature-item">
+                        <span class="feature-icon">✓</span>
+                        <strong>Unlimited subscriptions</strong> - Add as many subscriptions as you want
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">✓</span>
+                        <strong>Unlimited custom categories</strong> - Organize your subscriptions your way
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">✓</span>
+                        <strong>Unlimited custom services</strong> - Create your own services
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">✓</span>
+                        <strong>Unlimited service plans</strong> - Manage all your pricing plans
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">✓</span>
+                        <strong>Advanced statistics</strong> - Analyze your expenses in detail
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">✓</span>
+                        <strong>Data export</strong> - Download your data whenever you want
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">✓</span>
+                        <strong>Priority support</strong> - Fast and personalized assistance
+                    </div>"""
+
+            features_text = """✓ Unlimited subscriptions - Add as many subscriptions as you want
+    ✓ Unlimited custom categories - Organize your subscriptions your way
+    ✓ Unlimited custom services - Create your own services
+    ✓ Unlimited service plans - Manage all your pricing plans
+    ✓ Advanced statistics - Analyze your expenses in detail
+    ✓ Data export - Download your data whenever you want
+    ✓ Priority support - Fast and personalized assistance"""
+        else:
+            features_html = """
                     <div class="feature-item">
                         <span class="feature-icon">✓</span>
                         <strong>Abonnements illimités</strong> - Ajoutez autant d'abonnements que vous le souhaitez
@@ -904,7 +1201,7 @@ def send_welcome_email(user):
                         <strong>Support prioritaire</strong> - Une assistance rapide et personnalisée
                     </div>"""
 
-        features_text = """✓ Abonnements illimités - Ajoutez autant d'abonnements que vous le souhaitez
+            features_text = """✓ Abonnements illimités - Ajoutez autant d'abonnements que vous le souhaitez
     ✓ Catégories personnalisées illimitées - Organisez vos abonnements à votre façon
     ✓ Services personnalisés illimités - Créez vos propres services
     ✓ Plans de services illimités - Gérez tous vos plans tarifaires
@@ -1045,38 +1342,38 @@ def send_welcome_email(user):
                 <div class="logo-container">
                     <img src="{url_for('static', filename='uploads/logos/budgee_family_logo_trsp.png', _external=True)}" alt="Budgee Family" width="120" style="display: block; margin: 0 auto;">
                 </div>
-                <h1>🎉 Bienvenue sur Budgee Family !</h1>
-                <p>Votre compte a été créé avec succès</p>
+                <h1>{title}</h1>
+                <p>{subtitle}</p>
             </div>
 
             <div class="content">
-                <h2>Bonjour {user.first_name or user.email},</h2>
+                <h2>{greeting}</h2>
 
-                <p>Merci de vous être inscrit sur <strong>Budgee Family</strong>, votre gestionnaire d'abonnements intelligent !</p>
+                <p>{thanks_signup}</p>
 
-                <p>Nous sommes ravis de vous accueillir et vous souhaitons la bienvenue dans notre communauté.</p>
+                <p>{welcome_msg}</p>
 
                 <div class="subscription-summary">
-                    <h3>📋 Récapitulatif de votre abonnement</h3>
+                    <h3>{summary_title}</h3>
                     <div class="summary-item">
-                        <span class="summary-label">Plan souscrit</span>
+                        <span class="summary-label">{summary_plan}</span>
                         <span class="summary-value">{plan_name}</span>
                     </div>
                     <div class="summary-item">
-                        <span class="summary-label">Type d'abonnement</span>
+                        <span class="summary-label">{summary_type}</span>
                         <span class="summary-value">{period_text.capitalize()}</span>
                     </div>
                     <div class="summary-item">
-                        <span class="summary-label">Tarif</span>
+                        <span class="summary-label">{summary_price}</span>
                         <span class="summary-value">{price_text}</span>
                     </div>
                     <div class="summary-item">
-                        <span class="summary-label">Date d'inscription</span>
+                        <span class="summary-label">{summary_date}</span>
                         <span class="summary-value">{datetime.now().strftime('%d/%m/%Y')}</span>
                     </div>
                 </div>
 
-                <p><strong>Avec votre plan {plan_name}, vous bénéficiez de :</strong></p>
+                <p><strong>{benefits_title}</strong></p>
 
                 <div class="feature-list">
 {features_html}
@@ -1086,24 +1383,24 @@ def send_welcome_email(user):
 
                 <div style="text-align: center; margin: 30px 0;">
                     <a href="{url_for('main.dashboard', _external=True)}" class="button" style="color: white;">
-                        🚀 Accéder à mon tableau de bord
+                        {button_dashboard}
                     </a>
                 </div>
 
                 <p style="color: #6b7280; font-size: 14px; margin-top: 30px;">
-                    <em>Merci de votre confiance ! Nous sommes là pour vous accompagner dans la gestion de vos abonnements.</em>
+                    <em>{thanks_note}</em>
                 </p>
             </div>
 
             <div class="footer">
-                <p><strong>Budgee Family</strong> - Gestionnaire d'abonnements intelligent</p>
+                <p><strong>Budgee Family</strong> - {footer_title}</p>
                 <p style="margin-top: 8px;">
-                    <a href="https://budgeefamily.com">Site web</a> •
-                    <a href="https://budgeefamily.com/contact">Contact</a> •
-                    <a href="https://budgeefamily.com/mentions-legales">Mentions légales</a>
+                    <a href="https://budgeefamily.com">{footer_website}</a> •
+                    <a href="https://budgeefamily.com/contact">{footer_contact}</a> •
+                    <a href="https://budgeefamily.com/mentions-legales">{footer_legal}</a>
                 </p>
                 <p style="margin-top: 15px; font-size: 12px; color: #9ca3af;">
-                    © {datetime.now().year} Budgee Family. Tous droits réservés.
+                    © {datetime.now().year} Budgee Family. {'All rights reserved.' if lang == 'en' else 'Tous droits réservés.'}
                 </p>
             </div>
         </div>
@@ -1112,40 +1409,40 @@ def send_welcome_email(user):
     """
 
     text_body = f"""
-    🎉 Bienvenue sur Budgee Family !
+    {title}
 
-    Bonjour {user.first_name or user.email},
+    {greeting}
 
-    Merci de vous être inscrit sur Budgee Family, votre gestionnaire d'abonnements intelligent !
+    {thanks_signup.replace('<strong>', '').replace('</strong>', '')}
 
-    Nous sommes ravis de vous accueillir et vous souhaitons la bienvenue dans notre communauté.
+    {welcome_msg}
 
-    📋 RÉCAPITULATIF DE VOTRE ABONNEMENT
+    {summary_title.upper()}
 
-    Plan souscrit : {plan_name}
-    Type d'abonnement : {period_text.capitalize()}
-    Tarif : {price_text}
-    Date d'inscription : {datetime.now().strftime('%d/%m/%Y')}
+    {summary_plan} : {plan_name}
+    {summary_type} : {period_text.capitalize()}
+    {summary_price} : {price_text}
+    {summary_date} : {datetime.now().strftime('%d/%m/%Y')}
 
-    AVEC VOTRE PLAN {plan_name.upper()}, VOUS BÉNÉFICIEZ DE :
+    {benefits_title.upper().replace('<STRONG>', '').replace('</STRONG>', '')}
 
     {features_text}
 {upgrade_section_text}
 
-    🚀 Accéder à mon tableau de bord : {url_for('main.dashboard', _external=True)}
+    {button_dashboard} : {url_for('main.dashboard', _external=True)}
 
-    Merci de votre confiance ! Nous sommes là pour vous accompagner dans la gestion de vos abonnements.
+    {thanks_note}
 
     ---
-    Budgee Family - Gestionnaire d'abonnements intelligent
-    Site web : https://budgeefamily.com
-    Contact : https://budgeefamily.com/contact
+    Budgee Family - {footer_title}
+    {footer_website} : https://budgeefamily.com
+    {footer_contact} : https://budgeefamily.com/contact
 
-    © {datetime.now().year} Budgee Family. Tous droits réservés.
+    © {datetime.now().year} Budgee Family. {'All rights reserved.' if lang == 'en' else 'Tous droits réservés.'}
     """
 
     msg = Message(
-        subject=f'✓ Bienvenue sur Budgee Family - Plan {plan_name}',
+        subject=subject,
         sender=os.getenv('MAIL_DEFAULT_SENDER', 'noreply@budgeefamily.com'),
         recipients=[user.email],
         body=text_body,
@@ -1372,6 +1669,8 @@ def send_new_subscription_notification(user):
 def send_invoice_email(user, invoice_id):
     """Envoie un email avec la facture Stripe à l'utilisateur"""
     try:
+        lang = user.language or 'fr'
+
         # Initialiser Stripe
         stripe.api_key = os.environ.get('STRIPE_SECRET_KEY')
 
@@ -1397,6 +1696,40 @@ def send_invoice_email(user, invoice_id):
             'INR': '₹', 'BRL': 'R$', 'MXN': '$', 'ZAR': 'R'
         }
         currency_symbol = currency_symbols.get(currency, currency)
+
+        # Contenu selon la langue
+        if lang == 'en':
+            subject = f'Your Budgee Family invoice #{invoice_number}'
+            title = '📄 Your Budgee Family invoice'
+            greeting = f'Hello {user.first_name or user.email},'
+            thanks_payment = 'Thank you for your payment! Here is your invoice for your <strong>Budgee Family Premium</strong> subscription.'
+            invoice_num_label = 'Invoice number:'
+            date_label = 'Date:'
+            amount_label = 'Amount paid:'
+            download_title = '<strong>Download your invoice:</strong>'
+            button_download = '📥 Download PDF invoice'
+            button_view = '👁️ View invoice online'
+            auto_generated = 'This invoice is automatically generated for your Premium subscription. You can download and keep it for your records.'
+            thanks_closing = 'Thank you for your trust!'
+            closing = 'Best regards,<br>The Budgee Family team'
+            footer_note = 'This email was sent by Budgee Family'
+            footer_question = 'If you have any questions about your invoice, please don\'t hesitate to contact us.'
+        else:
+            subject = f'Votre facture Budgee Family #{invoice_number}'
+            title = '📄 Votre facture Budgee Family'
+            greeting = f'Bonjour {user.first_name or user.email},'
+            thanks_payment = 'Merci pour votre paiement ! Voici votre facture pour votre abonnement <strong>Budgee Family Premium</strong>.'
+            invoice_num_label = 'Numéro de facture :'
+            date_label = 'Date :'
+            amount_label = 'Montant payé :'
+            download_title = '<strong>Télécharger votre facture :</strong>'
+            button_download = '📥 Télécharger la facture PDF'
+            button_view = '👁️ Voir la facture en ligne'
+            auto_generated = 'Cette facture est générée automatiquement pour votre abonnement Premium. Vous pouvez la télécharger et la conserver pour vos dossiers.'
+            thanks_closing = 'Merci de votre confiance !'
+            closing = 'Cordialement,<br>L\'équipe Budgee Family'
+            footer_note = 'Cet email a été envoyé par Budgee Family'
+            footer_question = 'Si vous avez des questions concernant votre facture, n\'hésitez pas à nous contacter.'
 
         html_body = f"""
         <!DOCTYPE html>
@@ -1468,49 +1801,49 @@ def send_invoice_email(user, invoice_id):
             <div class="container">
                 <div class="header">
                     <img src="{url_for('static', filename='uploads/logos/budgee_family_logo_trsp.png', _external=True)}" alt="Budgee Family" width="120" style="display: block; margin: 0 auto 20px auto;">
-                    <h1>📄 Votre facture Budgee Family</h1>
+                    <h1>{title}</h1>
                 </div>
                 <div class="content">
-                    <p>Bonjour {user.first_name or user.email},</p>
+                    <p>{greeting}</p>
 
-                    <p>Merci pour votre paiement ! Voici votre facture pour votre abonnement <strong>Budgee Family Premium</strong>.</p>
+                    <p>{thanks_payment}</p>
 
                     <div class="invoice-box">
                         <div class="invoice-detail">
-                            <span>Numéro de facture :</span>
+                            <span>{invoice_num_label}</span>
                             <span><strong>{invoice_number}</strong></span>
                         </div>
                         <div class="invoice-detail">
-                            <span>Date :</span>
+                            <span>{date_label}</span>
                             <span>{invoice_date_str}</span>
                         </div>
                         <div class="invoice-detail">
-                            <span>Montant payé :</span>
+                            <span>{amount_label}</span>
                             <span>{amount_paid:.2f} {currency_symbol}</span>
                         </div>
                     </div>
 
-                    <p><strong>Télécharger votre facture :</strong></p>
+                    <p>{download_title}</p>
 
                     <div style="text-align: center;">
                         <a href="{invoice_pdf_url}" class="button">
-                            📥 Télécharger la facture PDF
+                            {button_download}
                         </a>
                         <br>
                         <a href="{hosted_invoice_url}" class="button button-secondary">
-                            👁️ Voir la facture en ligne
+                            {button_view}
                         </a>
                     </div>
 
-                    <p>Cette facture est générée automatiquement pour votre abonnement Premium. Vous pouvez la télécharger et la conserver pour vos dossiers.</p>
+                    <p>{auto_generated}</p>
 
-                    <p>Merci de votre confiance !</p>
+                    <p>{thanks_closing}</p>
 
-                    <p>Cordialement,<br>L'équipe Budgee Family</p>
+                    <p>{closing}</p>
                 </div>
                 <div class="footer">
-                    <p>Cet email a été envoyé par Budgee Family</p>
-                    <p>Si vous avez des questions concernant votre facture, n'hésitez pas à nous contacter.</p>
+                    <p>{footer_note}</p>
+                    <p>{footer_question}</p>
                 </div>
             </div>
         </body>
@@ -1518,34 +1851,32 @@ def send_invoice_email(user, invoice_id):
         """
 
         text_body = f"""
-        Votre facture Budgee Family
+        {title}
 
-        Bonjour {user.first_name or user.email},
+        {greeting}
 
-        Merci pour votre paiement ! Voici votre facture pour votre abonnement Budgee Family Premium.
+        {thanks_payment.replace('<strong>', '').replace('</strong>', '')}
 
-        Détails de la facture :
-        - Numéro : {invoice_number}
-        - Date : {invoice_date_str}
-        - Montant payé : {amount_paid:.2f} {currency_symbol}
+        {'Invoice details:' if lang == 'en' else 'Détails de la facture :'}
+        - {invoice_num_label.replace(':', '')} : {invoice_number}
+        - {date_label.replace(':', '')} : {invoice_date_str}
+        - {amount_label.replace(':', '')} : {amount_paid:.2f} {currency_symbol}
 
-        Télécharger votre facture PDF :
+        {button_download} :
         {invoice_pdf_url}
 
-        Voir la facture en ligne :
+        {button_view} :
         {hosted_invoice_url}
 
-        Cette facture est générée automatiquement pour votre abonnement Premium.
-        Vous pouvez la télécharger et la conserver pour vos dossiers.
+        {auto_generated}
 
-        Merci de votre confiance !
+        {thanks_closing}
 
-        Cordialement,
-        L'équipe Budgee Family
+        {closing.replace('<br>', '')}
         """
 
         msg = Message(
-            subject=f'Votre facture Budgee Family #{invoice_number}',
+            subject=subject,
             sender=os.getenv('MAIL_DEFAULT_SENDER', 'noreply@budgeefamily.com'),
             recipients=[user.email],
             body=text_body,
@@ -1567,6 +1898,8 @@ def send_notification_email(user, notification):
         if not user.email_notifications:
             return False
 
+        lang = user.language or 'fr'
+
         # Définir l'icône et la couleur selon le type de notification
         notification_types = {
             'subscription_added': {'icon': '🔔', 'color': '#10b981'},
@@ -1583,6 +1916,20 @@ def send_notification_email(user, notification):
         }
 
         notif_info = notification_types.get(notification.type, {'icon': '🔔', 'color': '#6366f1'})
+
+        # Contenu selon la langue
+        if lang == 'en':
+            title_notif = 'New notification'
+            greeting = f'Hello {user.first_name or user.email},'
+            button_dashboard = 'View my dashboard'
+            preferences_note = f'You are receiving this email because you have enabled email notifications in your preferences. You can disable this option anytime from your <a href="{url_for(\'auth.profile\', _external=True)}">profile</a>.'
+            footer_title = 'Smart subscription manager'
+        else:
+            title_notif = 'Nouvelle notification'
+            greeting = f'Bonjour {user.first_name or user.email},'
+            button_dashboard = 'Voir mon tableau de bord'
+            preferences_note = f'Vous recevez cet email car vous avez activé les notifications par email dans vos préférences. Vous pouvez désactiver cette option à tout moment depuis votre <a href="{url_for(\'auth.profile\', _external=True)}">profil</a>.'
+            footer_title = 'Gestionnaire d\'abonnements intelligent'
 
         html_body = f"""
         <!DOCTYPE html>
@@ -1657,10 +2004,10 @@ def send_notification_email(user, notification):
             <div class="container">
                 <div class="header">
                     <img src="{url_for('static', filename='uploads/logos/budgee_family_logo_trsp.png', _external=True)}" alt="Budgee Family" width="120" style="display: block; margin: 0 auto 20px auto;">
-                    <h1>{notif_info['icon']} Nouvelle notification</h1>
+                    <h1>{notif_info['icon']} {title_notif}</h1>
                 </div>
                 <div class="content">
-                    <p>Bonjour {user.first_name or user.email},</p>
+                    <p>{greeting}</p>
 
                     <div class="notification-box">
                         <h3>{notification.title}</h3>
@@ -1669,17 +2016,17 @@ def send_notification_email(user, notification):
 
                     <div style="text-align: center;">
                         <a href="{url_for('main.dashboard', _external=True)}" class="button" style="color: white;">
-                            Voir mon tableau de bord
+                            {button_dashboard}
                         </a>
                     </div>
 
                     <p style="color: #6b7280; font-size: 14px; margin-top: 30px;">
-                        <em>Vous recevez cet email car vous avez activé les notifications par email dans vos préférences. Vous pouvez désactiver cette option à tout moment depuis votre <a href="{url_for('auth.profile', _external=True)}">profil</a>.</em>
+                        <em>{preferences_note}</em>
                     </p>
                 </div>
                 <div class="footer">
-                    <p><strong>Budgee Family</strong> - Gestionnaire d'abonnements intelligent</p>
-                    <p style="margin-top: 8px; color: #9ca3af;">© {datetime.now().year} Budgee Family. Tous droits réservés.</p>
+                    <p><strong>Budgee Family</strong> - {footer_title}</p>
+                    <p style="margin-top: 8px; color: #9ca3af;">© {datetime.now().year} Budgee Family. {'All rights reserved.' if lang == 'en' else 'Tous droits réservés.'}</p>
                 </div>
             </div>
         </body>
@@ -1687,22 +2034,21 @@ def send_notification_email(user, notification):
         """
 
         text_body = f"""
-        {notif_info['icon']} Nouvelle notification - Budgee Family
+        {notif_info['icon']} {title_notif} - Budgee Family
 
-        Bonjour {user.first_name or user.email},
+        {greeting}
 
         {notification.title}
 
         {notification.message}
 
-        Voir mon tableau de bord : {url_for('main.dashboard', _external=True)}
+        {button_dashboard} : {url_for('main.dashboard', _external=True)}
 
         ---
-        Vous recevez cet email car vous avez activé les notifications par email dans vos préférences.
-        Vous pouvez désactiver cette option à tout moment depuis votre profil : {url_for('auth.profile', _external=True)}
+        {preferences_note.replace('<a href="', '').replace('">', ' : ').replace('</a>', '').replace('<em>', '').replace('</em>', '')}
 
-        Budgee Family - Gestionnaire d'abonnements intelligent
-        © {datetime.now().year} Budgee Family. Tous droits réservés.
+        Budgee Family - {footer_title}
+        © {datetime.now().year} Budgee Family. {'All rights reserved.' if lang == 'en' else 'Tous droits réservés.'}
         """
 
         msg = Message(

@@ -39,8 +39,8 @@
                                         <i class="fas {{ type.icon or 'fa-circle' }}" style="color: {{ type.color }};"></i>
                                         {{ type.name }}
                                     </h5>
-                                    {% if type.description %}
-                                        <p class="card-text text-muted small">{{ type.description }}</p>
+                                    {% if type.get_description(current_user.language or 'fr') %}
+                                        <p class="card-text text-muted small">{{ type.get_description(current_user.language or 'fr') }}</p>
                                     {% endif %}
                                     <span class="badge bg-secondary">{{ _('Global') }}</span>
                                 </div>
@@ -69,8 +69,8 @@
                                             <strong>{{ type.name }}</strong>
                                         </td>
                                         <td>
-                                            {% if type.description %}
-                                                {{ type.description[:100] }}
+                                            {% if type.get_description(current_user.language or 'fr') %}
+                                                {{ type.get_description(current_user.language or 'fr')[:100] }}
                                             {% else %}
                                                 <span class="text-muted">-</span>
                                             {% endif %}
@@ -165,8 +165,8 @@
                                             <strong>{{ type.name }}</strong>
                                         </td>
                                         <td>
-                                            {% if type.description %}
-                                                {{ type.description[:100] }}
+                                            {% if type.get_description(current_user.language or 'fr') %}
+                                                {{ type.get_description(current_user.language or 'fr')[:100] }}
                                             {% else %}
                                                 <span class="text-muted">-</span>
                                             {% endif %}

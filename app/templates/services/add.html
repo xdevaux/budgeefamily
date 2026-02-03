@@ -32,7 +32,7 @@
                                 <select class="form-select" id="category_id" name="category_id">
                                     <option value="">{{ _('No category') }}</option>
                                     {% for category in categories %}
-                                        <option value="{{ category.id }}">{{ category.name }}</option>
+                                        <option value="{{ category.id }}">{{ category | get_translated_name }}</option>
                                     {% endfor %}
                                 </select>
                             </div>
