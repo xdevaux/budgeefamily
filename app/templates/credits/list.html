@@ -1,22 +1,22 @@
 {% extends "base.html" %}
 
-{% block title %}Mes crédits - Budgee Family{% endblock %}
+{% block title %}{{ _('Mes crédits') }} - Budgee Family{% endblock %}
 
 {% block content %}
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2><i class="fas fa-money-bill-wave"></i> Mes crédits</h2>
+        <h2><i class="fas fa-money-bill-wave"></i> {{ _('Mes crédits') }}</h2>
         <div class="d-flex gap-2">
             {% if current_user.can_add_credit() %}
                 <a href="{{ url_for('credits.add') }}" class="btn btn-primary">
-                    <i class="fas fa-plus"></i> Ajouter un crédit
+                    <i class="fas fa-plus"></i> {{ _('Ajouter un crédit') }}
                 </a>
             {% else %}
-                <button class="btn btn-secondary" disabled title="Limite atteinte pour le plan gratuit">
-                    <i class="fas fa-lock"></i> Limite atteinte (1/1)
+                <button class="btn btn-secondary" disabled title="{{ _('Limite atteinte pour le plan gratuit') }}">
+                    <i class="fas fa-lock"></i> {{ _('Limite atteinte (1/1)') }}
                 </button>
                 <a href="{{ url_for('main.pricing') }}" class="btn btn-warning">
-                    <i class="fas fa-crown"></i> Passer Premium
+                    <i class="fas fa-crown"></i> {{ _('Passer Premium') }}
                 </a>
             {% endif %}
         </div>
@@ -27,17 +27,17 @@
         <div class="card-body">
             <form method="GET" class="row g-3">
                 <div class="col-md-4">
-                    <label class="form-label">Statut</label>
+                    <label class="form-label">{{ _('Statut') }}</label>
                     <select name="status" class="form-select" onchange="this.form.submit()">
-                        <option value="all" {% if filter_status == 'all' %}selected{% endif %}>Tous</option>
-                        <option value="active" {% if filter_status == 'active' %}selected{% endif %}>Actifs</option>
-                        <option value="inactive" {% if filter_status == 'inactive' %}selected{% endif %}>Clôturés</option>
+                        <option value="all" {% if filter_status == 'all' %}selected{% endif %}>{{ _('Tous') }}</option>
+                        <option value="active" {% if filter_status == 'active' %}selected{% endif %}>{{ _('Actifs') }}</option>
+                        <option value="inactive" {% if filter_status == 'inactive' %}selected{% endif %}>{{ _('Clôturés') }}</option>
                     </select>
                 </div>
                 <div class="col-md-4">
-                    <label class="form-label">Type de crédit</label>
+                    <label class="form-label">{{ _('Type de crédit') }}</label>
                     <select name="type" class="form-select" onchange="this.form.submit()">
-                        <option value="">Tous</option>
+                        <option value="">{{ _('Tous') }}</option>
                         {% for type in credit_types %}
                             <option value="{{ type.id }}" {% if filter_type_id == type.id %}selected{% endif %}>
                                 {{ type.name }}
@@ -48,7 +48,7 @@
                 <div class="col-md-4">
                     <label class="form-label">&nbsp;</label>
                     <a href="{{ url_for('credits.list_credits') }}" class="btn btn-secondary w-100">
-                        <i class="fas fa-redo"></i> Réinitialiser
+                        <i class="fas fa-redo"></i> {{ _('Réinitialiser') }}
                     </a>
                 </div>
             </form>
@@ -63,15 +63,15 @@
                     <table class="table table-hover mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th>Nom</th>
-                                <th>Type</th>
-                                <th class="text-end">Mensualité</th>
-                                <th class="text-end">Montant total</th>
-                                <th class="text-end">Restant</th>
-                                <th class="text-center">Progression</th>
-                                <th>Prochain</th>
-                                <th>Statut</th>
-                                <th class="text-end">Actions</th>
+                                <th>{{ _('Nom') }}</th>
+                                <th>{{ _('Type') }}</th>
+                                <th class="text-end">{{ _('Mensualité') }}</th>
+                                <th class="text-end">{{ _('Montant total') }}</th>
+                                <th class="text-end">{{ _('Restant') }}</th>
+                                <th class="text-center">{{ _('Progression') }}</th>
+                                <th>{{ _('Prochain') }}</th>
+                                <th>{{ _('Statut') }}</th>
+                                <th class="text-end">{{ _('Actions') }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -125,29 +125,29 @@
                                     <td>{{ credit.next_payment_date.strftime('%d/%m/%Y') }}</td>
                                     <td>
                                         {% if credit.is_active %}
-                                            <span class="badge bg-success">Actif</span>
+                                            <span class="badge bg-success">{{ _('Actif') }}</span>
                                         {% else %}
-                                            <span class="badge bg-danger">Clôturé</span>
+                                            <span class="badge bg-danger">{{ _('Clôturé') }}</span>
                                         {% endif %}
                                     </td>
                                     <td class="text-end">
                                         <div class="btn-group">
                                             <a href="{{ url_for('credits.detail', credit_id=credit.id) }}"
-                                               class="btn btn-sm btn-outline-primary" title="Voir">
+                                               class="btn btn-sm btn-outline-primary" title="{{ _('Voir') }}">
                                                 <i class="fas fa-eye"></i>
                                             </a>
                                             <a href="{{ url_for('credits.edit', credit_id=credit.id) }}"
-                                               class="btn btn-sm btn-outline-warning" title="Modifier">
+                                               class="btn btn-sm btn-outline-warning" title="{{ _('Modifier') }}">
                                                 <i class="fas fa-edit"></i>
                                             </a>
                                             <form method="POST" action="{{ url_for('credits.toggle', credit_id=credit.id) }}" class="d-inline">
-                                                <button type="submit" class="btn btn-sm btn-outline-info" title="Activer/Clôturer">
+                                                <button type="submit" class="btn btn-sm btn-outline-info" title="{{ _('Activer/Clôturer') }}">
                                                     <i class="fas fa-toggle-{% if credit.is_active %}on{% else %}off{% endif %}"></i>
                                                 </button>
                                             </form>
                                             <form method="POST" action="{{ url_for('credits.delete', credit_id=credit.id) }}"
-                                                  onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce crédit ?')" class="d-inline">
-                                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Supprimer">
+                                                  onsubmit="return confirm('{{ _('Êtes-vous sûr de vouloir supprimer ce crédit ?') }}')" class="d-inline">
+                                                <button type="submit" class="btn btn-sm btn-outline-danger" title="{{ _('Supprimer') }}">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </form>
@@ -158,7 +158,7 @@
                         </tbody>
                         <tfoot class="table-light">
                             <tr>
-                                <td colspan="2" class="text-end"><strong>Total mensuel :</strong></td>
+                                <td colspan="2" class="text-end"><strong>{{ _('Total mensuel :') }}</strong></td>
                                 <td class="text-end">
                                     <strong>
                                         {% set total_eur = namespace(value=0) %}
@@ -205,7 +205,7 @@
             <ul class="pagination justify-content-center">
                 {% if credits.has_prev %}
                     <li class="page-item">
-                        <a class="page-link" href="{{ url_for('credits.list', page=credits.prev_num) }}">Précédent</a>
+                        <a class="page-link" href="{{ url_for('credits.list', page=credits.prev_num) }}">{{ _('Précédent') }}</a>
                     </li>
                 {% endif %}
 
@@ -221,7 +221,7 @@
 
                 {% if credits.has_next %}
                     <li class="page-item">
-                        <a class="page-link" href="{{ url_for('credits.list', page=credits.next_num) }}">Suivant</a>
+                        <a class="page-link" href="{{ url_for('credits.list', page=credits.next_num) }}">{{ _('Suivant') }}</a>
                     </li>
                 {% endif %}
             </ul>
@@ -232,8 +232,8 @@
         {% if current_user.is_premium() %}
         <div class="card mt-4" id="creditsChartSection">
             <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #e5e7eb;">
-                <h5 class="mb-0"><i class="fas fa-chart-pie text-secondary"></i> Répartition des crédits actifs par type</h5>
-                <button class="btn btn-sm btn-outline-danger" onclick="exportCreditsChartToPDF()" title="Exporter en PDF">
+                <h5 class="mb-0"><i class="fas fa-chart-pie text-secondary"></i> {{ _('Répartition des crédits actifs par type') }}</h5>
+                <button class="btn btn-sm btn-outline-danger" onclick="exportCreditsChartToPDF()" title="{{ _('Exporter en PDF') }}">
                     <i class="fas fa-file-pdf"></i>
                 </button>
             </div>
@@ -250,10 +250,10 @@
         <div class="card">
             <div class="card-body text-center py-5">
                 <i class="fas fa-inbox fa-4x text-muted mb-3"></i>
-                <h4>Aucun crédit</h4>
-                <p class="text-muted">Commencez par ajouter votre premier crédit</p>
+                <h4>{{ _('Aucun crédit') }}</h4>
+                <p class="text-muted">{{ _('Commencez par ajouter votre premier crédit') }}</p>
                 <a href="{{ url_for('credits.add') }}" class="btn btn-primary">
-                    <i class="fas fa-plus"></i> Ajouter un crédit
+                    <i class="fas fa-plus"></i> {{ _('Ajouter un crédit') }}
                 </a>
             </div>
         </div>

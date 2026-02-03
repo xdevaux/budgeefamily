@@ -45,7 +45,13 @@
 
                         <div class="mb-3">
                             <label for="logo" class="form-label">{{ _('Logo') }}</label>
-                            <input type="file" class="form-control" id="logo" name="logo" accept="image/*">
+                            <div class="custom-file-input-wrapper">
+                                <label for="logo" class="custom-file-button btn btn-outline-secondary w-100">
+                                    <i class="fas fa-upload me-2"></i>
+                                    <span id="file-label">{{ _('No file selected') }}</span>
+                                </label>
+                                <input type="file" class="d-none" id="logo" name="logo" accept="image/*">
+                            </div>
                             <small class="text-muted">{{ _('Accepted formats: PNG, JPG, JPEG, GIF, SVG, WebP') }}</small>
                         </div>
 
@@ -60,4 +66,51 @@
         </div>
     </div>
 </div>
+
+<style>
+.custom-file-input-wrapper {
+    display: block;
+}
+
+.custom-file-button {
+    cursor: pointer;
+    text-align: left;
+    padding: 0.375rem 0.75rem;
+    transition: all 0.15s ease-in-out;
+}
+
+.custom-file-button:hover {
+    background-color: #e9ecef;
+}
+
+.custom-file-button #file-label {
+    color: #6c757d;
+}
+
+.custom-file-button.has-file #file-label {
+    color: #212529;
+    font-weight: 500;
+}
+</style>
+
+<script>
+// Gestion du label de fichier personnalisé
+document.addEventListener('DOMContentLoaded', function() {
+    const fileInput = document.getElementById('logo');
+    const fileLabel = document.getElementById('file-label');
+    const fileButton = document.querySelector('.custom-file-button');
+
+    if (fileInput && fileLabel && fileButton) {
+        fileInput.addEventListener('change', function() {
+            if (this.files && this.files.length > 0) {
+                fileLabel.textContent = this.files[0].name;
+                fileButton.classList.add('has-file');
+            } else {
+                fileLabel.textContent = "{{ _('No file selected') }}";
+                fileButton.classList.remove('has-file');
+            }
+        });
+    }
+});
+</script>
 {% endblock %}

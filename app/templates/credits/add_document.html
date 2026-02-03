@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Ajouter un document - {{ credit.name }} - Budgee Family{% endblock %}
+{% block title %}{{ _('Ajouter un document') }} - {{ credit.name }} - Budgee Family{% endblock %}
 
 {% block content %}
 <div class="container py-4">
@@ -8,11 +8,11 @@
         <div class="col-lg-8">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <div>
-                    <h2><i class="fas fa-file-upload"></i> Ajouter un document</h2>
-                    <p class="text-muted mb-0">Pour {{ credit.name }}</p>
+                    <h2><i class="fas fa-file-upload"></i> {{ _('Ajouter un document') }}</h2>
+                    <p class="text-muted mb-0">{{ _('Pour') }} {{ credit.name }}</p>
                 </div>
                 <a href="{{ url_for('credits.detail', credit_id=credit.id) }}" class="btn btn-outline-secondary">
-                    <i class="fas fa-arrow-left"></i> Retour
+                    <i class="fas fa-arrow-left"></i> {{ _('Retour') }}
                 </a>
             </div>
 
@@ -20,9 +20,9 @@
                 <div class="card-body p-4">
                     <form method="POST" enctype="multipart/form-data">
                         <div class="mb-3">
-                            <label for="document_type" class="form-label">Type de document *</label>
+                            <label for="document_type" class="form-label">{{ _('Type de document') }} *</label>
                             <select class="form-select" id="document_type" name="document_type" required>
-                                <option value="">-- Sélectionner --</option>
+                                <option value="">-- {{ _('Sélectionner') }} --</option>
                                 {% for code, name, icon, color in document_types %}
                                     <option value="{{ code }}" data-icon="{{ icon }}" data-color="{{ color }}">{{ name }}</option>
                                 {% endfor %}
@@ -30,57 +30,63 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="name" class="form-label">Nom du document *</label>
+                            <label for="name" class="form-label">{{ _('Nom du document') }} *</label>
                             <input type="text" class="form-control" id="name" name="name" required
-                                   placeholder="ex: Contrat de prêt, Relevé Janvier 2024...">
+                                   placeholder="{{ _('ex: Contrat de prêt, Relevé Janvier 2024...') }}">
                         </div>
 
                         <div class="mb-3">
-                            <label for="description" class="form-label">Description</label>
+                            <label for="description" class="form-label">{{ _('Description') }}</label>
                             <textarea class="form-control" id="description" name="description" rows="2"
-                                      placeholder="Informations complémentaires..."></textarea>
+                                      placeholder="{{ _('Informations complémentaires...') }}"></textarea>
                         </div>
 
                         <div class="row mb-3">
                             <div class="col-md-4">
-                                <label for="document_date" class="form-label">Date du document</label>
+                                <label for="document_date" class="form-label">{{ _('Date du document') }}</label>
                                 <input type="date" class="form-control" id="document_date" name="document_date">
                             </div>
                             <div class="col-md-4">
-                                <label for="year" class="form-label">Année</label>
+                                <label for="year" class="form-label">{{ _('Année') }}</label>
                                 <select class="form-select" id="year" name="year">
-                                    <option value="">-- Année --</option>
+                                    <option value="">-- {{ _('Année') }} --</option>
                                     {% for y in years %}
                                         <option value="{{ y }}">{{ y }}</option>
                                     {% endfor %}
                                 </select>
-                                <small class="text-muted">Pour le classement</small>
+                                <small class="text-muted">{{ _('Pour le classement') }}</small>
                             </div>
                             <div class="col-md-4">
-                                <label for="month" class="form-label">Mois</label>
+                                <label for="month" class="form-label">{{ _('Mois') }}</label>
                                 <select class="form-select" id="month" name="month">
-                                    <option value="">-- Mois --</option>
+                                    <option value="">-- {{ _('Mois') }} --</option>
                                     {% for num, name in months %}
                                         <option value="{{ num }}" data-name="{{ name }}">{{ name }}</option>
                                     {% endfor %}
                                 </select>
-                                <small class="text-muted">Pour les relevés mensuels</small>
+                                <small class="text-muted">{{ _('Pour les relevés mensuels') }}</small>
                             </div>
                         </div>
 
                         <div class="mb-4">
-                            <label for="file" class="form-label">Fichier *</label>
-                            <input type="file" class="form-control" id="file" name="file" required
-                                   accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png">
-                            <small class="text-muted">Formats acceptés : PDF, Word, Excel, Images (taille max : 16 Mo)</small>
+                            <label for="file" class="form-label">{{ _('Fichier') }} *</label>
+                            <div class="custom-file-input-wrapper">
+                                <label for="file" class="custom-file-button btn btn-outline-secondary w-100">
+                                    <i class="fas fa-upload me-2"></i>
+                                    <span id="file-label">{{ _('Aucun fichier sélectionné') }}</span>
+                                </label>
+                                <input type="file" class="d-none" id="file" name="file" required
+                                       accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png">
+                            </div>
+                            <small class="text-muted">{{ _('Formats acceptés : PDF, Word, Excel, Images (taille max : 16 Mo)') }}</small>
                         </div>
 
                         <div class="d-grid gap-2">
                             <button type="submit" id="submitBtn" class="btn btn-primary btn-lg" disabled>
-                                <i class="fas fa-plus"></i> Ajouter le document
+                                <i class="fas fa-plus"></i> {{ _('Ajouter le document') }}
                             </button>
                             <a href="{{ url_for('credits.detail', credit_id=credit.id) }}" class="btn btn-outline-secondary">
-                                Annuler
+                                {{ _('Annuler') }}
                             </a>
                         </div>
                     </form>
@@ -90,6 +96,32 @@
     </div>
 </div>
 
+<style>
+.custom-file-input-wrapper {
+    display: block;
+}
+
+.custom-file-button {
+    cursor: pointer;
+    text-align: left;
+    padding: 0.375rem 0.75rem;
+    transition: all 0.15s ease-in-out;
+}
+
+.custom-file-button:hover {
+    background-color: #e9ecef;
+}
+
+.custom-file-button #file-label {
+    color: #6c757d;
+}
+
+.custom-file-button.has-file #file-label {
+    color: #212529;
+    font-weight: 500;
+}
+</style>
+
 {% block extra_js %}
 <script>
     const documentDate = document.getElementById('document_date');
@@ -97,6 +129,8 @@
     const monthSelect = document.getElementById('month');
     const fileInput = document.getElementById('file');
     const submitBtn = document.getElementById('submitBtn');
+    const fileLabel = document.getElementById('file-label');
+    const fileButton = document.querySelector('.custom-file-button');
 
     // Auto-remplir année et mois quand on change la date
     documentDate.addEventListener('change', function() {
@@ -107,9 +141,17 @@
         }
     });
 
-    // Activer/désactiver le bouton submit selon la sélection du fichier
+    // Gestion du label de fichier personnalisé et activation du bouton submit
     fileInput.addEventListener('change', function() {
-        submitBtn.disabled = !this.files || this.files.length === 0;
+        if (this.files && this.files.length > 0) {
+            fileLabel.textContent = this.files[0].name;
+            fileButton.classList.add('has-file');
+            submitBtn.disabled = false;
+        } else {
+            fileLabel.textContent = "{{ _('Aucun fichier sélectionné') }}";
+            fileButton.classList.remove('has-file');
+            submitBtn.disabled = true;
+        }
     });
 </script>
 {% endblock %}

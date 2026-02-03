@@ -108,21 +108,21 @@
                             <h2 class="mb-1">{{ bank.name }}</h2>
                             <div class="d-flex flex-wrap gap-2">
                                 {% if bank.is_active %}
-                                    <span class="badge bg-success"><i class="fas fa-check"></i> Active</span>
+                                    <span class="badge bg-success"><i class="fas fa-check"></i> {{ _('Active') }}</span>
                                 {% else %}
-                                    <span class="badge bg-secondary"><i class="fas fa-times"></i> Inactive</span>
+                                    <span class="badge bg-secondary"><i class="fas fa-times"></i> {{ _('Inactive') }}</span>
                                 {% endif %}
                                 {% if bank.bic %}
-                                    <span class="badge bg-info">BIC: {{ bank.bic }}</span>
+                                    <span class="badge bg-info">{{ _('BIC') }}: {{ bank.bic }}</span>
                                 {% endif %}
                             </div>
                         </div>
                         <div class="d-flex gap-2">
                             <a href="{{ url_for('banks.edit', bank_id=bank.id) }}" class="btn btn-warning">
-                                <i class="fas fa-edit"></i> Modifier
+                                <i class="fas fa-edit"></i> {{ _('Modifier') }}
                             </a>
                             <a href="{{ url_for('banks.list_banks') }}" class="btn btn-outline-secondary">
-                                <i class="fas fa-arrow-left"></i> Retour
+                                <i class="fas fa-arrow-left"></i> {{ _('Retour') }}
                             </a>
                         </div>
                     </div>
@@ -137,12 +137,12 @@
             <!-- Informations de contact -->
             <div class="card mb-4">
                 <div class="card-header" style="background-color: #e5e7eb;">
-                    <i class="fas fa-info-circle text-secondary"></i> Informations
+                    <i class="fas fa-info-circle text-secondary"></i> {{ _('Informations') }}
                 </div>
                 <div class="card-body">
                     {% if bank.address or bank.postal_code or bank.city %}
                     <div class="mb-3">
-                        <strong>Adresse :</strong><br>
+                        <strong>{{ _('Adresse') }} :</strong><br>
                         {% if bank.address %}{{ bank.address }}<br>{% endif %}
                         {% if bank.postal_code or bank.city %}
                             {{ bank.postal_code }} {{ bank.city }}
@@ -152,35 +152,35 @@
 
                     {% if bank.phone %}
                     <div class="mb-3">
-                        <strong>Téléphone :</strong><br>
+                        <strong>{{ _('Téléphone') }} :</strong><br>
                         <a href="tel:{{ bank.phone }}">{{ bank.phone }}</a>
                     </div>
                     {% endif %}
 
                     {% if bank.email %}
                     <div class="mb-3">
-                        <strong>Email :</strong><br>
+                        <strong>{{ _('Email') }} :</strong><br>
                         <a href="mailto:{{ bank.email }}">{{ bank.email }}</a>
                     </div>
                     {% endif %}
 
                     {% if bank.website %}
                     <div class="mb-3">
-                        <strong>Site web :</strong><br>
+                        <strong>{{ _('Site web') }} :</strong><br>
                         <a href="{{ bank.website }}" target="_blank">{{ bank.website }}</a>
                     </div>
                     {% endif %}
 
                     {% if bank.iban %}
                     <div class="mb-3">
-                        <strong>IBAN :</strong><br>
+                        <strong>{{ _('IBAN') }} :</strong><br>
                         <code>{{ bank.iban }}</code>
                     </div>
                     {% endif %}
 
                     {% if bank.account_number %}
                     <div class="mb-0">
-                        <strong>Numéro de compte :</strong><br>
+                        <strong>{{ _('Numéro de compte') }} :</strong><br>
                         <code>{{ bank.account_number }}</code>
                     </div>
                     {% endif %}
@@ -191,7 +191,7 @@
             {% if bank.notes %}
             <div class="card mb-4">
                 <div class="card-header" style="background-color: #e5e7eb;">
-                    <i class="fas fa-sticky-note text-secondary"></i> Notes
+                    <i class="fas fa-sticky-note text-secondary"></i> {{ _('Notes') }}
                 </div>
                 <div class="card-body">
                     <p class="mb-0" style="white-space: pre-wrap;">{{ bank.notes }}</p>
@@ -202,7 +202,7 @@
             <!-- Statistiques documents -->
             <div class="card mb-4">
                 <div class="card-header" style="background-color: #e5e7eb;">
-                    <i class="fas fa-chart-pie text-secondary"></i> Documents
+                    <i class="fas fa-chart-pie text-secondary"></i> {{ _('Documents') }}
                 </div>
                 <div class="card-body p-2">
                     <div class="row g-2">
@@ -229,24 +229,24 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #e5e7eb;">
                     <span>
-                        <i class="fas fa-folder-open text-secondary"></i> Documents
+                        <i class="fas fa-folder-open text-secondary"></i> {{ _('Documents') }}
                         {% if total_size > 0 %}
                             <span class="badge bg-info ms-2">
                                 <i class="fas fa-hdd"></i>
                                 {% if total_size >= 1073741824 %}
-                                    {{ "%.2f"|format(total_size / 1073741824) }} Go
+                                    {{ "%.2f"|format(total_size / 1073741824) }} {{ _('Go') }}
                                 {% elif total_size >= 1048576 %}
-                                    {{ "%.2f"|format(total_size / 1048576) }} Mo
+                                    {{ "%.2f"|format(total_size / 1048576) }} {{ _('Mo') }}
                                 {% elif total_size >= 1024 %}
-                                    {{ "%.2f"|format(total_size / 1024) }} Ko
+                                    {{ "%.2f"|format(total_size / 1024) }} {{ _('Ko') }}
                                 {% else %}
-                                    {{ total_size }} octets
+                                    {{ total_size }} {{ _('octets') }}
                                 {% endif %}
                             </span>
                         {% endif %}
                     </span>
                     <a href="{{ url_for('banks.add_document', bank_id=bank.id) }}" class="btn btn-sm btn-primary">
-                        <i class="fas fa-plus"></i> Ajouter un document
+                        <i class="fas fa-plus"></i> {{ _('Ajouter un document') }}
                     </a>
                 </div>
                 <div class="card-body">
@@ -255,7 +255,7 @@
                         <div class="row g-2">
                             <div class="col-md-4">
                                 <select name="doc_type" class="form-select form-select-sm" onchange="this.form.submit()">
-                                    <option value="">Tous les types</option>
+                                    <option value="">{{ _('Tous les types') }}</option>
                                     {% for code, name, icon, color in document_types %}
                                         <option value="{{ code }}" {% if filter_type == code %}selected{% endif %}>{{ name }}</option>
                                     {% endfor %}
@@ -263,7 +263,7 @@
                             </div>
                             <div class="col-md-3">
                                 <select name="year" class="form-select form-select-sm" onchange="this.form.submit()">
-                                    <option value="">Toutes les années</option>
+                                    <option value="">{{ _('Toutes les années') }}</option>
                                     {% for y in years %}
                                         <option value="{{ y }}" {% if filter_year == y %}selected{% endif %}>{{ y }}</option>
                                     {% endfor %}
@@ -271,7 +271,7 @@
                             </div>
                             <div class="col-md-4">
                                 <div class="input-group input-group-sm">
-                                    <input type="text" class="form-control" name="search" placeholder="Rechercher..."
+                                    <input type="text" class="form-control" name="search" placeholder="{{ _('Rechercher...') }}"
                                            value="{{ search or '' }}">
                                     <button class="btn btn-outline-secondary" type="submit">
                                         <i class="fas fa-search"></i>
@@ -326,27 +326,27 @@
                                                     <button type="button"
                                                        class="btn btn-sm btn-outline-primary"
                                                        onclick="openPreviewModal('{{ url_for('banks.view_document', document_id=document.id) }}', '{{ document.name | e }}', '{{ document.file_mime_type }}')"
-                                                       title="Visualiser">
+                                                       title="{{ _('Visualiser') }}">
                                                         <i class="fas fa-eye"></i>
                                                     </button>
                                                 {% else %}
                                                     <a href="{{ url_for('banks.view_document', document_id=document.id) }}"
-                                                       class="btn btn-sm btn-outline-primary" title="Voir" target="_blank">
+                                                       class="btn btn-sm btn-outline-primary" title="{{ _('Voir') }}" target="_blank">
                                                         <i class="fas fa-eye"></i>
                                                     </a>
                                                 {% endif %}
                                                 <a href="{{ url_for('banks.download_document', document_id=document.id) }}"
-                                                   class="btn btn-sm btn-outline-success" title="Télécharger">
+                                                   class="btn btn-sm btn-outline-success" title="{{ _('Télécharger') }}">
                                                     <i class="fas fa-download"></i>
                                                 </a>
                                             {% endif %}
                                             <a href="{{ url_for('banks.edit_document', document_id=document.id) }}"
-                                               class="btn btn-sm btn-outline-warning" title="Modifier">
+                                               class="btn btn-sm btn-outline-warning" title="{{ _('Modifier') }}">
                                                 <i class="fas fa-edit"></i>
                                             </a>
                                             <form method="POST" action="{{ url_for('banks.delete_document', document_id=document.id) }}"
-                                                  onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce document ?')" class="d-inline">
-                                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Supprimer">
+                                                  onsubmit="return confirm('{{ _('Êtes-vous sûr de vouloir supprimer ce document ?') }}')" class="d-inline">
+                                                <button type="submit" class="btn btn-sm btn-outline-danger" title="{{ _('Supprimer') }}">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </form>
@@ -359,9 +359,9 @@
                         <div class="alert alert-info mb-0">
                             <i class="fas fa-info-circle"></i>
                             {% if filter_type or filter_year or search %}
-                                Aucun document ne correspond aux critères de recherche.
+                                {{ _('Aucun document ne correspond aux critères de recherche.') }}
                             {% else %}
-                                Aucun document ajouté pour cette banque.
+                                {{ _('Aucun document ajouté pour cette banque.') }}
                             {% endif %}
                         </div>
                     {% endif %}
@@ -378,9 +378,9 @@
             <div class="modal-header">
                 <h5 class="modal-title" id="documentPreviewModalLabel">
                     <i class="fas fa-file-alt me-2"></i>
-                    <span id="previewDocName">Document</span>
+                    <span id="previewDocName">{{ _('Document') }}</span>
                 </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ _('Fermer') }}"></button>
             </div>
             <div class="modal-body" id="documentPreviewContent">
                 <!-- Le contenu sera inséré dynamiquement -->
@@ -404,7 +404,7 @@ function openPreviewModal(docUrl, docName, docType) {
     } else if (docType.startsWith('image/')) {
         previewContent.innerHTML = '<div class="preview-image-container"><img src="' + docUrl + '" alt="' + docName + '" /></div>';
     } else {
-        previewContent.innerHTML = '<div class="text-center p-5"><i class="fas fa-file fa-4x text-muted mb-3"></i><p>Aperçu non disponible pour ce type de fichier</p><a href="' + docUrl + '" target="_blank" class="btn btn-primary">Ouvrir dans un nouvel onglet</a></div>';
+        previewContent.innerHTML = '<div class="text-center p-5"><i class="fas fa-file fa-4x text-muted mb-3"></i><p>{{ _('Aperçu non disponible pour ce type de fichier') }}</p><a href="' + docUrl + '" target="_blank" class="btn btn-primary">{{ _('Ouvrir dans un nouvel onglet') }}</a></div>';
     }
 
     // Utiliser l'API Bootstrap standard

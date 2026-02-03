@@ -193,7 +193,7 @@
                                 </td>
                                 <td>
                                     {% set desc = service | get_translated_description %}
-                                    <small class="text-muted">{{ desc[:80] if desc else \'-\' }}{% if desc and desc|length > 80 %}...{% endif %}</small>
+                                    <small class="text-muted">{{ desc[:80] if desc else '-' }}{% if desc and desc|length > 80 %}...{% endif %}</small>
                                 </td>
                                 <td>
                                     {% if service.category %}
@@ -352,7 +352,7 @@
                                 </td>
                                 <td>
                                     {% set desc = service | get_translated_description %}
-                                    <small class="text-muted">{{ desc[:80] if desc else \'-\' }}{% if desc and desc|length > 80 %}...{% endif %}</small>
+                                    <small class="text-muted">{{ desc[:80] if desc else '-' }}{% if desc and desc|length > 80 %}...{% endif %}</small>
                                 </td>
                                 <td>
                                     {% if service.category %}

@@ -1,14 +1,14 @@
 {% extends "base.html" %}
 
-{% block title %}Mes banques - Budgee Family{% endblock %}
+{% block title %}{{ _('Mes banques') }} - Budgee Family{% endblock %}
 
 {% block content %}
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2><i class="fas fa-university"></i> Mes banques</h2>
+        <h2><i class="fas fa-university"></i> {{ _('Mes banques') }}</h2>
         <div class="d-flex gap-2">
             <a href="{{ url_for('banks.add') }}" class="btn btn-primary">
-                <i class="fas fa-plus"></i> Ajouter une banque
+                <i class="fas fa-plus"></i> {{ _('Ajouter une banque') }}
             </a>
         </div>
     </div>
@@ -18,17 +18,17 @@
         <div class="card-body">
             <form method="GET" class="row g-3">
                 <div class="col-md-4">
-                    <label class="form-label">Statut</label>
+                    <label class="form-label">{{ _('Statut') }}</label>
                     <select name="status" class="form-select" onchange="this.form.submit()">
-                        <option value="all" {% if filter_status == 'all' %}selected{% endif %}>Toutes</option>
-                        <option value="active" {% if filter_status == 'active' %}selected{% endif %}>Actives</option>
-                        <option value="inactive" {% if filter_status == 'inactive' %}selected{% endif %}>Inactives</option>
+                        <option value="all" {% if filter_status == 'all' %}selected{% endif %}>{{ _('Toutes') }}</option>
+                        <option value="active" {% if filter_status == 'active' %}selected{% endif %}>{{ _('Actives') }}</option>
+                        <option value="inactive" {% if filter_status == 'inactive' %}selected{% endif %}>{{ _('Inactives') }}</option>
                     </select>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">&nbsp;</label>
                     <a href="{{ url_for('banks.list_banks') }}" class="btn btn-secondary w-100">
-                        <i class="fas fa-redo"></i> Réinitialiser
+                        <i class="fas fa-redo"></i> {{ _('Réinitialiser') }}
                     </a>
                 </div>
             </form>
@@ -43,12 +43,12 @@
                     <table class="table table-hover mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th>Nom</th>
-                                <th>Code BIC</th>
-                                <th>Téléphone</th>
-                                <th>Email</th>
-                                <th>Statut</th>
-                                <th class="text-end">Actions</th>
+                                <th>{{ _('Nom') }}</th>
+                                <th>{{ _('Code BIC') }}</th>
+                                <th>{{ _('Téléphone') }}</th>
+                                <th>{{ _('Email') }}</th>
+                                <th>{{ _('Statut') }}</th>
+                                <th class="text-end">{{ _('Actions') }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -98,29 +98,29 @@
                                     </td>
                                     <td>
                                         {% if bank.is_active %}
-                                            <span class="badge bg-success">Active</span>
+                                            <span class="badge bg-success">{{ _('Active') }}</span>
                                         {% else %}
-                                            <span class="badge bg-secondary">Inactive</span>
+                                            <span class="badge bg-secondary">{{ _('Inactive') }}</span>
                                         {% endif %}
                                     </td>
                                     <td class="text-end">
                                         <div class="btn-group">
                                             <a href="{{ url_for('banks.detail', bank_id=bank.id) }}"
-                                               class="btn btn-sm btn-outline-primary" title="Détails">
+                                               class="btn btn-sm btn-outline-primary" title="{{ _('Détails') }}">
                                                 <i class="fas fa-eye"></i>
                                             </a>
                                             <a href="{{ url_for('banks.edit', bank_id=bank.id) }}"
-                                               class="btn btn-sm btn-outline-warning" title="Modifier">
+                                               class="btn btn-sm btn-outline-warning" title="{{ _('Modifier') }}">
                                                 <i class="fas fa-edit"></i>
                                             </a>
                                             <form method="POST" action="{{ url_for('banks.toggle', bank_id=bank.id) }}" class="d-inline">
-                                                <button type="submit" class="btn btn-sm btn-outline-info" title="Activer/Désactiver">
+                                                <button type="submit" class="btn btn-sm btn-outline-info" title="{{ _('Activer/Désactiver') }}">
                                                     <i class="fas fa-toggle-{% if bank.is_active %}on{% else %}off{% endif %}"></i>
                                                 </button>
                                             </form>
                                             <form method="POST" action="{{ url_for('banks.delete', bank_id=bank.id) }}"
-                                                  onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette banque ?')" class="d-inline">
-                                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Supprimer">
+                                                  onsubmit="return confirm('{{ _('Êtes-vous sûr de vouloir supprimer cette banque ?') }}')" class="d-inline">
+                                                <button type="submit" class="btn btn-sm btn-outline-danger" title="{{ _('Supprimer') }}">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </form>
@@ -140,14 +140,14 @@
             <ul class="pagination justify-content-center">
                 {% if banks.has_prev %}
                     <li class="page-item">
-                        <a class="page-link" href="{{ url_for('banks.list', page=banks.prev_num) }}">Précédent</a>
+                        <a class="page-link" href="{{ url_for('banks.list_banks', page=banks.prev_num) }}">{{ _('Précédent') }}</a>
                     </li>
                 {% endif %}
 
                 {% for page_num in banks.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
                     {% if page_num %}
                         <li class="page-item {% if page_num == banks.page %}active{% endif %}">
-                            <a class="page-link" href="{{ url_for('banks.list', page=page_num) }}">{{ page_num }}</a>
+                            <a class="page-link" href="{{ url_for('banks.list_banks', page=page_num) }}">{{ page_num }}</a>
                         </li>
                     {% else %}
                         <li class="page-item disabled"><span class="page-link">...</span></li>
@@ -156,7 +156,7 @@
 
                 {% if banks.has_next %}
                     <li class="page-item">
-                        <a class="page-link" href="{{ url_for('banks.list', page=banks.next_num) }}">Suivant</a>
+                        <a class="page-link" href="{{ url_for('banks.list_banks', page=banks.next_num) }}">{{ _('Suivant') }}</a>
                     </li>
                 {% endif %}
             </ul>
@@ -166,10 +166,10 @@
         <div class="card">
             <div class="card-body text-center py-5">
                 <i class="fas fa-university fa-4x text-muted mb-3"></i>
-                <h4>Aucune banque</h4>
-                <p class="text-muted">Commencez par ajouter votre première banque</p>
+                <h4>{{ _('Aucune banque') }}</h4>
+                <p class="text-muted">{{ _('Commencez par ajouter votre première banque') }}</p>
                 <a href="{{ url_for('banks.add') }}" class="btn btn-primary">
-                    <i class="fas fa-plus"></i> Ajouter une banque
+                    <i class="fas fa-plus"></i> {{ _('Ajouter une banque') }}
                 </a>
             </div>
         </div>

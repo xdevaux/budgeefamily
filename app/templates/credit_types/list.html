@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 
-{% block title %}Types de credits - Budgee Family{% endblock %}
+{% block title %}{{ _('Types de crédits') }} - Budgee Family{% endblock %}
 
 {% block content %}
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2><i class="fas fa-tag"></i> Types de credits</h2>
+        <h2><i class="fas fa-tag"></i> {{ _('Types de crédits') }}</h2>
         <div class="d-flex gap-2">
             <!-- Boutons de basculement vue -->
             <div class="btn-group" role="group">
@@ -17,15 +17,15 @@
                 </button>
             </div>
             <a href="{{ url_for('credit_types.add') }}" class="btn btn-primary">
-                <i class="fas fa-plus"></i> Ajouter un type
+                <i class="fas fa-plus"></i> {{ _('Ajouter un type') }}
             </a>
         </div>
     </div>
 
-    <!-- Types par defaut -->
+    <!-- Types par défaut -->
     <div class="card mb-4">
         <div class="card-header" style="background-color: #e5e7eb;">
-            <h5 class="mb-0"><i class="fas fa-globe text-secondary"></i> Types par defaut</h5>
+            <h5 class="mb-0"><i class="fas fa-globe text-secondary"></i> {{ _('Types par défaut') }}</h5>
         </div>
         <div class="card-body">
             {% if global_types %}
@@ -42,7 +42,7 @@
                                     {% if type.description %}
                                         <p class="card-text text-muted small">{{ type.description }}</p>
                                     {% endif %}
-                                    <span class="badge bg-secondary">Global</span>
+                                    <span class="badge bg-secondary">{{ _('Global') }}</span>
                                 </div>
                             </div>
                         </div>
@@ -55,10 +55,10 @@
                         <table class="table table-hover mb-0">
                             <thead class="table-light">
                                 <tr>
-                                    <th>Nom</th>
-                                    <th>Description</th>
-                                    <th>Couleur</th>
-                                    <th>Type</th>
+                                    <th>{{ _('Nom') }}</th>
+                                    <th>{{ _('Description') }}</th>
+                                    <th>{{ _('Couleur') }}</th>
+                                    <th>{{ _('Type') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -79,7 +79,7 @@
                                             <span class="badge" style="background-color: {{ type.color }};">{{ type.color }}</span>
                                         </td>
                                         <td>
-                                            <span class="badge bg-secondary">Global</span>
+                                            <span class="badge bg-secondary">{{ _('Global') }}</span>
                                         </td>
                                     </tr>
                                 {% endfor %}
@@ -88,15 +88,15 @@
                     </div>
                 </div>
             {% else %}
-                <p class="text-muted mb-0">Aucun type par defaut disponible.</p>
+                <p class="text-muted mb-0">{{ _('Aucun type par défaut disponible.') }}</p>
             {% endif %}
         </div>
     </div>
 
-    <!-- Types personnalises -->
+    <!-- Types personnalisés -->
     <div class="card">
         <div class="card-header" style="background-color: #e5e7eb;">
-            <h5 class="mb-0"><i class="fas fa-user text-secondary"></i> Mes types personnalises</h5>
+            <h5 class="mb-0"><i class="fas fa-user text-secondary"></i> {{ _('Mes types personnalisés') }}</h5>
         </div>
         <div class="card-body">
             {% if custom_types %}
@@ -116,24 +116,24 @@
                                     <div class="mb-2">
                                         <span class="badge" style="background-color: {{ type.color }};">{{ type.color }}</span>
                                         {% if type.is_active %}
-                                            <span class="badge bg-success">Actif</span>
+                                            <span class="badge bg-success">{{ _('Actif') }}</span>
                                         {% else %}
-                                            <span class="badge bg-secondary">Inactif</span>
+                                            <span class="badge bg-secondary">{{ _('Inactif') }}</span>
                                         {% endif %}
                                     </div>
                                     <div class="btn-group w-100 mt-2">
                                         <a href="{{ url_for('credit_types.edit', type_id=type.id) }}"
-                                           class="btn btn-sm btn-outline-warning" title="Modifier">
+                                           class="btn btn-sm btn-outline-warning" title="{{ _('Modifier') }}">
                                             <i class="fas fa-edit"></i>
                                         </a>
                                         <form method="POST" action="{{ url_for('credit_types.toggle', type_id=type.id) }}" class="d-inline flex-fill">
-                                            <button type="submit" class="btn btn-sm btn-outline-info w-100" title="Activer/Desactiver">
+                                            <button type="submit" class="btn btn-sm btn-outline-info w-100" title="{{ _('Activer/Désactiver') }}">
                                                 <i class="fas fa-toggle-{% if type.is_active %}on{% else %}off{% endif %}"></i>
                                             </button>
                                         </form>
                                         <form method="POST" action="{{ url_for('credit_types.delete', type_id=type.id) }}"
-                                              onsubmit="return confirm('Etes-vous sur de vouloir supprimer ce type de credit ?')" class="d-inline flex-fill">
-                                            <button type="submit" class="btn btn-sm btn-outline-danger w-100" title="Supprimer">
+                                              onsubmit="return confirm('{{ _('Êtes-vous sûr de vouloir supprimer ce type de crédit ?') }}')" class="d-inline flex-fill">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger w-100" title="{{ _('Supprimer') }}">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </form>
@@ -150,11 +150,11 @@
                         <table class="table table-hover">
                             <thead class="table-light">
                                 <tr>
-                                    <th>Nom</th>
-                                    <th>Description</th>
-                                    <th>Couleur</th>
-                                    <th>Statut</th>
-                                    <th class="text-end">Actions</th>
+                                    <th>{{ _('Nom') }}</th>
+                                    <th>{{ _('Description') }}</th>
+                                    <th>{{ _('Couleur') }}</th>
+                                    <th>{{ _('Statut') }}</th>
+                                    <th class="text-end">{{ _('Actions') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -176,25 +176,25 @@
                                         </td>
                                         <td>
                                             {% if type.is_active %}
-                                                <span class="badge bg-success">Actif</span>
+                                                <span class="badge bg-success">{{ _('Actif') }}</span>
                                             {% else %}
-                                                <span class="badge bg-secondary">Inactif</span>
+                                                <span class="badge bg-secondary">{{ _('Inactif') }}</span>
                                             {% endif %}
                                         </td>
                                         <td class="text-end">
                                             <div class="btn-group">
                                                 <a href="{{ url_for('credit_types.edit', type_id=type.id) }}"
-                                                   class="btn btn-sm btn-outline-warning" title="Modifier">
+                                                   class="btn btn-sm btn-outline-warning" title="{{ _('Modifier') }}">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
                                                 <form method="POST" action="{{ url_for('credit_types.toggle', type_id=type.id) }}" class="d-inline">
-                                                    <button type="submit" class="btn btn-sm btn-outline-info" title="Activer/Desactiver">
+                                                    <button type="submit" class="btn btn-sm btn-outline-info" title="{{ _('Activer/Désactiver') }}">
                                                         <i class="fas fa-toggle-{% if type.is_active %}on{% else %}off{% endif %}"></i>
                                                     </button>
                                                 </form>
                                                 <form method="POST" action="{{ url_for('credit_types.delete', type_id=type.id) }}"
-                                                      onsubmit="return confirm('Etes-vous sur de vouloir supprimer ce type de credit ?')" class="d-inline">
-                                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Supprimer">
+                                                      onsubmit="return confirm('{{ _('Êtes-vous sûr de vouloir supprimer ce type de crédit ?') }}')" class="d-inline">
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="{{ _('Supprimer') }}">
                                                         <i class="fas fa-trash"></i>
                                                     </button>
                                                 </form>
@@ -209,10 +209,10 @@
             {% else %}
                 <div class="text-center py-5">
                     <i class="fas fa-inbox fa-4x text-muted mb-3"></i>
-                    <h4>Aucun type personnalise</h4>
-                    <p class="text-muted">Creez vos propres types de credits pour mieux organiser vos finances</p>
+                    <h4>{{ _('Aucun type personnalisé') }}</h4>
+                    <p class="text-muted">{{ _('Créez vos propres types de crédits pour mieux organiser vos finances') }}</p>
                     <a href="{{ url_for('credit_types.add') }}" class="btn btn-primary">
-                        <i class="fas fa-plus"></i> Creer mon premier type
+                        <i class="fas fa-plus"></i> {{ _('Créer mon premier type') }}
                     </a>
                 </div>
             {% endif %}
@@ -240,11 +240,11 @@ function switchView(view) {
         listBtn.classList.add('active');
     }
 
-    // Sauvegarder la preference dans localStorage
+    // Sauvegarder la préférence dans localStorage
     localStorage.setItem('creditTypesView', view);
 }
 
-// Restaurer la vue preferee au chargement de la page
+// Restaurer la vue préférée au chargement de la page
 document.addEventListener('DOMContentLoaded', function() {
     const savedView = localStorage.getItem('creditTypesView') || 'grid';
     switchView(savedView);

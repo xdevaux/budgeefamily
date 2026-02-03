@@ -3,6 +3,7 @@ Routes pour gérer les banques
 """
 from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify, Response
 from flask_login import login_required, current_user
+from flask_babel import gettext as _, lazy_gettext as _l
 from datetime import datetime
 from app import db, limiter
 from app.models import Bank, BankDocument
@@ -12,20 +13,28 @@ import base64
 bp = Blueprint('banks', __name__, url_prefix='/banks')
 
 # Types de documents disponibles pour les banques
-DOCUMENT_TYPES = [
-    ('rib', 'RIB', 'fa-file-invoice', '#6366f1'),
-    ('contract', 'Contrat', 'fa-file-signature', '#10b981'),
-    ('statement', 'Relevé', 'fa-file-invoice-dollar', '#f59e0b'),
-    ('correspondence', 'Courrier', 'fa-envelope', '#06b6d4'),
-    ('other', 'Autre document', 'fa-file', '#6c757d'),
-]
+def get_document_types():
+    """Retourne les types de documents avec traduction"""
+    return [
+        ('rib', _('RIB'), 'fa-file-invoice', '#6366f1'),
+        ('contract', _('Contrat'), 'fa-file-signature', '#10b981'),
+        ('statement', _('Relevé'), 'fa-file-invoice-dollar', '#f59e0b'),
+        ('correspondence', _('Courrier'), 'fa-envelope', '#06b6d4'),
+        ('other', _('Autre document'), 'fa-file', '#6c757d'),
+    ]
 
-# Mois en français
-MONTHS_FR = [
-    (1, 'Janvier'), (2, 'Février'), (3, 'Mars'), (4, 'Avril'),
-    (5, 'Mai'), (6, 'Juin'), (7, 'Juillet'), (8, 'Août'),
-    (9, 'Septembre'), (10, 'Octobre'), (11, 'Novembre'), (12, 'Décembre')
-]
+# Mois
+def get_months():
+    """Retourne les mois avec traduction"""
+    return [
+        (1, _('Janvier')), (2, _('Février')), (3, _('Mars')), (4, _('Avril')),
+        (5, _('Mai')), (6, _('Juin')), (7, _('Juillet')), (8, _('Août')),
+        (9, _('Septembre')), (10, _('Octobre')), (11, _('Novembre')), (12, _('Décembre'))
+    ]
+
+# Garder les anciennes références pour compatibilité
+DOCUMENT_TYPES = get_document_types()
+MONTHS_FR = get_months()
 
 # Logos des banques françaises
 FRENCH_BANKS_LOGOS = {
@@ -60,10 +69,10 @@ def generate_bank_logo_svg(bank_name, color, initials, text_color='#FFFFFF'):
 
 def get_document_type_info(type_code):
     """Retourne les informations d'un type de document"""
-    for code, name, icon, color in DOCUMENT_TYPES:
+    for code, name, icon, color in get_document_types():
         if code == type_code:
             return {'code': code, 'name': name, 'icon': icon, 'color': color}
-    return {'code': 'other', 'name': 'Autre', 'icon': 'fa-file', 'color': '#6c757d'}
+    return {'code': 'other', 'name': _('Autre'), 'icon': 'fa-file', 'color': '#6c757d'}
 
 
 @bp.route('/')
@@ -119,7 +128,7 @@ def add():
         db.session.add(bank)
         db.session.commit()
 
-        flash('Banque ajoutée avec succès !', 'success')
+        flash(_('Banque ajoutée avec succès !'), 'success')
         return redirect(url_for('banks.detail', bank_id=bank.id))
 
     return render_template('banks/add.html', french_banks=FRENCH_BANKS_LOGOS)
@@ -132,7 +141,7 @@ def detail(bank_id):
     bank = Bank.query.get_or_404(bank_id)
 
     if bank.user_id != current_user.id:
-        flash('Vous n\'avez pas accès à cette banque.', 'danger')
+        flash(_('Vous n\'avez pas accès à cette banque.'), 'danger')
         return redirect(url_for('banks.list_banks'))
 
     # Récupérer les documents avec filtres
@@ -160,7 +169,7 @@ def detail(bank_id):
 
     # Compter les documents par type
     doc_counts = {}
-    for doc_type, _, _, _ in DOCUMENT_TYPES:
+    for doc_type, _, _, _ in get_document_types():
         doc_counts[doc_type] = bank.documents.filter_by(document_type=doc_type).count()
 
     # Calculer la taille totale des documents
@@ -171,7 +180,7 @@ def detail(bank_id):
     return render_template('banks/detail.html',
                          bank=bank,
                          documents=documents,
-                         document_types=DOCUMENT_TYPES,
+                         document_types=get_document_types(),
                          years=years,
                          filter_type=filter_type,
                          filter_year=filter_year,
@@ -188,7 +197,7 @@ def edit(bank_id):
     bank = Bank.query.get_or_404(bank_id)
 
     if bank.user_id != current_user.id:
-        flash('Vous n\'avez pas accès à cette banque.', 'danger')
+        flash(_('Vous n\'avez pas accès à cette banque.'), 'danger')
         return redirect(url_for('banks.list_banks'))
 
     if request.method == 'POST':
@@ -221,7 +230,7 @@ def edit(bank_id):
 
         db.session.commit()
 
-        flash('Banque modifiée avec succès !', 'success')
+        flash(_('Banque modifiée avec succès !'), 'success')
         return redirect(url_for('banks.detail', bank_id=bank.id))
 
     return render_template('banks/edit.html', bank=bank)
@@ -234,14 +243,14 @@ def toggle(bank_id):
     bank = Bank.query.get_or_404(bank_id)
 
     if bank.user_id != current_user.id:
-        flash('Vous n\'avez pas accès à cette banque.', 'danger')
+        flash(_('Vous n\'avez pas accès à cette banque.'), 'danger')
         return redirect(url_for('banks.list_banks'))
 
     bank.is_active = not bank.is_active
     db.session.commit()
 
-    status = 'activée' if bank.is_active else 'désactivée'
-    flash(f'La banque "{bank.name}" a été {status}.', 'success')
+    status = _('activée') if bank.is_active else _('désactivée')
+    flash(_('La banque "%(name)s" a été %(status)s.', name=bank.name, status=status), 'success')
     return redirect(url_for('banks.list_banks'))
 
 
@@ -252,18 +261,18 @@ def delete(bank_id):
     bank = Bank.query.get_or_404(bank_id)
 
     if bank.user_id != current_user.id:
-        flash('Vous n\'avez pas accès à cette banque.', 'danger')
+        flash(_('Vous n\'avez pas accès à cette banque.'), 'danger')
         return redirect(url_for('banks.list_banks'))
 
     # Vérifier si la banque est utilisée par des crédits
     if bank.credits.count() > 0:
-        flash('Impossible de supprimer cette banque car elle est utilisée par des crédits.', 'warning')
+        flash(_('Impossible de supprimer cette banque car elle est utilisée par des crédits.'), 'warning')
         return redirect(url_for('banks.list_banks'))
 
     db.session.delete(bank)
     db.session.commit()
 
-    flash('Banque supprimée avec succès !', 'success')
+    flash(_('Banque supprimée avec succès !'), 'success')
     return redirect(url_for('banks.list_banks'))
 
 
@@ -286,7 +295,7 @@ def add_document(bank_id):
     bank = Bank.query.get_or_404(bank_id)
 
     if bank.user_id != current_user.id:
-        flash('Vous n\'avez pas accès à cette banque.', 'danger')
+        flash(_('Vous n\'avez pas accès à cette banque.'), 'danger')
         return redirect(url_for('banks.list_banks'))
 
     if request.method == 'POST':
@@ -337,7 +346,7 @@ def add_document(bank_id):
         db.session.add(document)
         db.session.commit()
 
-        flash(f'Le document "{name}" a été ajouté avec succès !', 'success')
+        flash(_('Le document "%(name)s" a été ajouté avec succès !', name=name), 'success')
         return redirect(url_for('banks.detail', bank_id=bank_id))
 
     current_year = datetime.now().year
@@ -345,8 +354,8 @@ def add_document(bank_id):
 
     return render_template('banks/add_document.html',
                          bank=bank,
-                         document_types=DOCUMENT_TYPES,
-                         months=MONTHS_FR,
+                         document_types=get_document_types(),
+                         months=get_months(),
                          years=years)
 
 
@@ -356,11 +365,11 @@ def download_document(document_id):
     document = BankDocument.query.get_or_404(document_id)
 
     if document.user_id != current_user.id:
-        flash('Vous n\'avez pas accès à ce document.', 'danger')
+        flash(_('Vous n\'avez pas accès à ce document.'), 'danger')
         return redirect(url_for('banks.list_banks'))
 
     if not document.file_data:
-        flash('Ce document n\'a pas de fichier attaché.', 'warning')
+        flash(_('Ce document n\'a pas de fichier attaché.'), 'warning')
         return redirect(url_for('banks.detail', bank_id=document.bank_id))
 
     return Response(
@@ -376,11 +385,11 @@ def view_document(document_id):
     document = BankDocument.query.get_or_404(document_id)
 
     if document.user_id != current_user.id:
-        flash('Vous n\'avez pas accès à ce document.', 'danger')
+        flash(_('Vous n\'avez pas accès à ce document.'), 'danger')
         return redirect(url_for('banks.list_banks'))
 
     if not document.file_data:
-        flash('Ce document n\'a pas de fichier attaché.', 'warning')
+        flash(_('Ce document n\'a pas de fichier attaché.'), 'warning')
         return redirect(url_for('banks.detail', bank_id=document.bank_id))
 
     return Response(
@@ -397,7 +406,7 @@ def edit_document(document_id):
     document = BankDocument.query.get_or_404(document_id)
 
     if document.user_id != current_user.id:
-        flash('Vous n\'avez pas accès à ce document.', 'danger')
+        flash(_('Vous n\'avez pas accès à ce document.'), 'danger')
         return redirect(url_for('banks.list_banks'))
 
     if request.method == 'POST':
@@ -428,7 +437,7 @@ def edit_document(document_id):
 
         db.session.commit()
 
-        flash(f'Le document "{document.name}" a été mis à jour.', 'success')
+        flash(_('Le document "%(name)s" a été mis à jour.', name=document.name), 'success')
         return redirect(url_for('banks.detail', bank_id=document.bank_id))
 
     current_year = datetime.now().year
@@ -437,8 +446,8 @@ def edit_document(document_id):
     return render_template('banks/edit_document.html',
                          document=document,
                          bank=document.bank,
-                         document_types=DOCUMENT_TYPES,
-                         months=MONTHS_FR,
+                         document_types=get_document_types(),
+                         months=get_months(),
                          years=years)
 
 
@@ -448,7 +457,7 @@ def delete_document(document_id):
     document = BankDocument.query.get_or_404(document_id)
 
     if document.user_id != current_user.id:
-        flash('Vous n\'avez pas accès à ce document.', 'danger')
+        flash(_('Vous n\'avez pas accès à ce document.'), 'danger')
         return redirect(url_for('banks.list_banks'))
 
     bank_id = document.bank_id
@@ -456,5 +465,5 @@ def delete_document(document_id):
     db.session.delete(document)
     db.session.commit()
 
-    flash(f'Le document "{document_name}" a été supprimé.', 'success')
+    flash(_('Le document "%(name)s" a été supprimé.', name=document_name), 'success')
     return redirect(url_for('banks.detail', bank_id=bank_id))

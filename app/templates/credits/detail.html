@@ -90,10 +90,10 @@
         <h2><i class="fas fa-money-bill-wave"></i> {{ credit.name }}</h2>
         <div class="btn-group">
             <a href="{{ url_for('credits.edit', credit_id=credit.id) }}" class="btn btn-warning">
-                <i class="fas fa-edit"></i> Modifier
+                <i class="fas fa-edit"></i> {{ _('Modifier') }}
             </a>
             <a href="{{ url_for('credits.list_credits') }}" class="btn btn-outline-secondary">
-                <i class="fas fa-arrow-left"></i> Retour
+                <i class="fas fa-arrow-left"></i> {{ _('Retour') }}
             </a>
         </div>
     </div>
@@ -103,7 +103,7 @@
         <div class="col-md-4">
             <div class="card text-center">
                 <div class="card-body">
-                    <h6 class="text-muted">Mensualité</h6>
+                    <h6 class="text-muted">{{ _('Mensualité') }}</h6>
                     <h2 class="mb-0">{{ credit.amount | format_amount }} {{ credit.currency | currency_symbol }}</h2>
                     <small class="text-muted">{{ credit.billing_cycle | translate_cycle }}</small>
                 </div>
@@ -113,7 +113,7 @@
         <div class="col-md-4">
             <div class="card text-center">
                 <div class="card-body">
-                    <h6 class="text-muted">Montant total</h6>
+                    <h6 class="text-muted">{{ _('Montant total') }}</h6>
                     <h2 class="mb-0">
                         {% if credit.total_amount %}
                             {{ credit.total_amount | format_amount }} {{ credit.currency | currency_symbol }}
@@ -121,7 +121,7 @@
                             <span class="text-muted">-</span>
                         {% endif %}
                     </h2>
-                    <small class="text-muted">Emprunté au départ</small>
+                    <small class="text-muted">{{ _('Emprunté au départ') }}</small>
                 </div>
             </div>
         </div>
@@ -129,7 +129,7 @@
         <div class="col-md-4">
             <div class="card text-center">
                 <div class="card-body">
-                    <h6 class="text-muted">Montant restant</h6>
+                    <h6 class="text-muted">{{ _('Montant restant') }}</h6>
                     <h2 class="mb-0">
                         {% if credit.remaining_amount %}
                             {{ credit.remaining_amount | format_amount }} {{ credit.currency | currency_symbol }}
@@ -137,7 +137,7 @@
                             <span class="text-muted">-</span>
                         {% endif %}
                     </h2>
-                    <small class="text-muted">À rembourser</small>
+                    <small class="text-muted">{{ _('À rembourser') }}</small>
                 </div>
             </div>
         </div>
@@ -147,7 +147,7 @@
     {% if credit.total_amount and credit.remaining_amount %}
     <div class="card mb-4">
         <div class="card-header" style="background-color: #e5e7eb;">
-            <h5 class="mb-0"><i class="fas fa-chart-line text-secondary"></i> Progression du remboursement</h5>
+            <h5 class="mb-0"><i class="fas fa-chart-line text-secondary"></i> {{ _('Progression du remboursement') }}</h5>
         </div>
         <div class="card-body">
             <div class="progress mb-3" style="height: 30px;">
@@ -160,11 +160,11 @@
             </div>
             <div class="row text-center">
                 <div class="col">
-                    <strong>Payé :</strong>
+                    <strong>{{ _('Payé :') }}</strong>
                     {{ (credit.total_amount - credit.remaining_amount) | format_amount }} {{ credit.currency | currency_symbol }}
                 </div>
                 <div class="col">
-                    <strong>Restant :</strong>
+                    <strong>{{ _('Restant :') }}</strong>
                     {{ credit.remaining_amount | format_amount }} {{ credit.currency | currency_symbol }}
                 </div>
             </div>
@@ -178,23 +178,23 @@
             <!-- Détails du crédit -->
             <div class="card mb-4">
                 <div class="card-header" style="background-color: #e5e7eb;">
-                    <h5 class="mb-0"><i class="fas fa-info-circle text-secondary"></i> Détails</h5>
+                    <h5 class="mb-0"><i class="fas fa-info-circle text-secondary"></i> {{ _('Détails') }}</h5>
                 </div>
                 <div class="card-body">
                     <div class="mb-3">
-                        <strong>Type de crédit :</strong><br>
+                        <strong>{{ _('Type de crédit :') }}</strong><br>
                         {% if credit.credit_type_obj %}
                             <span class="badge" style="background-color: {{ credit.credit_type_obj.color }};">
                                 <i class="fas {{ credit.credit_type_obj.icon or 'fa-circle' }}"></i>
                                 {{ credit.credit_type_obj.name }}
                             </span>
                         {% else %}
-                            <span class="text-muted">Non défini</span>
+                            <span class="text-muted">{{ _('Non défini') }}</span>
                         {% endif %}
                     </div>
 
                     <div class="mb-3">
-                        <strong>Banque :</strong><br>
+                        <strong>{{ _('Banque :') }}</strong><br>
                         {% if credit.bank %}
                             <span class="text-primary">
                                 <i class="fas fa-university"></i> {{ credit.bank.name }}
@@ -203,51 +203,51 @@
                                 <br><small class="text-muted">{{ credit.bank.bic }}</small>
                             {% endif %}
                         {% else %}
-                            <span class="text-muted">Non renseignée</span>
+                            <span class="text-muted">{{ _('Non renseignée') }}</span>
                         {% endif %}
                     </div>
 
                     <div class="mb-3">
-                        <strong>Statut :</strong><br>
+                        <strong>{{ _('Statut :') }}</strong><br>
                         {% if credit.is_active %}
-                            <span class="badge bg-success">Actif</span>
+                            <span class="badge bg-success">{{ _('Actif') }}</span>
                         {% else %}
-                            <span class="badge bg-danger">Clôturé</span>
+                            <span class="badge bg-danger">{{ _('Clôturé') }}</span>
                         {% endif %}
                     </div>
 
                     {% if credit.description %}
                     <div class="mb-3">
-                        <strong>Description :</strong><br>
+                        <strong>{{ _('Description :') }}</strong><br>
                         <p class="mb-0">{{ credit.description }}</p>
                     </div>
                     {% endif %}
 
                     <div class="mb-3">
-                        <strong>Taux d'intérêt :</strong><br>
+                        <strong>{{ _('Taux d\'intérêt :') }}</strong><br>
                         {% if credit.interest_rate %}
                             {{ credit.interest_rate }}%
                         {% else %}
-                            <span class="text-muted">Non renseigné</span>
+                            <span class="text-muted">{{ _('Non renseigné') }}</span>
                         {% endif %}
                     </div>
 
                     <div class="mb-3">
-                        <strong>Date de début :</strong><br>
+                        <strong>{{ _('Date de début :') }}</strong><br>
                         {{ credit.start_date.strftime('%d/%m/%Y') }}
                     </div>
 
                     <div class="mb-3">
-                        <strong>Date de fin prévue :</strong><br>
+                        <strong>{{ _('Date de fin prévue :') }}</strong><br>
                         {% if credit.end_date %}
                             {{ credit.end_date.strftime('%d/%m/%Y') }}
                         {% else %}
-                            <span class="text-muted">Non renseignée</span>
+                            <span class="text-muted">{{ _('Non renseignée') }}</span>
                         {% endif %}
                     </div>
 
                     <div class="mb-0">
-                        <strong>Prochain paiement :</strong><br>
+                        <strong>{{ _('Prochain paiement :') }}</strong><br>
                         {{ credit.next_payment_date.strftime('%d/%m/%Y') }}
                     </div>
                 </div>
@@ -256,7 +256,7 @@
             <!-- Statistiques documents -->
             <div class="card mb-4">
                 <div class="card-header" style="background-color: #e5e7eb;">
-                    <i class="fas fa-chart-pie text-secondary"></i> Documents
+                    <i class="fas fa-chart-pie text-secondary"></i> {{ _('Documents') }}
                 </div>
                 <div class="card-body p-2">
                     <div class="row g-2">
@@ -280,7 +280,7 @@
             <!-- Actions -->
             <div class="card">
                 <div class="card-header" style="background-color: #e5e7eb;">
-                    <h5 class="mb-0"><i class="fas fa-cog text-secondary"></i> Actions</h5>
+                    <h5 class="mb-0"><i class="fas fa-cog text-secondary"></i> {{ _('Actions') }}</h5>
                 </div>
                 <div class="card-body">
                     <div class="d-grid gap-2">
@@ -288,16 +288,16 @@
                             <button type="submit" class="btn btn-info w-100">
                                 <i class="fas fa-toggle-{% if credit.is_active %}on{% else %}off{% endif %}"></i>
                                 {% if credit.is_active %}
-                                    Marquer comme clôturé
+                                    {{ _('Marquer comme clôturé') }}
                                 {% else %}
-                                    Réactiver
+                                    {{ _('Réactiver') }}
                                 {% endif %}
                             </button>
                         </form>
                         <form method="POST" action="{{ url_for('credits.delete', credit_id=credit.id) }}"
-                              onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce crédit ?')">
+                              onsubmit="return confirm('{{ _('Êtes-vous sûr de vouloir supprimer ce crédit ?') }}')">
                             <button type="submit" class="btn btn-danger w-100">
-                                <i class="fas fa-trash"></i> Supprimer
+                                <i class="fas fa-trash"></i> {{ _('Supprimer') }}
                             </button>
                         </form>
                     </div>
@@ -310,7 +310,7 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #e5e7eb;">
                     <span>
-                        <i class="fas fa-folder-open text-secondary"></i> Documents
+                        <i class="fas fa-folder-open text-secondary"></i> {{ _('Documents') }}
                         {% if total_size > 0 %}
                             <span class="badge bg-info ms-2">
                                 <i class="fas fa-hdd"></i>
@@ -321,13 +321,13 @@
                                 {% elif total_size >= 1024 %}
                                     {{ "%.2f"|format(total_size / 1024) }} Ko
                                 {% else %}
-                                    {{ total_size }} octets
+                                    {{ total_size }} {{ _('octets') }}
                                 {% endif %}
                             </span>
                         {% endif %}
                     </span>
                     <a href="{{ url_for('credits.add_document', credit_id=credit.id) }}" class="btn btn-sm btn-primary">
-                        <i class="fas fa-plus"></i> Ajouter un document
+                        <i class="fas fa-plus"></i> {{ _('Ajouter un document') }}
                     </a>
                 </div>
                 <div class="card-body">
@@ -336,7 +336,7 @@
                         <div class="row g-2">
                             <div class="col-md-4">
                                 <select name="doc_type" class="form-select form-select-sm" onchange="this.form.submit()">
-                                    <option value="">Tous les types</option>
+                                    <option value="">{{ _('Tous les types') }}</option>
                                     {% for code, name, icon, color in document_types %}
                                         <option value="{{ code }}" {% if filter_type == code %}selected{% endif %}>{{ name }}</option>
                                     {% endfor %}
@@ -344,7 +344,7 @@
                             </div>
                             <div class="col-md-3">
                                 <select name="year" class="form-select form-select-sm" onchange="this.form.submit()">
-                                    <option value="">Toutes les années</option>
+                                    <option value="">{{ _('Toutes les années') }}</option>
                                     {% for y in years %}
                                         <option value="{{ y }}" {% if filter_year == y %}selected{% endif %}>{{ y }}</option>
                                     {% endfor %}
@@ -352,7 +352,7 @@
                             </div>
                             <div class="col-md-4">
                                 <div class="input-group input-group-sm">
-                                    <input type="text" class="form-control" name="search" placeholder="Rechercher..."
+                                    <input type="text" class="form-control" name="search" placeholder="{{ _('Rechercher...') }}"
                                            value="{{ search or '' }}">
                                     <button class="btn btn-outline-secondary" type="submit">
                                         <i class="fas fa-search"></i>
@@ -407,27 +407,27 @@
                                                     <button type="button"
                                                        class="btn btn-sm btn-outline-primary"
                                                        onclick="openPreviewModal('{{ url_for('credits.view_document', document_id=document.id) }}', '{{ document.name | e }}', '{{ document.file_mime_type }}')"
-                                                       title="Visualiser">
+                                                       title="{{ _('Visualiser') }}">
                                                         <i class="fas fa-eye"></i>
                                                     </button>
                                                 {% else %}
                                                     <a href="{{ url_for('credits.view_document', document_id=document.id) }}"
-                                                       class="btn btn-sm btn-outline-primary" title="Voir" target="_blank">
+                                                       class="btn btn-sm btn-outline-primary" title="{{ _('Voir') }}" target="_blank">
                                                         <i class="fas fa-eye"></i>
                                                     </a>
                                                 {% endif %}
                                                 <a href="{{ url_for('credits.download_document', document_id=document.id) }}"
-                                                   class="btn btn-sm btn-outline-success" title="Télécharger">
+                                                   class="btn btn-sm btn-outline-success" title="{{ _('Télécharger') }}">
                                                     <i class="fas fa-download"></i>
                                                 </a>
                                             {% endif %}
                                             <a href="{{ url_for('credits.edit_document', document_id=document.id) }}"
-                                               class="btn btn-sm btn-outline-warning" title="Modifier">
+                                               class="btn btn-sm btn-outline-warning" title="{{ _('Modifier') }}">
                                                 <i class="fas fa-edit"></i>
                                             </a>
                                             <form method="POST" action="{{ url_for('credits.delete_document', document_id=document.id) }}"
-                                                  onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce document ?')" class="d-inline">
-                                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Supprimer">
+                                                  onsubmit="return confirm('{{ _('Êtes-vous sûr de vouloir supprimer ce document ?') }}')" class="d-inline">
+                                                <button type="submit" class="btn btn-sm btn-outline-danger" title="{{ _('Supprimer') }}">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </form>
@@ -440,9 +440,9 @@
                         <div class="alert alert-info mb-0">
                             <i class="fas fa-info-circle"></i>
                             {% if filter_type or filter_year or search %}
-                                Aucun document ne correspond aux critères de recherche.
+                                {{ _('Aucun document ne correspond aux critères de recherche.') }}
                             {% else %}
-                                Aucun document ajouté pour ce crédit.
+                                {{ _('Aucun document ajouté pour ce crédit.') }}
                             {% endif %}
                         </div>
                     {% endif %}
@@ -459,9 +459,9 @@
             <div class="modal-header">
                 <h5 class="modal-title" id="documentPreviewModalLabel">
                     <i class="fas fa-file-alt me-2"></i>
-                    <span id="previewDocName">Document</span>
+                    <span id="previewDocName">{{ _('Document') }}</span>
                 </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ _('Fermer') }}"></button>
             </div>
             <div class="modal-body" id="documentPreviewContent">
                 <!-- Le contenu sera inséré dynamiquement -->
@@ -485,7 +485,7 @@ function openPreviewModal(docUrl, docName, docType) {
     } else if (docType.startsWith('image/')) {
         previewContent.innerHTML = '<div class="preview-image-container"><img src="' + docUrl + '" alt="' + docName + '" /></div>';
     } else {
-        previewContent.innerHTML = '<div class="text-center p-5"><i class="fas fa-file fa-4x text-muted mb-3"></i><p>Aperçu non disponible pour ce type de fichier</p><a href="' + docUrl + '" target="_blank" class="btn btn-primary">Ouvrir dans un nouvel onglet</a></div>';
+        previewContent.innerHTML = '<div class="text-center p-5"><i class="fas fa-file fa-4x text-muted mb-3"></i><p>{{ _("Aperçu non disponible pour ce type de fichier") }}</p><a href="' + docUrl + '" target="_blank" class="btn btn-primary">{{ _("Ouvrir dans un nouvel onglet") }}</a></div>';
     }
 
     // Utiliser l'API Bootstrap standard
