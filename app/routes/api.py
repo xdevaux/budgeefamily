@@ -627,9 +627,26 @@ def credits_distribution():
 def card_purchases_distribution():
     """API endpoint to retrieve active card purchases distribution"""
     from app.models import CardPurchase
+    from flask_babel import get_locale
 
-    # Get all active card purchases for the user
-    active_purchases = current_user.card_purchases.filter_by(is_active=True).all()
+    # Get filter parameters (month and year)
+    filter_month = request.args.get('month', type=int)
+    filter_year = request.args.get('year', type=int)
+
+    # Base query for active card purchases
+    query = current_user.card_purchases.filter_by(is_active=True)
+
+    # Apply month and year filters if provided
+    if filter_month and filter_year:
+        query = query.filter(
+            db.extract('month', CardPurchase.purchase_date) == filter_month,
+            db.extract('year', CardPurchase.purchase_date) == filter_year
+        )
+
+    active_purchases = query.all()
+
+    # Get current locale for translations
+    current_locale = str(get_locale())
 
     # Distribution by merchant
     merchants_data = {}
@@ -641,12 +658,13 @@ def card_purchases_distribution():
         else:
             merchants_data[merchant_name] = purchase.amount
 
-    # Distribution by category with colors
+    # Distribution by category with colors (using translated names)
     categories_data = {}
     categories_colors = {}
     for purchase in active_purchases:
         if purchase.category:
-            category_name = purchase.category.name
+            # Use translated category name
+            category_name = purchase.category.get_name(locale=current_locale)
             category_color = purchase.category.color if purchase.category.color else '#6c757d'
         else:
             category_name = 'Uncategorized'

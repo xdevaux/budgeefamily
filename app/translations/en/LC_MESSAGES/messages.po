@@ -6505,3 +6505,74 @@ msgstr "Notes..."
 msgid "Mes achats"
 msgstr "My Purchases"
 
+
+# Payment type translations
+#: app/templates/card_purchases/add_manual.html:2
+#: app/templates/card_purchases/add_manual.html:9
+msgid "Ajouter un achat"
+msgstr "Add a Purchase"
+
+#: app/templates/card_purchases/edit.html:2
+msgid "Modifier l'achat"
+msgstr "Edit Purchase"
+
+#: app/templates/card_purchases/add_manual.html:102
+#: app/templates/card_purchases/edit.html:74
+msgid "Type de Paiement"
+msgstr "Payment Type"
+
+#: app/templates/card_purchases/add_manual.html:105
+#: app/templates/card_purchases/edit.html:77
+#: app/templates/card_purchases/list.html:170
+msgid "Carte Bancaire"
+msgstr "Bank Card"
+
+#: app/templates/card_purchases/add_manual.html:106
+#: app/templates/card_purchases/edit.html:78
+#: app/templates/card_purchases/list.html:172
+msgid "Virement"
+msgstr "Transfer"
+
+#: app/templates/card_purchases/add_manual.html:107
+#: app/templates/card_purchases/edit.html:79
+#: app/templates/card_purchases/list.html:174
+msgid "Espèces"
+msgstr "Cash"
+
+#: app/templates/card_purchases/add_manual.html:108
+#: app/templates/card_purchases/edit.html:80
+#: app/templates/card_purchases/list.html:176
+msgid "Autres"
+msgstr "Other"
+
+#: app/templates/card_purchases/list.html:147
+msgid "Type"
+msgstr "Type"
+
+# Detail page translations
+#: app/templates/card_purchases/detail.html:3
+msgid "Détails de l'achat CB"
+msgstr "Purchase Details"
+
+#: app/templates/card_purchases/detail.html:3
+msgid "Détails de l'achat"
+msgstr "Purchase Details"
+
+#: app/templates/card_purchases/detail.html:128
+msgid "Type de Paiement :"
+msgstr "Payment Type:"
+
+# OCR Premium restriction translations
+#: app/routes/card_purchases.py:176
+#: app/routes/card_purchases.py:273
+msgid "La fonction OCR est réservée aux abonnés Premium."
+msgstr "The OCR feature is reserved for Premium subscribers."
+
+#: app/templates/card_purchases/add_manual.html:32
+msgid "Saisie manuelle disponible. L'OCR est réservé aux abonnés Premium."
+msgstr "Manual entry available. OCR is reserved for Premium subscribers."
+
+# Validate purchases translation
+#: app/templates/card_purchases/validate.html:3
+msgid "Valider les achats"
+msgstr "Validate Purchases"

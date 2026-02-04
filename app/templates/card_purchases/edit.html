@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}{{ _('Modifier l\'achat CB') }}{% endblock %}
+{% block title %}{{ _('Modifier l\'achat') }}{% endblock %}
 
 {% block content %}
 <div class="container mt-4">
@@ -68,6 +68,18 @@
                                         {{ category | get_translated_name }}
                                     </option>
                                 {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="payment_type" class="form-label">
+                                <i class="fas fa-wallet"></i> {{ _('Type de Paiement') }} <span class="text-danger">*</span>
+                            </label>
+                            <select class="form-select" id="payment_type" name="payment_type" required>
+                                <option value="card" {% if purchase.payment_type == 'card' %}selected{% endif %}>{{ _('Carte Bancaire') }}</option>
+                                <option value="transfer" {% if purchase.payment_type == 'transfer' %}selected{% endif %}>{{ _('Virement') }}</option>
+                                <option value="cash" {% if purchase.payment_type == 'cash' %}selected{% endif %}>{{ _('Espèces') }}</option>
+                                <option value="other" {% if purchase.payment_type == 'other' %}selected{% endif %}>{{ _('Autres') }}</option>
                             </select>
                         </div>
 

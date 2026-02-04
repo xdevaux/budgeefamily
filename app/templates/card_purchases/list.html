@@ -77,11 +77,20 @@
                             <i class="fas fa-keyboard"></i> {{ _('Saisie manuelle') }}
                         </a>
                     </li>
-                    <li>
-                        <a class="dropdown-item" href="{{ url_for('card_purchases.upload_receipts') }}">
-                            <i class="fas fa-robot"></i> {{ _('Scanner avec OCR') }}
-                        </a>
-                    </li>
+                    {% if current_user.is_premium() %}
+                        <li>
+                            <a class="dropdown-item" href="{{ url_for('card_purchases.upload_receipts') }}">
+                                <i class="fas fa-robot"></i> {{ _('Scanner avec OCR') }}
+                            </a>
+                        </li>
+                    {% else %}
+                        <li>
+                            <span class="dropdown-item text-muted" style="cursor: not-allowed;">
+                                <i class="fas fa-robot"></i> {{ _('Scanner avec OCR') }}
+                                <span class="badge bg-warning text-dark ms-1">Premium</span>
+                            </span>
+                        </li>
+                    {% endif %}
                 </ul>
             </div>
         </div>
@@ -145,6 +154,7 @@
                             <th>{{ _('Date') }}</th>
                             <th>{{ _('Marchand') }}</th>
                             <th>{{ _('Catégorie') }}</th>
+                            <th>{{ _('Type') }}</th>
                             <th class="text-end">{{ _('Montant') }}</th>
                             <th class="text-center">{{ _('Reçu') }}</th>
                             <th class="text-end">{{ _('Actions') }}</th>
@@ -171,6 +181,19 @@
                                     <span class="badge bg-secondary">
                                         {{ _('Non catégorisé') }}
                                     </span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if purchase.payment_type == 'card' %}
+                                    <span class="badge bg-primary"><i class="fas fa-credit-card"></i> {{ _('Carte Bancaire') }}</span>
+                                {% elif purchase.payment_type == 'transfer' %}
+                                    <span class="badge bg-info"><i class="fas fa-exchange-alt"></i> {{ _('Virement') }}</span>
+                                {% elif purchase.payment_type == 'cash' %}
+                                    <span class="badge bg-success"><i class="fas fa-money-bill"></i> {{ _('Espèces') }}</span>
+                                {% elif purchase.payment_type == 'other' %}
+                                    <span class="badge bg-secondary"><i class="fas fa-ellipsis-h"></i> {{ _('Autres') }}</span>
+                                {% else %}
+                                    <span class="badge bg-primary"><i class="fas fa-credit-card"></i> {{ _('Carte Bancaire') }}</span>
                                 {% endif %}
                             </td>
                             <td class="text-end text-danger">
@@ -380,95 +403,115 @@ function formatAmount(value) {
     }).format(value);
 }
 
-// Load distribution data
-fetch('/api/card-purchases/distribution')
-    .then(response => response.json())
-    .then(data => {
-        // Chart by Merchant
-        const merchantsCtx = document.getElementById('merchantsChart').getContext('2d');
-        new Chart(merchantsCtx, {
-            type: 'doughnut',
-            data: {
-                labels: data.merchants.labels,
-                datasets: [{
-                    data: data.merchants.values,
-                    backgroundColor: chartColors.slice(0, data.merchants.labels.length),
-                    borderWidth: 2,
-                    borderColor: '#fff'
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: true,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: {
-                            padding: 15,
-                            font: {
-                                size: 12
-                            }
-                        }
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                const label = context.label || '';
-                                const value = context.parsed || 0;
-                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                const percentage = ((value / total) * 100).toFixed(1);
-                                return label + ': ' + formatAmount(value) + ' € (' + percentage + '%)';
-                            }
-                        }
-                    }
-                }
-            }
-        });
+// Get filter values from URL parameters or form selects
+function getFilterParams() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const month = urlParams.get('month') || document.querySelector('select[name="month"]')?.value || '';
+    const year = urlParams.get('year') || document.querySelector('select[name="year"]')?.value || '';
 
-        // Chart by Category (with category colors)
-        const categoriesCtx = document.getElementById('cardPurchasesCategoriesChart').getContext('2d');
-        new Chart(categoriesCtx, {
-            type: 'doughnut',
-            data: {
-                labels: data.categories.labels,
-                datasets: [{
-                    data: data.categories.values,
-                    backgroundColor: data.categories.colors,
-                    borderWidth: 2,
-                    borderColor: '#fff'
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: true,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: {
-                            padding: 15,
-                            font: {
-                                size: 12
+    let params = '';
+    if (month && year) {
+        params = `?month=${month}&year=${year}`;
+    }
+    return params;
+}
+
+// Load distribution data
+function loadCharts() {
+    const params = getFilterParams();
+
+    fetch('/api/card-purchases/distribution' + params)
+        .then(response => response.json())
+        .then(data => {
+            // Chart by Merchant
+            const merchantsCtx = document.getElementById('merchantsChart').getContext('2d');
+            new Chart(merchantsCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: data.merchants.labels,
+                    datasets: [{
+                        data: data.merchants.values,
+                        backgroundColor: chartColors.slice(0, data.merchants.labels.length),
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 15,
+                                font: {
+                                    size: 12
+                                }
                             }
-                        }
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                const label = context.label || '';
-                                const value = context.parsed || 0;
-                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                const percentage = ((value / total) * 100).toFixed(1);
-                                return label + ': ' + formatAmount(value) + ' € (' + percentage + '%)';
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.parsed || 0;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = ((value / total) * 100).toFixed(1);
+                                    return label + ': ' + formatAmount(value) + ' € (' + percentage + '%)';
+                                }
                             }
                         }
                     }
                 }
-            }
+            });
+
+            // Chart by Category (with category colors)
+            const categoriesCtx = document.getElementById('cardPurchasesCategoriesChart').getContext('2d');
+            new Chart(categoriesCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: data.categories.labels,
+                    datasets: [{
+                        data: data.categories.values,
+                        backgroundColor: data.categories.colors,
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 15,
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.parsed || 0;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = ((value / total) * 100).toFixed(1);
+                                    return label + ': ' + formatAmount(value) + ' € (' + percentage + '%)';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        })
+        .catch(error => {
+            console.error('Error loading charts:', error);
         });
-    })
-    .catch(error => {
-        console.error('Error loading charts:', error);
-    });
+}
+
+// Load charts on page load
+loadCharts();
 
 // Function to export charts to PDF
 function exportCardPurchasesChartsToPDF() {

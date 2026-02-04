@@ -1198,6 +1198,7 @@ class CardPurchase(db.Model):
     merchant_name = db.Column(db.String(255), nullable=False)
     amount = db.Column(db.Float, nullable=False)
     currency = db.Column(db.String(10), default='EUR', nullable=False)
+    payment_type = db.Column(db.String(50), default='card', nullable=False)  # 'card', 'transfer', 'cash', 'other'
 
     # Catégorie
     category_id = db.Column(db.Integer, db.ForeignKey('categories.id'), nullable=True)

@@ -92,6 +92,7 @@ def add_manual():
             purchase_date = request.form.get('purchase_date')
             purchase_time = request.form.get('purchase_time', '12:00')
             category_id = request.form.get('category_id', type=int)
+            payment_type = request.form.get('payment_type', 'card')
             description = request.form.get('description', '')
 
             # Create card purchase
@@ -101,6 +102,7 @@ def add_manual():
                 merchant_name=merchant_name,
                 amount=amount,
                 currency='EUR',
+                payment_type=payment_type,
                 description=description,
                 ocr_confidence=0,  # No OCR
                 was_manually_edited=True,
@@ -167,6 +169,11 @@ def add_manual():
 @limiter.limit("50 per hour")
 def upload_receipts():
     """Multiple upload with OCR processing and validation grid"""
+
+    # Check if user has Premium access
+    if not current_user.is_premium():
+        flash(_('La fonction OCR est réservée aux abonnés Premium.'), 'warning')
+        return redirect(url_for('card_purchases.list_purchases'))
 
     if request.method == 'POST':
         # Get all uploaded files
@@ -260,6 +267,11 @@ def upload_receipts():
 def validate_purchases():
     """Validate and save purchases after user modification"""
 
+    # Check if user has Premium access
+    if not current_user.is_premium():
+        flash(_('La fonction OCR est réservée aux abonnés Premium.'), 'warning')
+        return redirect(url_for('card_purchases.list_purchases'))
+
     # Get form data
     purchases_data = request.form.get('purchases_json')
 
@@ -296,6 +308,7 @@ def validate_purchases():
             merchant_name=purchase_data['merchant_name'],
             amount=float(purchase_data['amount']),
             currency='EUR',
+            payment_type=purchase_data.get('payment_type', 'card'),
             category_name=purchase_data.get('category_name'),
             description=purchase_data.get('description', ''),
             ocr_confidence=float(purchase_data.get('ocr_confidence', 0)),
@@ -373,6 +386,7 @@ def edit(purchase_id):
         time_str = request.form.get('purchase_time', '12:00')
         purchase.purchase_date = datetime.strptime(f'{date_str} {time_str}', '%Y-%m-%d %H:%M')
 
+        purchase.payment_type = request.form.get('payment_type', 'card')
         purchase.description = request.form.get('description')
         purchase.notes = request.form.get('notes')
         purchase.was_manually_edited = True

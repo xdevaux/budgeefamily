@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}{{ _('Valider les achats CB') }}{% endblock %}
+{% block title %}{{ _('Valider les achats') }}{% endblock %}
 
 {% block content %}
 <div class="container-fluid mt-4">
@@ -28,6 +28,7 @@
                                 <th>{{ _('Marchand') }}</th>
                                 <th>{{ _('Montant') }}</th>
                                 <th>{{ _('Catégorie') }}</th>
+                                <th>{{ _('Type') }}</th>
                                 <th>{{ _('Confiance OCR') }}</th>
                                 <th style="width: 200px;">{{ _('Notes') }}</th>
                             </tr>
@@ -80,6 +81,16 @@
                                                 {{ category | get_translated_name }}
                                             </option>
                                         {% endfor %}
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="form-select form-select-sm"
+                                            name="payment_type_{{ loop.index0 }}"
+                                            required>
+                                        <option value="card" selected>{{ _('Carte Bancaire') }}</option>
+                                        <option value="transfer">{{ _('Virement') }}</option>
+                                        <option value="cash">{{ _('Espèces') }}</option>
+                                        <option value="other">{{ _('Autres') }}</option>
                                     </select>
                                 </td>
                                 <td class="text-center">
@@ -169,6 +180,7 @@ document.querySelector('form').addEventListener('submit', function(e) {
                 amount: document.querySelector(`[name="amount_${index}"]`).value,
                 category_id: document.querySelector(`[name="category_${index}"]`).value,
                 category_name: document.querySelector(`[name="category_name_${index}"]`).value,
+                payment_type: document.querySelector(`[name="payment_type_${index}"]`).value,
                 description: document.querySelector(`[name="description_${index}"]`).value,
                 file_data_base64: document.querySelector(`[name="file_data_${index}"]`).value,
                 file_name: document.querySelector(`[name="file_name_${index}"]`).value,

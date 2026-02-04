@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}{{ _('Détails de l\'achat CB') }}{% endblock %}
+{% block title %}{{ _('Détails de l\'achat') }}{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -119,6 +119,25 @@
                             <span class="badge bg-secondary">
                                 {{ purchase.category_name or _('Non catégorisé') }}
                             </span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <strong>{{ _('Type de Paiement :') }}</strong>
+                        </div>
+                        <div class="col-md-8">
+                            {% if purchase.payment_type == 'card' %}
+                                <span class="badge bg-primary"><i class="fas fa-credit-card"></i> {{ _('Carte Bancaire') }}</span>
+                            {% elif purchase.payment_type == 'transfer' %}
+                                <span class="badge bg-info"><i class="fas fa-exchange-alt"></i> {{ _('Virement') }}</span>
+                            {% elif purchase.payment_type == 'cash' %}
+                                <span class="badge bg-success"><i class="fas fa-money-bill"></i> {{ _('Espèces') }}</span>
+                            {% elif purchase.payment_type == 'other' %}
+                                <span class="badge bg-secondary"><i class="fas fa-ellipsis-h"></i> {{ _('Autres') }}</span>
+                            {% else %}
+                                <span class="badge bg-primary"><i class="fas fa-credit-card"></i> {{ _('Carte Bancaire') }}</span>
+                            {% endif %}
                         </div>
                     </div>
 
