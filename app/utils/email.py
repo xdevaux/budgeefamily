@@ -1918,18 +1918,19 @@ def send_notification_email(user, notification):
         notif_info = notification_types.get(notification.type, {'icon': '🔔', 'color': '#6366f1'})
 
         # Contenu selon la langue
+        profile_url = url_for('auth.profile', _external=True)
         if lang == 'en':
             title_notif = 'New notification'
             greeting = f'Hello {user.first_name or user.email},'
             button_dashboard = 'View my dashboard'
-            preferences_note = f'You are receiving this email because you have enabled email notifications in your preferences. You can disable this option anytime from your <a href="{url_for(\'auth.profile\', _external=True)}">profile</a>.'
+            preferences_note = f'You are receiving this email because you have enabled email notifications in your preferences. You can disable this option anytime from your <a href="{profile_url}">profile</a>.'
             footer_title = 'Smart subscription manager'
         else:
             title_notif = 'Nouvelle notification'
             greeting = f'Bonjour {user.first_name or user.email},'
             button_dashboard = 'Voir mon tableau de bord'
-            preferences_note = f'Vous recevez cet email car vous avez activé les notifications par email dans vos préférences. Vous pouvez désactiver cette option à tout moment depuis votre <a href="{url_for(\'auth.profile\', _external=True)}">profil</a>.'
-            footer_title = 'Gestionnaire d\'abonnements intelligent'
+            preferences_note = f'Vous recevez cet email car vous avez activé les notifications par email dans vos préférences. Vous pouvez désactiver cette option à tout moment depuis votre <a href="{profile_url}">profil</a>.'
+            footer_title = "Gestionnaire d'abonnements intelligent"
 
         html_body = f"""
         <!DOCTYPE html>

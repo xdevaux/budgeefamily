@@ -1,31 +1,31 @@
 {% extends "base.html" %}
 
-{% block title %}Edit Document - {{ reminder.name }} - Budgee Family{% endblock %}
+{% block title %}{{ _('Modifier le document') }} - {{ reminder.name }} - Budgee Family{% endblock %}
 
 {% block content %}
 <div class="container py-4">
     <div class="mb-4">
         <a href="{{ url_for('reminders.detail', reminder_id=reminder.id) }}" class="btn btn-outline-secondary">
-            <i class="fas fa-arrow-left"></i> Back to reminder
+            <i class="fas fa-arrow-left"></i> {{ _('Retour au rappel') }}
         </a>
     </div>
 
     <div class="card">
         <div class="card-header" style="background-color: #e5e7eb;">
             <h4 class="mb-0">
-                <i class="fas fa-edit text-secondary"></i> Edit Document
+                <i class="fas fa-edit text-secondary"></i> {{ _('Modifier le document') }}
             </h4>
-            <small class="text-muted">For: {{ reminder.name }}</small>
+            <small class="text-muted">{{ _('Pour :') }} {{ reminder.name }}</small>
         </div>
         <div class="card-body">
             <form method="POST" enctype="multipart/form-data">
                 <div class="row mb-3">
                     <div class="col-md-6">
-                        <label for="name" class="form-label">Document name <span class="text-danger">*</span></label>
+                        <label for="name" class="form-label">{{ _('Nom du document') }} <span class="text-danger">*</span></label>
                         <input type="text" class="form-control" id="name" name="name" value="{{ document.name }}" required>
                     </div>
                     <div class="col-md-6">
-                        <label for="document_type" class="form-label">Document type <span class="text-danger">*</span></label>
+                        <label for="document_type" class="form-label">{{ _('Type de document') }} <span class="text-danger">*</span></label>
                         <select class="form-select" id="document_type" name="document_type" required>
                             {% for code, name, icon, color in document_types %}
                                 <option value="{{ code }}" {% if document.document_type == code %}selected{% endif %}>{{ name }}</option>
@@ -35,40 +35,40 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="document_date" class="form-label">Document date</label>
+                    <label for="document_date" class="form-label">{{ _('Date du document') }}</label>
                     <input type="date" class="form-control" id="document_date" name="document_date"
                            value="{{ document.document_date.strftime('%Y-%m-%d') if document.document_date else '' }}">
                 </div>
 
                 <div class="mb-3">
-                    <label for="description" class="form-label">Description</label>
+                    <label for="description" class="form-label">{{ _('Description') }}</label>
                     <textarea class="form-control" id="description" name="description" rows="3">{{ document.description or '' }}</textarea>
                 </div>
 
                 <div class="mb-3">
-                    <label for="file" class="form-label">File</label>
+                    <label for="file" class="form-label">{{ _('Fichier') }}</label>
                     {% if document.file_data %}
                         <div class="alert alert-info">
-                            <i class="fas fa-file"></i> Current file: <strong>{{ document.file_name }}</strong>
+                            <i class="fas fa-file"></i> {{ _('Fichier actuel :') }} <strong>{{ document.file_name }}</strong>
                             ({{ document.get_file_size_display() }})
                         </div>
                     {% endif %}
                     <div class="d-flex align-items-center gap-2 mb-2">
                         <input type="file" class="d-none" id="file" name="file" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xls,.xlsx" onchange="updateFileName(this)">
                         <button type="button" class="btn btn-outline-secondary" onclick="document.getElementById('file').click()">
-                            <i class="fas fa-folder-open"></i> Browse...
+                            <i class="fas fa-folder-open"></i> {{ _('Parcourir...') }}
                         </button>
-                        <span id="file-name-display" class="text-muted flex-grow-1">No file selected</span>
+                        <span id="file-name-display" class="text-muted flex-grow-1">{{ _('Aucun fichier sélectionné') }}</span>
                     </div>
-                    <small class="text-muted">Leave empty to keep current file. Accepted formats: PDF, images, Office documents. Max size: 10 MB</small>
+                    <small class="text-muted">{{ _('Laissez vide pour conserver le fichier actuel. Formats acceptés : PDF, images, documents Office. Taille max : 10 Mo') }}</small>
                 </div>
 
                 <div class="d-flex gap-2">
                     <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save"></i> Save
+                        <i class="fas fa-save"></i> {{ _('Enregistrer') }}
                     </button>
                     <a href="{{ url_for('reminders.detail', reminder_id=reminder.id) }}" class="btn btn-secondary">
-                        <i class="fas fa-times"></i> Cancel
+                        <i class="fas fa-times"></i> {{ _('Annuler') }}
                     </a>
                 </div>
             </form>
@@ -84,7 +84,7 @@ function updateFileName(input) {
         display.classList.remove('text-muted');
         display.classList.add('text-success', 'fw-bold');
     } else {
-        display.textContent = 'No file selected';
+        display.textContent = '{{ _('Aucun fichier sélectionné') }}';
         display.classList.remove('text-success', 'fw-bold');
         display.classList.add('text-muted');
     }

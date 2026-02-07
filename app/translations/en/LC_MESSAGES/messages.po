@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-02-03 17:13+0100\n"
+"POT-Creation-Date: 2026-02-07 12:55+0100\n"
 "PO-Revision-Date: 2026-01-31 15:29+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -16,11 +16,12 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.10.3\n"
+"Generated-By: Babel 2.17.0\n"
 
 # Cycle translations (for translate_cycle filter)
-#: app/__init__.py:137 app/templates/credits/add.html:81
-#: app/templates/credits/edit.html:82 app/templates/index.html:177
+#: app/__init__.py:137 app/routes/reminders.py:24
+#: app/templates/credits/add.html:81 app/templates/credits/edit.html:82
+#: app/templates/dashboard.html:275 app/templates/index.html:177
 #: app/templates/index.html:196 app/templates/index.html:215
 #: app/templates/revenues/add.html:73 app/templates/revenues/edit.html:72
 #: app/templates/subscriptions/add.html:78
@@ -31,10 +32,12 @@ msgstr ""
 msgid "Mensuel"
 msgstr "Monthly"
 
-#: app/__init__.py:138 app/templates/credits/add.html:83
-#: app/templates/credits/edit.html:84 app/templates/index.html:230
-#: app/templates/index.html:234 app/templates/revenues/add.html:75
-#: app/templates/revenues/edit.html:74 app/templates/subscriptions/add.html:80
+#: app/__init__.py:138 app/routes/reminders.py:27
+#: app/templates/credits/add.html:83 app/templates/credits/edit.html:84
+#: app/templates/index.html:230 app/templates/index.html:234
+#: app/templates/reminders/detail.html:122 app/templates/reminders/list.html:97
+#: app/templates/revenues/add.html:75 app/templates/revenues/edit.html:74
+#: app/templates/subscriptions/add.html:80
 #: app/templates/subscriptions/add.html:198
 #: app/templates/subscriptions/edit.html:80
 #: app/templates/subscriptions/edit.html:190
@@ -42,7 +45,8 @@ msgstr "Monthly"
 msgid "Annuel"
 msgstr "Annual"
 
-#: app/__init__.py:139 app/templates/subscriptions/add.html:77
+#: app/__init__.py:139 app/routes/reminders.py:23
+#: app/templates/subscriptions/add.html:77
 #: app/templates/subscriptions/add.html:195
 #: app/templates/subscriptions/edit.html:77
 #: app/templates/subscriptions/edit.html:187
@@ -59,7 +63,7 @@ msgid "Trimestriel"
 msgstr "Quarterly"
 
 # Month abbreviations (for translate_month filter)
-#: app/__init__.py:159
+#: app/__init__.py:159 app/templates/reminders/detail.html:381
 msgid "Janv."
 msgstr "Jan."
 
@@ -68,112 +72,124 @@ msgid "Fév."
 msgstr "Feb."
 
 #: app/__init__.py:161 app/routes/banks.py:30 app/routes/credits.py:29
-#: app/routes/employers.py:39
+#: app/routes/employers.py:39 app/routes/reminders.py:34
+#: app/templates/balance.html:25 app/templates/balance.html:112
+#: app/templates/card_purchases/list.html:119
+#: app/templates/reminders/detail.html:381
 msgid "Mars"
 msgstr "March"
 
-#: app/__init__.py:162
+#: app/__init__.py:162 app/templates/reminders/detail.html:381
 msgid "Avr."
 msgstr "Apr."
 
 #: app/__init__.py:163 app/routes/banks.py:31 app/routes/credits.py:30
-#: app/routes/employers.py:40
+#: app/routes/employers.py:40 app/routes/reminders.py:35
+#: app/templates/balance.html:25 app/templates/balance.html:112
+#: app/templates/card_purchases/list.html:119
+#: app/templates/reminders/detail.html:381
 msgid "Mai"
 msgstr "May"
 
 #: app/__init__.py:164 app/routes/banks.py:31 app/routes/credits.py:30
-#: app/routes/employers.py:40
+#: app/routes/employers.py:40 app/routes/reminders.py:35
+#: app/templates/balance.html:25 app/templates/balance.html:112
+#: app/templates/card_purchases/list.html:119
+#: app/templates/reminders/detail.html:381
 msgid "Juin"
 msgstr "June"
 
-#: app/__init__.py:165
+#: app/__init__.py:165 app/templates/reminders/detail.html:381
 msgid "Juil."
 msgstr "Jul."
 
 #: app/__init__.py:166 app/routes/banks.py:31 app/routes/credits.py:30
-#: app/routes/employers.py:40
+#: app/routes/employers.py:40 app/routes/reminders.py:35
+#: app/templates/balance.html:25 app/templates/balance.html:112
+#: app/templates/card_purchases/list.html:119
+#: app/templates/reminders/detail.html:381
 msgid "Août"
 msgstr "August"
 
-#: app/__init__.py:167
+#: app/__init__.py:167 app/templates/reminders/detail.html:381
 msgid "Sept."
 msgstr "Sep."
 
-#: app/__init__.py:168
+#: app/__init__.py:168 app/templates/reminders/detail.html:381
 msgid "Oct."
 msgstr "Oct."
 
-#: app/__init__.py:169
+#: app/__init__.py:169 app/templates/reminders/detail.html:381
 msgid "Nov."
 msgstr "Nov."
 
-#: app/__init__.py:170
+#: app/__init__.py:170 app/templates/reminders/detail.html:381
 msgid "Déc."
 msgstr "Dec."
 
 # Default Category Names
-#: app/__init__.py:187 app/templates/installments/add.html:124
+#: app/__init__.py:194 app/templates/installments/add.html:124
 #: app/templates/installments/edit.html:66
 msgid "Alimentation"
 msgstr "Food"
 
-#: app/__init__.py:188
+#: app/__init__.py:195
 msgid "Carburant"
 msgstr "Fuel"
 
-#: app/__init__.py:189
+#: app/__init__.py:196
 msgid "Habillement"
 msgstr "Clothing"
 
-#: app/__init__.py:190
+#: app/__init__.py:197
 msgid "Restaurant"
 msgstr "Restaurant"
 
-#: app/__init__.py:191
+#: app/__init__.py:198
 msgid "Transport"
 msgstr "Transportation"
 
-#: app/__init__.py:192
+#: app/__init__.py:199
 msgid "Santé & Pharmacie"
 msgstr "Health & Pharmacy"
 
-#: app/__init__.py:193
+#: app/__init__.py:200
 msgid "Loisirs & Culture"
 msgstr "Leisure & Culture"
 
-#: app/__init__.py:194
+#: app/__init__.py:201
 msgid "Maison & Jardin"
 msgstr "Home & Garden"
 
-#: app/__init__.py:195
+#: app/__init__.py:202
 msgid "Électronique & High-tech"
 msgstr "Electronics & Tech"
 
-#: app/__init__.py:196
+#: app/__init__.py:203
 msgid "Sport & Fitness"
 msgstr "Sports & Fitness"
 
-#: app/__init__.py:197
+#: app/__init__.py:204
 msgid "Beauté & Cosmétiques"
 msgstr "Beauty & Cosmetics"
 
-#: app/__init__.py:198
+#: app/__init__.py:205
 msgid "Éducation & Formation"
 msgstr "Education & Training"
 
-#: app/__init__.py:199
+#: app/__init__.py:206
 msgid "Voyages & Hébergement"
 msgstr "Travel & Accommodation"
 
-#: app/__init__.py:200
+#: app/__init__.py:207
 msgid "Cadeaux"
 msgstr "Gifts"
 
-#: app/__init__.py:201
+#: app/__init__.py:208
 msgid "Animaux"
 msgstr "Pets"
 
-#: app/__init__.py:202 app/routes/banks.py:75 app/routes/credits.py:40
+#: app/__init__.py:209 app/routes/banks.py:75 app/routes/credits.py:40
 #: app/routes/employers.py:22 app/routes/employers.py:50
 #: app/routes/revenues.py:25 app/routes/revenues.py:34
 #: app/templates/installments/add.html:47
@@ -184,67 +200,67 @@ msgid "Autre"
 msgstr "Other"
 
 # Default Category Descriptions
-#: app/__init__.py:204
+#: app/__init__.py:211
 msgid "Courses alimentaires, supermarché"
 msgstr "Groceries, supermarket"
 
-#: app/__init__.py:205
+#: app/__init__.py:212
 msgid "Essence, diesel, station-service"
 msgstr "Gas, diesel, service station"
 
-#: app/__init__.py:206
+#: app/__init__.py:213
 msgid "Vêtements, chaussures, accessoires"
 msgstr "Clothes, shoes, accessories"
 
-#: app/__init__.py:207
+#: app/__init__.py:214
 msgid "Restaurants, fast-food, livraison"
 msgstr "Restaurants, fast-food, delivery"
 
-#: app/__init__.py:208
+#: app/__init__.py:215
 msgid "Transports en commun, taxi, parking"
 msgstr "Public transport, taxi, parking"
 
-#: app/__init__.py:209
+#: app/__init__.py:216
 msgid "Médicaments, pharmacie, soins"
 msgstr "Medications, pharmacy, healthcare"
 
-#: app/__init__.py:210
+#: app/__init__.py:217
 msgid "Cinéma, concerts, musées, spectacles"
 msgstr "Cinema, concerts, museums, shows"
 
-#: app/__init__.py:211
+#: app/__init__.py:218
 msgid "Bricolage, jardinage, décoration"
 msgstr "DIY, gardening, decoration"
 
-#: app/__init__.py:212
+#: app/__init__.py:219
 msgid "Informatique, électronique, gadgets"
 msgstr "Computers, electronics, gadgets"
 
-#: app/__init__.py:213
+#: app/__init__.py:220
 msgid "Équipement sportif, salle de sport"
 msgstr "Sports equipment, gym"
 
-#: app/__init__.py:214
+#: app/__init__.py:221
 msgid "Coiffeur, esthétique, cosmétiques"
 msgstr "Hairdresser, beauty salon, cosmetics"
 
-#: app/__init__.py:215
+#: app/__init__.py:222
 msgid "Livres, formations, cours"
 msgstr "Books, training, courses"
 
-#: app/__init__.py:216
+#: app/__init__.py:223
 msgid "Hôtels, voyages, locations"
 msgstr "Hotels, travel, rentals"
 
-#: app/__init__.py:217
+#: app/__init__.py:224
 msgid "Cadeaux pour occasions spéciales"
 msgstr "Gifts for special occasions"
 
-#: app/__init__.py:218
+#: app/__init__.py:225
 msgid "Nourriture et soins pour animaux"
 msgstr "Pet food and care"
 
-#: app/__init__.py:219
+#: app/__init__.py:226
 msgid "Dépenses diverses non catégorisées"
 msgstr "Miscellaneous uncategorized expenses"
 
@@ -263,7 +279,9 @@ msgstr "%(plan)s subscription renewed"
 msgid ""
 "Votre abonnement %(plan)s a été activé. Vous pouvez maintenant ajouter un"
 " nombre illimité d'abonnements."
-msgstr "Your %(plan)s subscription has been activated. You can now add unlimited subscriptions."
+msgstr ""
+"Your %(plan)s subscription has been activated. You can now add unlimited "
+"subscriptions."
 
 #: app/routes/api.py:269
 msgid "Abonnement Premium annulé"
@@ -283,13 +301,15 @@ msgstr "Payment failed"
 msgid ""
 "Le paiement de votre abonnement Premium a échoué. Veuillez mettre à jour "
 "vos informations de paiement."
-msgstr "Payment for your Premium subscription has failed. Please update your payment information."
+msgstr ""
+"Payment for your Premium subscription has failed. Please update your "
+"payment information."
 
-#: app/routes/auth.py:363
+#: app/routes/auth.py:374
 msgid "Rétrogradation confirmée"
 msgstr "Downgrade confirmed"
 
-#: app/routes/auth.py:364
+#: app/routes/auth.py:375
 #, python-format
 msgid "Vous avez été rétrogradé du plan %(old_plan)s vers le plan gratuit."
 msgstr "You have been downgraded from %(old_plan)s plan to the free plan."
@@ -298,7 +318,8 @@ msgstr "You have been downgraded from %(old_plan)s plan to the free plan."
 msgid "RIB"
 msgstr "RIB"
 
-#: app/routes/banks.py:20 app/templates/employers/list.html:129
+#: app/routes/banks.py:20 app/routes/reminders.py:15
+#: app/templates/employers/list.html:129
 msgid "Contrat"
 msgstr "Contract"
 
@@ -311,86 +332,96 @@ msgid "Courrier"
 msgstr "Correspondence"
 
 #: app/routes/banks.py:23 app/routes/credits.py:22 app/routes/employers.py:33
+#: app/routes/reminders.py:18
 msgid "Autre document"
 msgstr "Other document"
 
 #: app/routes/banks.py:30 app/routes/credits.py:29 app/routes/employers.py:39
+#: app/routes/reminders.py:34 app/templates/balance.html:25
+#: app/templates/balance.html:112 app/templates/card_purchases/list.html:119
 msgid "Janvier"
 msgstr "January"
 
 #: app/routes/banks.py:30 app/routes/credits.py:29 app/routes/employers.py:39
+#: app/routes/reminders.py:34 app/templates/balance.html:25
+#: app/templates/balance.html:112 app/templates/card_purchases/list.html:119
 msgid "Février"
 msgstr "February"
 
 #: app/routes/banks.py:30 app/routes/credits.py:29 app/routes/employers.py:39
+#: app/routes/reminders.py:34 app/templates/balance.html:25
+#: app/templates/balance.html:112 app/templates/card_purchases/list.html:119
 msgid "Avril"
 msgstr "April"
 
 #: app/routes/banks.py:31 app/routes/credits.py:30 app/routes/employers.py:40
+#: app/routes/reminders.py:35 app/templates/balance.html:25
+#: app/templates/balance.html:112 app/templates/card_purchases/list.html:119
 msgid "Juillet"
 msgstr "July"
 
 #: app/routes/banks.py:32 app/routes/credits.py:31 app/routes/employers.py:41
+#: app/routes/reminders.py:36 app/templates/balance.html:25
+#: app/templates/balance.html:112 app/templates/card_purchases/list.html:119
 msgid "Septembre"
 msgstr "September"
 
 #: app/routes/banks.py:32 app/routes/credits.py:31 app/routes/employers.py:41
+#: app/routes/reminders.py:36 app/templates/balance.html:25
+#: app/templates/balance.html:112 app/templates/card_purchases/list.html:119
 msgid "Octobre"
 msgstr "October"
 
 #: app/routes/banks.py:32 app/routes/credits.py:31 app/routes/employers.py:41
+#: app/routes/reminders.py:36 app/templates/balance.html:25
+#: app/templates/balance.html:112 app/templates/card_purchases/list.html:119
 msgid "Novembre"
 msgstr "November"
 
 #: app/routes/banks.py:32 app/routes/credits.py:31 app/routes/employers.py:41
+#: app/routes/reminders.py:36 app/templates/balance.html:25
+#: app/templates/balance.html:112 app/templates/card_purchases/list.html:119
 msgid "Décembre"
 msgstr "December"
 
 #: app/routes/banks.py:131
-#, fuzzy
 msgid "Banque ajoutée avec succès !"
-msgstr "Checkbook updated successfully!"
+msgstr "Bank added successfully!"
 
 #: app/routes/banks.py:144 app/routes/banks.py:200 app/routes/banks.py:246
 #: app/routes/banks.py:264 app/routes/banks.py:298
-#, fuzzy
 msgid "Vous n'avez pas accès à cette banque."
-msgstr "You do not have access to this check."
+msgstr "You do not have access to this bank."
 
 #: app/routes/banks.py:233
-#, fuzzy
 msgid "Banque modifiée avec succès !"
-msgstr "Checkbook updated successfully!"
+msgstr "Bank updated successfully!"
 
 #: app/routes/banks.py:252
-#, fuzzy
 msgid "activée"
-msgstr "enabled"
+msgstr "activated"
 
 #: app/routes/banks.py:252
-#, fuzzy
 msgid "désactivée"
-msgstr "Disabled"
+msgstr "deactivated"
 
 #: app/routes/banks.py:253
-#, fuzzy, python-format
+#, python-format
 msgid "La banque \"%(name)s\" a été %(status)s."
-msgstr "Checkbook \"%(name)s\" has been %(status)s."
+msgstr "Bank \"%(name)s\" has been %(status)s."
 
 #: app/routes/banks.py:269
-#, fuzzy
 msgid ""
 "Impossible de supprimer cette banque car elle est utilisée par des "
 "crédits."
-msgstr "Cannot delete this checkbook because it contains checks."
+msgstr "Cannot delete this bank because it is used by credits."
 
 #: app/routes/banks.py:275
-#, fuzzy
 msgid "Banque supprimée avec succès !"
-msgstr "Check #%(number)s deleted successfully!"
+msgstr "Bank deleted successfully!"
 
 #: app/routes/banks.py:349 app/routes/credits.py:396
-#: app/routes/employers.py:314
+#: app/routes/employers.py:314 app/routes/reminders.py:404
 #, python-format
 msgid "Le document \"%(name)s\" a été ajouté avec succès !"
 msgstr "Document \"%(name)s\" has been successfully added!"
@@ -400,23 +431,26 @@ msgstr "Document \"%(name)s\" has been successfully added!"
 #: app/routes/credits.py:455 app/routes/credits.py:504
 #: app/routes/employers.py:333 app/routes/employers.py:353
 #: app/routes/employers.py:373 app/routes/employers.py:422
+#: app/routes/reminders.py:423 app/routes/reminders.py:443
+#: app/routes/reminders.py:463 app/routes/reminders.py:512
 msgid "Vous n'avez pas accès à ce document."
 msgstr "You don't have access to this document."
 
 #: app/routes/banks.py:372 app/routes/banks.py:392 app/routes/credits.py:419
 #: app/routes/credits.py:439 app/routes/employers.py:337
-#: app/routes/employers.py:357
+#: app/routes/employers.py:357 app/routes/reminders.py:427
+#: app/routes/reminders.py:447
 msgid "Ce document n'a pas de fichier attaché."
 msgstr "This document has no attached file."
 
 #: app/routes/banks.py:440 app/routes/credits.py:484
-#: app/routes/employers.py:402
+#: app/routes/employers.py:402 app/routes/reminders.py:492
 #, python-format
 msgid "Le document \"%(name)s\" a été mis à jour."
 msgstr "Document \"%(name)s\" has been updated."
 
 #: app/routes/banks.py:468 app/routes/credits.py:512
-#: app/routes/employers.py:430
+#: app/routes/employers.py:430 app/routes/reminders.py:520
 #, python-format
 msgid "Le document \"%(name)s\" a été supprimé."
 msgstr "Document \"%(name)s\" has been deleted."
@@ -448,6 +482,11 @@ msgstr "You can only delete your own categories."
 #, python-format
 msgid "La catégorie \"%(name)s\" a été supprimée."
 msgstr "Category \"%(name)s\" has been deleted."
+
+# OCR Premium restriction translations
+#: app/routes/card_purchases.py:175 app/routes/card_purchases.py:272
+msgid "La fonction OCR est réservée aux abonnés Premium."
+msgstr "The OCR feature is reserved for Premium subscribers."
 
 # Checkbooks Page - Python
 #: app/routes/checkbooks.py:49
@@ -773,6 +812,83 @@ msgstr "Cannot delete this provider because reminders are associated with it."
 msgid "Le prestataire \"%(name)s\" a été supprimé."
 msgstr "Provider \"%(name)s\" has been deleted."
 
+#: app/routes/reminders.py:14
+msgid "Facture"
+msgstr "Invoice"
+
+#: app/routes/reminders.py:16
+msgid "Rapport/Attestation"
+msgstr "Report/Certificate"
+
+#: app/routes/reminders.py:17
+msgid "Certificat"
+msgstr "Certificate"
+
+#: app/routes/reminders.py:25
+msgid "Trimestriel (tous les 3 mois)"
+msgstr "Quarterly (every 3 months)"
+
+#: app/routes/reminders.py:26
+msgid "Semestriel (tous les 6 mois)"
+msgstr "Biannual (every 6 months)"
+
+#: app/routes/reminders.py:28
+msgid "Biennal (tous les 2 ans)"
+msgstr "Biennial (every 2 years)"
+
+#: app/routes/reminders.py:29
+msgid "Une fois (ponctuel)"
+msgstr "One-time (non-recurring)"
+
+#: app/routes/reminders.py:82
+msgid "Limite de rappels atteinte. Passez à Premium pour en ajouter davantage."
+msgstr "Reminder limit reached. Upgrade to Premium to add more."
+
+#: app/routes/reminders.py:108
+#, python-format
+msgid "Le rappel \"%(name)s\" a été ajouté."
+msgstr "Reminder \"%(name)s\" has been added."
+
+#: app/routes/reminders.py:128 app/routes/reminders.py:198
+#: app/routes/reminders.py:233 app/routes/reminders.py:250
+#: app/routes/reminders.py:276 app/routes/reminders.py:333
+#: app/routes/reminders.py:355
+msgid "Vous n'avez pas accès à ce rappel."
+msgstr "You don't have access to this reminder."
+
+#: app/routes/reminders.py:212
+#, python-format
+msgid "Le rappel \"%(name)s\" a été mis à jour."
+msgstr "Reminder \"%(name)s\" has been updated."
+
+#: app/routes/reminders.py:240
+#, python-format
+msgid "Le rappel \"%(name)s\" a été supprimé."
+msgstr "Reminder \"%(name)s\" has been deleted."
+
+#: app/routes/reminders.py:264
+msgid "réservé"
+msgstr "booked"
+
+#: app/routes/reminders.py:264
+msgid "annulé"
+msgstr "cancelled"
+
+#: app/routes/reminders.py:265
+#, python-format
+msgid "Rendez-vous %(status)s."
+msgstr "Appointment %(status)s."
+
+#: app/routes/reminders.py:323
+#, python-format
+msgid "Le rappel \"%(name)s\" a été archivé."
+msgstr "Reminder \"%(name)s\" has been archived."
+
+#: app/routes/reminders.py:342
+#, python-format
+msgid "Le rappel \"%(name)s\" a été désarchivé."
+msgstr "Reminder \"%(name)s\" has been unarchived."
+
 # Revenues page - Python routes
 #: app/routes/revenues.py:20
 msgid "Salaire"
@@ -1001,180 +1117,554 @@ msgstr "Subscription \"%(name)s\" and all its transactions have been deleted."
 msgid "L'abonnement \"%(name)s\" a été %(status)s."
 msgstr "Subscription \"%(name)s\" has been %(status)s."
 
-#: app/templates/base.html:883 app/templates/base.html:952
+#: app/templates/balance.html:3 app/templates/balance.html:96
+#: app/templates/balance.html:152
+msgid "Solde"
+msgstr "Balance"
+
+# Balance page translations
+#: app/templates/balance.html:8
+msgid "Solde et Mouvements"
+msgstr "Balance and Transactions"
+
+#: app/templates/balance.html:9
+msgid ""
+"Consultez l'ensemble de vos mouvements financiers et pointez-les au fur "
+"et à mesure"
+msgstr "View all your financial transactions and check them off as you go"
+
+#: app/templates/balance.html:17
+msgid "Navigation / Mois"
+msgstr "Navigation / Month"
+
+#: app/templates/balance.html:19
+msgid "Mois précédent"
+msgstr "Previous month"
+
+#: app/templates/balance.html:29
+msgid "Mois suivant"
+msgstr "Next month"
+
+#: app/templates/balance.html:35 app/templates/banks/add_document.html:50
+#: app/templates/banks/add_document.html:52
+#: app/templates/banks/edit_document.html:50
+#: app/templates/banks/edit_document.html:52
+#: app/templates/card_purchases/list.html:128
+#: app/templates/credits/add_document.html:50
+#: app/templates/credits/add_document.html:52
+#: app/templates/credits/edit_document.html:50
+#: app/templates/credits/edit_document.html:52
+#: app/templates/employers/edit_document.html:50
+#: app/templates/employers/edit_document.html:52
+#: app/templates/reminders/add.html:50 app/templates/reminders/edit.html:52
+msgid "Année"
+msgstr "Year"
+
+#: app/templates/balance.html:43
+msgid "État"
+msgstr "Status"
+
+#: app/templates/balance.html:45 app/templates/card_purchases/list.html:118
+#: app/templates/checkbooks/detail.html:75
+#: app/templates/checkbooks/list.html:23 app/templates/credits/list.html:32
+#: app/templates/credits/list.html:40 app/templates/employers/list.html:32
+#: app/templates/providers/list.html:21 app/templates/reminders/list.html:34
+#: app/templates/reminders/list.html:40 app/templates/revenues/list.html:32
+#: app/templates/revenues/list.html:40 app/templates/subscriptions/list.html:42
+msgid "Tous"
+msgstr "All"
+
+#: app/templates/balance.html:46
+msgid "En attente"
+msgstr "Pending"
+
+#: app/templates/balance.html:47
+msgid "Complétés"
+msgstr "Completed"
+
+#: app/templates/balance.html:52 app/templates/banks/list.html:31
+#: app/templates/credits/list.html:51 app/templates/providers/list.html:30
+#: app/templates/reminders/list.html:51 app/templates/revenues/list.html:51
+#: app/templates/subscriptions/list.html:61
+msgid "Réinitialiser"
+msgstr "Reset"
+
+#: app/templates/balance.html:66
+msgid "Total Revenus"
+msgstr "Total Income"
+
+#: app/templates/balance.html:81
+msgid "Total Dépenses"
+msgstr "Total Expenses"
+
+#: app/templates/balance.html:112
+msgid "Mouvements de"
+msgstr "Transactions of"
+
+#: app/templates/balance.html:122
+msgid "Tout pointer"
+msgstr "Check all"
+
+#: app/templates/balance.html:131
+msgid "Tout dépointer"
+msgstr "Uncheck all"
+
+#: app/templates/balance.html:146 app/templates/balance.html:162
+msgid "Pointer"
+msgstr "Check"
+
+#: app/templates/balance.html:148
+#: app/templates/card_purchases/add_manual.html:77
+#: app/templates/card_purchases/edit.html:31
+#: app/templates/card_purchases/list.html:154
+#: app/templates/card_purchases/validate.html:26
+#: app/templates/checkbooks/detail.html:105
+#: app/templates/reminders/list.html:68
+msgid "Date"
+msgstr "Date"
+
+#: app/templates/balance.html:149 app/templates/banks/add_document.html:39
+#: app/templates/banks/edit_document.html:39
+#: app/templates/card_purchase_categories/add.html:26
+#: app/templates/card_purchase_categories/edit.html:26
+#: app/templates/card_purchases/edit.html:87
+#: app/templates/categories/add.html:26 app/templates/categories/edit.html:26
+#: app/templates/categories/list.html:175
+#: app/templates/categories/list.html:326
+#: app/templates/checkbooks/add_check.html:53
+#: app/templates/checkbooks/detail.html:107
+#: app/templates/checkbooks/edit_check.html:55
+#: app/templates/credit_types/add.html:26
+#: app/templates/credit_types/edit.html:27
+#: app/templates/credit_types/list.html:59
+#: app/templates/credit_types/list.html:154 app/templates/credits/add.html:57
+#: app/templates/credits/add_document.html:39
+#: app/templates/credits/edit.html:58
+#: app/templates/credits/edit_document.html:39
+#: app/templates/employers/add_document.html:39
+#: app/templates/employers/edit_document.html:39
+#: app/templates/installments/add.html:26
+#: app/templates/installments/edit.html:25 app/templates/reminders/add.html:75
+#: app/templates/reminders/add_document.html:43
+#: app/templates/reminders/edit.html:78
+#: app/templates/reminders/edit_document.html:44
+#: app/templates/revenues/add.html:49 app/templates/revenues/detail.html:44
+#: app/templates/revenues/edit.html:50 app/templates/services/add.html:25
+#: app/templates/services/add_plan.html:32 app/templates/services/edit.html:25
+#: app/templates/services/edit_plan.html:26
+#: app/templates/services/list.html:171 app/templates/services/list.html:331
+#: app/templates/services/plans.html:113 app/templates/services/plans.html:194
+#: app/templates/subscriptions/add.html:53
+#: app/templates/subscriptions/detail.html:115
+#: app/templates/subscriptions/edit.html:54
+msgid "Description"
+msgstr "Description"
+
+#: app/templates/balance.html:150
+#: app/templates/card_purchases/add_manual.html:101
+#: app/templates/card_purchases/edit.html:62
+#: app/templates/card_purchases/list.html:104
+#: app/templates/card_purchases/list.html:156
+#: app/templates/card_purchases/validate.html:30
+#: app/templates/categories/list.html:174
+#: app/templates/categories/list.html:325
+#: app/templates/subscriptions/add.html:87
+#: app/templates/subscriptions/edit.html:86
+#: app/templates/subscriptions/list.html:48
+#: app/templates/subscriptions/list.html:78
+msgid "Catégorie"
+msgstr "Category"
+
+#: app/templates/balance.html:151
+#: app/templates/card_purchases/add_manual.html:61
+#: app/templates/card_purchases/list.html:158
+#: app/templates/card_purchases/validate.html:29
+#: app/templates/checkbooks/detail.html:108
+#: app/templates/checkbooks/edit_check.html:33
+#: app/templates/revenues/add.html:56 app/templates/revenues/detail.html:74
+#: app/templates/revenues/edit.html:57 app/templates/revenues/list.html:68
+#: app/templates/subscriptions/add.html:60
+#: app/templates/subscriptions/edit.html:60
+msgid "Montant"
+msgstr "Amount"
+
+#: app/templates/balance.html:153 app/templates/banks/list.html:51
+#: app/templates/card_purchases/list.html:160
+#: app/templates/categories/list.html:178
+#: app/templates/categories/list.html:328
+#: app/templates/checkbooks/detail.html:110
+#: app/templates/checkbooks/list.html:53
+#: app/templates/credit_types/list.html:157
+#: app/templates/credits/detail.html:283 app/templates/credits/list.html:74
+#: app/templates/employers/list.html:133
+#: app/templates/installments/list.html:76
+#: app/templates/installments/list.html:173
+#: app/templates/providers/list.html:49 app/templates/reminders/detail.html:263
+#: app/templates/reminders/list.html:73 app/templates/revenues/detail.html:106
+#: app/templates/revenues/detail.html:109 app/templates/revenues/list.html:72
+#: app/templates/services/list.html:175 app/templates/services/list.html:334
+#: app/templates/services/plans.html:197
+#: app/templates/subscriptions/list.html:84
+msgid "Actions"
+msgstr "Actions"
+
+#: app/templates/balance.html:162
+msgid "Dépointer"
+msgstr "Uncheck"
+
+#: app/templates/balance.html:172
+msgid "Marquer comme complété"
+msgstr "Mark as completed"
+
+#: app/templates/balance.html:178
+msgid "Repasser en attente"
+msgstr "Mark as pending"
+
+#: app/templates/balance.html:183 app/templates/checkbooks/detail.html:129
+#: app/templates/checkbooks/edit_check.html:63
+msgid "Annulé"
+msgstr "Cancelled"
+
+#: app/templates/balance.html:194
+msgid "Revenu"
+msgstr "Income"
+
+#: app/templates/balance.html:196
+msgid "Abonnement"
+msgstr "Subscription"
+
+#: app/templates/balance.html:198
+msgid "Crédit"
+msgstr "Credit"
+
+#: app/templates/balance.html:200
+msgid "Paiement en plusieurs fois"
+msgstr "Installment payment"
+
+#: app/templates/balance.html:202 app/templates/checkbooks/edit_check.html:12
+#: app/templates/dashboard.html:344
+msgid "Chèque"
+msgstr "Check"
+
+#: app/templates/balance.html:204
+msgid "Achat CB"
+msgstr "Card purchase"
+
+#: app/templates/balance.html:229
+msgid "Voir le revenu"
+msgstr "View income"
+
+#: app/templates/balance.html:233
+msgid "Voir l'abonnement"
+msgstr "View subscription"
+
+#: app/templates/balance.html:237
+msgid "Voir le crédit"
+msgstr "View credit"
+
+#: app/templates/balance.html:241
+msgid "Voir le paiement"
+msgstr "View payment"
+
+#: app/templates/balance.html:245
+msgid "Voir le chèque"
+msgstr "View check"
+
+#: app/templates/balance.html:253 app/templates/card_purchases/list.html:207
+msgid "Voir le reçu"
+msgstr "View receipt"
+
+#: app/templates/balance.html:257
+msgid "Voir l'achat CB"
+msgstr "View card purchase"
+
+#: app/templates/balance.html:266 app/templates/banks/detail.html:349
+#: app/templates/banks/list.html:123
+#: app/templates/card_purchase_categories/list.html:50
+#: app/templates/card_purchases/detail.html:215
+#: app/templates/card_purchases/list.html:231
+#: app/templates/categories/list.html:151
+#: app/templates/categories/list.html:236
+#: app/templates/checkbooks/detail.html:140
+#: app/templates/checkbooks/list.html:97
+#: app/templates/credit_types/list.html:136
+#: app/templates/credit_types/list.html:197
+#: app/templates/credits/detail.html:300 app/templates/credits/detail.html:430
+#: app/templates/credits/list.html:150 app/templates/employers/list.html:207
+#: app/templates/installments/detail.html:22
+#: app/templates/installments/list.html:134
+#: app/templates/installments/list.html:210
+#: app/templates/notifications.html:130 app/templates/providers/list.html:89
+#: app/templates/reminders/detail.html:285
+#: app/templates/reminders/detail.html:420
+#: app/templates/reminders/list.html:158 app/templates/revenues/detail.html:121
+#: app/templates/revenues/list.html:124
+#: app/templates/subscriptions/detail.html:134
+#: app/templates/subscriptions/list.html:174
+msgid "Supprimer"
+msgstr "Delete"
+
+#: app/templates/balance.html:279
+msgid "Aucun mouvement pour cette période"
+msgstr "No transactions for this period"
+
+#: app/templates/balance.html:288
+msgid "Retour au tableau de bord"
+msgstr "Back to dashboard"
+
+#: app/templates/balance.html:300 app/templates/balance.html:449
+#: app/templates/balance.html:455 app/templates/card_purchases/detail.html:232
+#: app/templates/card_purchases/detail.html:248
+#: app/templates/card_purchases/list.html:159
+#: app/templates/card_purchases/list.html:323
+#: app/templates/card_purchases/list.html:339
+msgid "Reçu"
+msgstr "Receipt"
+
+#: app/templates/balance.html:302 app/templates/balance.html:319
+#: app/templates/banks/detail.html:383
+#: app/templates/card_purchase_categories/add.html:94
+#: app/templates/card_purchase_categories/edit.html:101
+#: app/templates/credits/detail.html:464
+#: app/templates/employers/detail.html:400
+#: app/templates/reminders/detail.html:460
+msgid "Fermer"
+msgstr "Close"
+
+#: app/templates/balance.html:317
+msgid "Options de suppression"
+msgstr "Delete options"
+
+#: app/templates/balance.html:323
+msgid "Transaction :"
+msgstr "Transaction:"
+
+#: app/templates/balance.html:324 app/templates/card_purchases/detail.html:75
+msgid "Date :"
+msgstr "Date:"
+
+#: app/templates/balance.html:325 app/templates/card_purchases/detail.html:105
+#: app/templates/subscriptions/detail.html:90
+msgid "Montant :"
+msgstr "Amount:"
+
+#: app/templates/balance.html:327
+msgid "Que souhaitez-vous faire ?"
+msgstr "What would you like to do?"
+
+#: app/templates/balance.html:332
+msgid "Supprimer uniquement cette transaction"
+msgstr "Delete only this transaction"
+
+#: app/templates/balance.html:337
+msgid "Supprimer les transactions passées (inclus celle-ci)"
+msgstr "Delete past transactions (including this one)"
+
+#: app/templates/balance.html:342
+msgid "Supprimer les transactions futures (inclus celle-ci)"
+msgstr "Delete future transactions (including this one)"
+
+#: app/templates/balance.html:347
+msgid "Supprimer toutes les transactions liées"
+msgstr "Delete all related transactions"
+
+#: app/templates/balance.html:457 app/templates/banks/detail.html:407
+#: app/templates/card_purchases/detail.html:249
+#: app/templates/card_purchases/list.html:340
+#: app/templates/credits/detail.html:488
+#: app/templates/reminders/detail.html:484
+msgid "Aperçu non disponible pour ce type de fichier"
+msgstr "Preview not available for this file type"
+
+#: app/templates/balance.html:457 app/templates/banks/detail.html:407
+#: app/templates/card_purchases/detail.html:250
+#: app/templates/card_purchases/list.html:341
+#: app/templates/credits/detail.html:488
+#: app/templates/reminders/detail.html:484
+msgid "Ouvrir dans un nouvel onglet"
+msgstr "Open in a new tab"
+
+#: app/templates/base.html:888 app/templates/base.html:957
 msgid "Admin"
 msgstr "Admin"
 
-#: app/templates/auth/profile.html:22 app/templates/auth/register.html:115
-#: app/templates/base.html:889 app/templates/base.html:954
+#: app/templates/auth/profile.html:22 app/templates/auth/register.html:124
+#: app/templates/base.html:894 app/templates/base.html:959
 #: app/templates/index.html:173 app/templates/index.html:192
 #: app/templates/pricing.html:104
 msgid "Premium"
 msgstr "Premium"
 
-#: app/templates/auth/profile.html:24 app/templates/base.html:889
-#: app/templates/base.html:954 app/templates/pricing.html:18
+#: app/templates/auth/profile.html:24 app/templates/base.html:894
+#: app/templates/base.html:959 app/templates/pricing.html:18
 msgid "Gratuit"
 msgstr "Free"
 
-#: app/templates/base.html:895 app/templates/base.html:963
-#: app/templates/index.html:14
+#: app/templates/base.html:900 app/templates/base.html:968
+#: app/templates/dashboard.html:3 app/templates/index.html:14
 msgid "Tableau de bord"
 msgstr "Dashboard"
 
-#: app/templates/base.html:900 app/templates/index.html:27
+#: app/templates/base.html:905 app/templates/index.html:27
 msgid "Revenus"
 msgstr "Income"
 
-#: app/templates/base.html:903 app/templates/revenues/list.html:3
+#: app/templates/base.html:908 app/templates/revenues/list.html:3
 #: app/templates/revenues/list.html:8
 msgid "Mes revenus"
 msgstr "My income"
 
-#: app/templates/base.html:905
+#: app/templates/base.html:910
 msgid "Employeurs"
 msgstr "Employers"
 
-#: app/templates/base.html:910 app/templates/index.html:31
+#: app/templates/base.html:915 app/templates/index.html:31
 msgid "Dépenses"
 msgstr "Expenses"
 
 # Checkbooks Page - Templates
-#: app/templates/base.html:913 app/templates/checkbooks/list.html:3
+#: app/templates/base.html:918 app/templates/checkbooks/list.html:3
 #: app/templates/checkbooks/list.html:9
 msgid "Mes chéquiers"
 msgstr "My checkbooks"
 
-#: app/templates/base.html:914
-msgid "Mes achats CB"
-msgstr "My card purchases"
+# Rename "Mes achats CB" to "Mes achats"
+#: app/templates/base.html:919 app/templates/card_purchases/list.html:3
+#: app/templates/card_purchases/list.html:64
+msgid "Mes achats"
+msgstr "My Purchases"
 
-#: app/templates/base.html:915
+#: app/templates/base.html:920 app/templates/dashboard.html:380
+#: app/templates/reminders/list.html:3 app/templates/reminders/list.html:8
 msgid "Mes rappels"
 msgstr "My reminders"
 
-#: app/templates/base.html:917 app/templates/base.html:928
-#: app/templates/base.html:965 app/templates/categories/list.html:3
+#: app/templates/base.html:922 app/templates/base.html:933
+#: app/templates/base.html:970 app/templates/categories/list.html:3
 #: app/templates/categories/list.html:9
 msgid "Catégories"
 msgstr "Categories"
 
-#: app/templates/base.html:918
+#: app/templates/base.html:923
 msgid "Gérer les prestataires pour mes rappels"
 msgstr "Manage providers for my reminders"
 
-#: app/templates/base.html:923 app/templates/categories/list.html:176
+#: app/templates/base.html:928 app/templates/categories/list.html:176
 #: app/templates/categories/list.html:327
 msgid "Abonnements"
 msgstr "Subscriptions"
 
-#: app/templates/base.html:926 app/templates/subscriptions/list.html:3
+#: app/templates/base.html:931 app/templates/subscriptions/list.html:3
 #: app/templates/subscriptions/list.html:8
 msgid "Mes abonnements"
 msgstr "My subscriptions"
 
-#: app/templates/base.html:929 app/templates/base.html:966
+#: app/templates/base.html:934 app/templates/base.html:971
 #: app/templates/services/list.html:3 app/templates/services/list.html:9
 msgid "Services"
 msgstr "Services"
 
-#: app/templates/base.html:934
+#: app/templates/base.html:939 app/templates/dashboard.html:537
 msgid "Crédits"
 msgstr "Credits"
 
-#: app/templates/base.html:937 app/templates/credits/list.html:3
+#: app/templates/base.html:942 app/templates/credits/list.html:3
 #: app/templates/credits/list.html:8
 msgid "Mes crédits"
 msgstr "My credits"
 
-#: app/templates/base.html:938 app/templates/index.html:373
-#: app/templates/installments/list.html:3
+#: app/templates/base.html:943 app/templates/dashboard.html:289
+#: app/templates/index.html:373 app/templates/installments/list.html:3
 #: app/templates/installments/list.html:8
 msgid "Mes paiements en plusieurs fois"
 msgstr "My installment payments"
 
-#: app/templates/base.html:940 app/templates/credit_types/list.html:3
+#: app/templates/base.html:945 app/templates/credit_types/list.html:3
 #: app/templates/credit_types/list.html:8
 msgid "Types de crédits"
 msgstr "Credit types"
 
-#: app/templates/base.html:941
+#: app/templates/base.html:946
 msgid "Banques"
 msgstr "Banks"
 
+#: app/templates/base.html:951
+msgid "Profil"
+msgstr "Profile"
+
 #: app/templates/auth/profile.html:3 app/templates/auth/profile.html:9
-#: app/templates/base.html:958
+#: app/templates/base.html:963
 msgid "Mon profil"
 msgstr "My Profile"
 
-#: app/templates/base.html:959
+#: app/templates/base.html:964
 msgid "Plans & Tarifs"
 msgstr "Plans & Pricing"
 
-#: app/templates/base.html:962
+#: app/templates/base.html:967
 msgid "Administration"
 msgstr "Administration"
 
-#: app/templates/base.html:964
+#: app/templates/base.html:969
 msgid "Clients"
 msgstr "Clients"
 
-#: app/templates/base.html:967
+#: app/templates/base.html:972
 msgid "Formules"
 msgstr "Plans"
 
-#: app/templates/base.html:970
+#: app/templates/base.html:975
 msgid "Déconnexion"
 msgstr "Log out"
 
-#: app/templates/auth/profile.html:285 app/templates/base.html:986
+#: app/templates/auth/profile.html:281 app/templates/base.html:991
 msgid "Tarifs"
 msgstr "Pricing"
 
-#: app/templates/base.html:989 app/templates/base.html:1036
-#: app/templates/base.html:1109 app/templates/contact.html:3
+#: app/templates/base.html:994 app/templates/base.html:1041
+#: app/templates/base.html:1114 app/templates/contact.html:3
 #: app/templates/contact.html:14
 msgid "Nous contacter"
 msgstr "Contact us"
 
-#: app/templates/auth/login.html:3 app/templates/base.html:1013
-#: app/templates/base.html:1029
+#: app/templates/auth/login.html:3 app/templates/base.html:1018
+#: app/templates/base.html:1034
 msgid "Connexion"
 msgstr "Login"
 
-#: app/templates/auth/login.html:44 app/templates/base.html:1016
-#: app/templates/base.html:1032
+#: app/templates/auth/login.html:44 app/templates/base.html:1021
+#: app/templates/base.html:1037
 msgid "S'inscrire"
 msgstr "Sign up"
 
-#: app/templates/base.html:1091
+#: app/templates/base.html:1096
 msgid ""
 "Nous utilisons des cookies pour améliorer votre expérience et le "
 "fonctionnement du site."
 msgstr "We use cookies to improve your experience and the operation of the site."
 
-#: app/templates/base.html:1092
+#: app/templates/base.html:1097
 msgid "En savoir plus"
 msgstr "Learn more"
 
-#: app/templates/base.html:1097
+#: app/templates/base.html:1102
 msgid "Accepter"
 msgstr "Accept"
 
-#: app/templates/base.html:1100
+#: app/templates/base.html:1105
 msgid "Refuser"
 msgstr "Decline"
 
-#: app/templates/base.html:1109
+#: app/templates/base.html:1114
 msgid "Tous droits réservés."
 msgstr "All rights reserved."
 
-#: app/templates/base.html:1109 app/templates/mentions_legales.html:3
+#: app/templates/base.html:1114 app/templates/mentions_legales.html:3
 #: app/templates/mentions_legales.html:11
 msgid "Mentions Légales"
 msgstr "Legal Notice"
 
-#: app/templates/base.html:1110 app/templates/index.html:76
+#: app/templates/base.html:1115 app/templates/index.html:76
 msgid "Gérez votre budget familial en toute simplicité"
 msgstr "Manage your family budget with ease"
 
@@ -1288,6 +1778,146 @@ msgstr "Your message must contain at least 10 characters."
 #: app/templates/contact.html:233
 msgid "Veuillez prendre le temps de remplir le formulaire correctement."
 msgstr "Please take the time to fill out the form correctly."
+
+# Dashboard translations
+#: app/templates/dashboard.html:8
+msgid "Tableau de bord de"
+msgstr "Dashboard of"
+
+#: app/templates/dashboard.html:19
+msgid "Balance"
+msgstr "Balance"
+
+#: app/templates/dashboard.html:37
+msgid "Revenus actuels"
+msgstr "Current income"
+
+#: app/templates/dashboard.html:55
+msgid "Abonnements actifs"
+msgstr "Active subscriptions"
+
+#: app/templates/dashboard.html:73
+msgid "Crédits en cours"
+msgstr "Active credits"
+
+#: app/templates/dashboard.html:92
+msgid "Revenus : Prochains versements"
+msgstr "Income: Upcoming payments"
+
+#: app/templates/categories/list.html:29 app/templates/dashboard.html:99
+#: app/templates/dashboard.html:163 app/templates/dashboard.html:224
+#: app/templates/dashboard.html:313 app/templates/dashboard.html:448
+#: app/templates/dashboard.html:472 app/templates/dashboard.html:500
+#: app/templates/subscriptions/list.html:12
+msgid "Exporter en Excel"
+msgstr "Export to Excel"
+
+#: app/templates/card_purchases/list.html:296
+#: app/templates/categories/list.html:32 app/templates/credits/list.html:236
+#: app/templates/dashboard.html:102 app/templates/dashboard.html:166
+#: app/templates/dashboard.html:227 app/templates/dashboard.html:316
+#: app/templates/dashboard.html:451 app/templates/dashboard.html:475
+#: app/templates/dashboard.html:503 app/templates/subscriptions/list.html:15
+#: app/templates/subscriptions/list.html:310
+msgid "Exporter en PDF"
+msgstr "Export to PDF"
+
+#: app/templates/dashboard.html:136 app/templates/dashboard.html:197
+#: app/templates/dashboard.html:283 app/templates/dashboard.html:425
+msgid "Voir tous"
+msgstr "View all"
+
+#: app/templates/dashboard.html:139 app/templates/dashboard.html:200
+#: app/templates/dashboard.html:286 app/templates/dashboard.html:358
+#: app/templates/dashboard.html:428
+msgid "Ajouter"
+msgstr "Add"
+
+#: app/templates/dashboard.html:146
+msgid "Aucun revenu actif"
+msgstr "No active income"
+
+#: app/templates/dashboard.html:156
+msgid "Abonnements : Prochains renouvellements"
+msgstr "Subscriptions: Upcoming renewals"
+
+#: app/templates/dashboard.html:207
+msgid "Aucun abonnement actif"
+msgstr "No active subscriptions"
+
+#: app/templates/dashboard.html:217
+msgid "Crédits : Prochains prélèvements"
+msgstr "Credits: Upcoming debits"
+
+#: app/templates/credits/list.html:70 app/templates/dashboard.html:248
+#: app/templates/index.html:409
+msgid "Restant"
+msgstr "Remaining"
+
+#: app/templates/dashboard.html:296
+msgid "Aucun crédit actif"
+msgstr "No active credits"
+
+#: app/templates/dashboard.html:306
+msgid "Chèques : Non débités"
+msgstr "Checks: Not cashed"
+
+#: app/templates/dashboard.html:332
+msgid "Pointer ce chèque"
+msgstr "Point this check"
+
+#: app/templates/dashboard.html:355
+msgid "Voir les chéquiers"
+msgstr "View checkbooks"
+
+#: app/templates/dashboard.html:365
+msgid "Tous les chèques sont débités"
+msgstr "All checks are cashed"
+
+#: app/templates/dashboard.html:411
+msgid "RDV pris le"
+msgstr "Appointment on"
+
+#: app/templates/dashboard.html:415 app/templates/reminders/detail.html:158
+#: app/templates/reminders/list.html:127
+msgid "À planifier"
+msgstr "To be scheduled"
+
+#: app/templates/dashboard.html:435 app/templates/reminders/list.html:204
+msgid "Aucun rappel"
+msgstr "No reminders"
+
+#: app/templates/dashboard.html:445
+msgid "Répartition des Abonnements & Crédits"
+msgstr "Distribution of Subscriptions & Credits"
+
+#: app/templates/dashboard.html:461 app/templates/dashboard.html:485
+msgid "Aucune donnée disponible"
+msgstr "No data available"
+
+#: app/templates/dashboard.html:469
+msgid "Répartition des versements"
+msgstr "Distribution of payments"
+
+#: app/templates/dashboard.html:497
+msgid "Évolution des revenus et des dépenses mensuelles"
+msgstr "Evolution of monthly income and expenses"
+
+#: app/templates/dashboard.html:628
+msgid "Abonnements (€)"
+msgstr "Subscriptions (€)"
+
+#: app/templates/dashboard.html:636
+msgid "Crédits (€)"
+msgstr "Credits (€)"
+
+#: app/templates/dashboard.html:644
+msgid "Dépenses (€)"
+msgstr "Expenses (€)"
+
+#: app/templates/dashboard.html:652
+msgid "Revenus (€)"
+msgstr "Income (€)"
 
 #: app/templates/index.html:45
 msgid "Rappel"
@@ -1527,10 +2157,6 @@ msgstr "Banque Populaire"
 #: app/templates/installments/list.html:73
 msgid "Mensualité"
 msgstr "Monthly payment"
-
-#: app/templates/credits/list.html:70 app/templates/index.html:409
-msgid "Restant"
-msgstr "Remaining"
 
 #: app/templates/index.html:417
 #, python-format
@@ -2042,8 +2668,8 @@ msgstr "Read"
 msgid "Archivées"
 msgstr "Archived"
 
-#: app/templates/banks/list.html:23 app/templates/notifications.html:26
-#: app/templates/subscriptions/list.html:50
+#: app/templates/banks/list.html:23 app/templates/card_purchases/list.html:130
+#: app/templates/notifications.html:26 app/templates/subscriptions/list.html:50
 msgid "Toutes"
 msgstr "All"
 
@@ -2078,26 +2704,6 @@ msgstr "Archived"
 #: app/templates/notifications.html:124
 msgid "Notification lue"
 msgstr "Notification read"
-
-#: app/templates/banks/detail.html:349 app/templates/banks/list.html:123
-#: app/templates/card_purchase_categories/list.html:50
-#: app/templates/categories/list.html:151
-#: app/templates/categories/list.html:236
-#: app/templates/checkbooks/detail.html:140
-#: app/templates/checkbooks/list.html:97
-#: app/templates/credit_types/list.html:136
-#: app/templates/credit_types/list.html:197
-#: app/templates/credits/detail.html:300 app/templates/credits/detail.html:430
-#: app/templates/credits/list.html:150 app/templates/employers/list.html:207
-#: app/templates/installments/detail.html:22
-#: app/templates/installments/list.html:134
-#: app/templates/installments/list.html:210
-#: app/templates/notifications.html:130 app/templates/providers/list.html:89
-#: app/templates/revenues/detail.html:121 app/templates/revenues/list.html:124
-#: app/templates/subscriptions/detail.html:134
-#: app/templates/subscriptions/list.html:174
-msgid "Supprimer"
-msgstr "Delete"
 
 #: app/templates/notifications.html:145
 msgid "Aucune notification"
@@ -2251,7 +2857,7 @@ msgstr "Priority support"
 msgid "Export des données (PDF, CSV)"
 msgstr "Data export (PDF, CSV)"
 
-#: app/templates/auth/profile.html:31 app/templates/auth/profile.html:199
+#: app/templates/auth/profile.html:31 app/templates/auth/profile.html:195
 #: app/templates/categories/list.html:62 app/templates/pricing.html:177
 msgid "Passer à Premium"
 msgstr "Upgrade to Premium"
@@ -2264,7 +2870,7 @@ msgstr "Start with Premium"
 msgid "Meilleure offre"
 msgstr "Best offer"
 
-#: app/templates/auth/register.html:115 app/templates/pricing.html:197
+#: app/templates/auth/register.html:124 app/templates/pricing.html:197
 #: app/templates/pricing.html:305
 msgid "Premium Annuel"
 msgstr "Annual Premium"
@@ -2463,35 +3069,84 @@ msgstr "Spain"
 msgid "Italie"
 msgstr "Italy"
 
-#: app/templates/pricing.html:445
+# Registration form - Language field
+#: app/templates/auth/register.html:86 app/templates/pricing.html:441
+msgid "Langue"
+msgstr "Language"
+
+#: app/templates/auth/register.html:88 app/templates/pricing.html:443
+msgid "Français"
+msgstr "French"
+
+#: app/templates/auth/register.html:89 app/templates/pricing.html:444
+msgid "English"
+msgstr "English"
+
+#: app/templates/auth/register.html:91 app/templates/pricing.html:446
+msgid "Langue d'affichage de l'application"
+msgstr "Application display language"
+
+#: app/templates/auth/profile.html:119 app/templates/auth/register.html:95
+#: app/templates/pricing.html:449
+msgid "Devise par défaut"
+msgstr "Default currency"
+
+#: app/templates/auth/profile.html:121 app/templates/auth/register.html:97
+#: app/templates/pricing.html:451
+msgid "Euro"
+msgstr "Euro"
+
+#: app/templates/auth/profile.html:122 app/templates/auth/register.html:98
+#: app/templates/pricing.html:452
+msgid "Dollar américain"
+msgstr "US Dollar"
+
+#: app/templates/auth/profile.html:123 app/templates/auth/register.html:99
+#: app/templates/pricing.html:453
+msgid "Livre sterling"
+msgstr "British Pound"
+
+#: app/templates/auth/register.html:100 app/templates/pricing.html:454
+msgid "Franc suisse"
+msgstr "Swiss Franc"
+
+#: app/templates/auth/register.html:101 app/templates/pricing.html:455
+msgid "Dollar canadien"
+msgstr "Canadian Dollar"
+
+#: app/templates/auth/register.html:110 app/templates/pricing.html:457
+msgid "Cette devise sera utilisée pour vos abonnements et factures"
+msgstr "This currency will be used for your subscriptions and invoices"
+
+#: app/templates/pricing.html:464
 msgid "Créer mon compte et payer"
 msgstr "Create my account and pay"
 
-#: app/templates/pricing.html:451
+#: app/templates/pricing.html:470
 msgid "Déjà inscrit ?"
 msgstr "Already registered?"
 
-#: app/templates/pricing.html:451
+#: app/templates/pricing.html:470
 msgid "Connectez-vous"
 msgstr "Log in"
 
-#: app/templates/pricing.html:458
+#: app/templates/pricing.html:477
 msgid "Vos données sont sécurisées et protégées"
 msgstr "Your data is secure and protected"
 
-#: app/templates/pricing.html:472
+#: app/templates/pricing.html:491
 msgid "Paiement sécurisé"
 msgstr "Secure payment"
 
-#: app/templates/pricing.html:482
+#: app/templates/pricing.html:501
 msgid "Chargement..."
 msgstr "Loading..."
 
-#: app/templates/pricing.html:484
+#: app/templates/pricing.html:503
 msgid "Chargement du formulaire de paiement..."
 msgstr "Loading payment form..."
 
-#: app/templates/pricing.html:494
+#: app/templates/pricing.html:513
 msgid "Paiement sécurisé par"
 msgstr "Secure payment by"
 
@@ -2499,7 +3154,7 @@ msgstr "Secure payment by"
 msgid "Se souvenir de moi"
 msgstr "Remember me"
 
-#: app/templates/auth/login.html:36 app/templates/auth/register.html:129
+#: app/templates/auth/login.html:36 app/templates/auth/register.html:138
 msgid "Se connecter"
 msgstr "Sign in"
 
@@ -2563,22 +3218,6 @@ msgstr ""
 #: app/templates/auth/profile.html:115
 msgid "L'email ne peut pas être modifié"
 msgstr "Email cannot be changed"
-
-#: app/templates/auth/profile.html:119 app/templates/auth/register.html:86
-msgid "Devise par défaut"
-msgstr "Default currency"
-
-#: app/templates/auth/profile.html:121 app/templates/auth/register.html:88
-msgid "Euro"
-msgstr "Euro"
-
-#: app/templates/auth/profile.html:122 app/templates/auth/register.html:89
-msgid "Dollar américain"
-msgstr "US Dollar"
-
-#: app/templates/auth/profile.html:123 app/templates/auth/register.html:90
-msgid "Livre sterling"
-msgstr "British Pound"
 
 #: app/templates/auth/profile.html:125
 msgid ""
@@ -2683,6 +3322,7 @@ msgid "Fuseau horaire actuel:"
 msgstr "Current timezone:"
 
 #: app/templates/auth/profile.html:165 app/templates/credits/detail.html:192
+#: app/templates/reminders/detail.html:182
 #: app/templates/revenues/detail.html:56
 msgid "Non défini"
 msgstr "Not set"
@@ -2691,15 +3331,15 @@ msgstr "Not set"
 msgid "Langue de l'interface"
 msgstr "Interface Language"
 
-#: app/templates/auth/profile.html:178
+#: app/templates/auth/profile.html:174
 msgid "Choisissez la langue d'affichage de l'application"
 msgstr "Choose the application display language"
 
-#: app/templates/auth/profile.html:186
+#: app/templates/auth/profile.html:182
 msgid "Recevoir un email à chaque notification créée"
 msgstr "Receive an email for each notification created"
 
-#: app/templates/auth/profile.html:189
+#: app/templates/auth/profile.html:185
 msgid ""
 "Vous recevrez un email automatique pour toutes les notifications "
 "(nouveaux abonnements, crédits, revenus, etc.)"
@@ -2707,33 +3347,34 @@ msgstr ""
 "You will receive an automatic email for all notifications (new "
 "subscriptions, credits, income, etc.)"
 
-#: app/templates/auth/profile.html:196
+#: app/templates/auth/profile.html:192
 msgid "Fonctionnalité Premium"
 msgstr "Premium Feature"
 
-#: app/templates/auth/profile.html:197
+#: app/templates/auth/profile.html:193
 msgid "Les notifications par email sont réservées aux abonnés Premium."
 msgstr "Email notifications are reserved for Premium subscribers."
 
-#: app/templates/auth/profile.html:207
+#: app/templates/auth/profile.html:203
 msgid "Changer le mot de passe"
 msgstr "Change Password"
 
-#: app/templates/auth/profile.html:210
+#: app/templates/auth/profile.html:206
 msgid "Mot de passe actuel"
 msgstr "Current password"
 
-#: app/templates/auth/profile.html:216
+#: app/templates/auth/profile.html:212
 msgid "Nouveau mot de passe"
 msgstr "New password"
 
-#: app/templates/auth/profile.html:220
+#: app/templates/auth/profile.html:216
 msgid "Confirmer"
 msgstr "Confirm"
 
-#: app/templates/auth/profile.html:227 app/templates/banks/edit.html:96
+#: app/templates/auth/profile.html:223 app/templates/banks/edit.html:96
 #: app/templates/banks/edit_document.html:101
 #: app/templates/card_purchase_categories/edit.html:85
+#: app/templates/card_purchases/edit.html:150
 #: app/templates/categories/edit.html:116
 #: app/templates/credit_types/edit.html:56 app/templates/credits/edit.html:130
 #: app/templates/credits/edit_document.html:101
@@ -2744,89 +3385,92 @@ msgstr "Confirm"
 msgid "Enregistrer les modifications"
 msgstr "Save Changes"
 
-#: app/templates/auth/profile.html:236
+#: app/templates/auth/profile.html:232
 msgid "Informations du compte"
 msgstr "Account Information"
 
-#: app/templates/auth/profile.html:240
+#: app/templates/auth/profile.html:236
 msgid "Membre depuis :"
 msgstr "Member since:"
 
-#: app/templates/auth/profile.html:244
+#: app/templates/auth/profile.html:240
 msgid "Méthode de connexion :"
 msgstr "Login method:"
 
-#: app/templates/auth/profile.html:248
+#: app/templates/auth/profile.html:244
 msgid "Email/Mot de passe"
 msgstr "Email/Password"
 
-#: app/templates/auth/profile.html:263
+#: app/templates/auth/profile.html:259
 msgid "Confirmer la rétrogradation"
 msgstr "Confirm Downgrade"
 
-#: app/templates/auth/profile.html:268
+#: app/templates/auth/profile.html:264
 msgid "Êtes-vous sûr de vouloir rétrograder vers le plan gratuit ?"
 msgstr "Are you sure you want to downgrade to the free plan?"
 
-#: app/templates/auth/profile.html:272
+#: app/templates/auth/profile.html:268
 msgid "Ce qui va se passer :"
 msgstr "What will happen:"
 
-#: app/templates/auth/profile.html:274
+#: app/templates/auth/profile.html:270
 msgid "Rétrogradation immédiate"
 msgstr "Immediate downgrade"
 
-#: app/templates/auth/profile.html:274
+#: app/templates/auth/profile.html:270
 msgid "L'effet est instantané"
 msgstr "The effect is instant"
 
-#: app/templates/auth/profile.html:275
+#: app/templates/auth/profile.html:271
 msgid "Limite d'abonnements :"
 msgstr "Subscription limit:"
 
-#: app/templates/auth/profile.html:275 app/templates/auth/profile.html:276
-#: app/templates/auth/profile.html:277
+#: app/templates/auth/profile.html:271 app/templates/auth/profile.html:272
+#: app/templates/auth/profile.html:273
 msgid "5 maximum"
 msgstr "5 maximum"
 
-#: app/templates/auth/profile.html:275 app/templates/auth/profile.html:276
-#: app/templates/auth/profile.html:277 app/templates/auth/profile.html:278
+#: app/templates/auth/profile.html:271 app/templates/auth/profile.html:272
+#: app/templates/auth/profile.html:273 app/templates/auth/profile.html:274
 msgid "(contre illimité)"
 msgstr "(vs unlimited)"
 
-#: app/templates/auth/profile.html:276
+#: app/templates/auth/profile.html:272
 msgid "Catégories personnalisées :"
 msgstr "Custom categories:"
 
-#: app/templates/auth/profile.html:277
+#: app/templates/auth/profile.html:273
 msgid "Services personnalisés :"
 msgstr "Custom services:"
 
-#: app/templates/auth/profile.html:278
+#: app/templates/auth/profile.html:274
 msgid "Plans personnalisés :"
 msgstr "Custom plans:"
 
-#: app/templates/auth/profile.html:278
+#: app/templates/auth/profile.html:274
 msgid "10 maximum"
 msgstr "10 maximum"
 
-#: app/templates/auth/profile.html:279
+#: app/templates/auth/profile.html:275
 msgid "Notifications par email désactivées"
 msgstr "Email notifications disabled"
 
-#: app/templates/auth/profile.html:279
+#: app/templates/auth/profile.html:275
 msgid "Fonctionnalité réservée aux abonnés Premium"
 msgstr "Feature reserved for Premium subscribers"
 
-#: app/templates/auth/profile.html:285
+#: app/templates/auth/profile.html:281
 msgid "Vous pourrez repasser à Premium à tout moment depuis la page"
 msgstr "You can upgrade back to Premium at any time from the"
 
-#: app/templates/auth/profile.html:290 app/templates/banks/add.html:88
+#: app/templates/auth/profile.html:286 app/templates/banks/add.html:88
 #: app/templates/banks/add_document.html:87 app/templates/banks/edit.html:99
 #: app/templates/banks/edit_document.html:104
 #: app/templates/card_purchase_categories/add.html:75
 #: app/templates/card_purchase_categories/edit.html:82
+#: app/templates/card_purchases/add_manual.html:163
+#: app/templates/card_purchases/edit.html:147
+#: app/templates/card_purchases/validate.html:128
 #: app/templates/categories/add.html:95 app/templates/categories/edit.html:113
 #: app/templates/checkbooks/edit_check.html:75
 #: app/templates/credit_types/add.html:62
@@ -2840,13 +3484,17 @@ msgstr "You can upgrade back to Premium at any time from the"
 #: app/templates/employers/edit_document.html:90
 #: app/templates/installments/add.html:163
 #: app/templates/installments/edit.html:101 app/templates/providers/add.html:56
-#: app/templates/providers/edit.html:56 app/templates/revenues/add.html:92
-#: app/templates/revenues/edit.html:90 app/templates/subscriptions/add.html:110
+#: app/templates/providers/edit.html:56 app/templates/reminders/add.html:84
+#: app/templates/reminders/add_document.html:64
+#: app/templates/reminders/edit.html:87
+#: app/templates/reminders/edit_document.html:71
+#: app/templates/revenues/add.html:92 app/templates/revenues/edit.html:90
+#: app/templates/subscriptions/add.html:110
 #: app/templates/subscriptions/edit.html:100
 msgid "Annuler"
 msgstr "Cancel"
 
-#: app/templates/auth/profile.html:294
+#: app/templates/auth/profile.html:290
 msgid "Rétrograder maintenant"
 msgstr "Downgrade Now"
 
@@ -2866,72 +3514,59 @@ msgstr "Confirm password"
 msgid "Permet d'afficher les dates et heures dans votre fuseau horaire"
 msgstr "Displays dates and times in your timezone"
 
-#: app/templates/auth/register.html:91
-msgid "Franc suisse"
-msgstr "Swiss Franc"
-
-#: app/templates/auth/register.html:92
-msgid "Dollar canadien"
-msgstr "Canadian Dollar"
-
-#: app/templates/auth/register.html:93
+#: app/templates/auth/register.html:102
 msgid "Dollar australien"
 msgstr "Australian Dollar"
 
-#: app/templates/auth/register.html:94
+#: app/templates/auth/register.html:103
 msgid "Yen japonais"
 msgstr "Japanese Yen"
 
-#: app/templates/auth/register.html:95
+#: app/templates/auth/register.html:104
 msgid "Yuan chinois"
 msgstr "Chinese Yuan"
 
-#: app/templates/auth/register.html:96
+#: app/templates/auth/register.html:105
 msgid "Roupie indienne"
 msgstr "Indian Rupee"
 
-#: app/templates/auth/register.html:97
+#: app/templates/auth/register.html:106
 msgid "Real brésilien"
 msgstr "Brazilian Real"
 
-#: app/templates/auth/register.html:98
+#: app/templates/auth/register.html:107
 msgid "Peso mexicain"
 msgstr "Mexican Peso"
 
-#: app/templates/auth/register.html:99
+#: app/templates/auth/register.html:108
 msgid "Rand sud-africain"
 msgstr "South African Rand"
 
-#: app/templates/auth/register.html:101
-msgid "Cette devise sera utilisée pour vos abonnements et factures"
-msgstr "This currency will be used for your subscriptions and invoices"
-
-#: app/templates/auth/register.html:108
+#: app/templates/auth/register.html:117
 msgid ""
 "En vous inscrivant, vous bénéficiez du plan gratuit avec jusqu'à 5 "
 "abonnements."
 msgstr "By signing up, you get the free plan with up to 5 subscriptions."
 
-#: app/templates/auth/register.html:115
+#: app/templates/auth/register.html:124
 msgid "Vous vous inscrivez pour le plan"
 msgstr "You are signing up for the plan"
 
-#: app/templates/auth/register.html:115
+#: app/templates/auth/register.html:124
 msgid "Après validation de votre compte, vous pourrez finaliser votre paiement."
 msgstr "After validating your account, you can complete your payment."
 
-#: app/templates/auth/register.html:121
+#: app/templates/auth/register.html:130
 msgid "Créer mon compte"
 msgstr "Create my account"
 
-#: app/templates/auth/register.html:128
+#: app/templates/auth/register.html:137
 msgid "Déjà un compte ?"
 msgstr "Already have an account?"
 
 #: app/templates/banks/add.html:3 app/templates/banks/add.html:10
 #: app/templates/banks/list.html:11 app/templates/banks/list.html:172
 #: app/templates/credits/add.html:51 app/templates/credits/edit.html:52
-#, fuzzy
 msgid "Ajouter une banque"
 msgstr "Add a bank"
 
@@ -2940,6 +3575,10 @@ msgstr "Add a bank"
 #: app/templates/banks/edit_document.html:15
 #: app/templates/card_purchase_categories/add.html:12
 #: app/templates/card_purchase_categories/edit.html:12
+#: app/templates/card_purchases/add_manual.html:12
+#: app/templates/card_purchases/detail.html:67
+#: app/templates/card_purchases/edit.html:12
+#: app/templates/card_purchases/upload.html:12
 #: app/templates/categories/add.html:12 app/templates/categories/edit.html:12
 #: app/templates/checkbooks/add.html:15
 #: app/templates/checkbooks/add_check.html:15
@@ -2951,9 +3590,9 @@ msgstr "Add a bank"
 #: app/templates/credits/add_document.html:15
 #: app/templates/credits/detail.html:96 app/templates/credits/edit.html:12
 #: app/templates/credits/edit_document.html:15
-#: app/templates/employers/add.html:12 app/templates/revenues/add.html:12
-#: app/templates/revenues/detail.html:16 app/templates/revenues/edit.html:12
-#: app/templates/subscriptions/add.html:12
+#: app/templates/employers/add.html:12 app/templates/reminders/detail.html:109
+#: app/templates/revenues/add.html:12 app/templates/revenues/detail.html:16
+#: app/templates/revenues/edit.html:12 app/templates/subscriptions/add.html:12
 #: app/templates/subscriptions/detail.html:12
 #: app/templates/subscriptions/edit.html:12
 msgid "Retour"
@@ -2964,18 +3603,16 @@ msgid "Nom de la banque"
 msgstr "Bank name"
 
 #: app/templates/banks/add.html:22
-#, fuzzy
 msgid "Sélectionner ou saisir"
-msgstr "Select a bank"
+msgstr "Select or enter"
 
 #: app/templates/banks/add.html:27
 msgid "Ou saisir un nom personnalisé ci-dessous"
 msgstr ""
 
 #: app/templates/banks/add.html:28
-#, fuzzy
 msgid "Nom personnalisé (optionnel)"
-msgstr "Service (optional)"
+msgstr "Custom name (optional)"
 
 #: app/templates/banks/add.html:32 app/templates/banks/edit.html:27
 msgid "Logo de la banque"
@@ -2986,19 +3623,28 @@ msgstr "Bank logo"
 #: app/templates/banks/add_document.html:148 app/templates/banks/edit.html:43
 #: app/templates/banks/edit.html:149 app/templates/banks/edit_document.html:91
 #: app/templates/banks/edit_document.html:154
+#: app/templates/card_purchases/add_manual.html:151
+#: app/templates/card_purchases/add_manual.html:175
+#: app/templates/card_purchases/edit.html:133
+#: app/templates/card_purchases/edit.html:162
+#: app/templates/card_purchases/upload.html:49
+#: app/templates/card_purchases/upload.html:88
 #: app/templates/categories/add.html:61 app/templates/categories/add.html:165
 #: app/templates/categories/edit.html:76 app/templates/categories/edit.html:183
 #: app/templates/credits/add_document.html:76
 #: app/templates/credits/add_document.html:151
 #: app/templates/credits/edit_document.html:91
 #: app/templates/credits/edit_document.html:152
+#: app/templates/reminders/add_document.html:54
+#: app/templates/reminders/add_document.html:80
+#: app/templates/reminders/edit_document.html:61
+#: app/templates/reminders/edit_document.html:87
 msgid "Aucun fichier sélectionné"
 msgstr "No file selected"
 
 #: app/templates/banks/add.html:41 app/templates/banks/edit.html:48
-#, fuzzy
 msgid "Format: PNG, JPG, GIF (max 2 Mo)"
-msgstr "Accepted formats: PNG, JPG, GIF, SVG, WebP (max 5 MB)"
+msgstr "Format: PNG, JPG, GIF (max 2 MB)"
 
 #: app/templates/banks/add.html:45 app/templates/banks/edit.html:52
 msgid "Code BIC/SWIFT"
@@ -3032,18 +3678,18 @@ msgid "Téléphone"
 msgstr "Phone"
 
 #: app/templates/banks/add.html:61 app/templates/banks/edit.html:70
-#, fuzzy
 msgid "ex: 01 23 45 67 89"
 msgstr "e.g.: 01 23 45 67 89"
 
 #: app/templates/banks/add.html:67 app/templates/banks/edit.html:77
-#, fuzzy
 msgid "contact@banque.fr"
-msgstr "e.g.: contact@provider.com"
+msgstr "e.g.: contact@bank.com"
 
 #: app/templates/banks/add.html:78 app/templates/banks/detail.html:194
-#: app/templates/banks/edit.html:89 app/templates/employers/add.html:135
-#: app/templates/employers/add.html:138 app/templates/employers/detail.html:203
+#: app/templates/banks/edit.html:89 app/templates/card_purchases/edit.html:95
+#: app/templates/card_purchases/validate.html:33
+#: app/templates/employers/add.html:135 app/templates/employers/add.html:138
+#: app/templates/employers/detail.html:203
 #: app/templates/employers/detail.html:207
 #: app/templates/employers/edit.html:151 app/templates/employers/edit.html:154
 #: app/templates/providers/add.html:47 app/templates/providers/edit.html:47
@@ -3051,14 +3697,12 @@ msgid "Notes"
 msgstr "Notes"
 
 #: app/templates/banks/add.html:80 app/templates/banks/edit.html:91
-#, fuzzy
 msgid "Informations complémentaires"
-msgstr "Additional information..."
+msgstr "Additional information"
 
 #: app/templates/banks/add.html:85
-#, fuzzy
 msgid "Ajouter la banque"
-msgstr "Add a Checkbook"
+msgstr "Add Bank"
 
 #: app/templates/banks/add_document.html:3
 #: app/templates/banks/add_document.html:11 app/templates/banks/detail.html:249
@@ -3069,6 +3713,10 @@ msgstr "Add a Checkbook"
 #: app/templates/employers/add_document.html:11
 #: app/templates/employers/detail.html:262
 #: app/templates/employers/detail.html:381
+#: app/templates/reminders/add_document.html:3
+#: app/templates/reminders/add_document.html:16
+#: app/templates/reminders/detail.html:315
+#: app/templates/reminders/detail.html:441
 msgid "Ajouter un document"
 msgstr "Add a Document"
 
@@ -3081,6 +3729,8 @@ msgstr "For"
 #: app/templates/banks/edit_document.html:23
 #: app/templates/credits/add_document.html:23
 #: app/templates/credits/edit_document.html:23
+#: app/templates/reminders/add_document.html:28
+#: app/templates/reminders/edit_document.html:28
 msgid "Type de document"
 msgstr "Document type"
 
@@ -3095,44 +3745,14 @@ msgstr "Select"
 #: app/templates/banks/edit_document.html:33
 #: app/templates/credits/add_document.html:33
 #: app/templates/credits/edit_document.html:33
+#: app/templates/reminders/add_document.html:24
+#: app/templates/reminders/edit_document.html:24
 msgid "Nom du document"
 msgstr "Document name"
 
 #: app/templates/banks/add_document.html:35
 msgid "ex: RIB, Contrat..."
 msgstr ""
-
-#: app/templates/banks/add_document.html:39
-#: app/templates/banks/edit_document.html:39
-#: app/templates/card_purchase_categories/add.html:26
-#: app/templates/card_purchase_categories/edit.html:26
-#: app/templates/categories/add.html:26 app/templates/categories/edit.html:26
-#: app/templates/categories/list.html:175
-#: app/templates/categories/list.html:326
-#: app/templates/checkbooks/add_check.html:53
-#: app/templates/checkbooks/detail.html:107
-#: app/templates/checkbooks/edit_check.html:55
-#: app/templates/credit_types/add.html:26
-#: app/templates/credit_types/edit.html:27
-#: app/templates/credit_types/list.html:59
-#: app/templates/credit_types/list.html:154 app/templates/credits/add.html:57
-#: app/templates/credits/add_document.html:39
-#: app/templates/credits/edit.html:58
-#: app/templates/credits/edit_document.html:39
-#: app/templates/employers/add_document.html:39
-#: app/templates/employers/edit_document.html:39
-#: app/templates/installments/add.html:26
-#: app/templates/installments/edit.html:25 app/templates/revenues/add.html:49
-#: app/templates/revenues/detail.html:44 app/templates/revenues/edit.html:50
-#: app/templates/services/add.html:25 app/templates/services/add_plan.html:32
-#: app/templates/services/edit.html:25 app/templates/services/edit_plan.html:26
-#: app/templates/services/list.html:171 app/templates/services/list.html:331
-#: app/templates/services/plans.html:113 app/templates/services/plans.html:194
-#: app/templates/subscriptions/add.html:53
-#: app/templates/subscriptions/detail.html:115
-#: app/templates/subscriptions/edit.html:54
-msgid "Description"
-msgstr "Description"
 
 #: app/templates/banks/add_document.html:41
 #: app/templates/credits/add_document.html:41
@@ -3145,26 +3765,16 @@ msgstr "Additional information..."
 #: app/templates/credits/edit_document.html:45
 #: app/templates/employers/add_document.html:46
 #: app/templates/employers/edit_document.html:45
+#: app/templates/reminders/add_document.html:38
+#: app/templates/reminders/edit_document.html:38
 msgid "Date du document"
 msgstr "Document Date"
-
-#: app/templates/banks/add_document.html:50
-#: app/templates/banks/add_document.html:52
-#: app/templates/banks/edit_document.html:50
-#: app/templates/banks/edit_document.html:52
-#: app/templates/credits/add_document.html:50
-#: app/templates/credits/add_document.html:52
-#: app/templates/credits/edit_document.html:50
-#: app/templates/credits/edit_document.html:52
-#: app/templates/employers/edit_document.html:50
-#: app/templates/employers/edit_document.html:52
-msgid "Année"
-msgstr "Year"
 
 #: app/templates/banks/add_document.html:59
 #: app/templates/banks/add_document.html:61
 #: app/templates/banks/edit_document.html:59
 #: app/templates/banks/edit_document.html:61
+#: app/templates/card_purchases/list.html:116
 #: app/templates/credits/add_document.html:60
 #: app/templates/credits/add_document.html:62
 #: app/templates/credits/edit_document.html:59
@@ -3174,6 +3784,7 @@ msgstr "Year"
 #: app/templates/employers/add_document.html:109
 #: app/templates/employers/edit_document.html:59
 #: app/templates/employers/edit_document.html:61
+#: app/templates/reminders/add.html:42 app/templates/reminders/edit.html:44
 msgid "Mois"
 msgstr "Month"
 
@@ -3183,6 +3794,8 @@ msgstr "Month"
 #: app/templates/credits/edit_document.html:70
 #: app/templates/employers/edit_document.html:70
 #: app/templates/employers/edit_document.html:73
+#: app/templates/reminders/add_document.html:48
+#: app/templates/reminders/edit_document.html:49
 msgid "Fichier"
 msgstr "File"
 
@@ -3205,9 +3818,8 @@ msgid "Active"
 msgstr "Active"
 
 #: app/templates/banks/detail.html:113 app/templates/banks/list.html:103
-#, fuzzy
 msgid "Inactive"
-msgstr "Active"
+msgstr "Inactive"
 
 #: app/templates/banks/detail.html:116
 msgid "BIC"
@@ -3217,6 +3829,8 @@ msgstr ""
 #: app/templates/banks/edit_document.html:3 app/templates/banks/list.html:113
 #: app/templates/card_purchase_categories/edit.html:3
 #: app/templates/card_purchase_categories/list.html:41
+#: app/templates/card_purchases/detail.html:209
+#: app/templates/card_purchases/list.html:222
 #: app/templates/categories/edit.html:3 app/templates/categories/list.html:140
 #: app/templates/categories/list.html:225
 #: app/templates/checkbooks/detail.html:135
@@ -3235,7 +3849,9 @@ msgstr ""
 #: app/templates/installments/edit.html:3
 #: app/templates/installments/edit.html:8
 #: app/templates/installments/list.html:129
-#: app/templates/providers/list.html:84 app/templates/revenues/detail.html:13
+#: app/templates/providers/list.html:84 app/templates/reminders/detail.html:106
+#: app/templates/reminders/detail.html:415
+#: app/templates/reminders/list.html:138 app/templates/revenues/detail.html:13
 #: app/templates/revenues/edit.html:3 app/templates/revenues/edit.html:10
 #: app/templates/revenues/list.html:114
 #: app/templates/subscriptions/detail.html:123
@@ -3245,58 +3861,58 @@ msgstr "Edit"
 
 #: app/templates/banks/detail.html:140
 #: app/templates/installments/detail.html:33
-#, fuzzy
 msgid "Informations"
-msgstr "General Information"
+msgstr "Information"
 
 #: app/templates/banks/detail.html:176
-#, fuzzy
 msgid "IBAN"
-msgstr "Bank"
+msgstr "IBAN"
 
 #: app/templates/banks/detail.html:183
-#, fuzzy
 msgid "Numéro de compte"
-msgstr "Don't have an account yet?"
+msgstr "Account number"
 
 #: app/templates/banks/detail.html:205 app/templates/banks/detail.html:232
 #: app/templates/credits/detail.html:259 app/templates/credits/detail.html:313
 #: app/templates/employers/detail.html:218
 #: app/templates/employers/detail.html:245
 #: app/templates/employers/list.html:132
+#: app/templates/reminders/detail.html:239
+#: app/templates/reminders/detail.html:298
 msgid "Documents"
 msgstr "Documents"
 
 #: app/templates/banks/detail.html:237
-#, fuzzy
 msgid "Go"
-msgstr "Logo"
+msgstr "GB"
 
 #: app/templates/banks/detail.html:239
-#, fuzzy
 msgid "Mo"
-msgstr "Month"
+msgstr "MB"
 
 #: app/templates/banks/detail.html:241
 msgid "Ko"
 msgstr ""
 
 #: app/templates/banks/detail.html:243 app/templates/credits/detail.html:324
-#, fuzzy
+#: app/templates/reminders/detail.html:309
 msgid "octets"
-msgstr "Notes"
+msgstr "bytes"
 
 #: app/templates/banks/detail.html:258 app/templates/credits/detail.html:339
 #: app/templates/employers/detail.html:271
+#: app/templates/reminders/detail.html:324
 msgid "Tous les types"
 msgstr "All types"
 
 #: app/templates/banks/detail.html:266 app/templates/credits/detail.html:347
+#: app/templates/reminders/detail.html:332
 msgid "Toutes les années"
 msgstr "All years"
 
 #: app/templates/banks/detail.html:274 app/templates/credits/detail.html:355
 #: app/templates/employers/detail.html:287
+#: app/templates/reminders/detail.html:340
 msgid "Rechercher..."
 msgstr "Search..."
 
@@ -3305,27 +3921,35 @@ msgstr "Search..."
 msgid "Visualiser"
 msgstr "Preview"
 
-#: app/templates/banks/detail.html:334 app/templates/credits/detail.html:415
-#: app/templates/credits/list.html:136 app/templates/employers/list.html:108
-#: app/templates/employers/list.html:199 app/templates/revenues/list.html:110
+#: app/templates/banks/detail.html:334
+#: app/templates/card_purchases/detail.html:191
+#: app/templates/card_purchases/detail.html:192
+#: app/templates/card_purchases/edit.html:114
+#: app/templates/credits/detail.html:415 app/templates/credits/list.html:136
+#: app/templates/employers/list.html:108 app/templates/employers/list.html:199
+#: app/templates/reminders/detail.html:405
+#: app/templates/reminders/list.html:134 app/templates/revenues/list.html:110
 #: app/templates/subscriptions/list.html:160
 msgid "Voir"
 msgstr "View"
 
 #: app/templates/banks/detail.html:339
 #: app/templates/banks/edit_document.html:84
+#: app/templates/card_purchases/detail.html:196
+#: app/templates/card_purchases/detail.html:197
 #: app/templates/credits/detail.html:420
 #: app/templates/credits/edit_document.html:84
 #: app/templates/employers/edit_document.html:76
+#: app/templates/reminders/detail.html:410
 msgid "Télécharger"
 msgstr "Download"
 
 #: app/templates/banks/detail.html:348 app/templates/credits/detail.html:429
-#, fuzzy
 msgid "Êtes-vous sûr de vouloir supprimer ce document ?"
-msgstr "Are you sure you want to delete this check?"
+msgstr "Are you sure you want to delete this document?"
 
 #: app/templates/banks/detail.html:362 app/templates/credits/detail.html:443
+#: app/templates/reminders/detail.html:435
 msgid "Aucun document ne correspond aux critères de recherche."
 msgstr "No documents match the search criteria."
 
@@ -3334,31 +3958,13 @@ msgid "Aucun document ajouté pour cette banque."
 msgstr "No documents added for this bank."
 
 #: app/templates/banks/detail.html:381 app/templates/credits/detail.html:462
-#, fuzzy
+#: app/templates/reminders/detail.html:458
 msgid "Document"
-msgstr "Documents"
-
-#: app/templates/banks/detail.html:383
-#: app/templates/card_purchase_categories/add.html:94
-#: app/templates/card_purchase_categories/edit.html:101
-#: app/templates/credits/detail.html:464
-#: app/templates/employers/detail.html:400
-msgid "Fermer"
-msgstr "Close"
-
-#: app/templates/banks/detail.html:407 app/templates/credits/detail.html:488
-#, fuzzy
-msgid "Aperçu non disponible pour ce type de fichier"
-msgstr "Preview not available for this file type"
-
-#: app/templates/banks/detail.html:407 app/templates/credits/detail.html:488
-msgid "Ouvrir dans un nouvel onglet"
-msgstr ""
+msgstr "Document"
 
 #: app/templates/banks/edit.html:3
-#, fuzzy
 msgid "Modifier une banque"
-msgstr "Edit Check"
+msgstr "Edit Bank"
 
 #: app/templates/banks/edit.html:10
 msgid "Modifier la banque"
@@ -3378,27 +3984,27 @@ msgstr "Leave blank to keep current logo"
 
 #: app/templates/banks/edit_document.html:11
 #: app/templates/credits/edit_document.html:11
-#, fuzzy
+#: app/templates/reminders/edit_document.html:3
+#: app/templates/reminders/edit_document.html:16
 msgid "Modifier le document"
-msgstr "Edit Check"
+msgstr "Edit Document"
 
 #: app/templates/banks/edit_document.html:73
-#, fuzzy
 msgid "Fichier actuel"
-msgstr "File *"
+msgstr "Current file"
 
 #: app/templates/banks/edit_document.html:96
 #: app/templates/credits/edit_document.html:96
-#, fuzzy
 msgid ""
 "Formats acceptés : PDF, Word, Excel, Images (taille max : 16 Mo) - "
 "Laisser vide pour garder le fichier actuel"
-msgstr "Accepted formats: PDF, Word, Excel, Images (max size: 16 MB)"
+msgstr ""
+"Accepted formats: PDF, Word, Excel, Images (max size: 16 MB) - Leave "
+"blank to keep current file"
 
 #: app/templates/banks/list.html:3 app/templates/banks/list.html:8
-#, fuzzy
 msgid "Mes banques"
-msgstr "Banks"
+msgstr "My Banks"
 
 #: app/templates/banks/list.html:21 app/templates/banks/list.html:50
 #: app/templates/categories/list.html:177
@@ -3407,6 +4013,7 @@ msgstr "Banks"
 #: app/templates/credit_types/list.html:156 app/templates/credits/list.html:30
 #: app/templates/credits/list.html:73 app/templates/employers/list.html:30
 #: app/templates/employers/list.html:131 app/templates/providers/list.html:19
+#: app/templates/reminders/list.html:30 app/templates/reminders/list.html:71
 #: app/templates/revenues/detail.html:61 app/templates/revenues/list.html:30
 #: app/templates/revenues/list.html:71 app/templates/subscriptions/list.html:40
 #: app/templates/subscriptions/list.html:83
@@ -3414,20 +4021,12 @@ msgid "Statut"
 msgstr "Status"
 
 #: app/templates/banks/list.html:24
-#, fuzzy
 msgid "Actives"
 msgstr "Active"
 
 #: app/templates/banks/list.html:25
-#, fuzzy
 msgid "Inactives"
 msgstr "Inactive"
-
-#: app/templates/banks/list.html:31 app/templates/credits/list.html:51
-#: app/templates/providers/list.html:30 app/templates/revenues/list.html:51
-#: app/templates/subscriptions/list.html:61
-msgid "Réinitialiser"
-msgstr "Reset"
 
 #: app/templates/banks/list.html:46 app/templates/checkbooks/list.html:45
 #: app/templates/credit_types/list.html:58
@@ -3442,26 +4041,11 @@ msgstr "Name"
 msgid "Code BIC"
 msgstr ""
 
-#: app/templates/banks/list.html:51 app/templates/categories/list.html:178
-#: app/templates/categories/list.html:328
-#: app/templates/checkbooks/detail.html:110
-#: app/templates/checkbooks/list.html:53
-#: app/templates/credit_types/list.html:157
-#: app/templates/credits/detail.html:283 app/templates/credits/list.html:74
-#: app/templates/employers/list.html:133
-#: app/templates/installments/list.html:76
-#: app/templates/installments/list.html:173
-#: app/templates/providers/list.html:49 app/templates/revenues/detail.html:106
-#: app/templates/revenues/detail.html:109 app/templates/revenues/list.html:72
-#: app/templates/services/list.html:175 app/templates/services/list.html:334
-#: app/templates/services/plans.html:197
-#: app/templates/subscriptions/list.html:84
-msgid "Actions"
-msgstr "Actions"
-
-#: app/templates/banks/list.html:109 app/templates/credits/detail.html:181
+#: app/templates/banks/list.html:109 app/templates/card_purchases/list.html:217
+#: app/templates/credits/detail.html:181
 #: app/templates/installments/list.html:125
 #: app/templates/installments/list.html:205
+#: app/templates/reminders/detail.html:171
 msgid "Détails"
 msgstr "Details"
 
@@ -3473,34 +4057,34 @@ msgid "Activer/Désactiver"
 msgstr "Enable/Disable"
 
 #: app/templates/banks/list.html:122
-#, fuzzy
 msgid "Êtes-vous sûr de vouloir supprimer cette banque ?"
-msgstr "Are you sure you want to delete this check?"
+msgstr "Are you sure you want to delete this bank?"
 
-#: app/templates/banks/list.html:143 app/templates/checkbooks/detail.html:159
+#: app/templates/banks/list.html:143 app/templates/card_purchases/list.html:272
+#: app/templates/checkbooks/detail.html:159
 #: app/templates/checkbooks/list.html:117 app/templates/credits/list.html:208
-#: app/templates/providers/list.html:108 app/templates/revenues/list.html:183
+#: app/templates/providers/list.html:108 app/templates/reminders/list.html:178
+#: app/templates/revenues/list.html:183
 #: app/templates/subscriptions/list.html:282
 msgid "Précédent"
 msgstr "Previous"
 
-#: app/templates/banks/list.html:159 app/templates/checkbooks/detail.html:175
+#: app/templates/banks/list.html:159 app/templates/card_purchases/list.html:284
+#: app/templates/checkbooks/detail.html:175
 #: app/templates/checkbooks/list.html:133 app/templates/credits/list.html:224
 #: app/templates/employers/list.html:243 app/templates/providers/list.html:124
-#: app/templates/revenues/list.html:199
+#: app/templates/reminders/list.html:194 app/templates/revenues/list.html:199
 #: app/templates/subscriptions/list.html:298
 msgid "Suivant"
 msgstr "Next"
 
 #: app/templates/banks/list.html:169
-#, fuzzy
 msgid "Aucune banque"
-msgstr "No Checkbooks"
+msgstr "No Banks"
 
 #: app/templates/banks/list.html:170
-#, fuzzy
 msgid "Commencez par ajouter votre première banque"
-msgstr "Start by adding your first subscription"
+msgstr "Start by adding your first bank"
 
 # Card Purchase Categories - Add/Edit Templates
 #: app/templates/card_purchase_categories/add.html:3
@@ -3622,6 +4206,8 @@ msgid "Mes catégories personnalisées"
 msgstr "My Custom Categories"
 
 #: app/templates/card_purchase_categories/list.html:47
+#: app/templates/card_purchases/detail.html:213
+#: app/templates/card_purchases/list.html:228
 msgid "Confirmer la suppression ?"
 msgstr "Confirm deletion?"
 
@@ -3637,6 +4223,365 @@ msgstr "No default categories available."
 #: app/templates/card_purchase_categories/list.html:100
 msgid "Retour aux achats CB"
 msgstr "Back to Card Purchases"
+
+# Payment type translations
+#: app/templates/card_purchases/add_manual.html:3
+#: app/templates/card_purchases/add_manual.html:10
+#: app/templates/card_purchases/list.html:69
+msgid "Ajouter un achat"
+msgstr "Add a purchase"
+
+#: app/templates/card_purchases/add_manual.html:20
+#: app/templates/card_purchases/detail.html:89
+#: app/templates/card_purchases/list.html:77
+#: app/templates/card_purchases/upload.html:20
+msgid "Saisie manuelle"
+msgstr "Manual entry"
+
+#: app/templates/card_purchases/add_manual.html:24
+#: app/templates/card_purchases/add_manual.html:28
+#: app/templates/card_purchases/list.html:83
+#: app/templates/card_purchases/list.html:89
+#: app/templates/card_purchases/upload.html:23
+msgid "Scanner avec OCR"
+msgstr "Scan with OCR"
+
+#: app/templates/card_purchases/add_manual.html:36
+#: app/templates/card_purchases/upload.html:27
+msgid "Vous pouvez saisir manuellement ou utiliser l'OCR pour scanner vos tickets"
+msgstr "You can enter manually or use OCR to scan your receipts"
+
+#: app/templates/card_purchases/add_manual.html:38
+msgid "Saisie manuelle disponible. L'OCR est réservé aux abonnés Premium."
+msgstr "Manual entry available. OCR is reserved for Premium subscribers."
+
+#: app/templates/card_purchases/add_manual.html:49
+#: app/templates/card_purchases/edit.html:20
+#: app/templates/card_purchases/list.html:155
+#: app/templates/card_purchases/validate.html:28
+#: app/templates/installments/add.html:33
+#: app/templates/installments/edit.html:31
+#: app/templates/installments/list.html:71
+#: app/templates/installments/list.html:170
+msgid "Marchand"
+msgstr "Merchant"
+
+#: app/templates/card_purchases/add_manual.html:56
+msgid "ex : Walmart, McDonald's..."
+msgstr "e.g., Walmart, McDonald's..."
+
+#: app/templates/card_purchases/add_manual.html:89
+#: app/templates/card_purchases/edit.html:40
+#: app/templates/card_purchases/validate.html:27
+msgid "Heure"
+msgstr "Time"
+
+#: app/templates/card_purchases/add_manual.html:104
+msgid "-- Choisir une catégorie --"
+msgstr "-- Choose a category --"
+
+#: app/templates/card_purchases/add_manual.html:111
+msgid "Optionnel - Permet de classer vos dépenses"
+msgstr "Optional - Helps classify your expenses"
+
+#: app/templates/card_purchases/add_manual.html:116
+#: app/templates/card_purchases/edit.html:76
+msgid "Type de Paiement"
+msgstr "Payment Type"
+
+#: app/templates/card_purchases/add_manual.html:119
+#: app/templates/card_purchases/detail.html:131
+#: app/templates/card_purchases/detail.html:139
+#: app/templates/card_purchases/edit.html:79
+#: app/templates/card_purchases/list.html:188
+#: app/templates/card_purchases/list.html:196
+#: app/templates/card_purchases/validate.html:90
+msgid "Carte Bancaire"
+msgstr "Bank Card"
+
+#: app/templates/card_purchases/add_manual.html:120
+#: app/templates/card_purchases/detail.html:133
+#: app/templates/card_purchases/edit.html:80
+#: app/templates/card_purchases/list.html:190
+#: app/templates/card_purchases/validate.html:91
+msgid "Virement"
+msgstr "Transfer"
+
+#: app/templates/card_purchases/add_manual.html:121
+#: app/templates/card_purchases/detail.html:135
+#: app/templates/card_purchases/edit.html:81
+#: app/templates/card_purchases/list.html:192
+#: app/templates/card_purchases/validate.html:92
+msgid "Espèces"
+msgstr "Cash"
+
+#: app/templates/card_purchases/add_manual.html:122
+#: app/templates/card_purchases/detail.html:137
+#: app/templates/card_purchases/edit.html:82
+#: app/templates/card_purchases/list.html:194
+#: app/templates/card_purchases/validate.html:93
+msgid "Autres"
+msgstr "Other"
+
+#: app/templates/card_purchases/add_manual.html:128
+msgid "Description / Notes"
+msgstr "Description / Notes"
+
+#: app/templates/card_purchases/add_manual.html:134
+msgid "Notes supplémentaires (optionnel)"
+msgstr "Additional notes (optional)"
+
+#: app/templates/card_purchases/add_manual.html:139
+#: app/templates/card_purchases/edit.html:104
+msgid "Ticket de caisse / Reçu"
+msgstr "Receipt / Ticket"
+
+#: app/templates/card_purchases/add_manual.html:149
+#: app/templates/card_purchases/edit.html:131
+#: app/templates/card_purchases/upload.html:47
+#: app/templates/reminders/add_document.html:52
+#: app/templates/reminders/edit_document.html:59
+msgid "Parcourir..."
+msgstr "Browse..."
+
+#: app/templates/card_purchases/add_manual.html:154
+msgid "Optionnel - Formats acceptés : JPG, PNG, PDF (max 5 Mo)"
+msgstr "Optional - Accepted formats: JPG, PNG, PDF (max 5 MB)"
+
+#: app/templates/card_purchases/add_manual.html:160
+msgid "Enregistrer l'achat"
+msgstr "Save Purchase"
+
+#: app/templates/card_purchases/detail.html:3
+#: app/templates/card_purchases/detail.html:65
+msgid "Détails de l'achat"
+msgstr "Purchase Details"
+
+#: app/templates/card_purchases/detail.html:84
+#: app/templates/installments/detail.html:42
+msgid "Marchand :"
+msgstr "Merchant:"
+
+#: app/templates/card_purchases/detail.html:90
+#: app/templates/subscriptions/detail.html:79
+msgid "Manuel"
+msgstr "Manual"
+
+#: app/templates/card_purchases/detail.html:93
+msgid "Saisie OCR"
+msgstr "OCR entry"
+
+#: app/templates/card_purchases/detail.html:98
+msgid "Modifié après OCR"
+msgstr "Edited after OCR"
+
+#: app/templates/card_purchases/detail.html:116
+#: app/templates/subscriptions/detail.html:52
+msgid "Catégorie :"
+msgstr "Category:"
+
+#: app/templates/card_purchases/detail.html:120
+#: app/templates/card_purchases/list.html:182
+#: app/templates/subscriptions/detail.html:59
+msgid "Non catégorisé"
+msgstr "Uncategorized"
+
+#: app/templates/card_purchases/detail.html:127
+msgid "Type de Paiement :"
+msgstr "Payment Type:"
+
+#: app/templates/card_purchases/detail.html:147
+#: app/templates/credits/detail.html:221
+#: app/templates/installments/detail.html:53
+#: app/templates/reminders/detail.html:197
+msgid "Description :"
+msgstr "Description:"
+
+#: app/templates/card_purchases/detail.html:158
+msgid "Notes :"
+msgstr "Notes:"
+
+#: app/templates/card_purchases/detail.html:168
+msgid "Confiance OCR :"
+msgstr "OCR Confidence:"
+
+#: app/templates/card_purchases/detail.html:184
+msgid "Reçu :"
+msgstr "Receipt:"
+
+#: app/templates/card_purchases/edit.html:3
+#: app/templates/card_purchases/edit.html:10
+msgid "Modifier l'achat"
+msgstr "Edit Purchase"
+
+#: app/templates/card_purchases/edit.html:50
+msgid "Montant (€)"
+msgstr "Amount (€)"
+
+#: app/templates/card_purchases/edit.html:64
+#: app/templates/card_purchases/validate.html:77
+msgid "-- Aucune --"
+msgstr "-- None --"
+
+#: app/templates/card_purchases/edit.html:109
+msgid "Un ticket est déjà attaché :"
+msgstr "A receipt is already attached:"
+
+#: app/templates/card_purchases/edit.html:119
+msgid "Aucun ticket attaché"
+msgstr "No receipt attached"
+
+#: app/templates/card_purchases/edit.html:137
+msgid "Le choix d'un nouveau fichier remplacera le ticket actuel."
+msgstr "Choosing a new file will replace the current receipt."
+
+#: app/templates/card_purchases/edit.html:139
+msgid "Formats acceptés : JPG, PNG, PDF (max 5 Mo)"
+msgstr "Accepted formats: JPG, PNG, PDF (max 5 MB)"
+
+#: app/templates/card_purchases/list.html:72
+msgid "Basculer le menu"
+msgstr "Toggle menu"
+
+#: app/templates/card_purchases/list.html:106
+msgid "Toutes les catégories"
+msgstr "All categories"
+
+#: app/templates/card_purchases/list.html:140
+msgid "Filtrer"
+msgstr "Filter"
+
+#: app/templates/card_purchases/list.html:157
+#: app/templates/card_purchases/validate.html:31
+#: app/templates/credit_types/list.html:61 app/templates/credits/list.html:67
+#: app/templates/providers/list.html:45 app/templates/revenues/add.html:39
+#: app/templates/revenues/detail.html:49 app/templates/revenues/edit.html:40
+#: app/templates/revenues/list.html:38 app/templates/revenues/list.html:67
+#: app/templates/revenues/list.html:218 app/templates/revenues/list.html:260
+#: app/templates/revenues/list.html:261
+msgid "Type"
+msgstr "Type"
+
+#: app/templates/card_purchases/list.html:172
+msgid "Modifié manuellement"
+msgstr "Manually edited"
+
+#: app/templates/card_purchases/list.html:241
+msgid "Aucun achat enregistré."
+msgstr "No card purchases recorded."
+
+#: app/templates/card_purchases/list.html:248
+#: app/templates/subscriptions/list.html:185
+msgid "Total :"
+msgstr "Total:"
+
+#: app/templates/card_purchases/list.html:295
+#: app/templates/card_purchases/list.html:542
+msgid "Répartition des achats CB actifs"
+msgstr "Active Card Purchases Distribution"
+
+#: app/templates/card_purchases/list.html:303
+msgid "Par marchand"
+msgstr "By Merchant"
+
+#: app/templates/card_purchases/list.html:307
+msgid "Par catégorie"
+msgstr "By Category"
+
+#: app/templates/card_purchases/list.html:547
+#: app/templates/subscriptions/list.html:488
+msgid "Généré le"
+msgstr "Generated on"
+
+#: app/templates/card_purchases/upload.html:3
+msgid "Télécharger des tickets CB"
+msgstr "Upload Card Receipts"
+
+#: app/templates/card_purchases/upload.html:10
+msgid "Scanner des tickets avec OCR"
+msgstr "Scan Receipts with OCR"
+
+#: app/templates/card_purchases/upload.html:36
+msgid "Sélectionner des tickets (jusqu'à 10)"
+msgstr "Select receipts (up to 10)"
+
+#: app/templates/card_purchases/upload.html:52
+msgid "Formats acceptés : JPG, PNG, PDF. Maximum 5 Mo par fichier."
+msgstr "Accepted formats: JPG, PNG, PDF. Maximum 5 MB per file."
+
+#: app/templates/card_purchases/upload.html:58
+msgid "Comment ça fonctionne ?"
+msgstr "How does it work?"
+
+#: app/templates/card_purchases/upload.html:59
+msgid "1. Sélectionnez vos photos/scans de tickets de caisse"
+msgstr "1. Select your photos/scans of card receipts"
+
+#: app/templates/card_purchases/upload.html:60
+msgid ""
+"2. Le système extraira automatiquement les données (date, montant, "
+"marchand)"
+msgstr "2. The system will automatically extract data (date, amount, merchant)"
+
+#: app/templates/card_purchases/upload.html:61
+msgid "3. Vous pourrez vérifier et corriger les données avant validation"
+msgstr "3. You can review and correct the data before validation"
+
+#: app/templates/card_purchases/upload.html:62
+msgid "4. Les achats seront ajoutés à votre solde"
+msgstr "4. Purchases will be added to your balance"
+
+#: app/templates/card_purchases/upload.html:68
+msgid "Traiter avec OCR"
+msgstr "Process with OCR"
+
+#: app/templates/card_purchases/upload.html:74
+msgid "Traitement OCR en cours..."
+msgstr "OCR processing in progress..."
+
+#: app/templates/card_purchases/upload.html:76
+msgid "Cela peut prendre quelques secondes par fichier. Veuillez patienter."
+msgstr "This may take a few seconds per file. Please wait."
+
+#: app/templates/card_purchases/upload.html:89
+msgid "fichier(s) sélectionné(s)"
+msgstr "file(s) selected"
+
+#: app/templates/card_purchases/upload.html:90
+msgid "Maximum 10 fichiers. Seuls les 10 premiers seront traités."
+msgstr "Maximum 10 files. Only the first 10 will be processed."
+
+# Validate purchases translation
+#: app/templates/card_purchases/validate.html:3
+msgid "Valider les achats"
+msgstr "Validate Purchases"
+
+#: app/templates/card_purchases/validate.html:8
+msgid "Vérifier et valider les achats"
+msgstr "Review and Validate Purchases"
+
+#: app/templates/card_purchases/validate.html:13
+msgid ""
+"Vérifiez les données extraites automatiquement. Vous pouvez les modifier "
+"avant d'enregistrer."
+msgstr "Review the automatically extracted data. You can modify it before saving."
+
+#: app/templates/card_purchases/validate.html:32
+msgid "Confiance OCR"
+msgstr "OCR Confidence"
+
+#: app/templates/card_purchases/validate.html:109
+msgid "Notes..."
+msgstr "Notes..."
+
+#: app/templates/card_purchases/validate.html:132
+#: app/templates/card_purchases/validate.html:146
+msgid "achat(s) sélectionné(s)"
+msgstr "purchase(s) selected"
+
+#: app/templates/card_purchases/validate.html:135
+msgid "Enregistrer les achats"
+msgstr "Save Purchases"
 
 #: app/templates/categories/add.html:22
 msgid "Ex: Abonnements Professionnels, Services Cloud..."
@@ -3677,17 +4622,6 @@ msgstr "Leave empty to keep current logo"
 msgid "catégories personnalisées utilisées"
 msgstr "custom categories used"
 
-#: app/templates/categories/list.html:29
-#: app/templates/subscriptions/list.html:12
-msgid "Exporter en Excel"
-msgstr "Export to Excel"
-
-#: app/templates/categories/list.html:32 app/templates/credits/list.html:236
-#: app/templates/subscriptions/list.html:15
-#: app/templates/subscriptions/list.html:310
-msgid "Exporter en PDF"
-msgstr "Export to PDF"
-
 #: app/templates/categories/list.html:42
 #: app/templates/subscriptions/list.html:26
 msgid "Limite atteinte (5/5)"
@@ -3698,27 +4632,25 @@ msgid "Limite atteinte"
 msgstr "Limit reached"
 
 #: app/templates/categories/list.html:57
-#, fuzzy
 msgid ""
 "Vous avez atteint la limite de 5 catégories personnalisées pour le plan "
 "gratuit. Passez au plan Premium pour créer un nombre illimité de "
 "catégories."
 msgstr ""
-"You have reached the limit of 5 custom services for the free plan "
-"(%(count)s/5). Upgrade to Premium to create unlimited services."
+"You have reached the limit of 5 custom categories for the free plan. "
+"Upgrade to Premium to create unlimited categories."
 
 #: app/templates/categories/list.html:71
 msgid "Catégories personnalisées"
 msgstr "Custom categories"
 
 #: app/templates/categories/list.html:73
-#, fuzzy
 msgid ""
 "Vous pouvez créer jusqu'à 5 catégories personnalisées avec le plan "
 "gratuit. Passez à Premium pour un nombre illimité."
 msgstr ""
-"You have reached the limit of 5 custom services for the free plan "
-"(%(count)s/5). Upgrade to Premium to create unlimited services."
+"You can create up to 5 custom categories with the free plan. Upgrade to "
+"Premium for unlimited."
 
 #: app/templates/categories/list.html:78
 msgid "Découvrir Premium"
@@ -3765,19 +4697,9 @@ msgstr "Are you sure you want to delete this category?"
 msgid "Plan Premium requis pour gérer cette catégorie"
 msgstr "Premium plan required to manage this category"
 
-#: app/templates/categories/list.html:174
-#: app/templates/categories/list.html:325
-#: app/templates/subscriptions/add.html:87
-#: app/templates/subscriptions/edit.html:86
-#: app/templates/subscriptions/list.html:48
-#: app/templates/subscriptions/list.html:78
-msgid "Catégorie"
-msgstr "Category"
-
 #: app/templates/categories/list.html:242
-#, fuzzy
 msgid "Premium requis"
-msgstr "Monthly Premium"
+msgstr "Premium required"
 
 #: app/templates/categories/list.html:301
 #: app/templates/categories/list.html:368
@@ -3817,7 +4739,10 @@ msgstr "Select a bank"
 #: app/templates/checkbooks/edit_check.html:72
 #: app/templates/installments/add.html:166
 #: app/templates/installments/edit.html:104 app/templates/providers/add.html:53
-#: app/templates/providers/edit.html:53
+#: app/templates/providers/edit.html:53 app/templates/reminders/add.html:81
+#: app/templates/reminders/add_document.html:61
+#: app/templates/reminders/edit.html:84
+#: app/templates/reminders/edit_document.html:68
 msgid "Enregistrer"
 msgstr "Save"
 
@@ -3858,14 +4783,6 @@ msgstr "Used"
 msgid "Total montants"
 msgstr "Total Amounts"
 
-#: app/templates/checkbooks/detail.html:75
-#: app/templates/checkbooks/list.html:23 app/templates/credits/list.html:32
-#: app/templates/credits/list.html:40 app/templates/employers/list.html:32
-#: app/templates/providers/list.html:21 app/templates/revenues/list.html:32
-#: app/templates/revenues/list.html:40 app/templates/subscriptions/list.html:42
-msgid "Tous"
-msgstr "All"
-
 #: app/templates/checkbooks/detail.html:87
 #: app/templates/checkbooks/list.html:50
 msgid "Annulés"
@@ -3879,23 +4796,10 @@ msgstr "Issued Checks"
 msgid "N° Chèque"
 msgstr "Check #"
 
-#: app/templates/checkbooks/detail.html:105
-msgid "Date"
-msgstr "Date"
-
 #: app/templates/checkbooks/detail.html:106
 #: app/templates/checkbooks/edit_check.html:49
 msgid "Bénéficiaire"
 msgstr "Payee"
-
-#: app/templates/checkbooks/detail.html:108
-#: app/templates/checkbooks/edit_check.html:33
-#: app/templates/revenues/add.html:56 app/templates/revenues/detail.html:74
-#: app/templates/revenues/edit.html:57 app/templates/revenues/list.html:68
-#: app/templates/subscriptions/add.html:60
-#: app/templates/subscriptions/edit.html:60
-msgid "Montant"
-msgstr "Amount"
 
 #: app/templates/checkbooks/detail.html:125
 msgid "Disponible"
@@ -3904,11 +4808,6 @@ msgstr "Available"
 #: app/templates/checkbooks/detail.html:127
 msgid "Utilisé"
 msgstr "Used"
-
-#: app/templates/checkbooks/detail.html:129
-#: app/templates/checkbooks/edit_check.html:63
-msgid "Annulé"
-msgstr "Cancelled"
 
 #: app/templates/checkbooks/detail.html:139
 msgid "Êtes-vous sûr de vouloir supprimer ce chèque ?"
@@ -3926,10 +4825,6 @@ msgstr "Edit Check"
 #: app/templates/checkbooks/edit_check.html:11
 msgid "Modifier le chèque"
 msgstr "Edit Check"
-
-#: app/templates/checkbooks/edit_check.html:12
-msgid "Chèque"
-msgstr "Check"
 
 #: app/templates/checkbooks/edit_check.html:23
 msgid "Le numéro du chèque ne peut pas être modifié :"
@@ -3993,7 +4888,9 @@ msgstr "Finished"
 #: app/templates/credit_types/list.html:119
 #: app/templates/credit_types/list.html:179
 #: app/templates/credits/detail.html:213 app/templates/credits/list.html:128
-#: app/templates/employers/list.html:189 app/templates/revenues/detail.html:63
+#: app/templates/employers/list.html:189
+#: app/templates/reminders/detail.html:189 app/templates/reminders/list.html:32
+#: app/templates/reminders/list.html:115 app/templates/revenues/detail.html:63
 #: app/templates/revenues/list.html:33 app/templates/revenues/list.html:102
 #: app/templates/subscriptions/detail.html:67
 #: app/templates/subscriptions/list.html:152
@@ -4087,15 +4984,6 @@ msgstr "Default types"
 msgid "Global"
 msgstr "Global"
 
-#: app/templates/credit_types/list.html:61 app/templates/credits/list.html:67
-#: app/templates/providers/list.html:45 app/templates/revenues/add.html:39
-#: app/templates/revenues/detail.html:49 app/templates/revenues/edit.html:40
-#: app/templates/revenues/list.html:38 app/templates/revenues/list.html:67
-#: app/templates/revenues/list.html:218 app/templates/revenues/list.html:260
-#: app/templates/revenues/list.html:261
-msgid "Type"
-msgstr "Type"
-
 #: app/templates/credit_types/list.html:91
 msgid "Aucun type par défaut disponible."
 msgstr "No default types available."
@@ -4152,19 +5040,16 @@ msgid "Type de crédit"
 msgstr "Credit type"
 
 #: app/templates/credits/add.html:29 app/templates/credits/edit.html:30
-#, fuzzy
 msgid "Aucun type"
-msgstr "-- No type --"
+msgstr "No type"
 
 #: app/templates/credits/add.html:33 app/templates/credits/edit.html:34
-#, fuzzy
 msgid "Personnalisé"
-msgstr "and personalized"
+msgstr "Custom"
 
 #: app/templates/credits/add.html:38 app/templates/credits/edit.html:39
-#, fuzzy
 msgid "Gérer les types"
-msgstr "All types"
+msgstr "Manage types"
 
 #: app/templates/credits/add.html:59 app/templates/credits/edit.html:60
 msgid "Informations complémentaires sur le crédit"
@@ -4218,14 +5103,12 @@ msgid "Date prévue de fin de remboursement"
 msgstr "Expected repayment end date"
 
 #: app/templates/credits/add.html:134
-#, fuzzy
 msgid "Ajouter le crédit"
-msgstr "Add Document"
+msgstr "Add Credit"
 
 #: app/templates/credits/add.html:237
-#, fuzzy
 msgid "Veuillez entrer une mensualité valide"
-msgstr "Please enter a valid amount"
+msgstr "Please enter a valid monthly payment"
 
 #: app/templates/credits/add.html:250 app/templates/installments/add.html:261
 #: app/templates/revenues/add.html:177 app/templates/subscriptions/add.html:343
@@ -4242,9 +5125,8 @@ msgid "Pour le classement"
 msgstr "For classification"
 
 #: app/templates/credits/add_document.html:67
-#, fuzzy
 msgid "Pour les relevés mensuels"
-msgstr "Add Revenue"
+msgstr "For monthly statements"
 
 #: app/templates/credits/detail.html:116 app/templates/credits/list.html:69
 #: app/templates/installments/add.html:62
@@ -4272,31 +5154,28 @@ msgid "Progression du remboursement"
 msgstr ""
 
 #: app/templates/credits/detail.html:163
-#, fuzzy
 msgid "Payé :"
-msgstr "Total paid:"
+msgstr "Paid:"
 
 #: app/templates/credits/detail.html:167
-#, fuzzy
 msgid "Restant :"
-msgstr "Remaining"
+msgstr "Remaining:"
 
 #: app/templates/credits/detail.html:185
-#, fuzzy
 msgid "Type de crédit :"
-msgstr "Credit types"
+msgstr "Credit type:"
 
 #: app/templates/credits/detail.html:197
 msgid "Banque :"
 msgstr "Bank:"
 
 #: app/templates/credits/detail.html:206 app/templates/credits/detail.html:245
-#, fuzzy
 msgid "Non renseignée"
-msgstr "No contact information provided"
+msgstr "Not specified"
 
 #: app/templates/credits/detail.html:211
 #: app/templates/installments/detail.html:68
+#: app/templates/reminders/detail.html:187
 #: app/templates/subscriptions/detail.html:64
 msgid "Statut :"
 msgstr "Status:"
@@ -4304,12 +5183,6 @@ msgstr "Status:"
 #: app/templates/credits/detail.html:215 app/templates/credits/list.html:130
 msgid "Clôturé"
 msgstr ""
-
-#: app/templates/credits/detail.html:221
-#: app/templates/installments/detail.html:53
-#, fuzzy
-msgid "Description :"
-msgstr "Description"
 
 #: app/templates/credits/detail.html:227
 msgid "Taux d'intérêt :"
@@ -4340,35 +5213,33 @@ msgid "Marquer comme clôturé"
 msgstr "Mark as closed"
 
 #: app/templates/credits/detail.html:293
-#, fuzzy
 msgid "Réactiver"
-msgstr "Enable"
+msgstr "Reactivate"
 
 #: app/templates/credits/detail.html:298 app/templates/credits/list.html:149
-#, fuzzy
 msgid "Êtes-vous sûr de vouloir supprimer ce crédit ?"
-msgstr "Are you sure you want to delete this checkbook?"
+msgstr "Are you sure you want to delete this credit?"
 
 #: app/templates/credits/detail.html:445
 msgid "Aucun document ajouté pour ce crédit."
 msgstr "No documents added for this credit."
 
 #: app/templates/credits/edit.html:3
-#, fuzzy
 msgid "Modifier un crédit"
-msgstr "Edit Provider"
+msgstr "Edit Credit"
 
 #: app/templates/credits/edit.html:10
 msgid "Modifier le crédit"
 msgstr "Edit credit"
 
 #: app/templates/credits/edit_document.html:73
-#, fuzzy
+#: app/templates/reminders/edit_document.html:52
 msgid "Fichier actuel :"
-msgstr "File *"
+msgstr "Current file:"
 
 #: app/templates/credits/list.html:15 app/templates/installments/list.html:15
-#: app/templates/revenues/list.html:15 app/templates/subscriptions/list.html:25
+#: app/templates/reminders/list.html:15 app/templates/revenues/list.html:15
+#: app/templates/subscriptions/list.html:25
 msgid "Limite atteinte pour le plan gratuit"
 msgstr "Limit reached for free plan"
 
@@ -4378,7 +5249,8 @@ msgid "Limite atteinte (1/1)"
 msgstr "Limit reached (1/1)"
 
 #: app/templates/credits/list.html:19 app/templates/installments/list.html:19
-#: app/templates/revenues/list.html:19 app/templates/subscriptions/list.html:29
+#: app/templates/reminders/list.html:19 app/templates/revenues/list.html:19
+#: app/templates/subscriptions/list.html:29
 msgid "Passer Premium"
 msgstr "Upgrade to Premium"
 
@@ -4393,9 +5265,8 @@ msgid "Progression"
 msgstr ""
 
 #: app/templates/credits/list.html:144
-#, fuzzy
 msgid "Activer/Clôturer"
-msgstr "Enable/Disable"
+msgstr "Activate/Close"
 
 #: app/templates/credits/list.html:161 app/templates/revenues/list.html:135
 msgid "Total mensuel :"
@@ -4406,14 +5277,12 @@ msgid "Répartition des crédits actifs par type"
 msgstr "Distribution of active credits by type"
 
 #: app/templates/credits/list.html:253
-#, fuzzy
 msgid "Aucun crédit"
-msgstr "No Checkbooks"
+msgstr "No Credits"
 
 #: app/templates/credits/list.html:254
-#, fuzzy
 msgid "Commencez par ajouter votre premier crédit"
-msgstr "Start by adding your first provider"
+msgstr "Start by adding your first credit"
 
 #: app/templates/employers/add.html:3 app/templates/employers/add.html:10
 #: app/templates/employers/list.html:20 app/templates/employers/list.html:256
@@ -4570,10 +5439,12 @@ msgid "Telecharger"
 msgstr "Download"
 
 #: app/templates/employers/detail.html:365
+#: app/templates/reminders/detail.html:419
 msgid "Supprimer ce document ?"
 msgstr "Delete this document?"
 
 #: app/templates/employers/detail.html:378
+#: app/templates/reminders/detail.html:432
 msgid "Aucun document"
 msgstr "No documents"
 
@@ -4681,13 +5552,6 @@ msgstr "e.g.: Darty Oven"
 #: app/templates/installments/add.html:28
 msgid "Description optionnelle"
 msgstr "Optional description"
-
-#: app/templates/installments/add.html:33
-#: app/templates/installments/edit.html:31
-#: app/templates/installments/list.html:71
-#: app/templates/installments/list.html:170
-msgid "Marchand"
-msgstr "Merchant"
 
 #: app/templates/installments/add.html:35
 msgid "Ex: Darty, Fnac, Amazon..."
@@ -4902,10 +5766,6 @@ msgstr "Are you sure you want to delete this payment?"
 msgid "Article :"
 msgstr "Item:"
 
-#: app/templates/installments/detail.html:42
-msgid "Marchand :"
-msgstr "Merchant:"
-
 #: app/templates/installments/detail.html:60
 msgid "Fournisseur de paiement :"
 msgstr "Payment provider:"
@@ -5006,10 +5866,12 @@ msgstr "You have no installment payments in progress."
 
 #: app/templates/providers/add.html:3 app/templates/providers/add.html:15
 #: app/templates/providers/list.html:10 app/templates/providers/list.html:137
+#: app/templates/reminders/add.html:33 app/templates/reminders/edit.html:35
 msgid "Ajouter un prestataire"
 msgstr "Add a Provider"
 
 #: app/templates/providers/add.html:9 app/templates/providers/edit.html:9
+#: app/templates/reminders/add.html:9
 msgid "Retour à la liste"
 msgstr "Back to List"
 
@@ -5062,6 +5924,191 @@ msgstr "No Providers"
 #: app/templates/providers/list.html:135
 msgid "Commencez par ajouter votre premier prestataire"
 msgstr "Start by adding your first provider"
+
+#: app/templates/reminders/add.html:3 app/templates/reminders/add.html:15
+#: app/templates/reminders/list.html:12 app/templates/reminders/list.html:207
+msgid "Ajouter un rappel"
+msgstr "Add a Reminder"
+
+#: app/templates/reminders/add.html:21 app/templates/reminders/edit.html:21
+msgid "Nom du service"
+msgstr "Service Name"
+
+#: app/templates/reminders/add.html:22
+msgid "Ex : Entretien chaudière"
+msgstr "E.g.: Boiler maintenance"
+
+# Providers Page - Templates
+#: app/templates/reminders/add.html:25 app/templates/reminders/edit.html:25
+#: app/templates/reminders/list.html:38 app/templates/reminders/list.html:67
+msgid "Prestataire"
+msgstr "Provider"
+
+#: app/templates/reminders/add.html:28 app/templates/reminders/edit.html:28
+msgid "Sélectionner un prestataire"
+msgstr "Select a provider"
+
+#: app/templates/reminders/add.html:61 app/templates/reminders/detail.html:131
+#: app/templates/reminders/edit.html:63 app/templates/reminders/list.html:70
+msgid "Coût estimé"
+msgstr "Estimated cost"
+
+#: app/templates/reminders/add.html:65 app/templates/reminders/edit.html:68
+#: app/templates/reminders/list.html:69
+msgid "Fréquence"
+msgstr "Frequency"
+
+#: app/templates/reminders/add.html:76
+msgid "Notes, détails..."
+msgstr "Notes, details..."
+
+#: app/templates/reminders/add_document.html:9
+#: app/templates/reminders/edit_document.html:9
+msgid "Retour au rappel"
+msgstr "Back to reminder"
+
+#: app/templates/reminders/add_document.html:18
+#: app/templates/reminders/edit_document.html:18
+msgid "Pour :"
+msgstr "For:"
+
+#: app/templates/reminders/add_document.html:56
+msgid ""
+"Formats acceptés : PDF, images (JPG, PNG), documents Office. Taille max :"
+" 10 Mo"
+msgstr ""
+"Accepted formats: PDF, images (JPG, PNG), Office documents. Max size: 10 "
+"MB"
+
+#: app/templates/reminders/detail.html:119
+msgid "Date du rappel"
+msgstr "Reminder date"
+
+#: app/templates/reminders/detail.html:122 app/templates/reminders/list.html:99
+msgid "Semestriel"
+msgstr "Biannual"
+
+#: app/templates/reminders/detail.html:122
+#: app/templates/reminders/list.html:101
+msgid "Biennal"
+msgstr "Biennial"
+
+#: app/templates/reminders/detail.html:122
+#: app/templates/reminders/list.html:103
+msgid "Une fois"
+msgstr "One-time"
+
+#: app/templates/reminders/detail.html:139
+msgid "Budget prévisionnel"
+msgstr "Estimated budget"
+
+#: app/templates/reminders/detail.html:147
+#: app/templates/reminders/detail.html:207 app/templates/reminders/list.html:72
+msgid "Rendez-vous"
+msgstr "Appointment"
+
+#: app/templates/reminders/detail.html:151
+#: app/templates/reminders/detail.html:212
+#: app/templates/reminders/list.html:123
+msgid "Prochain rendez-vous"
+msgstr "Next appointment"
+
+#: app/templates/reminders/detail.html:153
+#: app/templates/reminders/detail.html:214
+#: app/templates/reminders/list.html:123
+msgid "le"
+msgstr "on"
+
+# Providers Page - Templates
+#: app/templates/reminders/detail.html:175
+msgid "Prestataire :"
+msgstr "Provider:"
+
+#: app/templates/reminders/detail.html:191 app/templates/reminders/list.html:33
+#: app/templates/reminders/list.html:117
+msgid "Archivé"
+msgstr "Archived"
+
+#: app/templates/reminders/detail.html:219
+msgid "Annuler le rendez-vous"
+msgstr "Cancel the appointment"
+
+#: app/templates/reminders/detail.html:225
+msgid "Date du rendez-vous :"
+msgstr "Appointment date:"
+
+#: app/templates/reminders/detail.html:229
+msgid "Marquer le rendez-vous comme réservé"
+msgstr "Mark appointment as booked"
+
+#: app/templates/reminders/detail.html:269
+msgid ""
+"Archiver ce rappel ? Un nouveau rappel sera automatiquement créé s'il est"
+" récurrent."
+msgstr ""
+"Archive this reminder? A new reminder will be automatically created if it"
+" is recurring."
+
+#: app/templates/reminders/detail.html:271
+#: app/templates/reminders/list.html:144
+msgid "Archiver"
+msgstr "Archive"
+
+#: app/templates/reminders/detail.html:276
+#: app/templates/reminders/list.html:150
+msgid "Désarchiver ce rappel ?"
+msgstr "Unarchive this reminder?"
+
+#: app/templates/reminders/detail.html:278
+#: app/templates/reminders/list.html:151
+msgid "Désarchiver"
+msgstr "Unarchive"
+
+#: app/templates/reminders/detail.html:283
+#: app/templates/reminders/list.html:157
+msgid "Êtes-vous sûr de vouloir supprimer ce rappel ?"
+msgstr "Are you sure you want to delete this reminder?"
+
+#: app/templates/reminders/detail.html:381
+msgid "Févr."
+msgstr "Feb."
+
+#: app/templates/reminders/detail.html:437
+msgid "Ajoutez vos factures, contrats et autres documents liés à ce service."
+msgstr "Add your invoices, contracts and other documents related to this service."
+
+#: app/templates/reminders/edit.html:3 app/templates/reminders/edit.html:15
+msgid "Modifier le rappel"
+msgstr "Edit Reminder"
+
+#: app/templates/reminders/edit.html:9
+msgid "Retour au détail"
+msgstr "Back to details"
+
+#: app/templates/reminders/edit_document.html:63
+msgid ""
+"Laissez vide pour conserver le fichier actuel. Formats acceptés : PDF, "
+"images, documents Office. Taille max : 10 Mo"
+msgstr ""
+"Leave empty to keep current file. Accepted formats: PDF, images, Office "
+"documents. Max size: 10 MB"
+
+#: app/templates/reminders/list.html:16
+msgid "Limite atteinte (3/3)"
+msgstr "Limit reached (3/3)"
+
+#: app/templates/reminders/list.html:66 app/templates/services/list.html:170
+#: app/templates/services/list.html:330
+msgid "Service"
+msgstr "Service"
+
+#: app/templates/reminders/list.html:143
+msgid "Archiver ce rappel ?"
+msgstr "Archive this reminder?"
+
+#: app/templates/reminders/list.html:205
+msgid "Commencez par ajouter votre premier rappel"
+msgstr "Start by adding your first reminder"
 
 #: app/templates/revenues/add.html:3 app/templates/revenues/add.html:10
 #: app/templates/revenues/list.html:12 app/templates/revenues/list.html:231
@@ -5171,14 +6218,12 @@ msgstr "Service description"
 
 #: app/templates/services/add.html:31 app/templates/services/edit.html:31
 #: app/templates/services/list.html:172 app/templates/services/list.html:332
-#, fuzzy
 msgid "Category"
-msgstr "Categories"
+msgstr "Category"
 
 #: app/templates/services/add.html:33 app/templates/services/edit.html:33
-#, fuzzy
 msgid "No category"
-msgstr "Contact us"
+msgstr "No category"
 
 #: app/templates/services/add.html:41 app/templates/services/edit.html:43
 #: app/templates/services/list.html:154
@@ -5208,9 +6253,8 @@ msgid "Add custom plan to %(name)s"
 msgstr "Add custom plan to %(name)s"
 
 #: app/templates/services/add_plan.html:19
-#, fuzzy
 msgid "Info:"
-msgstr "Name:"
+msgstr "Info:"
 
 #: app/templates/services/add_plan.html:19
 msgid ""
@@ -5238,16 +6282,14 @@ msgstr "Features of this plan"
 #: app/templates/services/add_plan.html:38
 #: app/templates/services/edit_plan.html:33
 #: app/templates/services/plans.html:114 app/templates/services/plans.html:195
-#, fuzzy
 msgid "Amount"
-msgstr "Aug."
+msgstr "Amount"
 
 #: app/templates/services/add_plan.html:51
 #: app/templates/services/edit_plan.html:46
 #: app/templates/services/plans.html:115 app/templates/services/plans.html:196
-#, fuzzy
 msgid "Frequency"
-msgstr "Freelance"
+msgstr "Frequency"
 
 #: app/templates/services/add_plan.html:53
 #: app/templates/services/edit_plan.html:48
@@ -5270,9 +6312,8 @@ msgid "Yearly"
 msgstr "Yearly"
 
 #: app/templates/services/add_plan.html:63
-#, fuzzy
 msgid "Add plan"
-msgstr "Plan"
+msgstr "Add plan"
 
 #: app/templates/services/edit.html:3 app/templates/services/edit.html:10
 #, python-format
@@ -5292,9 +6333,8 @@ msgid "Save changes"
 msgstr "Save changes"
 
 #: app/templates/services/edit_plan.html:3
-#, fuzzy
 msgid "Edit plan"
-msgstr "Plan"
+msgstr "Edit plan"
 
 #: app/templates/services/edit_plan.html:10
 #, python-format
@@ -5315,9 +6355,8 @@ msgid "Export to PDF"
 msgstr "Export to PDF"
 
 #: app/templates/services/list.html:42
-#, fuzzy
 msgid "Limit reached (5/5)"
-msgstr "Limit reached (1/1)"
+msgstr "Limit reached (5/5)"
 
 #: app/templates/services/list.html:43 app/templates/services/list.html:55
 #: app/templates/services/plans.html:39 app/templates/services/plans.html:50
@@ -5333,14 +6372,12 @@ msgstr ""
 "Upgrade to Premium to create unlimited services."
 
 #: app/templates/services/list.html:62 app/templates/services/plans.html:57
-#, fuzzy
 msgid "Upgrade to Premium"
 msgstr "Upgrade to Premium"
 
 #: app/templates/services/list.html:71
-#, fuzzy
 msgid "Custom services"
-msgstr "Services"
+msgstr "Custom services"
 
 #: app/templates/services/list.html:73
 msgid ""
@@ -5351,31 +6388,26 @@ msgstr ""
 "Premium for unlimited."
 
 #: app/templates/services/list.html:78
-#, fuzzy
 msgid "Discover Premium"
-msgstr "Upgrade to Premium"
+msgstr "Discover Premium"
 
 #: app/templates/services/list.html:90
-#, fuzzy
 msgid "My custom services"
-msgstr "Services"
+msgstr "My custom services"
 
 #: app/templates/services/list.html:113 app/templates/services/list.html:216
-#, fuzzy
 msgid "Disabled"
-msgstr "Available"
+msgstr "Disabled"
 
 #: app/templates/services/list.html:117 app/templates/services/list.html:209
 #: app/templates/services/list.html:278 app/templates/services/list.html:368
-#, fuzzy
 msgid "plan"
-msgstr "Plan"
+msgstr "plan"
 
 #: app/templates/services/list.html:117 app/templates/services/list.html:209
 #: app/templates/services/list.html:278 app/templates/services/list.html:368
-#, fuzzy
 msgid "plans"
-msgstr "Plan"
+msgstr "plans"
 
 #: app/templates/services/list.html:138 app/templates/services/list.html:222
 #: app/templates/services/list.html:298 app/templates/services/list.html:313
@@ -5394,34 +6426,25 @@ msgstr "Are you sure you want to delete this service?"
 
 #: app/templates/services/list.html:147 app/templates/services/list.html:236
 #: app/templates/services/plans.html:176 app/templates/services/plans.html:225
-#, fuzzy
 msgid "Delete"
-msgstr "Date"
+msgstr "Delete"
 
 #: app/templates/services/list.html:153 app/templates/services/list.html:226
 msgid "Visit website"
 msgstr "Visit website"
 
-#: app/templates/services/list.html:170 app/templates/services/list.html:330
-#, fuzzy
-msgid "Service"
-msgstr "Services"
-
 #: app/templates/services/list.html:173 app/templates/services/list.html:314
 #: app/templates/services/list.html:333 app/templates/services/plans.html:3
-#, fuzzy
 msgid "Plans"
-msgstr "Plan"
+msgstr "Plans"
 
 #: app/templates/services/list.html:174
-#, fuzzy
 msgid "Status"
 msgstr "Status"
 
 #: app/templates/services/list.html:256
-#, fuzzy
 msgid "Available services"
-msgstr "Services"
+msgstr "Available services"
 
 #: app/templates/services/list.html:302 app/templates/services/list.html:378
 msgid "Customize this service"
@@ -5453,9 +6476,8 @@ msgid "Add custom plan"
 msgstr "Add custom plan"
 
 #: app/templates/services/plans.html:38
-#, fuzzy
 msgid "Limit reached (10/10)"
-msgstr "Limit reached (1/1)"
+msgstr "Limit reached (10/10)"
 
 #: app/templates/services/plans.html:52
 msgid ""
@@ -5551,9 +6573,8 @@ msgid "Aucune catégorie"
 msgstr "No category"
 
 #: app/templates/subscriptions/add.html:105
-#, fuzzy
 msgid "Info :"
-msgstr "Name:"
+msgstr "Info:"
 
 #: app/templates/subscriptions/add.html:105
 msgid ""
@@ -5572,39 +6593,20 @@ msgid "Nom :"
 msgstr "Name:"
 
 #: app/templates/subscriptions/detail.html:28
-#, fuzzy
 msgid "Service :"
-msgstr "Services"
+msgstr "Service:"
 
 #: app/templates/subscriptions/detail.html:38
 msgid "Formule :"
 msgstr "Plan:"
-
-#: app/templates/subscriptions/detail.html:52
-msgid "Catégorie :"
-msgstr "Category:"
-
-#: app/templates/subscriptions/detail.html:59
-msgid "Non catégorisé"
-msgstr "Uncategorized"
 
 #: app/templates/subscriptions/detail.html:74
 msgid "Renouvellement :"
 msgstr "Renewal:"
 
 #: app/templates/subscriptions/detail.html:77
-#, fuzzy
 msgid "Automatique"
-msgstr "Martinique"
-
-#: app/templates/subscriptions/detail.html:79
-#, fuzzy
-msgid "Manuel"
-msgstr "Annual"
-
-#: app/templates/subscriptions/detail.html:90
-msgid "Montant :"
-msgstr "Amount:"
+msgstr "Automatic"
 
 #: app/templates/subscriptions/detail.html:94
 msgid "Périodicité :"
@@ -5620,32 +6622,26 @@ msgid "Êtes-vous sûr de vouloir supprimer cet abonnement ?"
 msgstr "Are you sure you want to delete this subscription?"
 
 #: app/templates/subscriptions/detail.html:144
-#, fuzzy
 msgid "Liens utiles"
-msgstr "Clients"
+msgstr "Useful links"
 
 #: app/templates/subscriptions/detail.html:148
-#, fuzzy, python-format
+#, python-format
 msgid "Site web de %(name)s"
-msgstr "Website:"
+msgstr "%(name)s website"
 
 #: app/templates/subscriptions/detail.html:153
 msgid "Site web de la catégorie"
 msgstr "Category website"
 
 #: app/templates/subscriptions/edit.html:3
-#, fuzzy, python-format
+#, python-format
 msgid "Modifier %(name)s"
-msgstr "Edit"
+msgstr "Edit %(name)s"
 
 #: app/templates/subscriptions/edit.html:10
 msgid "Modifier l'abonnement"
 msgstr "Edit subscription"
-
-#: app/templates/subscriptions/list.html:185
-#, fuzzy
-msgid "Total :"
-msgstr "Total"
 
 #: app/templates/subscriptions/list.html:309
 #: app/templates/subscriptions/list.html:483
@@ -5668,911 +6664,31 @@ msgstr "No subscriptions"
 msgid "Commencez par ajouter votre premier abonnement"
 msgstr "Start by adding your first subscription"
 
-#: app/templates/subscriptions/list.html:488
-#, fuzzy
-msgid "Généré le"
-msgstr "Created on"
-
 #: app/templates/subscriptions/list.html:501
 msgid "Erreur lors de la génération du PDF"
 msgstr "Error generating PDF"
 
-# Dashboard translations
-#: app/templates/dashboard.html:8
-msgid "Tableau de bord de"
-msgstr "Dashboard of"
-
-#: app/templates/dashboard.html:19
-msgid "Solde"
-msgstr "Balance"
-
-#: app/templates/dashboard.html:37
-msgid "Revenus actuels"
-msgstr "Current income"
-
-#: app/templates/dashboard.html:55
-msgid "Abonnements actifs"
-msgstr "Active subscriptions"
-
-#: app/templates/dashboard.html:73
-msgid "Crédits en cours"
-msgstr "Active credits"
-
-#: app/templates/dashboard.html:92
-msgid "Revenus : Prochains versements"
-msgstr "Income: Upcoming payments"
-
-#: app/templates/dashboard.html:100
-msgid "Exporter en Excel"
-msgstr "Export to Excel"
-
-#: app/templates/dashboard.html:103
-msgid "Exporter en PDF"
-msgstr "Export to PDF"
-
-#: app/templates/dashboard.html:136
-msgid "Voir tous"
-msgstr "View all"
-
-#: app/templates/dashboard.html:139
-msgid "Ajouter"
-msgstr "Add"
-
-#: app/templates/dashboard.html:146
-msgid "Aucun revenu actif"
-msgstr "No active income"
-
-#: app/templates/dashboard.html:156
-msgid "Abonnements : Prochains renouvellements"
-msgstr "Subscriptions: Upcoming renewals"
-
-#: app/templates/dashboard.html:207
-msgid "Aucun abonnement actif"
-msgstr "No active subscriptions"
-
-#: app/templates/dashboard.html:217
-msgid "Crédits : Prochains prélèvements"
-msgstr "Credits: Upcoming debits"
-
-#: app/templates/dashboard.html:248
-msgid "Restant"
-msgstr "Remaining"
-
-#: app/templates/dashboard.html:289
-msgid "Mes paiements en plusieurs fois"
-msgstr "My installment payments"
-
-#: app/templates/dashboard.html:296
-msgid "Aucun crédit actif"
-msgstr "No active credits"
-
-#: app/templates/dashboard.html:306
-msgid "Chèques : Non débités"
-msgstr "Checks: Not cashed"
-
-#: app/templates/dashboard.html:332
-msgid "Pointer ce chèque"
-msgstr "Point this check"
-
-#: app/templates/dashboard.html:344
-msgid "Chèque"
-msgstr "Check"
-
-#: app/templates/dashboard.html:355
-msgid "Voir les chéquiers"
-msgstr "View checkbooks"
-
-#: app/templates/dashboard.html:365
-msgid "Tous les chèques sont débités"
-msgstr "All checks are cashed"
-
-#: app/templates/dashboard.html:411
-msgid "RDV pris le"
-msgstr "Appointment on"
-
-#: app/templates/dashboard.html:415
-msgid "À planifier"
-msgstr "To be scheduled"
-
-#: app/templates/dashboard.html:435
-msgid "Aucun rappel"
-msgstr "No reminders"
-
-#: app/templates/dashboard.html:445
-msgid "Répartition des Abonnements & Crédits"
-msgstr "Distribution of Subscriptions & Credits"
-
-#: app/templates/dashboard.html:461
-msgid "Aucune donnée disponible"
-msgstr "No data available"
-
-#: app/templates/dashboard.html:469
-msgid "Répartition des versements"
-msgstr "Distribution of payments"
-
-#: app/templates/dashboard.html:497
-msgid "Évolution des revenus et des dépenses mensuelles"
-msgstr "Evolution of monthly income and expenses"
-
-#: app/templates/dashboard.html:628
-msgid "Abonnements (€)"
-msgstr "Subscriptions (€)"
-
-#: app/templates/dashboard.html:636
-msgid "Crédits (€)"
-msgstr "Credits (€)"
-
-#: app/templates/dashboard.html:644
-msgid "Dépenses (€)"
-msgstr "Expenses (€)"
-
-#: app/templates/dashboard.html:652
-msgid "Revenus (€)"
-msgstr "Income (€)"
-
-#: app/templates/dashboard.html:537
-msgid "Crédits"
-msgstr "Credits"
-
-# Balance page translations
-#: app/templates/balance.html:8
-msgid "Solde et Mouvements"
-msgstr "Balance and Transactions"
-
-#: app/templates/balance.html:9
-msgid "Consultez l'ensemble de vos mouvements financiers et pointez-les au fur et à mesure"
-msgstr "View all your financial transactions and check them off as you go"
-
-#: app/templates/balance.html:17
-msgid "Navigation / Mois"
-msgstr "Navigation / Month"
-
-#: app/templates/balance.html:19
-msgid "Mois précédent"
-msgstr "Previous month"
-
-#: app/templates/balance.html:25
-msgid "Janvier"
-msgstr "January"
-
-#: app/templates/balance.html:25
-msgid "Février"
-msgstr "February"
-
-#: app/templates/balance.html:25
-msgid "Avril"
-msgstr "April"
-
-#: app/templates/balance.html:25
-msgid "Juillet"
-msgstr "July"
-
-#: app/templates/balance.html:25
-msgid "Septembre"
-msgstr "September"
-
-#: app/templates/balance.html:25
-msgid "Octobre"
-msgstr "October"
-
-#: app/templates/balance.html:25
-msgid "Novembre"
-msgstr "November"
-
-#: app/templates/balance.html:25
-msgid "Décembre"
-msgstr "December"
-
-#: app/templates/balance.html:29
-msgid "Mois suivant"
-msgstr "Next month"
-
-#: app/templates/balance.html:35
-msgid "Année"
-msgstr "Year"
-
-#: app/templates/balance.html:43
-msgid "État"
-msgstr "Status"
-
-#: app/templates/balance.html:45
-msgid "Tous"
-msgstr "All"
-
-#: app/templates/balance.html:46
-msgid "En attente"
-msgstr "Pending"
-
-#: app/templates/balance.html:47
-msgid "Complétés"
-msgstr "Completed"
-
-#: app/templates/balance.html:52
-msgid "Réinitialiser"
-msgstr "Reset"
-
-#: app/templates/balance.html:66
-msgid "Total Revenus"
-msgstr "Total Income"
-
-#: app/templates/balance.html:81
-msgid "Total Dépenses"
-msgstr "Total Expenses"
-
-#: app/templates/balance.html:112
-msgid "Mouvements de"
-msgstr "Transactions of"
-
-#: app/templates/balance.html:122
-msgid "Tout pointer"
-msgstr "Check all"
-
-#: app/templates/balance.html:131
-msgid "Tout dépointer"
-msgstr "Uncheck all"
-
-#: app/templates/balance.html:146
-msgid "Pointer"
-msgstr "Check"
-
-#: app/templates/balance.html:148
-msgid "Date"
-msgstr "Date"
-
-#: app/templates/balance.html:149
-msgid "Description"
-msgstr "Description"
-
-#: app/templates/balance.html:150
-msgid "Catégorie"
-msgstr "Category"
-
-#: app/templates/balance.html:151
-msgid "Montant"
-msgstr "Amount"
-
-#: app/templates/balance.html:153
-msgid "Actions"
-msgstr "Actions"
-
-#: app/templates/balance.html:162
-msgid "Dépointer"
-msgstr "Uncheck"
-
-#: app/templates/balance.html:172
-msgid "Marquer comme complété"
-msgstr "Mark as completed"
-
-#: app/templates/balance.html:178
-msgid "Repasser en attente"
-msgstr "Mark as pending"
-
-#: app/templates/balance.html:183
-msgid "Annulé"
-msgstr "Cancelled"
-
-#: app/templates/balance.html:194
-msgid "Revenu"
-msgstr "Income"
-
-#: app/templates/balance.html:196
-msgid "Abonnement"
-msgstr "Subscription"
-
-#: app/templates/balance.html:198
-msgid "Crédit"
-msgstr "Credit"
-
-#: app/templates/balance.html:200
-msgid "Paiement en plusieurs fois"
-msgstr "Installment payment"
-
-#: app/templates/balance.html:204
-msgid "Achat CB"
-msgstr "Card purchase"
-
-#: app/templates/balance.html:229
-msgid "Voir le revenu"
-msgstr "View income"
-
-#: app/templates/balance.html:233
-msgid "Voir l'abonnement"
-msgstr "View subscription"
-
-#: app/templates/balance.html:237
-msgid "Voir le crédit"
-msgstr "View credit"
-
-#: app/templates/balance.html:241
-msgid "Voir le paiement"
-msgstr "View payment"
-
-#: app/templates/balance.html:245
-msgid "Voir le chèque"
-msgstr "View check"
-
-#: app/templates/balance.html:253
-msgid "Voir le reçu"
-msgstr "View receipt"
-
-#: app/templates/balance.html:257
-msgid "Voir l'achat CB"
-msgstr "View card purchase"
-
-#: app/templates/balance.html:266
-msgid "Supprimer"
-msgstr "Delete"
-
-#: app/templates/balance.html:279
-msgid "Aucun mouvement pour cette période"
-msgstr "No transactions for this period"
-
-#: app/templates/balance.html:288
-msgid "Retour au tableau de bord"
-msgstr "Back to dashboard"
-
-#: app/templates/balance.html:300
-msgid "Reçu"
-msgstr "Receipt"
-
-#: app/templates/balance.html:302
-msgid "Fermer"
-msgstr "Close"
-
-#: app/templates/balance.html:317
-msgid "Options de suppression"
-msgstr "Delete options"
-
-#: app/templates/balance.html:323
-msgid "Transaction :"
-msgstr "Transaction:"
-
-#: app/templates/balance.html:324
-msgid "Date :"
-msgstr "Date:"
-
-#: app/templates/balance.html:325
-msgid "Montant :"
-msgstr "Amount:"
-
-#: app/templates/balance.html:327
-msgid "Que souhaitez-vous faire ?"
-msgstr "What would you like to do?"
-
-#: app/templates/balance.html:332
-msgid "Supprimer uniquement cette transaction"
-msgstr "Delete only this transaction"
-
-#: app/templates/balance.html:337
-msgid "Supprimer les transactions passées (inclus celle-ci)"
-msgstr "Delete past transactions (including this one)"
-
-#: app/templates/balance.html:342
-msgid "Supprimer les transactions futures (inclus celle-ci)"
-msgstr "Delete future transactions (including this one)"
-
-#: app/templates/balance.html:347
-msgid "Supprimer toutes les transactions liées"
-msgstr "Delete all related transactions"
-
-#: app/templates/balance.html:457
-msgid "Aperçu non disponible pour ce type de fichier"
-msgstr "Preview not available for this file type"
-
-#: app/templates/balance.html:457
-msgid "Ouvrir dans un nouvel onglet"
-msgstr "Open in a new tab"
-
-# Registration form - Language field
-#: app/templates/auth/register.html:86
-msgid "Langue"
-msgstr "Language"
-
-#: app/templates/auth/register.html:88
-msgid "Français"
-msgstr "French"
-
-#: app/templates/auth/register.html:89
-msgid "English"
-msgstr "English"
-
-#: app/templates/auth/register.html:91
-msgid "Langue d'affichage de l'application"
-msgstr "Application display language"
-
 # Card Purchases List translations
-#: app/templates/card_purchases/list.html:3
-#: app/templates/card_purchases/list.html:64
-msgid "Mes achats CB"
-msgstr "My Card Purchases"
-
-#: app/templates/card_purchases/list.html:72
-msgid "Basculer le menu"
-msgstr "Toggle menu"
-
-#: app/templates/card_purchases/list.html:69
-msgid "Ajouter un achat"
-msgstr "Add a purchase"
-
-#: app/templates/card_purchases/list.html:77
-msgid "Saisie manuelle"
-msgstr "Manual entry"
-
-#: app/templates/card_purchases/list.html:82
-msgid "Scanner avec OCR"
-msgstr "Scan with OCR"
-
-#: app/templates/card_purchases/list.html:95
-msgid "Catégorie"
-msgstr "Category"
-
-#: app/templates/card_purchases/list.html:97
-msgid "Toutes les catégories"
-msgstr "All categories"
-
-#: app/templates/card_purchases/list.html:107
-msgid "Mois"
-msgstr "Month"
-
-#: app/templates/card_purchases/list.html:109
-msgid "Tous"
-msgstr "All"
-
-#: app/templates/card_purchases/list.html:119
-msgid "Année"
-msgstr "Year"
-
-#: app/templates/card_purchases/list.html:121
-msgid "Toutes"
-msgstr "All"
-
-#: app/templates/card_purchases/list.html:131
-msgid "Filtrer"
-msgstr "Filter"
-
-#: app/templates/card_purchases/list.html:146
-msgid "Marchand"
-msgstr "Merchant"
-
-#: app/templates/card_purchases/list.html:162
-msgid "Modifié manuellement"
-msgstr "Manually edited"
-
-#: app/templates/card_purchases/list.html:172
-msgid "Non catégorisé"
-msgstr "Uncategorized"
-
-#: app/templates/card_purchases/list.html:184
-msgid "Voir le reçu"
-msgstr "View receipt"
-
-#: app/templates/card_purchases/list.html:194
-msgid "Détails"
-msgstr "Details"
-
-#: app/templates/card_purchases/list.html:199
-msgid "Modifier"
-msgstr "Edit"
-
-#: app/templates/card_purchases/list.html:205
-msgid "Confirmer la suppression ?"
-msgstr "Confirm deletion?"
-
-#: app/templates/card_purchases/list.html:218
-msgid "Aucun achat enregistré."
-msgstr "No card purchases recorded."
-
-#: app/templates/card_purchases/list.html:225
-msgid "Total :"
-msgstr "Total:"
-
-#: app/templates/card_purchases/list.html:249
-msgid "Précédent"
-msgstr "Previous"
-
-#: app/templates/card_purchases/list.html:261
-msgid "Suivant"
-msgstr "Next"
-
-#: app/templates/card_purchases/list.html:272
-msgid "Répartition des achats CB actifs"
-msgstr "Active Card Purchases Distribution"
-
-#: app/templates/card_purchases/list.html:273
-msgid "Exporter en PDF"
-msgstr "Export to PDF"
-
-#: app/templates/card_purchases/list.html:280
-msgid "Par marchand"
-msgstr "By Merchant"
-
-#: app/templates/card_purchases/list.html:284
-msgid "Par catégorie"
-msgstr "By Category"
-
-#: app/templates/card_purchases/list.html:496
-msgid "Généré le"
-msgstr "Generated on"
+#~ msgid "Mes achats CB"
+#~ msgstr "My card purchases"
 
 # Card Purchases Detail translations
-#: app/templates/card_purchases/detail.html:3
-msgid "Détails de l'achat CB"
-msgstr "Card Purchase Details"
-
-#: app/templates/card_purchases/detail.html:65
-msgid "Détails de l'achat"
-msgstr "Purchase Details"
-
-#: app/templates/card_purchases/detail.html:67
-msgid "Retour"
-msgstr "Back"
-
-#: app/templates/card_purchases/detail.html:75
-msgid "Date :"
-msgstr "Date:"
-
-#: app/templates/card_purchases/detail.html:82
-msgid "Marchand :"
-msgstr "Merchant:"
-
-#: app/templates/card_purchases/detail.html:87
-msgid "Saisie manuelle"
-msgstr "Manual entry"
-
-#: app/templates/card_purchases/detail.html:88
-msgid "Manuel"
-msgstr "Manual"
-
-#: app/templates/card_purchases/detail.html:91
-msgid "Saisie OCR"
-msgstr "OCR entry"
-
-#: app/templates/card_purchases/detail.html:96
-msgid "Modifié après OCR"
-msgstr "Edited after OCR"
-
-#: app/templates/card_purchases/detail.html:103
-msgid "Montant :"
-msgstr "Amount:"
-
-#: app/templates/card_purchases/detail.html:113
-msgid "Catégorie :"
-msgstr "Category:"
-
-#: app/templates/card_purchases/detail.html:125
-msgid "Description :"
-msgstr "Description:"
-
-#: app/templates/card_purchases/detail.html:135
-msgid "Notes :"
-msgstr "Notes:"
-
-#: app/templates/card_purchases/detail.html:146
-msgid "Confiance OCR :"
-msgstr "OCR Confidence:"
-
-#: app/templates/card_purchases/detail.html:163
-msgid "Reçu :"
-msgstr "Receipt:"
-
-#: app/templates/card_purchases/detail.html:170
-msgid "Voir"
-msgstr "View"
-
-#: app/templates/card_purchases/detail.html:175
-msgid "Télécharger"
-msgstr "Download"
-
-
-#: app/templates/card_purchases/add_manual.html:3
-msgid "Ajouter un achat CB"
-msgstr "Add Card Purchase"
-
-#: app/templates/card_purchases/add_manual.html:20
-msgid "Saisie manuelle"
-msgstr "Manual Entry"
-
-#: app/templates/card_purchases/add_manual.html:23
-#: app/templates/card_purchases/upload.html:23
-msgid "Scanner avec OCR"
-msgstr "Scan with OCR"
-
-#: app/templates/card_purchases/add_manual.html:27
-#: app/templates/card_purchases/upload.html:27
-msgid "Vous pouvez saisir manuellement ou utiliser l'OCR pour scanner vos tickets"
-msgstr "You can enter manually or use OCR to scan your receipts"
-
-#: app/templates/card_purchases/add_manual.html:37
-msgid "Marchand"
-msgstr "Merchant"
-
-#: app/templates/card_purchases/add_manual.html:44
-msgid "ex : Walmart, McDonald's..."
-msgstr "e.g., Walmart, McDonald's..."
-
-#: app/templates/card_purchases/add_manual.html:49
-msgid "Montant"
-msgstr "Amount"
-
-#: app/templates/card_purchases/add_manual.html:65
-msgid "Date"
-msgstr "Date"
-
-#: app/templates/card_purchases/add_manual.html:77
-msgid "Heure"
-msgstr "Time"
-
-#: app/templates/card_purchases/add_manual.html:88
-msgid "Catégorie"
-msgstr "Category"
-
-#: app/templates/card_purchases/add_manual.html:92
-msgid "-- Choisir une catégorie --"
-msgstr "-- Choose a category --"
-
-#: app/templates/card_purchases/add_manual.html:100
-msgid "Optionnel - Permet de classer vos dépenses"
-msgstr "Optional - Helps classify your expenses"
-
-#: app/templates/card_purchases/add_manual.html:104
-msgid "Description / Notes"
-msgstr "Description / Notes"
-
-#: app/templates/card_purchases/add_manual.html:110
-msgid "Notes supplémentaires (optionnel)"
-msgstr "Additional notes (optional)"
-
-#: app/templates/card_purchases/add_manual.html:115
-#: app/templates/card_purchases/edit.html:92
-msgid "Ticket de caisse / Reçu"
-msgstr "Receipt / Ticket"
-
-#: app/templates/card_purchases/add_manual.html:125
-#: app/templates/card_purchases/edit.html:119
-#: app/templates/card_purchases/upload.html:47
-msgid "Parcourir..."
-msgstr "Browse..."
-
-#: app/templates/card_purchases/add_manual.html:127
-#: app/templates/card_purchases/edit.html:121
-msgid "Aucun fichier sélectionné"
-msgstr "No file selected"
-
-#: app/templates/card_purchases/add_manual.html:130
-msgid "Optionnel - Formats acceptés : JPG, PNG, PDF (max 5 Mo)"
-msgstr "Optional - Accepted formats: JPG, PNG, PDF (max 5 MB)"
-
-#: app/templates/card_purchases/add_manual.html:136
-msgid "Enregistrer l'achat"
-msgstr "Save Purchase"
-
-#: app/templates/card_purchases/add_manual.html:139
-#: app/templates/card_purchases/validate.html:117
-msgid "Annuler"
-msgstr "Cancel"
-
-#: app/templates/card_purchases/add_manual.html:12
-#: app/templates/card_purchases/detail.html:67
-#: app/templates/card_purchases/edit.html:12
-#: app/templates/card_purchases/upload.html:12
-msgid "Retour"
-msgstr "Back"
-
-#: app/templates/card_purchases/edit.html:3
-msgid "Modifier l'achat CB"
-msgstr "Edit Card Purchase"
-
-#: app/templates/card_purchases/edit.html:10
-msgid "Modifier l'achat"
-msgstr "Edit Purchase"
-
-#: app/templates/card_purchases/edit.html:50
-msgid "Montant (€)"
-msgstr "Amount (€)"
-
-#: app/templates/card_purchases/edit.html:64
-msgid "-- Aucune --"
-msgstr "-- None --"
-
-#: app/templates/card_purchases/edit.html:75
-msgid "Description"
-msgstr "Description"
-
-#: app/templates/card_purchases/edit.html:83
-msgid "Notes"
-msgstr "Notes"
-
-#: app/templates/card_purchases/edit.html:97
-msgid "Un ticket est déjà attaché :"
-msgstr "A receipt is already attached:"
-
-#: app/templates/card_purchases/edit.html:103
-msgid "Voir"
-msgstr "View"
-
-#: app/templates/card_purchases/edit.html:108
-msgid "Aucun ticket attaché"
-msgstr "No receipt attached"
-
-#: app/templates/card_purchases/edit.html:125
-msgid "Le choix d'un nouveau fichier remplacera le ticket actuel."
-msgstr "Choosing a new file will replace the current receipt."
-
-#: app/templates/card_purchases/edit.html:127
-msgid "Formats acceptés : JPG, PNG, PDF (max 5 Mo)"
-msgstr "Accepted formats: JPG, PNG, PDF (max 5 MB)"
-
-#: app/templates/card_purchases/edit.html:138
-msgid "Enregistrer les modifications"
-msgstr "Save Changes"
-
-#: app/templates/card_purchases/upload.html:3
-msgid "Télécharger des tickets CB"
-msgstr "Upload Card Receipts"
-
-#: app/templates/card_purchases/upload.html:10
-msgid "Scanner des tickets avec OCR"
-msgstr "Scan Receipts with OCR"
-
-#: app/templates/card_purchases/upload.html:20
-msgid "Saisie manuelle"
-msgstr "Manual Entry"
-
-#: app/templates/card_purchases/upload.html:36
-msgid "Sélectionner des tickets (jusqu'à 10)"
-msgstr "Select receipts (up to 10)"
-
-#: app/templates/card_purchases/upload.html:49
-msgid "Aucun fichier sélectionné"
-msgstr "No files selected"
-
-#: app/templates/card_purchases/upload.html:52
-msgid "Formats acceptés : JPG, PNG, PDF. Maximum 5 Mo par fichier."
-msgstr "Accepted formats: JPG, PNG, PDF. Maximum 5 MB per file."
-
-#: app/templates/card_purchases/upload.html:58
-msgid "Comment ça fonctionne ?"
-msgstr "How does it work?"
-
-#: app/templates/card_purchases/upload.html:59
-msgid "1. Sélectionnez vos photos/scans de tickets de caisse"
-msgstr "1. Select your photos/scans of card receipts"
-
-#: app/templates/card_purchases/upload.html:60
-msgid "2. Le système extraira automatiquement les données (date, montant, marchand)"
-msgstr "2. The system will automatically extract data (date, amount, merchant)"
-
-#: app/templates/card_purchases/upload.html:61
-msgid "3. Vous pourrez vérifier et corriger les données avant validation"
-msgstr "3. You can review and correct the data before validation"
-
-#: app/templates/card_purchases/upload.html:62
-msgid "4. Les achats seront ajoutés à votre solde"
-msgstr "4. Purchases will be added to your balance"
-
-#: app/templates/card_purchases/upload.html:68
-msgid "Traiter avec OCR"
-msgstr "Process with OCR"
-
-#: app/templates/card_purchases/upload.html:73
-msgid "Traitement OCR en cours..."
-msgstr "OCR processing in progress..."
-
-#: app/templates/card_purchases/upload.html:75
-msgid "Cela peut prendre quelques secondes par fichier. Veuillez patienter."
-msgstr "This may take a few seconds per file. Please wait."
-
-#: app/templates/card_purchases/upload.html:81
-msgid "fichier(s) sélectionné(s)"
-msgstr "file(s) selected"
-
-#: app/templates/card_purchases/upload.html:82
-msgid "Maximum 10 fichiers. Seuls les 10 premiers seront traités."
-msgstr "Maximum 10 files. Only the first 10 will be processed."
-
-#: app/templates/card_purchases/validate.html:3
-msgid "Valider les achats CB"
-msgstr "Validate Card Purchases"
-
-#: app/templates/card_purchases/validate.html:8
-msgid "Vérifier et valider les achats"
-msgstr "Review and Validate Purchases"
-
-#: app/templates/card_purchases/validate.html:13
-msgid "Vérifiez les données extraites automatiquement. Vous pouvez les modifier avant d'enregistrer."
-msgstr "Review the automatically extracted data. You can modify it before saving."
-
-#: app/templates/card_purchases/validate.html:27
-msgid "Confiance OCR"
-msgstr "OCR Confidence"
-
-#: app/templates/card_purchases/validate.html:122
-msgid "achat(s) sélectionné(s)"
-msgstr "purchase(s) selected"
-
-#: app/templates/card_purchases/validate.html:125
-msgid "Enregistrer les achats"
-msgstr "Save Purchases"
-
-#: app/templates/card_purchases/validate.html:98
-msgid "Notes..."
-msgstr "Notes..."
-
-# Rename "Mes achats CB" to "Mes achats"
-#: app/templates/base.html:914
-#: app/templates/card_purchases/list.html:3
-#: app/templates/card_purchases/list.html:64
-msgid "Mes achats"
-msgstr "My Purchases"
-
-
-# Payment type translations
-#: app/templates/card_purchases/add_manual.html:2
-#: app/templates/card_purchases/add_manual.html:9
-msgid "Ajouter un achat"
-msgstr "Add a Purchase"
-
-#: app/templates/card_purchases/edit.html:2
-msgid "Modifier l'achat"
-msgstr "Edit Purchase"
-
-#: app/templates/card_purchases/add_manual.html:102
-#: app/templates/card_purchases/edit.html:74
-msgid "Type de Paiement"
-msgstr "Payment Type"
-
-#: app/templates/card_purchases/add_manual.html:105
-#: app/templates/card_purchases/edit.html:77
-#: app/templates/card_purchases/list.html:170
-msgid "Carte Bancaire"
-msgstr "Bank Card"
-
-#: app/templates/card_purchases/add_manual.html:106
-#: app/templates/card_purchases/edit.html:78
-#: app/templates/card_purchases/list.html:172
-msgid "Virement"
-msgstr "Transfer"
-
-#: app/templates/card_purchases/add_manual.html:107
-#: app/templates/card_purchases/edit.html:79
-#: app/templates/card_purchases/list.html:174
-msgid "Espèces"
-msgstr "Cash"
-
-#: app/templates/card_purchases/add_manual.html:108
-#: app/templates/card_purchases/edit.html:80
-#: app/templates/card_purchases/list.html:176
-msgid "Autres"
-msgstr "Other"
-
-#: app/templates/card_purchases/list.html:147
-msgid "Type"
-msgstr "Type"
-
 # Detail page translations
-#: app/templates/card_purchases/detail.html:3
-msgid "Détails de l'achat CB"
-msgstr "Purchase Details"
+#~ msgid "Détails de l'achat CB"
+#~ msgstr "Card Purchase Details"
 
-#: app/templates/card_purchases/detail.html:3
-msgid "Détails de l'achat"
-msgstr "Purchase Details"
+#~ msgid "Ajouter un achat CB"
+#~ msgstr "Add Card Purchase"
 
-#: app/templates/card_purchases/detail.html:128
-msgid "Type de Paiement :"
-msgstr "Payment Type:"
+#~ msgid "Modifier l'achat CB"
+#~ msgstr "Edit Card Purchase"
 
-# OCR Premium restriction translations
-#: app/routes/card_purchases.py:176
-#: app/routes/card_purchases.py:273
-msgid "La fonction OCR est réservée aux abonnés Premium."
-msgstr "The OCR feature is reserved for Premium subscribers."
+#~ msgid "Valider les achats CB"
+#~ msgstr "Validate Card Purchases"
 
-#: app/templates/card_purchases/add_manual.html:32
-msgid "Saisie manuelle disponible. L'OCR est réservé aux abonnés Premium."
-msgstr "Manual entry available. OCR is reserved for Premium subscribers."
+#~ msgid "Rendez-vous réservé"
+#~ msgstr "Appointment booked"
 
-# Validate purchases translation
-#: app/templates/card_purchases/validate.html:3
-msgid "Valider les achats"
-msgstr "Validate Purchases"
+#~ msgid "Le"
+#~ msgstr "On"
+

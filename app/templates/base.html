@@ -355,11 +355,13 @@
         .toast-container {
             position: fixed;
             top: 80px;
-            right: 20px;
+            left: 50%;
+            transform: translateX(-50%);
             z-index: 9999;
             display: flex;
             flex-direction: column;
             gap: 10px;
+            align-items: center;
         }
 
         .toast-notification {
@@ -468,13 +470,16 @@
         @media (max-width: 768px) {
             .toast-container {
                 top: 70px;
-                right: 10px;
-                left: 10px;
+                left: 50%;
+                transform: translateX(-50%);
+                width: calc(100% - 20px);
+                max-width: 500px;
             }
 
             .toast-notification {
                 min-width: auto;
                 max-width: 100%;
+                width: 100%;
             }
         }
 
@@ -943,7 +948,7 @@
                         </li>
                         <li class="nav-item dropdown">
                             <a class="nav-menu-btn user dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" title="{{ current_user.first_name or current_user.email }}">
-                                <i class="fas fa-user-circle"></i>
+                                <i class="fas fa-user-circle"></i> <span class="d-md-none">{{ _('Profil') }}</span>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end">
                                 <li><h6 class="dropdown-header text-center" style="color: #9333ea; font-weight: bold;">
