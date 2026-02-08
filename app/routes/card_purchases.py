@@ -368,6 +368,19 @@ def detail(purchase_id):
     return render_template('card_purchases/detail.html', purchase=purchase)
 
 
+@bp.route('/<int:purchase_id>/detail-partial')
+@login_required
+def detail_partial(purchase_id):
+    """Retourne un template partiel avec les détails de l'achat pour affichage en modale"""
+    from flask_babel import gettext as _
+    purchase = CardPurchase.query.get_or_404(purchase_id)
+
+    if purchase.user_id != current_user.id:
+        return '<div class="alert alert-danger">Accès non autorisé</div>', 403
+
+    return render_template('card_purchases/detail_partial.html', purchase=purchase)
+
+
 @bp.route('/<int:purchase_id>/edit', methods=['GET', 'POST'])
 @login_required
 def edit(purchase_id):

@@ -212,6 +212,23 @@ def update_payment_dates():
     if regenerated_count > 0:
         click.echo(f"✓ {regenerated_count} entité(s) ont eu leurs transactions régénérées")
 
+    # Pointer automatiquement les transactions des abonnements dont la date est passée
+    click.echo("Pointage automatique des transactions passées...")
+    transactions_to_point = Transaction.query.filter(
+        Transaction.source_type == 'subscription',
+        Transaction.transaction_date <= today,
+        Transaction.status == 'completed',
+        Transaction.is_pointed == False
+    ).all()
+
+    pointed_count = 0
+    for transaction in transactions_to_point:
+        transaction.is_pointed = True
+        pointed_count += 1
+
+    if pointed_count > 0:
+        click.echo(f"✓ {pointed_count} transaction(s) d'abonnements pointée(s) automatiquement")
+
     # Sauvegarder les modifications
     db.session.commit()
 

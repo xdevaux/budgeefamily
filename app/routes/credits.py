@@ -337,6 +337,18 @@ def detail(credit_id):
                          get_document_type_info=get_document_type_info)
 
 
+@bp.route('/<int:credit_id>/detail-partial')
+@login_required
+def detail_partial(credit_id):
+    """Retourne un template partiel avec les détails du crédit pour affichage en modale"""
+    credit = Credit.query.get_or_404(credit_id)
+
+    if credit.user_id != current_user.id:
+        return '<div class="alert alert-danger">Accès non autorisé</div>', 403
+
+    return render_template('credits/detail_partial.html', credit=credit)
+
+
 @bp.route('/<int:credit_id>/documents/add', methods=['GET', 'POST'])
 @login_required
 @limiter.limit("100 per hour")

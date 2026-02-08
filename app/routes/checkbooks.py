@@ -385,6 +385,18 @@ def edit_check(check_id):
     return render_template('checkbooks/edit_check.html', check=check)
 
 
+@bp.route('/check/<int:check_id>/detail-partial')
+@login_required
+def check_detail_partial(check_id):
+    """Retourne un template partiel avec les détails du chèque pour affichage en modale"""
+    check = Check.query.get_or_404(check_id)
+
+    if check.user_id != current_user.id:
+        return '<div class="alert alert-danger">Accès non autorisé</div>', 403
+
+    return render_template('checkbooks/check_detail_partial.html', check=check)
+
+
 @bp.route('/checks/<int:check_id>/delete', methods=['POST'])
 @login_required
 def delete_check(check_id):

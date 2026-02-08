@@ -11,13 +11,43 @@
         </a>
     </div>
 
-    <!-- Catégories personnalisées -->
-    {% if user_categories %}
+    <!-- Catégories par défaut -->
     <div class="card mb-4">
         <div class="card-header" style="background-color: #e5e7eb;">
-            <i class="fas fa-user text-secondary"></i> {{ _('Mes catégories personnalisées') }}
+            <h5 class="mb-0"><i class="fas fa-globe text-secondary"></i> {{ _('Catégories par défaut') }}</h5>
         </div>
         <div class="card-body">
+            {% if global_categories %}
+            <div class="row">
+                {% for category in global_categories %}
+                <div class="col-md-6 col-lg-4 mb-3">
+                    <div class="card h-100" style="border-left: 4px solid {{ category.color }};">
+                        <div class="card-body">
+                            {% if category.icon %}
+                            <i class="fas {{ category.icon }}" style="color: {{ category.color }};"></i>
+                            {% endif %}
+                            <strong>{{ category.name | translate_category }}</strong>
+                            {% if category.description %}
+                            <p class="text-muted small mb-0 mt-1">{{ category.description | translate_category }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="text-muted mb-0">{{ _('Aucune catégorie par défaut disponible.') }}</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Catégories personnalisées -->
+    <div class="card">
+        <div class="card-header" style="background-color: #e5e7eb;">
+            <h5 class="mb-0"><i class="fas fa-user text-secondary"></i> {{ _('Mes catégories personnalisées') }}</h5>
+        </div>
+        <div class="card-body">
+            {% if user_categories %}
             <div class="row">
                 {% for category in user_categories %}
                 <div class="col-md-6 col-lg-4 mb-3">
@@ -56,36 +86,15 @@
                 </div>
                 {% endfor %}
             </div>
-        </div>
-    </div>
-    {% endif %}
-
-    <!-- Catégories globales -->
-    <div class="card">
-        <div class="card-header" style="background-color: #e5e7eb;">
-            <i class="fas fa-globe text-secondary"></i> {{ _('Catégories par défaut') }}
-        </div>
-        <div class="card-body">
-            {% if global_categories %}
-            <div class="row">
-                {% for category in global_categories %}
-                <div class="col-md-6 col-lg-4 mb-3">
-                    <div class="card h-100" style="border-left: 4px solid {{ category.color }};">
-                        <div class="card-body">
-                            {% if category.icon %}
-                            <i class="fas {{ category.icon }}" style="color: {{ category.color }};"></i>
-                            {% endif %}
-                            <strong>{{ category.name | translate_category }}</strong>
-                            {% if category.description %}
-                            <p class="text-muted small mb-0 mt-1">{{ category.description | translate_category }}</p>
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
             {% else %}
-            <p class="text-muted mb-0">{{ _('Aucune catégorie par défaut disponible.') }}</p>
+            <div class="text-center py-5">
+                <i class="fas fa-inbox fa-4x text-muted mb-3"></i>
+                <h4>{{ _('Aucune catégorie personnalisée') }}</h4>
+                <p class="text-muted">{{ _('Créez vos propres catégories pour mieux organiser vos achats') }}</p>
+                <a href="{{ url_for('card_purchase_categories.add_category') }}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> {{ _('Créer ma première catégorie') }}
+                </a>
+            </div>
             {% endif %}
         </div>
     </div>

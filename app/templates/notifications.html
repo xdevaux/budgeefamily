@@ -6,25 +6,30 @@
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="mb-0">
-            <i class="fas fa-bell"></i> {{ _('Notifications') }}
+            <i class="fas fa-bell notification-purple-icon"></i> {{ _('Notifications') }}
         </h2>
-        <div class="btn-group" role="group">
-            <a href="{{ url_for('main.notifications', filter='unread') }}"
-               class="btn btn-sm {% if filter_type == 'unread' %}btn-success{% else %}btn-outline-success{% endif %}">
-                <i class="fas fa-envelope"></i> {{ _('Non lues') }}
-            </a>
-            <a href="{{ url_for('main.notifications', filter='read') }}"
-               class="btn btn-sm {% if filter_type == 'read' %}btn-info{% else %}btn-outline-info{% endif %}">
-                <i class="fas fa-check-circle"></i> {{ _('Lues') }}
-            </a>
-            <a href="{{ url_for('main.notifications', filter='archived') }}"
-               class="btn btn-sm {% if filter_type == 'archived' %}btn-secondary{% else %}btn-outline-secondary{% endif %}">
-                <i class="fas fa-archive"></i> {{ _('Archivées') }}
-            </a>
-            <a href="{{ url_for('main.notifications', filter='all') }}"
-               class="btn btn-sm {% if filter_type == 'all' %}btn-primary{% else %}btn-outline-primary{% endif %}">
-                <i class="fas fa-inbox"></i> {{ _('Toutes') }}
-            </a>
+    </div>
+
+    <!-- Filtres -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="GET" class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">{{ _('Type') }}</label>
+                    <select name="filter" class="form-select" onchange="this.form.submit()">
+                        <option value="all" {% if filter_type == 'all' %}selected{% endif %}>{{ _('Toutes') }}</option>
+                        <option value="unread" {% if filter_type == 'unread' %}selected{% endif %}>{{ _('Non lues') }}</option>
+                        <option value="read" {% if filter_type == 'read' %}selected{% endif %}>{{ _('Lues') }}</option>
+                        <option value="archived" {% if filter_type == 'archived' %}selected{% endif %}>{{ _('Archivées') }}</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">&nbsp;</label>
+                    <a href="{{ url_for('main.notifications') }}" class="btn btn-secondary w-100">
+                        <i class="fas fa-redo"></i> {{ _('Réinitialiser') }}
+                    </a>
+                </div>
+            </form>
         </div>
     </div>
 

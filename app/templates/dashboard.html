@@ -265,7 +265,7 @@
                                         </div>
                                         <div class="flex-grow-1 text-start d-flex align-items-center" style="min-width: 0; gap: 0.5rem;">
                                             <strong class="text-truncate item-label" style="max-width: 70%;" title="{{ installment.name }}">{{ installment.name }}</strong>
-                                            <span class="badge bg-info text-white badge-hide-mobile" style="padding: 0.15rem 0.4rem; font-size: 0.7rem;">{{ installment.installments_paid }}/{{ installment.number_of_installments }}</span>
+                                            <span class="badge text-white badge-hide-mobile" style="background-color: #fbbf24; padding: 0.15rem 0.4rem; font-size: 0.7rem;">{{ installment.installments_paid }}/{{ installment.number_of_installments }}</span>
                                             {% if installment.provider %}
                                                 <span class="badge bg-secondary badge-hide-mobile" style="padding: 0.15rem 0.4rem; font-size: 0.7rem;">{{ installment.provider }}</span>
                                             {% endif %}

@@ -231,3 +231,17 @@ def detail(revenue_id):
     return render_template('revenues/detail.html',
                          revenue=revenue,
                          get_revenue_type_info=get_revenue_type_info)
+
+
+@bp.route('/<int:revenue_id>/detail-partial')
+@login_required
+def detail_partial(revenue_id):
+    """Retourne un template partiel avec les détails du revenu pour affichage en modale"""
+    revenue = Revenue.query.get_or_404(revenue_id)
+
+    if revenue.user_id != current_user.id:
+        return '<div class="alert alert-danger">Accès non autorisé</div>', 403
+
+    return render_template('revenues/detail_partial.html',
+                         revenue=revenue,
+                         get_revenue_type_info=get_revenue_type_info)

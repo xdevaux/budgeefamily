@@ -1,15 +1,15 @@
 {% extends "base.html" %}
 
-{% block title %}{{ _('Edit %(name)s', name=service.name) }} - Budgee Family{% endblock %}
+{% block title %}{{ _('Modifier %(name)s', name=service.name) }} - Budgee Family{% endblock %}
 
 {% block content %}
 <div class="container py-4">
     <div class="row">
         <div class="col-lg-8 mx-auto">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2>{{ _('Edit %(name)s', name=service.name) }}</h2>
+                <h2><i class="fas fa-edit subscription-blue-icon"></i> {{ _('Modifier %(name)s', name=service.name) }}</h2>
                 <a href="{{ url_for('services.list') }}" class="btn btn-outline-secondary">
-                    <i class="fas fa-arrow-left"></i> {{ _('Back') }}
+                    <i class="fas fa-arrow-left"></i> {{ _('Retour') }}
                 </a>
             </div>
 
@@ -17,7 +17,7 @@
                 <div class="card-body">
                     <form method="POST" enctype="multipart/form-data">
                         <div class="mb-3">
-                            <label for="name" class="form-label">{{ _('Service name') }} *</label>
+                            <label for="name" class="form-label">{{ _('Nom du service') }} *</label>
                             <input type="text" class="form-control" id="name" name="name" required value="{{ service.name }}">
                         </div>
 
@@ -30,7 +30,7 @@
                             <div class="col-md-6">
                                 <label for="category_id" class="form-label">{{ _('Category') }}</label>
                                 <select class="form-select" id="category_id" name="category_id">
-                                    <option value="">{{ _('No category') }}</option>
+                                    <option value="">{{ _('Aucune catégorie') }}</option>
                                     {% for category in categories %}
                                         <option value="{{ category.id }}" {% if service.category_id == category.id %}selected{% endif %}>
                                             {{ category | get_translated_name }}
@@ -47,26 +47,26 @@
 
                         {% if service.logo_data %}
                         <div class="mb-3">
-                            <label class="form-label">{{ _('Current logo') }}</label><br>
+                            <label class="form-label">{{ _('Logo actuel') }}</label><br>
                             <img src="{{ url_for('api.serve_logo', entity_type='service', entity_id=service.id) }}?v={{ service.updated_at.timestamp() if service.updated_at else service.created_at.timestamp() }}" alt="{{ service.name }}" style="max-height: 100px; object-fit: contain;">
                         </div>
                         {% endif %}
 
                         <div class="mb-3">
-                            <label for="logo" class="form-label">{{ _('Change logo') if service.logo_data else _('Logo') }}</label>
+                            <label for="logo" class="form-label">{{ _('Modifier le logo') if service.logo_data else _('Logo') }}</label>
                             <div class="custom-file-input-wrapper">
                                 <label for="logo" class="custom-file-button btn btn-outline-secondary w-100">
                                     <i class="fas fa-upload me-2"></i>
-                                    <span id="file-label">{{ _('No file selected') }}</span>
+                                    <span id="file-label">{{ _('Aucun fichier sélectionné') }}</span>
                                 </label>
                                 <input type="file" class="d-none" id="logo" name="logo" accept="image/*">
                             </div>
-                            <small class="text-muted">{{ _('Accepted formats: PNG, JPG, JPEG, GIF, SVG, WebP') }}</small>
+                            <small class="text-muted">{{ _('Formats acceptés : PNG, JPG, JPEG, GIF, SVG, WebP') }}</small>
                         </div>
 
                         <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save"></i> {{ _('Save changes') }}
+                            <button type="submit" class="btn btn-subscription">
+                                <i class="fas fa-save"></i> {{ _('Enregistrer les modifications') }}
                             </button>
                         </div>
                     </form>
@@ -115,7 +115,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 fileLabel.textContent = this.files[0].name;
                 fileButton.classList.add('has-file');
             } else {
-                fileLabel.textContent = "{{ _('No file selected') }}";
+                fileLabel.textContent = "{{ _('Aucun fichier sélectionné') }}";
                 fileButton.classList.remove('has-file');
             }
         });

@@ -252,6 +252,14 @@ def balance():
         else:
             movement['has_receipt'] = False
 
+        # Pour les paiements en plusieurs fois, récupérer la progression
+        if transaction.source_type == 'installment' and transaction.source_id:
+            from app.models import InstallmentPayment
+            installment = InstallmentPayment.query.get(transaction.source_id)
+            if installment:
+                movement['installments_paid'] = installment.installments_paid
+                movement['number_of_installments'] = installment.number_of_installments
+
         movements.append(movement)
 
     # Calculer le solde progressif (du plus ancien au plus récent)

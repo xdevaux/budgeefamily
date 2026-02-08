@@ -142,6 +142,18 @@ def detail(payment_id):
     return render_template('installments/detail.html', payment=payment)
 
 
+@bp.route('/<int:payment_id>/detail-partial')
+@login_required
+def detail_partial(payment_id):
+    """Retourne un template partiel avec les détails du paiement pour affichage en modale"""
+    payment = InstallmentPayment.query.get_or_404(payment_id)
+
+    if payment.user_id != current_user.id:
+        return '<div class="alert alert-danger">Accès non autorisé</div>', 403
+
+    return render_template('installments/detail_partial.html', payment=payment)
+
+
 @bp.route('/<int:payment_id>/edit', methods=['GET', 'POST'])
 @login_required
 def edit(payment_id):

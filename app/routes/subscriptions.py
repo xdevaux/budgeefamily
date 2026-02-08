@@ -261,3 +261,15 @@ def detail(subscription_id):
         return redirect(url_for('subscriptions.list'))
 
     return render_template('subscriptions/detail.html', subscription=subscription)
+
+
+@bp.route('/<int:subscription_id>/detail-partial')
+@login_required
+def detail_partial(subscription_id):
+    """Retourne un template partiel avec les détails de l'abonnement pour affichage en modale"""
+    subscription = Subscription.query.get_or_404(subscription_id)
+
+    if subscription.user_id != current_user.id:
+        return '<div class="alert alert-danger">Accès non autorisé</div>', 403
+
+    return render_template('subscriptions/detail_partial.html', subscription=subscription)
