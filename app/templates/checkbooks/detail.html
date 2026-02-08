@@ -12,7 +12,7 @@
             {% endif %}
         </div>
         <div>
-            <a href="{{ url_for('checkbooks.add_check', checkbook_id=checkbook.id) }}" class="btn btn-danger">
+            <a href="{{ url_for('checkbooks.add_check', checkbook_id=checkbook.id) }}" class="btn btn-check-use">
                 <i class="fas fa-check"></i> {{ _('Utiliser un chèque') }}
             </a>
             <a href="{{ url_for('checkbooks.list_checkbooks') }}" class="btn btn-outline-secondary">
@@ -28,13 +28,12 @@
     {% endif %}
 
     <!-- Statistiques -->
-    <div class="row mb-4">
+    <div class="row mb-2">
         <div class="col-md-3">
             <div class="card bg-primary text-white">
                 <div class="card-body">
                     <h6 class="text-uppercase mb-1 opacity-75">{{ _('Total chèques') }}</h6>
                     <h3 class="mb-0">{{ checkbook.total_checks() }}</h3>
-                    <small>{{ _('N°') }} {{ checkbook.start_number }} {{ _('à') }} {{ checkbook.end_number }}</small>
                 </div>
             </div>
         </div>
@@ -66,27 +65,32 @@
         </div>
     </div>
 
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <small class="text-muted">{{ _('N°') }} {{ checkbook.start_number }} {{ _('à') }} {{ checkbook.end_number }}</small>
+        </div>
+    </div>
+
     <!-- Filtres -->
     <div class="card mb-4">
         <div class="card-body">
-            <div class="btn-group btn-group-sm" role="group">
-                <a href="{{ url_for('checkbooks.detail', checkbook_id=checkbook.id, status='all') }}"
-                   class="btn btn-outline-secondary {% if filter_status == 'all' %}active{% endif %}">
-                    {{ _('Tous') }}
-                </a>
-                <a href="{{ url_for('checkbooks.detail', checkbook_id=checkbook.id, status='available') }}"
-                   class="btn btn-outline-success {% if filter_status == 'available' %}active{% endif %}">
-                    {{ _('Disponibles') }}
-                </a>
-                <a href="{{ url_for('checkbooks.detail', checkbook_id=checkbook.id, status='used') }}"
-                   class="btn btn-outline-primary {% if filter_status == 'used' %}active{% endif %}">
-                    {{ _('Utilisés') }}
-                </a>
-                <a href="{{ url_for('checkbooks.detail', checkbook_id=checkbook.id, status='cancelled') }}"
-                   class="btn btn-outline-danger {% if filter_status == 'cancelled' %}active{% endif %}">
-                    {{ _('Annulés') }}
-                </a>
-            </div>
+            <form method="GET" class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">{{ _('Statut') }}</label>
+                    <select name="status" class="form-select" onchange="this.form.submit()">
+                        <option value="all" {% if filter_status == 'all' %}selected{% endif %}>{{ _('Tous') }}</option>
+                        <option value="available" {% if filter_status == 'available' %}selected{% endif %}>{{ _('Disponibles') }}</option>
+                        <option value="used" {% if filter_status == 'used' %}selected{% endif %}>{{ _('Utilisés') }}</option>
+                        <option value="cancelled" {% if filter_status == 'cancelled' %}selected{% endif %}>{{ _('Annulés') }}</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">&nbsp;</label>
+                    <a href="{{ url_for('checkbooks.detail', checkbook_id=checkbook.id) }}" class="btn btn-secondary w-100">
+                        <i class="fas fa-redo"></i> {{ _('Réinitialiser') }}
+                    </a>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -112,15 +116,15 @@
                         </thead>
                         <tbody>
                             {% for check in checks.items %}
-                            <tr>
-                                <td><strong>#{{ check.check_number }}</strong></td>
-                                <td><small>{{ check.check_date.strftime('%d/%m/%Y') }}</small></td>
-                                <td>{{ check.payee or '-' }}</td>
-                                <td><small class="text-muted">{{ check.description or '-' }}</small></td>
-                                <td class="text-end">
+                            <tr class="clickable-row" data-href="{{ url_for('checkbooks.edit_check', check_id=check.id) }}">
+                                <td class="align-middle"><strong>#{{ check.check_number }}</strong></td>
+                                <td class="align-middle"><small>{{ check.check_date.strftime('%d/%m/%Y') }}</small></td>
+                                <td class="align-middle">{{ check.payee or '-' }}</td>
+                                <td class="align-middle"><small class="text-muted">{{ check.description or '-' }}</small></td>
+                                <td class="text-end align-middle">
                                     <strong>{{ check.amount | format_amount }} {{ check.currency | currency_symbol }}</strong>
                                 </td>
-                                <td class="text-center">
+                                <td class="text-center align-middle">
                                     {% if check.status == 'available' %}
                                         <span class="badge bg-success">{{ _('Disponible') }}</span>
                                     {% elif check.status == 'used' %}
@@ -129,15 +133,15 @@
                                         <span class="badge bg-danger">{{ _('Annulé') }}</span>
                                     {% endif %}
                                 </td>
-                                <td class="text-end">
+                                <td class="text-end align-middle" onclick="event.stopPropagation();">
                                     <div class="btn-group btn-group-sm">
                                         <a href="{{ url_for('checkbooks.edit_check', check_id=check.id) }}"
-                                           class="btn btn-outline-primary" title="{{ _('Modifier') }}">
+                                           class="btn btn-outline-warning" title="{{ _('Modifier') }}">
                                             <i class="fas fa-edit"></i>
                                         </a>
                                         <form method="post" action="{{ url_for('checkbooks.delete_check', check_id=check.id) }}"
                                               class="d-inline" onsubmit="return confirm(&quot;{{ _('Êtes-vous sûr de vouloir supprimer ce chèque ?') }}&quot;);">
-                                            <button type="submit" class="btn btn-outline-danger" title="{{ _('Supprimer') }}">
+                                            <button type="submit" class="btn btn-outline-danger btn-sm" title="{{ _('Supprimer') }}">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </form>
@@ -146,6 +150,23 @@
                             </tr>
                             {% endfor %}
                         </tbody>
+                        <tfoot class="table-light">
+                            <tr>
+                                <td colspan="4" class="text-end"><strong>{{ _('Total :') }}</strong></td>
+                                <td class="text-end">
+                                    <strong>
+                                        {% set total_amount = namespace(value=0) %}
+                                        {% for check in checks.items %}
+                                            {% if check.status == 'used' %}
+                                                {% set total_amount.value = total_amount.value + check.amount %}
+                                            {% endif %}
+                                        {% endfor %}
+                                        {{ total_amount.value | format_amount }} €
+                                    </strong>
+                                </td>
+                                <td colspan="2"></td>
+                            </tr>
+                        </tfoot>
                     </table>
                 </div>
 
@@ -188,4 +209,42 @@
         </div>
     </div>
 </div>
+
+<style>
+.btn-check-use {
+    background-color: #ef4444;
+    border-color: #ef4444;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.btn-check-use:hover {
+    background-color: #dc2626;
+    border-color: #dc2626;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.clickable-row {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.clickable-row:hover {
+    background-color: #f8f9fa !important;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Rendre les lignes du tableau cliquables
+    const rows = document.querySelectorAll('.clickable-row');
+    rows.forEach(row => {
+        row.addEventListener('click', function() {
+            window.location.href = this.dataset.href;
+        });
+    });
+});
+</script>
 {% endblock %}

@@ -306,7 +306,7 @@
                     <h5 class="mb-0"><i class="fas fa-money-check text-secondary"></i> {{ _('Chèques : Non débités') }}</h5>
                     <div class="d-flex align-items-center gap-2">
                         {% if unpointed_checks %}
-                            <span class="badge bg-danger">{{ unpointed_checks|length }}</span>
+                            <span class="badge" style="background-color: #ef4444; color: white;">{{ unpointed_checks|length }}</span>
                         {% endif %}
                         {% if current_user.is_premium() %}
                             <div class="btn-group btn-group-sm">
@@ -334,14 +334,13 @@
                                                 </button>
                                             </form>
                                         </div>
-                                        <div class="flex-shrink-0 d-flex align-items-center" style="width: 90px;">
+                                        <div class="flex-shrink-0 d-flex align-items-center" style="width: 120px;">
                                             <small class="text-muted">
                                                 <i class="fas fa-calendar"></i> {{ check.transaction_date.strftime('%d/%m/%Y') }}
                                             </small>
                                         </div>
-                                        <div class="flex-grow-1 text-start d-flex align-items-center" style="min-width: 0; gap: 0.5rem;">
-                                            <strong class="text-truncate item-label" style="max-width: 70%;" title="{{ check.name }}">{{ check.name }}</strong>
-                                            <span class="badge bg-danger text-white badge-hide-mobile" style="padding: 0.15rem 0.4rem; font-size: 0.7rem;">{{ _('Chèque') }}</span>
+                                        <div class="flex-grow-1 text-start d-flex align-items-center" style="min-width: 0;">
+                                            <strong class="text-truncate item-label" style="font-size: 1rem;" title="{{ check.name }}">{{ check.name }}</strong>
                                         </div>
                                         <div class="flex-shrink-0 text-end d-flex align-items-center justify-content-end" style="width: 150px;">
                                             <strong class="me-1">{{ check.amount | format_amount }} {{ check.currency | currency_symbol }}</strong>
@@ -351,10 +350,10 @@
                             {% endfor %}
                         </div>
                         <div class="card-footer bg-white text-center">
-                            <a href="{{ url_for('checkbooks.list_checkbooks') }}" class="btn btn-sm btn-outline-danger">
+                            <a href="{{ url_for('checkbooks.list_checkbooks') }}" class="btn btn-sm" style="border-color: #ef4444; color: #ef4444;">
                                 <i class="fas fa-check"></i> {{ _('Voir les chéquiers') }}
                             </a>
-                            <a href="{{ url_for('checkbooks.list_checkbooks') }}" class="btn btn-sm btn-outline-danger ms-2">
+                            <a href="{{ url_for('checkbooks.list_checkbooks') }}" class="btn btn-sm ms-2" style="border-color: #ef4444; color: #ef4444;">
                                 <i class="fas fa-plus"></i> {{ _('Ajouter') }}
                             </a>
                         </div>

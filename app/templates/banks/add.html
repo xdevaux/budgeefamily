@@ -17,16 +17,25 @@
                 <div class="card-body p-4">
                     <form method="POST" enctype="multipart/form-data">
                         <div class="mb-3">
-                            <label for="name" class="form-label">{{ _('Nom de la banque') }} *</label>
-                            <select class="form-select" id="name" name="name" required>
-                                <option value="">-- {{ _('Sélectionner ou saisir') }} --</option>
-                                {% for bank_name, info in french_banks.items() %}
-                                    <option value="{{ bank_name }}">{{ bank_name }}</option>
+                            <label for="default_bank" class="form-label">{{ _('Banque par défaut') }}</label>
+                            <select class="form-select" id="default_bank">
+                                <option value="">-- {{ _('Sélectionner une banque prédéfinie') }} --</option>
+                                {% for bank in default_banks %}
+                                    <option value="{{ bank.id }}">{{ bank.name }}</option>
                                 {% endfor %}
                             </select>
-                            <small class="text-muted">{{ _('Ou saisir un nom personnalisé ci-dessous') }}</small>
-                            <input type="text" class="form-control mt-2" id="name_custom" placeholder="{{ _('Nom personnalisé (optionnel)') }}">
+                            <small class="text-muted">{{ _('Sélectionnez une banque pour remplir automatiquement les champs') }}</small>
                         </div>
+
+                        <div class="mb-3">
+                            <label for="name" class="form-label">{{ _('Nom de la banque') }} *</label>
+                            <input type="text" class="form-control" id="name" name="name" required
+                                   placeholder="{{ _('Nom de votre banque') }}">
+                        </div>
+
+                        <!-- Champs cachés pour stocker les données du logo de la banque par défaut -->
+                        <input type="hidden" id="default_bank_logo_data" name="default_bank_logo_data">
+                        <input type="hidden" id="default_bank_logo_mime_type" name="default_bank_logo_mime_type">
 
                         <div class="mb-3">
                             <label for="logo" class="form-label">{{ _('Logo de la banque') }}</label>
@@ -36,9 +45,9 @@
                                     <span id="file-label">{{ _('Aucun fichier sélectionné') }}</span>
                                 </label>
                                 <input type="file" class="d-none" id="logo" name="logo"
-                                       accept="image/png,image/jpeg,image/jpg,image/gif">
+                                       accept="image/png,image/jpeg,image/jpg,image/gif,image/webp">
                             </div>
-                            <small class="text-muted">{{ _('Format: PNG, JPG, GIF (max 2 Mo)') }}</small>
+                            <small class="text-muted">{{ _('Format: PNG, JPG, GIF, WebP (max 2 Mo)') }}</small>
                         </div>
 
                         <div class="mb-3">
@@ -52,6 +61,19 @@
                             <label for="address" class="form-label">{{ _('Adresse') }}</label>
                             <textarea class="form-control" id="address" name="address" rows="3"
                                       placeholder="{{ _('Adresse complète de l\'agence') }}"></textarea>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label for="postal_code" class="form-label">{{ _('Code postal') }}</label>
+                                <input type="text" class="form-control" id="postal_code" name="postal_code"
+                                       placeholder="{{ _('ex: 75001') }}">
+                            </div>
+                            <div class="col-md-8">
+                                <label for="city" class="form-label">{{ _('Ville') }}</label>
+                                <input type="text" class="form-control" id="city" name="city"
+                                       placeholder="{{ _('ex: Paris') }}">
+                            </div>
                         </div>
 
                         <div class="row mb-3">
@@ -134,6 +156,9 @@
                 if (this.files && this.files.length > 0) {
                     fileLabel.textContent = this.files[0].name;
                     fileButton.classList.add('has-file');
+                    // Réinitialiser les champs cachés du logo par défaut
+                    document.getElementById('default_bank_logo_data').value = '';
+                    document.getElementById('default_bank_logo_mime_type').value = '';
                 } else {
                     fileLabel.textContent = "{{ _('Aucun fichier sélectionné') }}";
                     fileButton.classList.remove('has-file');
@@ -142,24 +167,50 @@
         }
     });
 
-    // Gestion du nom personnalisé
-    const nameSelect = document.getElementById('name');
-    const nameCustom = document.getElementById('name_custom');
+    // Auto-remplissage depuis la banque par défaut
+    const defaultBankSelect = document.getElementById('default_bank');
 
-    nameCustom.addEventListener('input', function() {
-        if (this.value.trim()) {
-            nameSelect.value = '';
-            nameSelect.required = false;
-        } else {
-            nameSelect.required = true;
-        }
-    });
+    defaultBankSelect.addEventListener('change', function() {
+        const bankId = this.value;
 
-    // Utiliser le nom personnalisé si rempli
-    document.querySelector('form').addEventListener('submit', function(e) {
-        if (nameCustom.value.trim()) {
-            nameSelect.value = nameCustom.value.trim();
+        if (!bankId) {
+            // Réinitialiser les champs
+            document.getElementById('name').value = '';
+            document.getElementById('address').value = '';
+            document.getElementById('postal_code').value = '';
+            document.getElementById('city').value = '';
+            document.getElementById('phone').value = '';
+            document.getElementById('email').value = '';
+            document.getElementById('website').value = '';
+            document.getElementById('bic').value = '';
+            document.getElementById('default_bank_logo_data').value = '';
+            document.getElementById('default_bank_logo_mime_type').value = '';
+            return;
         }
+
+        // Récupérer les informations de la banque par défaut
+        fetch(`/banks/api/default-bank/${bankId}`)
+            .then(response => response.json())
+            .then(data => {
+                // Remplir automatiquement les champs
+                document.getElementById('name').value = data.name;
+                document.getElementById('address').value = data.address;
+                document.getElementById('postal_code').value = data.postal_code;
+                document.getElementById('city').value = data.city;
+                document.getElementById('phone').value = data.phone;
+                document.getElementById('email').value = data.email;
+                document.getElementById('website').value = data.website;
+                document.getElementById('bic').value = data.bic;
+
+                // Stocker les données du logo dans les champs cachés
+                if (data.logo_data) {
+                    document.getElementById('default_bank_logo_data').value = data.logo_data;
+                    document.getElementById('default_bank_logo_mime_type').value = data.logo_mime_type;
+                }
+            })
+            .catch(error => {
+                console.error('Erreur lors de la récupération des informations de la banque:', error);
+            });
     });
 </script>
 {% endblock %}

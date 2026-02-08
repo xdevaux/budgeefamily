@@ -1,0 +1,214 @@
+{% extends "base.html" %}
+
+{% block title %}Gestion des banques - Administration{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h3"><i class="fas fa-university"></i> Gestion des banques</h1>
+                <a href="{{ url_for('admin.default_banks_add') }}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Ajouter une banque
+                </a>
+            </div>
+
+            <!-- Filtres -->
+            <div class="card mb-3">
+                <div class="card-body">
+                    <form method="GET" class="row g-3">
+                        <div class="col-md-4">
+                            <label for="country" class="form-label">Pays</label>
+                            <select class="form-select" id="country" name="country">
+                                <option value="">Tous les pays</option>
+                                {% for country in countries %}
+                                <option value="{{ country }}" {% if country_filter == country %}selected{% endif %}>
+                                    {{ country }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="language" class="form-label">Langue</label>
+                            <select class="form-select" id="language" name="language">
+                                <option value="">Toutes les langues</option>
+                                {% for lang in languages %}
+                                <option value="{{ lang }}" {% if language_filter == lang %}selected{% endif %}>
+                                    {{ lang }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-4 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary me-2">
+                                <i class="fas fa-filter"></i> Filtrer
+                            </button>
+                            <a href="{{ url_for('admin.default_banks_list') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-times"></i> Réinitialiser
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Logo</th>
+                                    <th>Nom</th>
+                                    <th>Pays</th>
+                                    <th>Langue</th>
+                                    <th>BIC</th>
+                                    <th>Actif</th>
+                                    <th class="text-end">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for bank in banks %}
+                                <tr class="clickable-row" data-href="{{ url_for('admin.default_banks_edit', bank_id=bank.id) }}">
+                                    <td>{{ bank.id }}</td>
+                                    <td>
+                                        {% if bank.logo_data %}
+                                            <img src="data:{{ bank.logo_mime_type }};base64,{{ bank.logo_data }}" alt="{{ bank.name }}"
+                                                 style="width: 50px; height: 50px; object-fit: contain;">
+                                        {% elif bank.color and bank.initials %}
+                                            <svg width="50" height="50" xmlns="http://www.w3.org/2000/svg">
+                                                <rect width="50" height="50" rx="5" fill="{{ bank.color }}"/>
+                                                <text x="25" y="32" font-family="Arial, sans-serif" font-size="16" font-weight="bold"
+                                                      fill="{{ bank.text_color or '#FFFFFF' }}" text-anchor="middle">{{ bank.initials }}</text>
+                                            </svg>
+                                        {% else %}
+                                            <i class="fas fa-university fa-2x text-muted"></i>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <strong>{{ bank.name }}</strong>
+                                        {% if bank.website %}
+                                        <a href="{{ bank.website }}" target="_blank" class="ms-1">
+                                            <i class="fas fa-external-link-alt text-muted small"></i>
+                                        </a>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-secondary">{{ bank.country_code }}</span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-info">{{ bank.language }}</span>
+                                    </td>
+                                    <td>
+                                        {% if bank.bic %}
+                                        <code>{{ bank.bic }}</code>
+                                        {% else %}
+                                        <span class="text-muted">-</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if bank.is_active %}
+                                        <span class="badge bg-success">Actif</span>
+                                        {% else %}
+                                        <span class="badge bg-danger">Inactif</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-end" onclick="event.stopPropagation();">
+                                        <a href="{{ url_for('admin.default_banks_edit', bank_id=bank.id) }}"
+                                           class="btn btn-sm btn-outline-primary" title="Modifier">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <form action="{{ url_for('admin.default_banks_toggle', bank_id=bank.id) }}"
+                                              method="POST" style="display: inline;">
+                                            <button type="submit" class="btn btn-sm btn-outline-warning" title="Activer/Désactiver">
+                                                <i class="fas fa-power-off"></i>
+                                            </button>
+                                        </form>
+                                        <form action="{{ url_for('admin.default_banks_delete', bank_id=bank.id) }}"
+                                              method="POST" style="display: inline;"
+                                              onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette banque ?');">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Supprimer">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td colspan="8" class="text-center text-muted">Aucune banque trouvée</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    {% if pagination.pages > 1 %}
+                    <nav aria-label="Page navigation" class="mt-4">
+                        <ul class="pagination justify-content-center">
+                            {% if pagination.has_prev %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ url_for('admin.default_banks_list', page=pagination.prev_num, country=country_filter, language=language_filter) }}">Précédent</a>
+                            </li>
+                            {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link">Précédent</span>
+                            </li>
+                            {% endif %}
+
+                            {% for page_num in pagination.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+                                {% if page_num %}
+                                    {% if page_num == pagination.page %}
+                                    <li class="page-item active"><span class="page-link">{{ page_num }}</span></li>
+                                    {% else %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ url_for('admin.default_banks_list', page=page_num, country=country_filter, language=language_filter) }}">{{ page_num }}</a>
+                                    </li>
+                                    {% endif %}
+                                {% else %}
+                                    <li class="page-item disabled"><span class="page-link">...</span></li>
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if pagination.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ url_for('admin.default_banks_list', page=pagination.next_num, country=country_filter, language=language_filter) }}">Suivant</a>
+                            </li>
+                            {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link">Suivant</span>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.clickable-row {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.clickable-row:hover {
+    background-color: #f8f9fa !important;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Rendre les lignes du tableau cliquables
+    const rows = document.querySelectorAll('.clickable-row');
+
+    rows.forEach(row => {
+        row.addEventListener('click', function() {
+            window.location.href = this.dataset.href;
+        });
+    });
+});
+</script>
+{% endblock %}

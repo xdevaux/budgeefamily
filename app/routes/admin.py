@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, redirect, url_for, flash, request,
 from flask_login import login_required, current_user
 from functools import wraps
 from app import db
-from app.models import User, Plan, Category, Service, ServicePlan
+from app.models import User, Plan, Category, Service, ServicePlan, DefaultBank
 from app.utils.backup import BackupManager
 from datetime import datetime
 import base64
@@ -863,3 +863,172 @@ def backup_delete(filename):
         flash(f'Erreur: {str(e)}', 'danger')
 
     return redirect(url_for('admin.backups_manage'))
+
+
+# ========== GESTION DES BANQUES PAR DÉFAUT ==========
+
+@bp.route('/default-banks')
+@login_required
+@admin_required
+def default_banks_list():
+    """Liste toutes les banques"""
+    page = request.args.get('page', 1, type=int)
+    per_page = 20
+    country_filter = request.args.get('country', '')
+    language_filter = request.args.get('language', '')
+
+    # Requête de base
+    query = DefaultBank.query
+
+    # Filtres
+    if country_filter:
+        query = query.filter_by(country_code=country_filter)
+    if language_filter:
+        query = query.filter_by(language=language_filter)
+
+    pagination = query.order_by(DefaultBank.country_code, DefaultBank.name).paginate(
+        page=page, per_page=per_page, error_out=False
+    )
+    banks = pagination.items
+
+    # Récupérer les pays et langues distincts pour les filtres
+    countries = db.session.query(DefaultBank.country_code).distinct().order_by(DefaultBank.country_code).all()
+    countries = [c[0] for c in countries]
+    languages = db.session.query(DefaultBank.language).distinct().order_by(DefaultBank.language).all()
+    languages = [l[0] for l in languages]
+
+    return render_template('admin/default_banks_list.html',
+                         banks=banks,
+                         pagination=pagination,
+                         countries=countries,
+                         languages=languages,
+                         country_filter=country_filter,
+                         language_filter=language_filter)
+
+
+@bp.route('/default-banks/add', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def default_banks_add():
+    """Ajouter une nouvelle banque"""
+    if request.method == 'POST':
+        name = request.form.get('name')
+        country_code = request.form.get('country_code')
+        language = request.form.get('language')
+        bic = request.form.get('bic')
+        address = request.form.get('address')
+        postal_code = request.form.get('postal_code')
+        city = request.form.get('city')
+        phone = request.form.get('phone')
+        email = request.form.get('email')
+        website = request.form.get('website')
+        color = request.form.get('color')
+        initials = request.form.get('initials')
+        text_color = request.form.get('text_color', '#FFFFFF')
+
+        # Créer la banque
+        bank = DefaultBank(
+            name=name,
+            country_code=country_code,
+            language=language,
+            bic=bic,
+            address=address,
+            postal_code=postal_code,
+            city=city,
+            phone=phone,
+            email=email,
+            website=website,
+            color=color,
+            initials=initials,
+            text_color=text_color
+        )
+
+        # Gestion du logo uploadé
+        if 'logo' in request.files:
+            logo_file = request.files['logo']
+            if logo_file and logo_file.filename and allowed_file(logo_file.filename):
+                logo_data = base64.b64encode(logo_file.read()).decode('utf-8')
+                bank.logo_data = logo_data
+                bank.logo_mime_type = logo_file.content_type
+
+        db.session.add(bank)
+        db.session.commit()
+
+        flash(f'Banque "{name}" ajoutée avec succès !', 'success')
+        return redirect(url_for('admin.default_banks_list'))
+
+    return render_template('admin/default_banks_add.html')
+
+
+@bp.route('/default-banks/<int:bank_id>/edit', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def default_banks_edit(bank_id):
+    """Modifier une banque"""
+    bank = DefaultBank.query.get_or_404(bank_id)
+
+    if request.method == 'POST':
+        bank.name = request.form.get('name')
+        bank.country_code = request.form.get('country_code')
+        bank.language = request.form.get('language')
+        bank.bic = request.form.get('bic')
+        bank.address = request.form.get('address')
+        bank.postal_code = request.form.get('postal_code')
+        bank.city = request.form.get('city')
+        bank.phone = request.form.get('phone')
+        bank.email = request.form.get('email')
+        bank.website = request.form.get('website')
+        bank.color = request.form.get('color')
+        bank.initials = request.form.get('initials')
+        bank.text_color = request.form.get('text_color', '#FFFFFF')
+        bank.updated_at = datetime.utcnow()
+
+        # Supprimer le logo si demandé
+        if request.form.get('remove_logo') == '1':
+            bank.logo_data = None
+            bank.logo_mime_type = None
+
+        # Gestion du logo uploadé
+        if 'logo' in request.files:
+            logo_file = request.files['logo']
+            if logo_file and logo_file.filename and allowed_file(logo_file.filename):
+                logo_data = base64.b64encode(logo_file.read()).decode('utf-8')
+                bank.logo_data = logo_data
+                bank.logo_mime_type = logo_file.content_type
+
+        db.session.commit()
+
+        flash(f'Banque "{bank.name}" modifiée avec succès !', 'success')
+        return redirect(url_for('admin.default_banks_list'))
+
+    return render_template('admin/default_banks_edit.html', bank=bank)
+
+
+@bp.route('/default-banks/<int:bank_id>/toggle', methods=['POST'])
+@login_required
+@admin_required
+def default_banks_toggle(bank_id):
+    """Activer/Désactiver une banque"""
+    bank = DefaultBank.query.get_or_404(bank_id)
+
+    bank.is_active = not bank.is_active
+    db.session.commit()
+
+    status = 'activée' if bank.is_active else 'désactivée'
+    flash(f'La banque "{bank.name}" a été {status}.', 'success')
+    return redirect(url_for('admin.default_banks_list'))
+
+
+@bp.route('/default-banks/<int:bank_id>/delete', methods=['POST'])
+@login_required
+@admin_required
+def default_banks_delete(bank_id):
+    """Supprimer une banque"""
+    bank = DefaultBank.query.get_or_404(bank_id)
+
+    name = bank.name
+    db.session.delete(bank)
+    db.session.commit()
+
+    flash(f'Banque "{name}" supprimée avec succès !', 'success')
+    return redirect(url_for('admin.default_banks_list'))

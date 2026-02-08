@@ -5,18 +5,9 @@
 {% block content %}
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2><i class="fas fa-building"></i> {{ _('Mes employeurs') }}</h2>
+        <h2><i class="fas fa-building" style="color: #10b981;"></i> {{ _('Mes employeurs') }}</h2>
         <div class="d-flex gap-2">
-            <!-- Boutons de basculement vue -->
-            <div class="btn-group" role="group">
-                <button type="button" class="btn btn-outline-secondary active" id="gridViewBtn" onclick="switchView('grid')">
-                    <i class="fas fa-th"></i>
-                </button>
-                <button type="button" class="btn btn-outline-secondary" id="listViewBtn" onclick="switchView('list')">
-                    <i class="fas fa-list"></i>
-                </button>
-            </div>
-            <a href="{{ url_for('employers.add') }}" class="btn btn-primary">
+            <a href="{{ url_for('employers.add') }}" class="btn btn-employer-add">
                 <i class="fas fa-plus"></i> {{ _('Ajouter un employeur') }}
             </a>
         </div>
@@ -46,78 +37,6 @@
 
     <!-- Liste des employeurs -->
     {% if employers.items %}
-        <!-- Vue grille -->
-        <div class="row grid-view">
-            {% for employer in employers.items %}
-                <div class="col-md-6 col-lg-4 mb-4">
-                    <div class="card h-100 {% if not employer.is_active %}border-secondary{% endif %}">
-                        <div class="card-body">
-                            <div class="d-flex align-items-center mb-3">
-                                {% if employer.logo_data %}
-                                    <img src="data:{{ employer.logo_mime_type }};base64,{{ employer.logo_data }}"
-                                         alt="{{ employer.name }}"
-                                         class="rounded me-3"
-                                         style="width: 60px; height: 60px; object-fit: contain; background: #f8f9fa; padding: 5px;">
-                                {% else %}
-                                    <div class="rounded me-3 d-flex align-items-center justify-content-center"
-                                         style="width: 60px; height: 60px; background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; font-size: 1.5rem;">
-                                        <i class="fas fa-building"></i>
-                                    </div>
-                                {% endif %}
-                                <div class="flex-grow-1">
-                                    <h5 class="card-title mb-0">{{ employer.name }}</h5>
-                                    {% if employer.job_title %}
-                                        <small class="text-muted">{{ employer.job_title }}</small>
-                                    {% endif %}
-                                </div>
-                            </div>
-
-                            {% if employer.city %}
-                                <p class="mb-2">
-                                    <i class="fas fa-map-marker-alt text-muted"></i>
-                                    {{ employer.city }}{% if employer.country %}, {{ employer.country }}{% endif %}
-                                </p>
-                            {% endif %}
-
-                            {% if employer.hire_date %}
-                                <p class="mb-2">
-                                    <i class="fas fa-calendar-alt text-muted"></i>
-                                    {{ _('Depuis le') }} {{ employer.hire_date.strftime('%d/%m/%Y') }}
-                                    {% if employer.end_date %}
-                                        <br><small class="text-muted">{{ _('Jusqu\'au') }} {{ employer.end_date.strftime('%d/%m/%Y') }}</small>
-                                    {% endif %}
-                                </p>
-                            {% endif %}
-
-                            {% if employer.contract_type %}
-                                <span class="badge bg-primary">{{ employer.contract_type|upper }}</span>
-                            {% endif %}
-
-                            {% if not employer.is_active %}
-                                <span class="badge bg-secondary">{{ _('Termine') }}</span>
-                            {% endif %}
-
-                            <div class="mt-3">
-                                <small class="text-muted">
-                                    <i class="fas fa-file"></i> {{ employer.documents.count() }} {{ _('document(s)') }}
-                                </small>
-                            </div>
-                        </div>
-                        <div class="card-footer bg-transparent">
-                            <a href="{{ url_for('employers.detail', employer_id=employer.id) }}" class="btn btn-sm btn-outline-primary">
-                                <i class="fas fa-eye"></i> {{ _('Voir') }}
-                            </a>
-                            <a href="{{ url_for('employers.edit', employer_id=employer.id) }}" class="btn btn-sm btn-outline-warning">
-                                <i class="fas fa-edit"></i> {{ _('Modifier') }}
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
-
-        <!-- Vue liste -->
-        <div class="list-view d-none">
             <div class="card">
                 <div class="table-responsive">
                     <table class="table table-hover mb-0">
@@ -128,15 +47,15 @@
                                 <th>{{ _('Localisation') }}</th>
                                 <th>{{ _('Contrat') }}</th>
                                 <th>{{ _('Date d\'embauche') }}</th>
-                                <th>{{ _('Statut') }}</th>
                                 <th>{{ _('Documents') }}</th>
+                                <th>{{ _('Statut') }}</th>
                                 <th class="text-end">{{ _('Actions') }}</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for employer in employers.items %}
-                            <tr class="{% if not employer.is_active %}opacity-50{% endif %}">
-                                <td>
+                            <tr class="clickable-row {% if not employer.is_active %}opacity-50{% endif %}" data-href="{{ url_for('employers.detail', employer_id=employer.id) }}">
+                                <td class="align-middle">
                                     <div class="d-flex align-items-center">
                                         <div class="me-2">
                                             {% if employer.logo_data %}
@@ -153,28 +72,28 @@
                                         <strong>{{ employer.name }}</strong>
                                     </div>
                                 </td>
-                                <td>
+                                <td class="align-middle">
                                     {% if employer.job_title %}
                                         {{ employer.job_title }}
                                     {% else %}
                                         <span class="text-muted">-</span>
                                     {% endif %}
                                 </td>
-                                <td>
+                                <td class="align-middle">
                                     {% if employer.city %}
                                         {{ employer.city }}{% if employer.country %}, {{ employer.country }}{% endif %}
                                     {% else %}
                                         <span class="text-muted">-</span>
                                     {% endif %}
                                 </td>
-                                <td>
+                                <td class="align-middle">
                                     {% if employer.contract_type %}
                                         <span class="badge bg-primary">{{ employer.contract_type|upper }}</span>
                                     {% else %}
                                         <span class="text-muted">-</span>
                                     {% endif %}
                                 </td>
-                                <td>
+                                <td class="align-middle">
                                     {% if employer.hire_date %}
                                         {{ employer.hire_date.strftime('%d/%m/%Y') }}
                                         {% if employer.end_date %}
@@ -184,21 +103,18 @@
                                         <span class="text-muted">-</span>
                                     {% endif %}
                                 </td>
-                                <td>
+                                <td class="align-middle">
+                                    <span class="badge bg-info">{{ employer.documents.count() }}</span>
+                                </td>
+                                <td class="align-middle">
                                     {% if employer.is_active %}
                                         <span class="badge bg-success">{{ _('Actif') }}</span>
                                     {% else %}
                                         <span class="badge bg-secondary">{{ _('Termine') }}</span>
                                     {% endif %}
                                 </td>
-                                <td>
-                                    <span class="badge bg-info">{{ employer.documents.count() }}</span>
-                                </td>
-                                <td class="text-end">
+                                <td class="align-middle text-end" onclick="event.stopPropagation();">
                                     <div class="btn-group">
-                                        <a href="{{ url_for('employers.detail', employer_id=employer.id) }}" class="btn btn-sm btn-outline-primary" title="{{ _('Voir') }}">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
                                         <a href="{{ url_for('employers.edit', employer_id=employer.id) }}" class="btn btn-sm btn-outline-warning" title="{{ _('Modifier') }}">
                                             <i class="fas fa-edit"></i>
                                         </a>
@@ -216,7 +132,6 @@
                     </table>
                 </div>
             </div>
-        </div>
 
         <!-- Pagination -->
         {% if employers.pages > 1 %}
@@ -261,33 +176,40 @@
 </div>
 
 <script>
-// Fonction pour basculer entre les vues grille et liste
-function switchView(view) {
-    const gridViews = document.querySelectorAll('.grid-view');
-    const listViews = document.querySelectorAll('.list-view');
-    const gridBtn = document.getElementById('gridViewBtn');
-    const listBtn = document.getElementById('listViewBtn');
-
-    if (view === 'grid') {
-        gridViews.forEach(el => el.classList.remove('d-none'));
-        listViews.forEach(el => el.classList.add('d-none'));
-        gridBtn.classList.add('active');
-        listBtn.classList.remove('active');
-    } else {
-        gridViews.forEach(el => el.classList.add('d-none'));
-        listViews.forEach(el => el.classList.remove('d-none'));
-        gridBtn.classList.remove('active');
-        listBtn.classList.add('active');
-    }
-
-    // Sauvegarder la preference dans localStorage
-    localStorage.setItem('employersView', view);
-}
-
-// Restaurer la vue preferee au chargement de la page
 document.addEventListener('DOMContentLoaded', function() {
-    const savedView = localStorage.getItem('employersView') || 'grid';
-    switchView(savedView);
+    // Rendre les lignes du tableau cliquables
+    const rows = document.querySelectorAll('.clickable-row');
+    rows.forEach(row => {
+        row.addEventListener('click', function() {
+            window.location.href = this.dataset.href;
+        });
+    });
 });
 </script>
+
+<style>
+.clickable-row {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.clickable-row:hover {
+    background-color: #f8f9fa !important;
+}
+
+.btn-employer-add {
+    background-color: #10b981;
+    border-color: #10b981;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.btn-employer-add:hover {
+    background-color: #059669;
+    border-color: #059669;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+</style>
 {% endblock %}

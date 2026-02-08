@@ -5,10 +5,10 @@
 {% block content %}
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2><i class="fas fa-bell"></i> {{ _('Mes rappels') }}</h2>
+        <h2><i class="fas fa-bell" style="color: #ef4444;"></i> {{ _('Mes rappels') }}</h2>
         <div class="d-flex gap-2">
             {% if current_user.can_add_reminder() %}
-                <a href="{{ url_for('reminders.add') }}" class="btn btn-primary">
+                <a href="{{ url_for('reminders.add') }}" class="btn btn-reminder-add">
                     <i class="fas fa-plus"></i> {{ _('Ajouter un rappel') }}
                 </a>
             {% else %}
@@ -75,24 +75,24 @@
                         </thead>
                         <tbody>
                             {% for reminder in reminders.items %}
-                                <tr class="{% if not reminder.is_active %}opacity-50{% endif %}">
-                                    <td>
+                                <tr class="clickable-row {% if not reminder.is_active %}opacity-50{% endif %}" data-href="{{ url_for('reminders.detail', reminder_id=reminder.id) }}">
+                                    <td class="align-middle">
                                         <strong>{{ reminder.name }}</strong>
                                         {% if reminder.description %}
                                             <br><small class="text-muted">{{ reminder.description[:50] }}{% if reminder.description|length > 50 %}...{% endif %}</small>
                                         {% endif %}
                                     </td>
-                                    <td>
+                                    <td class="align-middle">
                                         {% if reminder.provider %}
                                             <i class="fas fa-user-tie text-primary"></i> {{ reminder.provider.name }}
                                         {% else %}
                                             <span class="text-muted">-</span>
                                         {% endif %}
                                     </td>
-                                    <td>
+                                    <td class="align-middle">
                                         <strong>{{ '%02d'|format(reminder.reminder_month) }}/{{ reminder.reminder_year }}</strong>
                                     </td>
-                                    <td>
+                                    <td class="align-middle">
                                         {% if reminder.recurrence == 'annual' %}
                                             <span class="badge bg-info">{{ _('Annuel') }}</span>
                                         {% elif reminder.recurrence == 'semiannual' %}
@@ -103,21 +103,21 @@
                                             <span class="badge bg-secondary">{{ _('Une fois') }}</span>
                                         {% endif %}
                                     </td>
-                                    <td class="text-end">
+                                    <td class="text-end align-middle">
                                         {% if reminder.estimated_cost %}
                                             {{ reminder.estimated_cost | format_amount }} {{ reminder.currency | currency_symbol }}
                                         {% else %}
                                             <span class="text-muted">-</span>
                                         {% endif %}
                                     </td>
-                                    <td>
+                                    <td class="align-middle">
                                         {% if reminder.is_active %}
                                             <span class="badge bg-success">{{ _('Actif') }}</span>
                                         {% else %}
                                             <span class="badge bg-secondary">{{ _('Archivé') }}</span>
                                         {% endif %}
                                     </td>
-                                    <td>
+                                    <td class="align-middle">
                                         {% if reminder.appointment_booked %}
                                             <span class="badge bg-success">
                                                 <i class="fas fa-check"></i> {{ _('Prochain rendez-vous') }}{% if reminder.appointment_date %} {{ _('le') }} {{ reminder.appointment_date.strftime('%d/%m/%Y') }}{% endif %}
@@ -128,12 +128,8 @@
                                             </span>
                                         {% endif %}
                                     </td>
-                                    <td class="text-end">
+                                    <td class="text-end align-middle" onclick="event.stopPropagation();">
                                         <div class="btn-group">
-                                            <a href="{{ url_for('reminders.detail', reminder_id=reminder.id) }}"
-                                               class="btn btn-sm btn-outline-primary" title="{{ _('Voir') }}">
-                                                <i class="fas fa-eye"></i>
-                                            </a>
                                             <a href="{{ url_for('reminders.edit', reminder_id=reminder.id) }}"
                                                class="btn btn-sm btn-outline-warning" title="{{ _('Modifier') }}">
                                                 <i class="fas fa-edit"></i>
@@ -203,11 +199,49 @@
                 <i class="fas fa-bell fa-4x text-muted mb-3"></i>
                 <h4>{{ _('Aucun rappel') }}</h4>
                 <p class="text-muted">{{ _('Commencez par ajouter votre premier rappel') }}</p>
-                <a href="{{ url_for('reminders.add') }}" class="btn btn-primary">
+                <a href="{{ url_for('reminders.add') }}" class="btn btn-reminder-add">
                     <i class="fas fa-plus"></i> {{ _('Ajouter un rappel') }}
                 </a>
             </div>
         </div>
     {% endif %}
 </div>
+
+<style>
+.btn-reminder-add {
+    background-color: #ef4444;
+    border-color: #ef4444;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.btn-reminder-add:hover {
+    background-color: #dc2626;
+    border-color: #dc2626;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.clickable-row {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.clickable-row:hover {
+    background-color: #f8f9fa !important;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Rendre les lignes du tableau cliquables
+    const rows = document.querySelectorAll('.clickable-row');
+    rows.forEach(row => {
+        row.addEventListener('click', function() {
+            window.location.href = this.dataset.href;
+        });
+    });
+});
+</script>
 {% endblock %}

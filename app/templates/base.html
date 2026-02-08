@@ -354,14 +354,13 @@
         /* Toast Notification */
         .toast-container {
             position: fixed;
-            top: 80px;
-            left: 50%;
-            transform: translateX(-50%);
+            bottom: 20px;
+            right: 20px;
             z-index: 9999;
             display: flex;
             flex-direction: column;
             gap: 10px;
-            align-items: center;
+            align-items: flex-end;
         }
 
         .toast-notification {
@@ -469,11 +468,12 @@
 
         @media (max-width: 768px) {
             .toast-container {
-                top: 70px;
-                left: 50%;
-                transform: translateX(-50%);
+                bottom: 20px;
+                right: 10px;
+                left: 10px;
                 width: calc(100% - 20px);
                 max-width: 500px;
+                margin: 0 auto;
             }
 
             .toast-notification {
@@ -907,6 +907,7 @@
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="{{ url_for('revenues.list') }}"><i class="fas fa-hand-holding-usd"></i> {{ _('Mes revenus') }}</a></li>
                                 <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{{ url_for('banks.list_banks') }}"><i class="fas fa-university"></i> {{ _('Banques') }}</a></li>
                                 <li><a class="dropdown-item" href="{{ url_for('employers.list') }}"><i class="fas fa-building"></i> {{ _('Employeurs') }}</a></li>
                             </ul>
                         </li>
@@ -943,7 +944,6 @@
                                 <li><a class="dropdown-item" href="{{ url_for('installments.list') }}"><i class="fas fa-calendar-alt"></i> {{ _('Mes paiements en plusieurs fois') }}</a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="{{ url_for('credit_types.list') }}"><i class="fas fa-tag"></i> {{ _('Types de crédits') }}</a></li>
-                                <li><a class="dropdown-item" href="{{ url_for('banks.list_banks') }}"><i class="fas fa-university"></i> {{ _('Banques') }}</a></li>
                             </ul>
                         </li>
                         <li class="nav-item dropdown">
@@ -970,6 +970,7 @@
                                 <li><a class="dropdown-item" href="{{ url_for('admin.categories_list') }}"><i class="fas fa-folder"></i> {{ _('Catégories') }}</a></li>
                                 <li><a class="dropdown-item" href="{{ url_for('admin.services_list') }}"><i class="fas fa-cogs"></i> {{ _('Services') }}</a></li>
                                 <li><a class="dropdown-item" href="{{ url_for('admin.service_plans_list') }}"><i class="fas fa-list-alt"></i> {{ _('Formules') }}</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('admin.default_banks_list') }}"><i class="fas fa-university"></i> {{ _('Banques') }}</a></li>
                                 {% endif %}
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item text-danger" href="{{ url_for('auth.logout') }}"><i class="fas fa-sign-out-alt"></i> {{ _('Déconnexion') }}</a></li>

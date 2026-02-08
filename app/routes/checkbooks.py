@@ -17,21 +17,32 @@ def list_checkbooks():
     """Liste des chéquiers de l'utilisateur"""
     page = request.args.get('page', 1, type=int)
     filter_status = request.args.get('status', 'all')
+    filter_bank = request.args.get('bank_id', type=int)
 
     query = current_user.checkbooks
 
+    # Filter by status
     if filter_status == 'active':
         query = query.filter_by(status='active')
     elif filter_status == 'finished':
         query = query.filter_by(status='finished')
 
+    # Filter by bank
+    if filter_bank:
+        query = query.filter_by(bank_id=filter_bank)
+
     checkbooks = query.order_by(Checkbook.created_at.desc()).paginate(
         page=page, per_page=10, error_out=False
     )
 
+    # Get user's banks for filter dropdown
+    banks = current_user.banks.filter_by(is_active=True).order_by(Bank.name).all()
+
     return render_template('checkbooks/list.html',
                          checkbooks=checkbooks,
-                         filter_status=filter_status)
+                         banks=banks,
+                         filter_status=filter_status,
+                         filter_bank=filter_bank)
 
 
 @bp.route('/add', methods=['GET', 'POST'])
@@ -90,7 +101,7 @@ def add():
     # Récupérer les banques pour le formulaire
     banks = current_user.banks.filter_by(is_active=True).order_by(Bank.name).all()
 
-    return render_template('checkbooks/add.html', banks=banks)
+    return render_template('checkbooks/add.html', banks=banks, now=datetime.now())
 
 
 @bp.route('/<int:checkbook_id>')
@@ -190,6 +201,42 @@ def delete(checkbook_id):
     db.session.commit()
 
     flash(_('Chéquier "%(name)s" supprimé avec succès !', name=checkbook_name), 'success')
+    return redirect(url_for('checkbooks.list_checkbooks'))
+
+
+@bp.route('/<int:checkbook_id>/archive', methods=['POST'])
+@login_required
+def archive(checkbook_id):
+    """Archiver un chéquier"""
+    checkbook = Checkbook.query.get_or_404(checkbook_id)
+
+    if checkbook.user_id != current_user.id:
+        flash(_('Vous n\'avez pas accès à ce chéquier.'), 'danger')
+        return redirect(url_for('checkbooks.list_checkbooks'))
+
+    checkbook.status = 'finished'
+    checkbook.updated_at = datetime.utcnow()
+    db.session.commit()
+
+    flash(_('Le chéquier "%(name)s" a été archivé.', name=checkbook.name), 'success')
+    return redirect(url_for('checkbooks.list_checkbooks'))
+
+
+@bp.route('/<int:checkbook_id>/unarchive', methods=['POST'])
+@login_required
+def unarchive(checkbook_id):
+    """Désarchiver un chéquier"""
+    checkbook = Checkbook.query.get_or_404(checkbook_id)
+
+    if checkbook.user_id != current_user.id:
+        flash(_('Vous n\'avez pas accès à ce chéquier.'), 'danger')
+        return redirect(url_for('checkbooks.list_checkbooks'))
+
+    checkbook.status = 'active'
+    checkbook.updated_at = datetime.utcnow()
+    db.session.commit()
+
+    flash(_('Le chéquier "%(name)s" a été désarchivé.', name=checkbook.name), 'success')
     return redirect(url_for('checkbooks.list_checkbooks'))
 
 
@@ -341,7 +388,7 @@ def edit_check(check_id):
 @bp.route('/checks/<int:check_id>/delete', methods=['POST'])
 @login_required
 def delete_check(check_id):
-    """Supprimer un chèque"""
+    """Remettre un chèque disponible"""
     check = Check.query.get_or_404(check_id)
 
     if check.user_id != current_user.id:
@@ -349,6 +396,7 @@ def delete_check(check_id):
         return redirect(url_for('checkbooks.list_checkbooks'))
 
     checkbook_id = check.checkbook_id
+    check_number = check.check_number
 
     # Annuler la transaction associée si elle existe
     transaction = Transaction.query.filter_by(
@@ -358,8 +406,15 @@ def delete_check(check_id):
     if transaction:
         transaction.status = 'cancelled'
 
-    db.session.delete(check)
+    # Remettre le chèque à l'état disponible au lieu de le supprimer
+    check.status = 'available'
+    check.amount = 0.0
+    check.payee = None
+    check.description = None
+    check.check_date = datetime.now().date()
+    check.updated_at = datetime.utcnow()
+
     db.session.commit()
 
-    flash(_('Chèque #%(number)s supprimé avec succès !', number=check.check_number), 'success')
+    flash(_('Chèque #%(number)s est à nouveau disponible !', number=check_number), 'success')
     return redirect(url_for('checkbooks.detail', checkbook_id=checkbook_id))

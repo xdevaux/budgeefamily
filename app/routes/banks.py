@@ -6,8 +6,9 @@ from flask_login import login_required, current_user
 from flask_babel import gettext as _, lazy_gettext as _l
 from datetime import datetime
 from app import db, limiter
-from app.models import Bank, BankDocument
+from app.models import Bank, BankDocument, BankAccount, DefaultBank
 from app.utils.file_security import validate_upload, get_safe_content_disposition
+from app.routes.bank_accounts import get_account_type_label
 import base64
 
 bp = Blueprint('banks', __name__, url_prefix='/banks')
@@ -117,13 +118,17 @@ def add():
             notes=request.form.get('notes')
         )
 
-        # Gestion du logo uploadé
+        # Gestion du logo uploadé ou copié depuis la banque par défaut
         if 'logo' in request.files:
             logo_file = request.files['logo']
             if logo_file and logo_file.filename:
                 logo_data = base64.b64encode(logo_file.read()).decode('utf-8')
                 bank.logo_data = logo_data
                 bank.logo_mime_type = logo_file.content_type
+        elif request.form.get('default_bank_logo_data'):
+            # Copier le logo de la banque par défaut
+            bank.logo_data = request.form.get('default_bank_logo_data')
+            bank.logo_mime_type = request.form.get('default_bank_logo_mime_type')
 
         db.session.add(bank)
         db.session.commit()
@@ -131,7 +136,14 @@ def add():
         flash(_('Banque ajoutée avec succès !'), 'success')
         return redirect(url_for('banks.detail', bank_id=bank.id))
 
-    return render_template('banks/add.html', french_banks=FRENCH_BANKS_LOGOS)
+    # Récupérer les banques par défaut en fonction de la langue de l'utilisateur
+    user_language = current_user.language or 'fr'
+    default_banks = DefaultBank.query.filter_by(
+        language=user_language,
+        is_active=True
+    ).order_by(DefaultBank.name).all()
+
+    return render_template('banks/add.html', default_banks=default_banks)
 
 
 @bp.route('/<int:bank_id>')
@@ -147,6 +159,7 @@ def detail(bank_id):
     # Récupérer les documents avec filtres
     filter_type = request.args.get('doc_type', None)
     filter_year = request.args.get('year', None, type=int)
+    filter_account = request.args.get('account_id', None)
     search = request.args.get('search', None)
 
     query = bank.documents
@@ -155,6 +168,11 @@ def detail(bank_id):
         query = query.filter_by(document_type=filter_type)
     if filter_year:
         query = query.filter_by(year=filter_year)
+    if filter_account:
+        if filter_account == 'none':
+            query = query.filter_by(account_id=None)
+        else:
+            query = query.filter_by(account_id=int(filter_account))
     if search:
         query = query.filter(BankDocument.name.ilike(f'%{search}%'))
 
@@ -177,17 +195,23 @@ def detail(bank_id):
         BankDocument.bank_id == bank_id
     ).scalar() or 0
 
+    # Récupérer les comptes bancaires
+    accounts = bank.accounts.order_by(BankAccount.is_default.desc(), BankAccount.name).all()
+
     return render_template('banks/detail.html',
                          bank=bank,
+                         accounts=accounts,
                          documents=documents,
                          document_types=get_document_types(),
                          years=years,
                          filter_type=filter_type,
                          filter_year=filter_year,
+                         filter_account=filter_account,
                          search=search,
                          doc_counts=doc_counts,
                          total_size=total_size,
-                         get_document_type_info=get_document_type_info)
+                         get_document_type_info=get_document_type_info,
+                         get_account_type_label=get_account_type_label)
 
 
 @bp.route('/<int:bank_id>/edit', methods=['GET', 'POST'])
@@ -269,6 +293,11 @@ def delete(bank_id):
         flash(_('Impossible de supprimer cette banque car elle est utilisée par des crédits.'), 'warning')
         return redirect(url_for('banks.list_banks'))
 
+    # Vérifier si la banque a des comptes bancaires
+    if bank.accounts.count() > 0:
+        flash(_('Impossible de supprimer cette banque car elle contient des comptes bancaires.'), 'warning')
+        return redirect(url_for('banks.list_banks'))
+
     db.session.delete(bank)
     db.session.commit()
 
@@ -285,6 +314,30 @@ def api_list():
         'id': bank.id,
         'name': bank.name
     } for bank in banks])
+
+
+@bp.route('/api/default-bank/<int:bank_id>')
+@login_required
+def api_get_default_bank(bank_id):
+    """API pour récupérer les informations d'une banque par défaut"""
+    bank = DefaultBank.query.get_or_404(bank_id)
+
+    return jsonify({
+        'id': bank.id,
+        'name': bank.name,
+        'address': bank.address or '',
+        'postal_code': bank.postal_code or '',
+        'city': bank.city or '',
+        'phone': bank.phone or '',
+        'email': bank.email or '',
+        'website': bank.website or '',
+        'bic': bank.bic or '',
+        'logo_data': bank.logo_data or '',
+        'logo_mime_type': bank.logo_mime_type or '',
+        'color': bank.color or '',
+        'initials': bank.initials or '',
+        'text_color': bank.text_color or ''
+    })
 
 
 # Routes pour les documents
@@ -307,6 +360,8 @@ def add_document(bank_id):
         year = int(year_str) if year_str else None
         month_str = request.form.get('month')
         month = int(month_str) if month_str else None
+        account_id_str = request.form.get('account_id')
+        account_id = int(account_id_str) if account_id_str else None
 
         document_date = datetime.strptime(document_date_str, '%Y-%m-%d').date() if document_date_str else None
 
@@ -319,6 +374,7 @@ def add_document(bank_id):
         document = BankDocument(
             user_id=current_user.id,
             bank_id=bank_id,
+            account_id=account_id,
             name=name,
             description=description,
             document_type=document_type,
@@ -352,8 +408,12 @@ def add_document(bank_id):
     current_year = datetime.now().year
     years = list(range(current_year, current_year - 20, -1))
 
+    # Récupérer les comptes actifs de la banque
+    accounts = bank.accounts.filter_by(is_active=True).order_by(BankAccount.is_default.desc(), BankAccount.name).all()
+
     return render_template('banks/add_document.html',
                          bank=bank,
+                         accounts=accounts,
                          document_types=get_document_types(),
                          months=get_months(),
                          years=years)
@@ -416,6 +476,9 @@ def edit_document(document_id):
         document.year = request.form.get('year', type=int)
         document.month = request.form.get('month', type=int)
 
+        account_id_str = request.form.get('account_id')
+        document.account_id = int(account_id_str) if account_id_str else None
+
         document_date_str = request.form.get('document_date')
         document.document_date = datetime.strptime(document_date_str, '%Y-%m-%d').date() if document_date_str else None
 
@@ -443,9 +506,13 @@ def edit_document(document_id):
     current_year = datetime.now().year
     years = list(range(current_year, current_year - 20, -1))
 
+    # Récupérer les comptes actifs de la banque
+    accounts = document.bank.accounts.filter_by(is_active=True).order_by(BankAccount.is_default.desc(), BankAccount.name).all()
+
     return render_template('banks/edit_document.html',
                          document=document,
                          bank=document.bank,
+                         accounts=accounts,
                          document_types=get_document_types(),
                          months=get_months(),
                          years=years)

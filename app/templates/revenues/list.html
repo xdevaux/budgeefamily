@@ -5,10 +5,10 @@
 {% block content %}
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2><i class="fas fa-hand-holding-usd"></i> {{ _('Mes revenus') }}</h2>
+        <h2><i class="fas fa-hand-holding-usd" style="color: #10b981;"></i> {{ _('Mes revenus') }}</h2>
         <div class="d-flex gap-2">
             {% if current_user.can_add_revenue() %}
-                <a href="{{ url_for('revenues.add') }}" class="btn btn-primary">
+                <a href="{{ url_for('revenues.add') }}" class="btn btn-revenue-add">
                     <i class="fas fa-plus"></i> {{ _('Ajouter un revenu') }}
                 </a>
             {% else %}
@@ -75,8 +75,8 @@
                         <tbody>
                             {% for revenue in revenues.items %}
                                 {% set type_info = get_revenue_type_info(revenue.revenue_type) %}
-                                <tr>
-                                    <td>
+                                <tr class="clickable-row" data-href="{{ url_for('revenues.detail', revenue_id=revenue.id) }}">
+                                    <td class="align-middle">
                                         <strong>{{ revenue.name }}</strong>
                                         {% if revenue.employer %}
                                             <span class="badge bg-secondary ms-2"><i class="fas fa-building"></i> {{ revenue.employer.name }}</span>
@@ -84,7 +84,7 @@
                                             <span class="badge bg-secondary ms-2"><i class="fas fa-building"></i> {{ revenue.company }}</span>
                                         {% endif %}
                                     </td>
-                                    <td>
+                                    <td class="align-middle">
                                         {% if revenue.revenue_type %}
                                             <span class="badge" style="background-color: {{ type_info.color }};">
                                                 <i class="fas {{ type_info.icon }}"></i>
@@ -94,22 +94,18 @@
                                             <span class="text-muted">-</span>
                                         {% endif %}
                                     </td>
-                                    <td class="text-end"><strong class="text-success">{{ revenue.amount | format_amount }} {{ revenue.currency | currency_symbol }}</strong></td>
-                                    <td>{{ revenue.billing_cycle | translate_cycle }}</td>
-                                    <td>{{ revenue.next_payment_date.strftime('%d/%m/%Y') }}</td>
-                                    <td>
+                                    <td class="text-end align-middle"><strong class="text-success">{{ revenue.amount | format_amount }} {{ revenue.currency | currency_symbol }}</strong></td>
+                                    <td class="align-middle">{{ revenue.billing_cycle | translate_cycle }}</td>
+                                    <td class="align-middle">{{ revenue.next_payment_date.strftime('%d/%m/%Y') }}</td>
+                                    <td class="align-middle">
                                         {% if revenue.is_active %}
                                             <span class="badge bg-success">{{ _('Actif') }}</span>
                                         {% else %}
                                             <span class="badge bg-secondary">{{ _('Inactif') }}</span>
                                         {% endif %}
                                     </td>
-                                    <td class="text-end">
+                                    <td class="text-end align-middle" onclick="event.stopPropagation();">
                                         <div class="btn-group">
-                                            <a href="{{ url_for('revenues.detail', revenue_id=revenue.id) }}"
-                                               class="btn btn-sm btn-outline-primary" title="{{ _('Voir') }}">
-                                                <i class="fas fa-eye"></i>
-                                            </a>
                                             <a href="{{ url_for('revenues.edit', revenue_id=revenue.id) }}"
                                                class="btn btn-sm btn-outline-warning" title="{{ _('Modifier') }}">
                                                 <i class="fas fa-edit"></i>
@@ -227,13 +223,52 @@
                 <i class="fas fa-wallet fa-4x text-muted mb-3"></i>
                 <h4>{{ _('Aucun revenu') }}</h4>
                 <p class="text-muted">{{ _('Commencez par ajouter votre premier revenu (salaire, freelance, etc.)') }}</p>
-                <a href="{{ url_for('revenues.add') }}" class="btn btn-primary">
+                <a href="{{ url_for('revenues.add') }}" class="btn btn-revenue-add">
                     <i class="fas fa-plus"></i> {{ _('Ajouter un revenu') }}
                 </a>
             </div>
         </div>
     {% endif %}
 </div>
+
+<style>
+.clickable-row {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.clickable-row:hover {
+    background-color: #f8f9fa !important;
+}
+
+.btn-revenue-add {
+    background-color: #10b981;
+    border-color: #10b981;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.btn-revenue-add:hover {
+    background-color: #059669;
+    border-color: #059669;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Rendre les lignes du tableau cliquables
+    const rows = document.querySelectorAll('.clickable-row');
+
+    rows.forEach(row => {
+        row.addEventListener('click', function() {
+            window.location.href = this.dataset.href;
+        });
+    });
+});
+</script>
 {% endblock %}
 
 {% block extra_js %}

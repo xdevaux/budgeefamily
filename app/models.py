@@ -864,6 +864,7 @@ class Bank(db.Model):
     user = db.relationship('User', backref=db.backref('banks', lazy='dynamic', cascade='all, delete-orphan'))
     credits = db.relationship('Credit', back_populates='bank', lazy='dynamic')
     documents = db.relationship('BankDocument', back_populates='bank', lazy='dynamic', cascade='all, delete-orphan')
+    accounts = db.relationship('BankAccount', back_populates='bank', lazy='dynamic', cascade='all, delete-orphan')
 
     def __repr__(self):
         return f'<Bank {self.name}>'
@@ -875,6 +876,7 @@ class BankDocument(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     bank_id = db.Column(db.Integer, db.ForeignKey('banks.id'), nullable=False)
+    account_id = db.Column(db.Integer, db.ForeignKey('bank_accounts.id'), nullable=True)  # Compte bancaire (optionnel)
 
     # Informations du document
     name = db.Column(db.String(200), nullable=False)
@@ -899,9 +901,61 @@ class BankDocument(db.Model):
     # Relations
     user = db.relationship('User', backref=db.backref('bank_documents', lazy='dynamic', cascade='all, delete-orphan'))
     bank = db.relationship('Bank', back_populates='documents')
+    account = db.relationship('BankAccount', back_populates='documents')
 
     def __repr__(self):
         return f'<BankDocument {self.name}>'
+
+
+class BankAccount(db.Model):
+    """Modèle pour les comptes bancaires"""
+    __tablename__ = 'bank_accounts'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
+    bank_id = db.Column(db.Integer, db.ForeignKey('banks.id'), nullable=False, index=True)
+
+    # Informations du compte
+    name = db.Column(db.String(100), nullable=False)
+    account_number = db.Column(db.String(100), nullable=True)
+    iban = db.Column(db.String(34), nullable=True)
+    bic = db.Column(db.String(11), nullable=True)
+
+    # Type de compte
+    account_type = db.Column(db.String(50), default='checking', nullable=False)
+    # Types: 'checking' (courant), 'savings' (épargne), 'business' (professionnel), 'other'
+
+    # Informations financières
+    currency = db.Column(db.String(3), default='EUR', nullable=False)
+    opening_balance = db.Column(db.Float, default=0.0, nullable=True)  # Solde d'ouverture
+
+    # Notes et statut
+    notes = db.Column(db.Text, nullable=True)
+    is_active = db.Column(db.Boolean, default=True, nullable=False)
+    is_default = db.Column(db.Boolean, default=False, nullable=False)  # Compte par défaut
+
+    # Dates
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+
+    # Relations
+    user = db.relationship('User', backref=db.backref('bank_accounts', lazy='dynamic', cascade='all, delete-orphan'))
+    bank = db.relationship('Bank', back_populates='accounts')
+    documents = db.relationship('BankDocument', back_populates='account', lazy='dynamic', cascade='all, delete-orphan')
+
+    def __repr__(self):
+        return f'<BankAccount {self.name} - {self.bank.name if self.bank else "No Bank"}>'
+
+    def get_file_size_display(self):
+        """Format file size for display"""
+        if not self.file_size:
+            return "0 B"
+        size = self.file_size
+        for unit in ['B', 'KB', 'MB', 'GB']:
+            if size < 1024.0:
+                return f"{size:.1f} {unit}"
+            size /= 1024.0
+        return f"{size:.1f} TB"
 
 
 class CreditDocument(db.Model):
@@ -1360,3 +1414,43 @@ class ReminderDocument(db.Model):
 
     def __repr__(self):
         return f'<ReminderDocument {self.name}>'
+
+
+class DefaultBank(db.Model):
+    """Modèle pour les banques par défaut disponibles pour tous les utilisateurs"""
+    __tablename__ = 'default_banks'
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    # Informations de la banque
+    name = db.Column(db.String(100), nullable=False)
+    country_code = db.Column(db.String(2), nullable=False, index=True)  # Code pays ISO (FR, US, GB, etc.)
+    language = db.Column(db.String(2), nullable=False, index=True, default='fr')  # Langue (fr, en, es, etc.)
+
+    # Logo
+    logo_data = db.Column(db.Text, nullable=True)  # Logo en base64
+    logo_mime_type = db.Column(db.String(50), nullable=True)
+    color = db.Column(db.String(7), nullable=True)  # Couleur principale (hex)
+    initials = db.Column(db.String(10), nullable=True)  # Initiales pour logo généré
+    text_color = db.Column(db.String(7), nullable=True, default='#FFFFFF')  # Couleur du texte
+
+    # Coordonnées
+    address = db.Column(db.String(255), nullable=True)
+    postal_code = db.Column(db.String(20), nullable=True)
+    city = db.Column(db.String(100), nullable=True)
+    phone = db.Column(db.String(50), nullable=True)
+    email = db.Column(db.String(120), nullable=True)
+    website = db.Column(db.String(255), nullable=True)
+
+    # Code BIC/SWIFT
+    bic = db.Column(db.String(11), nullable=True)
+
+    # État
+    is_active = db.Column(db.Boolean, default=True)
+
+    # Dates
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<DefaultBank {self.name} ({self.country_code})>'

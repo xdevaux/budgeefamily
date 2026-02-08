@@ -226,6 +226,54 @@
 
         <!-- Colonne documents -->
         <div class="col-lg-8">
+            <!-- Comptes bancaires -->
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #e5e7eb;">
+                    <span>
+                        <i class="fas fa-wallet text-secondary"></i> {{ _('Comptes bancaires') }}
+                        <span class="badge bg-primary ms-2">{{ accounts|length }}</span>
+                    </span>
+                    <a href="{{ url_for('bank_accounts.add', bank_id=bank.id) }}" class="btn btn-sm btn-primary">
+                        <i class="fas fa-plus"></i> {{ _('Ajouter un compte') }}
+                    </a>
+                </div>
+                <div class="card-body p-0">
+                    {% if accounts %}
+                        <div class="list-group list-group-flush">
+                            {% for account in accounts %}
+                                <a href="{{ url_for('bank_accounts.detail', account_id=account.id) }}"
+                                   class="list-group-item list-group-item-action">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <i class="fas fa-wallet text-primary me-2"></i>
+                                            <strong>{{ account.name }}</strong>
+                                            {% if account.account_number %}
+                                                <span class="text-muted"> - {{ account.account_number }}</span>
+                                            {% elif account.iban %}
+                                                <span class="text-muted"> - <code>{{ account.iban }}</code></span>
+                                            {% endif %}
+                                            {% if account.is_default %}
+                                                <span class="badge bg-success ms-2">{{ _('Par défaut') }}</span>
+                                            {% endif %}
+                                            {% if not account.is_active %}
+                                                <span class="badge bg-secondary ms-2">{{ _('Inactif') }}</span>
+                                            {% endif %}
+                                        </div>
+                                        <div class="text-end">
+                                            <span class="badge bg-info">{{ get_account_type_label(account.account_type) }}</span>
+                                        </div>
+                                    </div>
+                                </a>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-3">
+                            <small class="text-muted">{{ _('Aucun compte enregistré') }}</small>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #e5e7eb;">
                     <span>
@@ -253,7 +301,7 @@
                     <!-- Filtres et recherche -->
                     <form method="GET" class="mb-4">
                         <div class="row g-2">
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <select name="doc_type" class="form-select form-select-sm" onchange="this.form.submit()">
                                     <option value="">{{ _('Tous les types') }}</option>
                                     {% for code, name, icon, color in document_types %}
@@ -261,7 +309,18 @@
                                     {% endfor %}
                                 </select>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-2">
+                                <select name="account_id" class="form-select form-select-sm" onchange="this.form.submit()">
+                                    <option value="">{{ _('Tous les comptes') }}</option>
+                                    <option value="none" {% if filter_account == 'none' %}selected{% endif %}>{{ _('Sans compte') }}</option>
+                                    {% for account in accounts %}
+                                        <option value="{{ account.id }}" {% if filter_account == account.id|string %}selected{% endif %}>
+                                            {{ account.name }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-2">
                                 <select name="year" class="form-select form-select-sm" onchange="this.form.submit()">
                                     <option value="">{{ _('Toutes les années') }}</option>
                                     {% for y in years %}
@@ -313,6 +372,9 @@
                                                                 {{ "%.2f"|format(document.file_size / 1048576) }} MB
                                                             {% endif %}
                                                         {% endif %}
+                                                        {% if document.account %}
+                                                            <br><i class="fas fa-wallet text-primary"></i> {{ document.account.name }}
+                                                        {% endif %}
                                                     </small>
                                                 </div>
                                             </div>
@@ -356,12 +418,17 @@
                             {% endfor %}
                         </div>
                     {% else %}
-                        <div class="alert alert-info mb-0">
-                            <i class="fas fa-info-circle"></i>
-                            {% if filter_type or filter_year or search %}
-                                {{ _('Aucun document ne correspond aux critères de recherche.') }}
+                        <div class="text-center py-5">
+                            <i class="fas fa-folder-open fa-4x text-muted mb-3"></i>
+                            {% if filter_type or filter_year or filter_account or search %}
+                                <h5>{{ _('Aucun document') }}</h5>
+                                <p class="text-muted">{{ _('Aucun document ne correspond aux critères de recherche.') }}</p>
                             {% else %}
-                                {{ _('Aucun document ajouté pour cette banque.') }}
+                                <h5>{{ _('Aucun document') }}</h5>
+                                <p class="text-muted">{{ _('Ajoutez vos RIB, contrats, relevés et autres documents bancaires') }}</p>
+                                <a href="{{ url_for('banks.add_document', bank_id=bank.id) }}" class="btn btn-primary">
+                                    <i class="fas fa-plus"></i> {{ _('Ajouter un document') }}
+                                </a>
                             {% endif %}
                         </div>
                     {% endif %}

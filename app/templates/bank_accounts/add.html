@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block title %}{{ _('Nouveau compte bancaire') }} - {{ bank.name }} - Budgee Family{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2><i class="fas fa-wallet text-primary"></i> {{ _('Nouveau compte bancaire') }}</h2>
+                    <p class="text-muted mb-0">{{ _('Banque') }}: <strong>{{ bank.name }}</strong></p>
+                </div>
+                <a href="{{ url_for('banks.detail', bank_id=bank.id) }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> {{ _('Retour') }}
+                </a>
+            </div>
+
+            <div class="card">
+                <div class="card-body p-4">
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">{{ _('Nom du compte') }} *</label>
+                            <input type="text" class="form-control" id="name" name="name" required
+                                   placeholder="{{ _('Ex: Compte courant, Livret A...') }}">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="account_type" class="form-label">{{ _('Type de compte') }} *</label>
+                            <select class="form-select" id="account_type" name="account_type" required>
+                                {% for code, name, icon, color in account_types %}
+                                    <option value="{{ code }}">{{ name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="account_number" class="form-label">{{ _('Numéro de compte') }}</label>
+                                <input type="text" class="form-control" id="account_number" name="account_number"
+                                       placeholder="{{ _('Ex: 00012345678') }}">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="currency" class="form-label">{{ _('Devise') }}</label>
+                                <select class="form-select" id="currency" name="currency">
+                                    <option value="EUR" selected>EUR (€)</option>
+                                    <option value="USD">USD ($)</option>
+                                    <option value="GBP">GBP (£)</option>
+                                    <option value="CHF">CHF (CHF)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="iban" class="form-label">{{ _('IBAN') }}</label>
+                            <input type="text" class="form-control" id="iban" name="iban"
+                                   placeholder="{{ _('Ex: FR76 1234 5678 9012 3456 7890 123') }}" maxlength="34">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="bic" class="form-label">{{ _('BIC/SWIFT') }}</label>
+                            <input type="text" class="form-control" id="bic" name="bic"
+                                   placeholder="{{ _('Ex: BNPAFRPP') }}" maxlength="11">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="opening_balance" class="form-label">{{ _('Solde d\'ouverture') }}</label>
+                            <div class="input-group">
+                                <input type="number" step="0.01" class="form-control" id="opening_balance"
+                                       name="opening_balance" placeholder="0.00" value="0.00">
+                                <span class="input-group-text">€</span>
+                            </div>
+                            <small class="text-muted">{{ _('Facultatif - Solde du compte à la création') }}</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="notes" class="form-label">{{ _('Notes') }}</label>
+                            <textarea class="form-control" id="notes" name="notes" rows="3"
+                                      placeholder="{{ _('Notes personnelles...') }}"></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="is_default" name="is_default">
+                                <label class="form-check-label" for="is_default">
+                                    {{ _('Définir comme compte par défaut') }}
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-save"></i> {{ _('Enregistrer') }}
+                            </button>
+                            <a href="{{ url_for('banks.detail', bank_id=bank.id) }}" class="btn btn-outline-secondary">
+                                {{ _('Annuler') }}
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

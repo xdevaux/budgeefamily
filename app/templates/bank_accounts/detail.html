@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+
+{% block title %}{{ account.name }} - Budgee Family{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2><i class="fas fa-wallet text-primary"></i> {{ account.name }}</h2>
+            <p class="text-muted mb-0">
+                <i class="fas fa-university"></i> {{ account.bank.name }}
+            </p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{{ url_for('bank_accounts.edit', account_id=account.id) }}" class="btn btn-warning">
+                <i class="fas fa-edit"></i> {{ _('Modifier') }}
+            </a>
+            <a href="{{ url_for('banks.detail', bank_id=account.bank_id) }}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left"></i> {{ _('Retour') }}
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="card mb-4">
+                <div class="card-header" style="background-color: #e5e7eb;">
+                    <i class="fas fa-info-circle text-secondary"></i> {{ _('Informations du compte') }}
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <strong>{{ _('Type de compte') }} :</strong><br>
+                        <span class="badge bg-primary">{{ get_account_type_label(account.account_type) }}</span>
+                    </div>
+
+                    {% if account.account_number %}
+                    <div class="mb-3">
+                        <strong>{{ _('Numéro de compte') }} :</strong><br>
+                        <code>{{ account.account_number }}</code>
+                    </div>
+                    {% endif %}
+
+                    {% if account.iban %}
+                    <div class="mb-3">
+                        <strong>{{ _('IBAN') }} :</strong><br>
+                        <code>{{ account.iban }}</code>
+                    </div>
+                    {% endif %}
+
+                    {% if account.bic %}
+                    <div class="mb-3">
+                        <strong>{{ _('BIC/SWIFT') }} :</strong><br>
+                        <code>{{ account.bic }}</code>
+                    </div>
+                    {% endif %}
+
+                    <div class="mb-3">
+                        <strong>{{ _('Devise') }} :</strong><br>
+                        {{ account.currency }}
+                    </div>
+
+                    <div class="mb-3">
+                        <strong>{{ _('Solde d\'ouverture') }} :</strong><br>
+                        <span class="fs-4">{{ "%.2f"|format(account.opening_balance or 0.0) }} {{ account.currency }}</span>
+                    </div>
+
+                    <div class="mb-0">
+                        <strong>{{ _('Statut') }} :</strong><br>
+                        {% if account.is_active %}
+                            <span class="badge bg-success">{{ _('Actif') }}</span>
+                        {% else %}
+                            <span class="badge bg-secondary">{{ _('Inactif') }}</span>
+                        {% endif %}
+                        {% if account.is_default %}
+                            <span class="badge bg-success ms-2">{{ _('Par défaut') }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            {% if account.notes %}
+            <div class="card mb-4">
+                <div class="card-header" style="background-color: #e5e7eb;">
+                    <i class="fas fa-sticky-note text-secondary"></i> {{ _('Notes') }}
+                </div>
+                <div class="card-body">
+                    <p class="mb-0" style="white-space: pre-wrap;">{{ account.notes }}</p>
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="card">
+                <div class="card-header" style="background-color: #e5e7eb;">
+                    <i class="fas fa-clock text-secondary"></i> {{ _('Informations système') }}
+                </div>
+                <div class="card-body">
+                    <small class="text-muted">
+                        <div class="mb-2">
+                            <i class="fas fa-calendar-plus"></i> {{ _('Créé le') }} : {{ account.created_at.strftime('%d/%m/%Y à %H:%M') }}
+                        </div>
+                        <div>
+                            <i class="fas fa-calendar-check"></i> {{ _('Modifié le') }} : {{ account.updated_at.strftime('%d/%m/%Y à %H:%M') }}
+                        </div>
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="card mt-4">
+        <div class="card-header" style="background-color: #e5e7eb;">
+            <i class="fas fa-cog text-secondary"></i> {{ _('Actions') }}
+        </div>
+        <div class="card-body">
+            <div class="d-flex gap-2 flex-wrap">
+                {% if not account.is_default %}
+                <form method="POST" action="{{ url_for('bank_accounts.set_default', account_id=account.id) }}" class="d-inline">
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-star"></i> {{ _('Définir par défaut') }}
+                    </button>
+                </form>
+                {% endif %}
+
+                <form method="POST" action="{{ url_for('bank_accounts.toggle', account_id=account.id) }}" class="d-inline">
+                    <button type="submit" class="btn btn-info">
+                        <i class="fas fa-toggle-{% if account.is_active %}on{% else %}off{% endif %}"></i>
+                        {% if account.is_active %}{{ _('Désactiver') }}{% else %}{{ _('Activer') }}{% endif %}
+                    </button>
+                </form>
+
+                <form method="POST" action="{{ url_for('bank_accounts.delete', account_id=account.id) }}"
+                      onsubmit="return confirm('{{ _('Êtes-vous sûr de vouloir supprimer ce compte ?') }}')" class="d-inline">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash"></i> {{ _('Supprimer') }}
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

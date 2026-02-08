@@ -7,7 +7,7 @@
     <div class="row">
         <div class="col-lg-8 mx-auto">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2><i class="fas fa-credit-card"></i> {{ _('Ajouter un achat') }}</h2>
+                <h2><i class="fas fa-credit-card" style="color: #ef4444;"></i> {{ _('Ajouter un achat') }}</h2>
                 <a href="{{ url_for('card_purchases.list_purchases') }}" class="btn btn-outline-secondary">
                     <i class="fas fa-arrow-left"></i> {{ _('Retour') }}
                 </a>
@@ -16,11 +16,11 @@
             <!-- Navigation between modes -->
             <div class="alert alert-light border">
                 <div class="d-flex gap-2">
-                    <a href="{{ url_for('card_purchases.add_manual') }}" class="btn btn-primary">
+                    <a href="{{ url_for('card_purchases.add_manual') }}" class="btn btn-purchase-add">
                         <i class="fas fa-keyboard"></i> {{ _('Saisie manuelle') }}
                     </a>
                     {% if current_user.is_premium() %}
-                        <a href="{{ url_for('card_purchases.upload_receipts') }}" class="btn btn-outline-primary">
+                        <a href="{{ url_for('card_purchases.upload_receipts') }}" class="btn btn-outline-danger">
                             <i class="fas fa-robot"></i> {{ _('Scanner avec OCR') }}
                         </a>
                     {% else %}
@@ -143,7 +143,7 @@
                                        class="d-none"
                                        id="receipt_file"
                                        name="receipt_file"
-                                       accept="image/jpeg,image/png,image/jpg,application/pdf"
+                                       accept="image/jpeg,image/png,image/jpg,image/webp,application/pdf"
                                        onchange="updateFileName(this)">
                                 <button type="button" class="btn btn-outline-secondary" onclick="document.getElementById('receipt_file').click()">
                                     <i class="fas fa-folder-open"></i> {{ _('Parcourir...') }}
@@ -156,7 +156,7 @@
                         </div>
 
                         <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary btn-lg">
+                            <button type="submit" class="btn btn-purchase-add btn-lg">
                                 <i class="fas fa-save"></i> {{ _('Enregistrer l\'achat') }}
                             </button>
                             <a href="{{ url_for('card_purchases.list_purchases') }}" class="btn btn-outline-secondary">
@@ -188,4 +188,21 @@ function updateFileName(input) {
     }
 }
 </script>
+
+<style>
+.btn-purchase-add {
+    background-color: #ef4444;
+    border-color: #ef4444;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.btn-purchase-add:hover {
+    background-color: #dc2626;
+    border-color: #dc2626;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+</style>
 {% endblock %}

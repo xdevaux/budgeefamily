@@ -63,7 +63,7 @@ def create_app(config_class=Config):
     babel.init_app(app, locale_selector=get_locale, timezone_selector=get_timezone)
     limiter.init_app(app)
 
-    from app.routes import auth, main, subscriptions, api, categories, services, admin, exports, credits, credit_types, revenues, employers, banks, installments, checkbooks, card_purchases, card_purchase_categories, reminders, providers
+    from app.routes import auth, main, subscriptions, api, categories, services, admin, exports, credits, credit_types, revenues, employers, banks, bank_accounts, installments, checkbooks, card_purchases, card_purchase_categories, reminders, providers
     app.register_blueprint(auth.bp)
     app.register_blueprint(main.bp)
     app.register_blueprint(subscriptions.bp)
@@ -77,6 +77,7 @@ def create_app(config_class=Config):
     app.register_blueprint(revenues.bp)
     app.register_blueprint(employers.bp)
     app.register_blueprint(banks.bp)
+    app.register_blueprint(bank_accounts.bp)
     app.register_blueprint(installments.bp)
     app.register_blueprint(checkbooks.bp)
     app.register_blueprint(card_purchases.bp)

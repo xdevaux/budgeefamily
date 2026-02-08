@@ -5,9 +5,9 @@
 {% block content %}
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2><i class="fas fa-university"></i> {{ _('Mes banques') }}</h2>
+        <h2><i class="fas fa-university" style="color: #10b981;"></i> {{ _('Mes banques') }}</h2>
         <div class="d-flex gap-2">
-            <a href="{{ url_for('banks.add') }}" class="btn btn-primary">
+            <a href="{{ url_for('banks.add') }}" class="btn btn-bank-add">
                 <i class="fas fa-plus"></i> {{ _('Ajouter une banque') }}
             </a>
         </div>
@@ -17,7 +17,7 @@
     <div class="card mb-4">
         <div class="card-body">
             <form method="GET" class="row g-3">
-                <div class="col-md-4">
+                <div class="col-md-6">
                     <label class="form-label">{{ _('Statut') }}</label>
                     <select name="status" class="form-select" onchange="this.form.submit()">
                         <option value="all" {% if filter_status == 'all' %}selected{% endif %}>{{ _('Toutes') }}</option>
@@ -25,7 +25,7 @@
                         <option value="inactive" {% if filter_status == 'inactive' %}selected{% endif %}>{{ _('Inactives') }}</option>
                     </select>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-6">
                     <label class="form-label">&nbsp;</label>
                     <a href="{{ url_for('banks.list_banks') }}" class="btn btn-secondary w-100">
                         <i class="fas fa-redo"></i> {{ _('Réinitialiser') }}
@@ -47,14 +47,15 @@
                                 <th>{{ _('Code BIC') }}</th>
                                 <th>{{ _('Téléphone') }}</th>
                                 <th>{{ _('Email') }}</th>
+                                <th>{{ _('Documents') }}</th>
                                 <th>{{ _('Statut') }}</th>
                                 <th class="text-end">{{ _('Actions') }}</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for bank in banks.items %}
-                                <tr>
-                                    <td>
+                                <tr style="cursor: pointer;" onclick="window.location='{{ url_for('banks.detail', bank_id=bank.id) }}';">
+                                    <td class="align-middle">
                                         <div class="d-flex align-items-center gap-2">
                                             {% if bank.logo_data %}
                                                 <img src="data:{{ bank.logo_mime_type }};base64,{{ bank.logo_data }}"
@@ -69,45 +70,45 @@
                                             {% endif %}
                                             <div>
                                                 <strong>{{ bank.name }}</strong>
-                                                {% if bank.address %}
-                                                    <br><small class="text-muted">{{ bank.address[:50] }}</small>
-                                                {% endif %}
                                             </div>
                                         </div>
                                     </td>
-                                    <td>
+                                    <td class="align-middle">
                                         {% if bank.bic %}
                                             <code>{{ bank.bic }}</code>
                                         {% else %}
                                             <span class="text-muted">-</span>
                                         {% endif %}
                                     </td>
-                                    <td>
+                                    <td class="align-middle">
                                         {% if bank.phone %}
                                             {{ bank.phone }}
                                         {% else %}
                                             <span class="text-muted">-</span>
                                         {% endif %}
                                     </td>
-                                    <td>
+                                    <td class="align-middle">
                                         {% if bank.email %}
                                             <a href="mailto:{{ bank.email }}">{{ bank.email }}</a>
                                         {% else %}
                                             <span class="text-muted">-</span>
                                         {% endif %}
                                     </td>
-                                    <td>
+                                    <td class="align-middle">
+                                        <span class="badge bg-info">{{ bank.documents.count() }}</span>
+                                    </td>
+                                    <td class="align-middle">
                                         {% if bank.is_active %}
                                             <span class="badge bg-success">{{ _('Active') }}</span>
                                         {% else %}
                                             <span class="badge bg-secondary">{{ _('Inactive') }}</span>
                                         {% endif %}
                                     </td>
-                                    <td class="text-end">
+                                    <td class="align-middle text-end" onclick="event.stopPropagation();">
                                         <div class="btn-group">
-                                            <a href="{{ url_for('banks.detail', bank_id=bank.id) }}"
-                                               class="btn btn-sm btn-outline-primary" title="{{ _('Détails') }}">
-                                                <i class="fas fa-eye"></i>
+                                            <a href="{{ url_for('bank_accounts.add', bank_id=bank.id) }}"
+                                               class="btn btn-sm btn-outline-success" title="{{ _('Ajouter un compte') }}">
+                                                <i class="fas fa-plus"></i>
                                             </a>
                                             <a href="{{ url_for('banks.edit', bank_id=bank.id) }}"
                                                class="btn btn-sm btn-outline-warning" title="{{ _('Modifier') }}">
@@ -175,4 +176,25 @@
         </div>
     {% endif %}
 </div>
+
+<style>
+.table tbody tr[style*="cursor: pointer"]:hover {
+    background-color: #f8f9fa;
+}
+
+.btn-bank-add {
+    background-color: #10b981;
+    border-color: #10b981;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.btn-bank-add:hover {
+    background-color: #059669;
+    border-color: #059669;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+</style>
 {% endblock %}

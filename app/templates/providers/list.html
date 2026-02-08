@@ -5,8 +5,8 @@
 {% block content %}
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2><i class="fas fa-user-tie"></i> {{ _('Mes prestataires') }}</h2>
-        <a href="{{ url_for('providers.add') }}" class="btn btn-primary">
+        <h2><i class="fas fa-user-tie" style="color: #ef4444;"></i> {{ _('Mes prestataires') }}</h2>
+        <a href="{{ url_for('providers.add') }}" class="btn btn-provider-add">
             <i class="fas fa-plus"></i> {{ _('Ajouter un prestataire') }}
         </a>
     </div>
@@ -51,35 +51,35 @@
                     </thead>
                     <tbody>
                         {% for provider in providers.items %}
-                        <tr class="{% if not provider.is_active %}opacity-50{% endif %}">
-                            <td>
+                        <tr class="clickable-row {% if not provider.is_active %}opacity-50{% endif %}" data-href="{{ url_for('providers.edit', provider_id=provider.id) }}">
+                            <td class="align-middle">
                                 <strong><i class="fas fa-user-tie text-primary"></i> {{ provider.name }}</strong>
                             </td>
-                            <td>
+                            <td class="align-middle">
                                 {% if provider.provider_type %}
                                     <span class="badge bg-secondary">{{ provider.provider_type }}</span>
                                 {% else %}
                                     <span class="text-muted">-</span>
                                 {% endif %}
                             </td>
-                            <td>
+                            <td class="align-middle">
                                 {% if provider.phone %}
                                     <i class="fas fa-phone text-success"></i> {{ provider.phone }}
                                 {% else %}
                                     <span class="text-muted">-</span>
                                 {% endif %}
                             </td>
-                            <td>
+                            <td class="align-middle">
                                 {% if provider.email %}
                                     <i class="fas fa-envelope text-primary"></i> {{ provider.email }}
                                 {% else %}
                                     <span class="text-muted">-</span>
                                 {% endif %}
                             </td>
-                            <td>
-                                <span class="badge bg-info">{{ provider.reminders.filter_by(is_active=True).count() }}</span>
+                            <td class="align-middle">
+                                <span class="badge bg-warning">{{ provider.reminders.filter_by(is_active=True).count() }}</span>
                             </td>
-                            <td class="text-end">
+                            <td class="text-end align-middle" onclick="event.stopPropagation();">
                                 <div class="btn-group">
                                     <a href="{{ url_for('providers.edit', provider_id=provider.id) }}" class="btn btn-sm btn-outline-warning" title="{{ _('Modifier') }}">
                                         <i class="fas fa-edit"></i>
@@ -133,11 +133,49 @@
                 <i class="fas fa-user-tie fa-4x text-muted mb-3"></i>
                 <h4>{{ _('Aucun prestataire') }}</h4>
                 <p class="text-muted">{{ _('Commencez par ajouter votre premier prestataire') }}</p>
-                <a href="{{ url_for('providers.add') }}" class="btn btn-primary">
+                <a href="{{ url_for('providers.add') }}" class="btn btn-provider-add">
                     <i class="fas fa-plus"></i> {{ _('Ajouter un prestataire') }}
                 </a>
             </div>
         </div>
     {% endif %}
 </div>
+
+<style>
+.btn-provider-add {
+    background-color: #ef4444;
+    border-color: #ef4444;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.btn-provider-add:hover {
+    background-color: #dc2626;
+    border-color: #dc2626;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.clickable-row {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.clickable-row:hover {
+    background-color: #f8f9fa !important;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Rendre les lignes du tableau cliquables
+    const rows = document.querySelectorAll('.clickable-row');
+    rows.forEach(row => {
+        row.addEventListener('click', function() {
+            window.location.href = this.dataset.href;
+        });
+    });
+});
+</script>
 {% endblock %}
